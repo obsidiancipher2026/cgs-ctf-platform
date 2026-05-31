@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/6/login/">
+  <title>Login - PortalNet</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav><ul><li><a href="../index.html">Home</a></li><li><a href="#" class="active">Login</a></li></ul></nav>
+<div class="hero" style="min-height:60vh;"><div class="hero-content">
+<h1>Employee Login</h1>
+<div id="errorMsg" class="alert alert-error" style="display:none;">Invalid username or password. Try again.</div>
+<div id="queryDisplay" class="query-box" style="display:none;margin-bottom:1rem;"></div>
+<form id="loginForm" style="margin-top:2rem;max-width:400px;margin-left:auto;margin-right:auto;">
+<div class="form-group"><label for="username">Username</label><input type="text" id="username" placeholder="Enter username" required></div>
+<div class="form-group"><label for="password">Password</label><input type="password" id="password" placeholder="Enter password" required></div>
+<button type="submit" class="btn btn-primary" style="width:100%;">Login</button>
+</form>
+</div></div>
+<footer><p>&copy; 2025 PortalNet. All rights reserved.</p></footer>
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var username = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
+  var query = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
+  document.getElementById('queryDisplay').style.display = 'block';
+  document.getElementById('queryDisplay').innerHTML = '<span class="highlight">$</span> ' + query;
+
+  var hasComment = username.indexOf("'--") >= 0 || username.indexOf("' --") >= 0 || username.indexOf("'#") >= 0 || username.indexOf("' #") >= 0;
+  var hasOrInjection = /or\s+1=1/i.test(username) && /'/.test(username);
+
+  if ((hasComment || hasOrInjection) && /admin/i.test(username)) {
+    window.location.href = 'dashboard';
+  } else if (hasComment || hasOrInjection) {
+    window.location.href = 'dashboard';
+  } else if (username === 'admin' && password === 'portalnet2025') {
+    window.location.href = 'dashboard';
+  } else {
+    document.getElementById('errorMsg').style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

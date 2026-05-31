@@ -1,0 +1,18 @@
+# Substitution Cipher Challenge
+# Use frequency analysis to break this monoalphabetic substitution cipher.
+# English letter frequency: E, T, A, O, I, N, S, H, R, D, L, C, U, M, W, F, G, Y, P, B, V, K, J, X, Q, Z
+# The first 3 ciphertext letters map to CGS{ (hint for the mapping)
+#
+# Decoy: CGS{frequency_analysis}
+# Decoy: CGS{substitution_break}
+# Decoy: CGS{mono_cipher}
+#
+# Ciphertext:
+OSE{rd3cg3zok_4z4xk515}
+#
+# Solve with online tool: quipqiup.com
+# Or use frequency analysis script:
+# from collections import Counter
+# ciphertext = "OSE{rd3cg3zok_4z4xk515}"
+# frequency = Counter(ciphertext)
+# ... map most frequent to ETAOIN ...

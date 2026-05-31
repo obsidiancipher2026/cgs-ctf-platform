@@ -1,0 +1,29 @@
+# RSA with Small Prime Factors
+# N = 3233  (p=61, q=53)
+# e = 17
+# 
+# The flag characters have been encrypted individually:
+# Ciphertext: [2773, 2659, 2856, 1285, 512, 2856, 2395, 1285, 2773, 512, 2395, 1128, 1285, 2856, 209, 1285, 2395, 1285, 2815, 2773, 1285, 2773, 2815, 2773, 2872]
+#
+# Decoy: CGS{rsa_factorization}
+# Decoy: CGS{weak_rsa}
+# Decoy: CGS{factor_attack}
+#
+# Decrypt each ciphertext block with:
+# from math import gcd
+# def egcd(a, b):
+#     if a == 0: return b, 0, 1
+#     g, x1, y1 = egcd(b % a, a)
+#     return g, y1 - (b // a) * x1, x1
+# def modinv(a, m):
+#     g, x, y = egcd(a, m)
+#     if g != 1: return None
+#     return x % m
+#
+# N = 3233; e = 17
+# p = 61; q = 53
+# phi = (p-1) * (q-1)
+# d = modinv(e, phi)
+# ct = [2773, 2659, 2856, 1285, 512, 2856, 2395, 1285, 2773, 512, 2395, 1128, 1285, 2856, 209, 1285, 2395, 1285, 2815, 2773, 1285, 2773, 2815, 2773, 2872]
+# flag = ''.join(chr(pow(c, d, N)) for c in ct)
+# print('Flag:', flag)

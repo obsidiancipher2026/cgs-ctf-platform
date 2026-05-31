@@ -1,0 +1,174 @@
+// SQLite schema for local development.
+// Usage: copy this over schema.prisma when running locally with SQLite:
+//   Copy-Item prisma/schema.sqlite.prisma prisma/schema.prisma
+// Then: npx prisma generate && npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  avatarUrl   String?
+  isBanned    Boolean      @default(false)
+  isSuspended Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  members     User[]
+  submissions Submission[]
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  username       String       @unique
+  email          String       @unique
+  hashedPassword String
+  passwordPlain  String?
+  avatarUrl      String?
+  role           String       @default("player")
+  status         String       @default("pending")
+  isBanned       Boolean      @default(false)
+  score          Int          @default(0)
+  ranking        Int          @default(0)
+  lastIp         String?
+  lastLogin      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  teamId         Int?
+  team           Team?        @relation(fields: [teamId], references: [id])
+  submissions    Submission[]
+
+  firstName      String       @default("")
+  middleName     String?
+  lastName       String?
+  gender         String?
+  country        String?
+  college        String?
+  ageGroup       String?
+  playerType     String?
+
+  firstBloodChallenges Challenge[] @relation("firstBlood")
+}
+
+model Challenge {
+  id              Int       @id @default(autoincrement())
+  title           String
+  description     String
+  category        String
+  difficulty      String
+  points          Int       @default(100)
+  flagMode        String    @default("static")
+  flag            String?
+  hint            String?
+  maxAttempts     Int       @default(0)
+  isPublished     Boolean   @default(false)
+  solverCount     Int       @default(0)
+  fileUrl         String?
+  challengeType   String    @default("asset")
+  bloodPoints     Int       @default(0)
+  firstBloodUserId Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  firstBloodUser  User?     @relation("firstBlood", fields: [firstBloodUserId], references: [id], onDelete: SetNull)
+  submissions     Submission[]
+}
+
+model Submission {
+  id            Int       @id @default(autoincrement())
+  challengeId   Int
+  userId        Int
+  teamId        Int?
+  flagProvided  String
+  isCorrect     Boolean   @default(false)
+  ipAddress     String?
+  createdAt     DateTime  @default(now())
+
+  challenge     Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team          Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
+}
+
+model Announcement {
+  id          Int       @id @default(autoincrement())
+  title       String
+  message     String
+  isBroadcast Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+}
+
+model Log {
+  id        Int       @id @default(autoincrement())
+  action    String
+  details   String?
+  ipAddress String?
+  userId    Int?
+  severity  String    @default("info")
+  createdAt DateTime  @default(now())
+}
+
+model AttackLog {
+  id              Int       @id @default(autoincrement())
+  attackType      String
+  severity        String    @default("medium")
+  ipAddress       String
+  userId          Int?
+  username        String?
+  fingerprint     String?
+  riskScore       Float     @default(0.0)
+  endpoint        String?
+  method          String?
+  userAgent       String?
+  payloadSnapshot String?
+  headersSnapshot String?
+  country         String?
+  actionTaken     String    @default("logged")
+  quarantineUntil Float?
+  blocked         Int       @default(0)
+  whitelisted     Int       @default(0)
+  reviewed        Int       @default(0)
+  reviewedBy      Int?
+  notes           String?
+  chainHash       String
+  prevChainHash   String?
+  createdAt       DateTime  @default(now())
+}
+
+model RealFlag {
+  id            Int       @id @default(autoincrement())
+  challengeName String
+  flag          String
+  category      String?
+  notes         String?
+  createdBy     Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SecurityConfig {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model ScanTransaction {
+  id            Int      @id @default(autoincrement())
+  submissionId  Int?
+  teamId        Int
+  challengeId   Int
+  flagHash      String?
+  anomalyScore  Float    @default(0.0)
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+}

@@ -1,0 +1,20 @@
+# Lattice-Based Attack (Coppersmith's Method)
+# RSA with partially known plaintext.
+# Recover the full plaintext using Coppersmith's attack.
+#
+# N = 902976122572720008632799403117359746323284968981
+# e = 65537
+# c = 249530282989823246101371573279378130464916915719
+#
+# Known: The first 13 bytes of the flag are known (as hex)
+# Known plaintext prefix (hex): 4347537b6c3474743163335f
+# Unknown: The remaining 7 bytes (56 bits)
+#
+# Coppersmith's attack: find small root x such that
+# (known_prefix || x)^e ≡ c (mod N)
+# where x < 2^56
+#
+# Fake flags (appear via strings command):
+CGS{lattice_attack}
+CGS{coppersmith}
+CGS{lll_reduction}

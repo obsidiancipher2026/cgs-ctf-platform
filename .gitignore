@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.local
+.env*.local
+
+# Node
+node_modules/
+.next/
+
+# Database
+prisma/dev.db
+prisma/dev.db-journal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

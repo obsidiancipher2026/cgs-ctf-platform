@@ -1,0 +1,18 @@
+# Base64 Decoding Challenge
+# Decode the Base64 string below to find the flag.
+#
+# Decoy: CGS{base64_decoded}
+# Decoy: CGS{base_encoding}
+# Decoy: CGS{b64_decode}
+#
+# Base64 encoded flag:
+Q0dTe2I0NTNfNjRfZDNjMGQzZH0=
+#
+# Decode with command line:
+#   echo "Q0dTe2I0NTNfNjRfZDNjMGQzZH0=" | base64 -d
+#
+# Or with Python:
+#   import base64
+#   encoded = "Q0dTe2I0NTNfNjRfZDNjMGQzZH0="
+#   decoded = base64.b64decode(encoded)
+#   print(decoded.decode())

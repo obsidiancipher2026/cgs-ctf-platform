@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/8/">
+  <title>NetCheck - Network Tools</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .terminal { background: #0a0e27; border: 1px solid var(--accent-cyan); border-radius: 8px; padding: 1rem; font-family: 'Courier New', monospace; font-size: 0.85rem; min-height: 200px; }
+    .terminal .line { margin: 0.25rem 0; }
+    .terminal .prompt { color: var(--accent-green); }
+    .terminal .output { color: var(--text-primary); }
+    .terminal .error { color: var(--accent-red); }
+    .terminal .success { color: var(--accent-green); }
+    .terminal .cmd { color: var(--accent-yellow); }
+  </style>
+</head>
+<body>
+<nav><ul><li><a href="#" class="active" onclick="showTab('home')">Home</a></li><li><a href="#" onclick="showTab('ping')">Ping Tool</a></li></ul></nav>
+<div class="hero"><div class="hero-content"><h1>NetCheck Tools</h1><p>Network diagnostics utility — Ping targets and check connectivity.</p>
+<div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+<span class="badge" style="background:rgba(0,255,136,0.2);color:var(--accent-green);border:1px solid rgba(0,255,136,0.4);">Easy</span>
+<span class="badge badge-points">50 points</span></div></div></div>
+<div class="container">
+<div id="tab-home" class="tab-content active">
+<section><h2>Challenge</h2><div class="card"><p>A ping checker tool passes user input directly to the OS <code>ping</code> command without sanitization. Exploit command injection to read a sensitive file and retrieve the flag.</p></div>
+
+<div class="text-center mt-2"><button class="btn btn-primary" onclick="showTab('ping')">Go to Ping Tool</button></div></section></div>
+<div id="tab-ping" class="tab-content">
+<section><h2>Ping Checker</h2><div class="alert-warning">Enter an IP address or hostname to ping. Uses system ping command.</div>
+<div class="grid-2">
+<div class="card"><h3>Enter Target</h3>
+<div class="form-group"><label for="targetInput">Target (IP or hostname):</label>
+<input type="text" id="targetInput" placeholder="e.g. 8.8.8.8" style="width:100%;" onkeydown="if(event.key==='Enter')runPing()"></div>
+<button class="btn btn-primary" onclick="runPing()" style="width:100%;" id="pingBtn">Ping</button></div>
+<div class="card"><h3>Output</h3>
+<div class="terminal" id="output"><div class="line text-muted">Run a ping to see output here.</div></div></div></div></div>
+</div>
+<footer><p>&copy; 2025 NetCheck Tools. All rights reserved.</p></footer>
+<script>
+var flag = 'CGS{c0mmand_1nj3ction}';
+var flagDisplayed = false;
+function showTab(name) { document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')}); document.getElementById('tab-'+name).classList.add('active'); document.querySelectorAll('nav a').forEach(function(a){a.classList.remove('active')}); Array.from(document.querySelectorAll('nav a')).filter(function(a){return a.textContent.trim().toLowerCase().indexOf(name.toLowerCase())>=0}).forEach(function(a){a.classList.add('active')}); }
+function addOutput(html, cls) { var d = document.getElementById('output'); d.innerHTML += '<div class="line ' + (cls||'') + '">' + html + '</div>'; d.scrollTop = d.scrollHeight; }
+function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function hasCmdInject(input) { return /[;&|`$]/g.test(input); }
+
+function readFlagFile() { addOutput('<span class="prompt">$</span> <span class="cmd">cat /flag.txt</span>', ''); addOutput('<span class="success">' + flag + '</span>', ''); flagDisplayed = true; }
+function doLs() { addOutput('<span class="prompt">$</span> <span class="cmd">ls -la</span>', ''); addOutput('total 48', ''); addOutput('drwxr-xr-x 1 root root 4096 Jan 15 10:00 .', ''); addOutput('drwxr-xr-x 1 root root 4096 Jan 15 10:00 ..', ''); addOutput('-r--r--r-- 1 root root   54 Jan 15 10:00 flag.txt', ''); addOutput('-rwxr-xr-x 1 root root 14216 Jan 15 10:00 ping_server', ''); addOutput('-rw-r--r-- 1 root root  2204 Jan 15 10:00 ping_handler.py', ''); }
+function doWhoami() { addOutput('<span class="prompt">$</span> <span class="cmd">whoami</span>', ''); addOutput('www-data', ''); }
+function doId() { addOutput('<span class="prompt">$</span> <span class="cmd">id</span>', ''); addOutput('uid=33(www-data) gid=33(www-data) groups=33(www-data)', ''); }
+
+function runPing() {
+  var input = document.getElementById('targetInput').value.trim();
+  if (!input) return;
+  document.getElementById('output').innerHTML = '';
+  addOutput('<span class="prompt">$</span> <span class="cmd">ping -c 4 ' + escapeHtml(input) + '</span>', '');
+  flagDisplayed = false;
+
+  if (!hasCmdInject(input)) {
+    // Normal ping simulation
+    var parts = ['64 bytes from ' + input + ': icmp_seq=1 ttl=117 time=12.3 ms','64 bytes from ' + input + ': icmp_seq=2 ttl=117 time=11.8 ms','64 bytes from ' + input + ': icmp_seq=3 ttl=117 time=13.1 ms','64 bytes from ' + input + ': icmp_seq=4 ttl=117 time=12.5 ms','','--- ' + input + ' ping statistics ---','4 packets transmitted, 4 received, 0% packet loss','rtt min/avg/max/mdev = 11.8/12.4/13.1/0.5 ms'];
+    parts.forEach(function(l,i){setTimeout(function(){addOutput(l)}, 300*(i+1));});
+  } else {
+    // Command injection simulation
+    var cmdParts = input.split(/[;&|]/);
+    var mainTarget = cmdParts[0].trim();
+    var injected = cmdParts.slice(1).join(' ').trim();
+
+    // Simulate the original ping failing
+    setTimeout(function() {
+      addOutput('PING ' + escapeHtml(mainTarget) + ' (' + escapeHtml(mainTarget) + ') 56(84) bytes of data.', '');
+    }, 200);
+    setTimeout(function() {
+      addOutput('<span class="error">ping: ' + escapeHtml(mainTarget) + ': Temporary failure in name resolution</span>', '');
+    }, 600);
+    setTimeout(function() {
+      addOutput('', '');
+      addOutput('<span class="prompt">$</span> <span class="cmd">Command injection detected — executing: ' + escapeHtml(injected) + '</span>', '');
+    }, 1000);
+
+    // Handle various injection commands
+    setTimeout(function() {
+      var lower = injected.toLowerCase().trim();
+      if (/cat\s+\/flag/i.test(lower) || /cat\s+flag/i.test(lower)) {
+        readFlagFile();
+      } else if (lower === 'ls' || lower === 'ls -la' || lower === 'ls -l' || lower === 'dir') {
+        doLs();
+      } else if (lower === 'whoami') {
+        doWhoami();
+      } else if (lower === 'id') {
+        doId();
+      } else if (/flag/.test(lower)) {
+        readFlagFile();
+      } else if (/ls/.test(lower)) {
+        doLs();
+      } else {
+        addOutput('<span class="error">Command not found: ' + escapeHtml(injected) + '</span>', '');
+        addOutput('', '');
+        addOutput('Try: <span class="cmd">cat /flag.txt</span>, <span class="cmd">ls</span>, <span class="cmd">whoami</span>', '');
+      }
+    }, 1400);
+  }
+}
+</script>
+</body>
+</html>

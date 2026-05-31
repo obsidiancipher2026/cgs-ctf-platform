@@ -1,0 +1,19 @@
+# AES ECB Mode Weakness
+# Encrypted data: AES-ECB encrypted flag (base64 below)
+# Key: 30313233343536373839616263646566 (hex) = '0123456789abcdef'
+# Ciphertext (base64): lGU/3CAF5dUtJzuqo9qXFjm6EDfXpf5LMO4r8SezEeo=
+#
+# Decoy: CGS{aes_ecb_weakness}
+# Decoy: CGS{ecb_mode_broken}
+# Decoy: CGS{block_cipher_mode}
+#
+# In ECB mode, identical plaintext blocks encrypt to identical ciphertext blocks.
+# The flag starts with 'CGS{...}' so the first block is encrypted.
+# Decrypt with:
+# from Crypto.Cipher import AES
+# import base64
+# key = b'0123456789abcdef'
+# ct = base64.b64decode('lGU/3CAF5dUtJzuqo9qXFjm6EDfXpf5LMO4r8SezEeo=')
+# cipher = AES.new(key, AES.MODE_ECB)
+# flag = cipher.decrypt(ct).decode('utf-8').rstrip('\x00')
+# print('Flag:', flag)
