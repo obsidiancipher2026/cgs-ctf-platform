@@ -1,20 +1,52 @@
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
+<<<<<<< HEAD
+=======
+import argon2 from 'argon2'
+>>>>>>> 3faa2baf685d32f0a41b1e08f244efdb5a8ea6e6
 import jwt from 'jsonwebtoken'
 import { config } from './config'
 import prisma from './prisma'
 
 export async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+<<<<<<< HEAD
+=======
+  // Try Argon2id first (primary hash)
+  if (hashedPassword.startsWith('$argon2')) {
+    try {
+      return await argon2.verify(hashedPassword, plainPassword)
+    } catch {
+      return false
+    }
+  }
+  // Fallback to bcrypt for legacy hashes
+>>>>>>> 3faa2baf685d32f0a41b1e08f244efdb5a8ea6e6
   return bcrypt.compareSync(plainPassword, hashedPassword)
 }
 
 export async function getPasswordHash(password: string): Promise<string> {
+<<<<<<< HEAD
   const salt = bcrypt.genSaltSync(10)
   return bcrypt.hashSync(password, salt)
 }
 
 export async function upgradePasswordHash(userId: number, plainPassword: string, currentHash: string): Promise<string> {
   if (!currentHash.startsWith('$2a$') && !currentHash.startsWith('$2b$')) {
+=======
+  // Argon2id: 3 iterations, 64MB memory, 4 parallelism
+  return argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 65536,
+    timeCost: 3,
+    parallelism: 4,
+    hashLength: 32,
+  })
+}
+
+export async function upgradePasswordHash(userId: number, plainPassword: string, currentHash: string): Promise<string> {
+  // If current hash is bcrypt (legacy), upgrade to Argon2id
+  if (!currentHash.startsWith('$argon2')) {
+>>>>>>> 3faa2baf685d32f0a41b1e08f244efdb5a8ea6e6
     const newHash = await getPasswordHash(plainPassword)
     await prisma.user.update({ where: { id: userId }, data: { hashedPassword: newHash } })
     return newHash
