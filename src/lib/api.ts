@@ -419,6 +419,11 @@ class ApiClient {
     const { data } = await this.client.post('/api/admin/challenges/publish-all-web');
     return data;
   }
+
+  async adminBulkToggleChallenges(action: 'publish' | 'unpublish', category?: string, difficulty?: string) {
+    const { data } = await this.client.post('/api/admin/challenges/bulk-toggle', { action, category, difficulty });
+    return data;
+  }
 }
 
 export const api = new ApiClient();

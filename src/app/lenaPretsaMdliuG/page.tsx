@@ -18,7 +18,7 @@ import toast from 'react-hot-toast';
 
 type AdminTab =
   | 'dashboard' | 'users' | 'challenges'
-  | 'submissions' | 'announcements' | 'logs' | 'warmup' | 'security' | 'realflags' | 'settings';
+  | 'submissions' | 'announcements' | 'logs' | 'warmup' | 'security' | 'realflags' | 'settings' | 'live';
 
 const tabs: { id: AdminTab; label: string; icon: any }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -31,6 +31,7 @@ const tabs: { id: AdminTab; label: string; icon: any }[] = [
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'realflags', label: 'Secret Flags', icon: Lock },
   { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'live', label: 'Live Control', icon: Radio },
 ];
 
 export default function AdminPage() {
@@ -79,6 +80,7 @@ export default function AdminPage() {
   const [securityFeatures, setSecurityFeatures] = useState<Record<string, boolean>>({});
   const [featureToggling, setFeatureToggling] = useState<string | null>(null);
   const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
+  const [liveChallenges, setLiveChallenges] = useState<any[]>([]);
   const [wsConnected, setWsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -205,6 +207,9 @@ export default function AdminPage() {
           ));
           break;
         }
+        case 'live':
+          setLiveChallenges(await api.getAdminChallenges());
+          break;
       }
     } catch (err: any) {
       const detail = err?.response?.data?.detail || '';
@@ -1615,6 +1620,126 @@ export default function AdminPage() {
                             </tbody>
                           </table>
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'live' && (
+                    <div className="space-y-6">
+                      <div className="cyber-card rounded-xl p-5 sm:p-6">
+                        <h3 className="font-cyber text-white text-sm mb-5 flex items-center gap-2 border-b border-cyber-blue/10 pb-3">
+                          <Radio className="w-4 h-4 text-cyber-blue" /> Live Challenge Control
+                        </h3>
+                        <p className="text-gray-500 font-mono text-xs mb-5">Publish or unpublish challenges by category and difficulty. Current counts shown for each group.</p>
+
+                        {(() => {
+                          const categories = ['web', 'reverse', 'crypto', 'forensics', 'osint'];
+                          const difficulties = ['easy', 'medium', 'hard'];
+                          const catLabels: Record<string, string> = { web: 'Web', reverse: 'Reverse', crypto: 'Crypto', forensics: 'Forensics', osint: 'OSINT' };
+                          const diffLabels: Record<string, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+
+                          function countFor(cat: string, diff: string): number {
+                            return liveChallenges.filter(c => c.category === cat && c.difficulty === diff).length;
+                          }
+                          function publishedCount(cat: string, diff: string): number {
+                            return liveChallenges.filter(c => c.category === cat && c.difficulty === diff && c.isPublished).length;
+                          }
+
+                          const handleToggle = async (action: 'publish' | 'unpublish', category: string, difficulty: string) => {
+                            const label = `${catLabels[category]} ${diffLabels[difficulty]}`;
+                            try {
+                              const result = await api.adminBulkToggleChallenges(action, category, difficulty);
+                              toast.success(result.message);
+                              setLiveChallenges(await api.getAdminChallenges());
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.detail || `Failed to ${action} ${label}`);
+                            }
+                          };
+
+                          const handleToggleCategory = async (action: 'publish' | 'unpublish', category: string) => {
+                            try {
+                              const result = await api.adminBulkToggleChallenges(action, category);
+                              toast.success(result.message);
+                              setLiveChallenges(await api.getAdminChallenges());
+                            } catch (err: any) {
+                              toast.error(err?.response?.data?.detail || `Failed to ${action} ${category}`);
+                            }
+                          };
+
+                          return (
+                            <div className="space-y-4">
+                              {/* Category-level buttons */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+                                {categories.map(cat => {
+                                  const total = liveChallenges.filter(c => c.category === cat).length;
+                                  const pub = liveChallenges.filter(c => c.category === cat && c.isPublished).length;
+                                  return (
+                                    <div key={cat} className="cyber-card rounded-xl p-4 border border-cyber-blue/10">
+                                      <h4 className="font-cyber text-white text-sm mb-2 uppercase tracking-wider">{catLabels[cat]}</h4>
+                                      <p className="text-gray-500 font-mono text-xs mb-3">{pub}/{total} published</p>
+                                      <div className="flex gap-2">
+                                        <button onClick={() => handleToggleCategory('publish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 font-mono text-xs hover:bg-green-500/20 transition-all">
+                                          Publish All
+                                        </button>
+                                        <button onClick={() => handleToggleCategory('unpublish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs hover:bg-red-500/20 transition-all">
+                                          Unpublish All
+                                        </button>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Per-category × difficulty grid */}
+                              <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                  <thead>
+                                    <tr className="text-gray-500 font-mono text-[11px] uppercase tracking-wider border-b border-cyber-blue/10 bg-black/20">
+                                      <th className="p-3 pl-5 font-medium">Category</th>
+                                      {difficulties.map(d => (
+                                        <th key={d} className="p-3 font-medium text-center">{diffLabels[d]}</th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {categories.map(cat => (
+                                      <tr key={cat} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/[0.03] transition-colors">
+                                        <td className="p-3 pl-5 font-mono text-sm text-white font-medium">{catLabels[cat]}</td>
+                                        {difficulties.map(diff => {
+                                          const total = countFor(cat, diff);
+                                          const pub = publishedCount(cat, diff);
+                                          return (
+                                            <td key={diff} className="p-3 text-center">
+                                              {total > 0 ? (
+                                                <div className="flex flex-col items-center gap-1.5">
+                                                  <span className="font-mono text-xs text-gray-400">{pub}/{total}</span>
+                                                  <div className="flex gap-1">
+                                                    <button onClick={() => handleToggle('publish', cat, diff)}
+                                                      disabled={pub === total}
+                                                      className="px-2 py-1 rounded bg-green-500/10 border border-green-500/30 text-green-400 font-mono text-[10px] hover:bg-green-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                                      Live
+                                                    </button>
+                                                    <button onClick={() => handleToggle('unpublish', cat, diff)}
+                                                      disabled={pub === 0}
+                                                      className="px-2 py-1 rounded bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-[10px] hover:bg-red-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                                      Draft
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <span className="font-mono text-xs text-gray-600">—</span>
+                                              )}
+                                            </td>
+                                          );
+                                        })}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   )}
