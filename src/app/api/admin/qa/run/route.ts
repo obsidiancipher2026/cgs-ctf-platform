@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     { id: 'xss', name: 'XSS Prevention', status: 'check', description: 'All user inputs sanitized via WAF + sanitizer. CSP headers set.' },
     { id: 'sqli', name: 'SQL Injection Prevention', status: 'check', description: 'WAF detects 14 SQLi patterns. All DB queries use Prisma ORM (parameterized).' },
     { id: 'csrf', name: 'CSRF Protection', status: 'check', description: 'HMAC-based CSRF tokens on all POST/PUT/DELETE admin endpoints.' },
-    { id: 'auth', name: 'Authentication Hardening', status: 'check', description: 'Argon2id password hashing. JWT with version-based invalidation. Fingerprint binding.' },
+    { id: 'auth', name: 'Authentication Hardening', status: 'check', description: 'bcrypt password hashing. JWT with version-based invalidation. Fingerprint binding.' },
     { id: 'rate_limits', name: 'Rate Limiting', status: 'check', description: 'Auth: 5/15s, Admin: 30/60s, Submissions: 5/min. Tarpit with exponential backoff.' },
     { id: 'jwt', name: 'JWT Security', status: 'check', description: 'HS256 algorithm. Versioned tokens invalidate on restart. Short expiry (15min access).' },
     { id: 'upload', name: 'File Upload Security', status: 'check', description: 'WAF scans uploads. Body size limits (100KB/50MB). Type validation.' },
