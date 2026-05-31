@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
   if (adminErr) return adminErr
 
-  const flags = await prisma.realFlag.findMany({ orderBy: { createdAt: 'desc' } })
+  const flags = await prisma.realFlag.findMany({ orderBy: { id: 'asc' } })
   return jsonResponse(flags.map(f => ({
     id: f.id, challenge_name: f.challengeName, flag: f.flag,
     category: f.category, notes: f.notes,
