@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/12/">
+  <title>JWT Authentication Bypass Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .jwt-display { font-family: 'Courier New', monospace; font-size: 0.72rem; word-break: break-all; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; max-height: 120px; overflow-y: auto; }
+    .jwt-part-header { color: var(--accent-red); }
+    .jwt-part-payload { color: var(--accent-green); }
+    .jwt-part-sig { color: var(--accent-orange); }
+    .jwt-decode-table { width:100%; font-size:0.82rem; }
+    .jwt-decode-table td { padding:0.4rem 0.5rem; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .jwt-decode-table td:first-child { color:var(--text-secondary); width:100px; }
+  </style>
+</head>
+<body>
+<nav><ul><li><a href="#" class="active" onclick="showTab('home')">Home</a></li><li><a href="#" onclick="showTab('challenge')">Challenge</a></li></ul></nav>
+<div class="hero"><div class="hero-content"><h1>JWT Authentication Bypass</h1><p>Exploit a weak JWT signing key to forge an admin token.</p>
+<div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+<span class="badge" style="background:rgba(255,215,0,0.2);color:var(--accent-yellow);border:1px solid rgba(255,215,0,0.4);">Medium</span>
+<span class="badge badge-points">105 points</span></div></div></div>
+<div class="container">
+<div id="tab-home" class="tab-content active">
+<section><h2>Challenge</h2><div class="card"><p>The admin panel uses JWT for authentication with a weak, guessable secret key <code>secret123</code>. Forge a JWT with <code>role: admin</code> to access the protected panel and retrieve the flag.</p></div>
+
+<div class="text-center mt-2"><button class="btn btn-primary" onclick="showTab('challenge')">Go to Challenge</button></div></section>
+</div>
+<div id="tab-challenge" class="tab-content">
+<section><h2>JWT Forge Lab</h2>
+<div class="card"><h3>Example User Token</h3>
+<div class="jwt-display" id="exampleJwt">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ3Vlc3QiLCJyb2xlIjoidXNlciIsImlhdCI6MTY4MDAwMDAwMH0.abcdef1234567890abcdef1234567890abcdef12</div>
+<div class="grid-2" style="margin-top:1rem;">
+<div><p class="text-muted small">Header (base64): <code>{"alg":"HS256","typ":"JWT"}</code></p></div>
+<div><p class="text-muted small">Payload (base64): <code>{"user":"guest","role":"user","iat":1680000000}</code></p></div>
+</div>
+<p class="text-muted small mt-2">The server verifies the token using the secret key. The key is weak: <code>secret123</code></p>
+</div>
+<div class="grid-2">
+<div class="card"><h3>Forge Admin Token</h3>
+<div class="form-group"><label>Secret Key</label><input type="text" id="secretKey" class="amount-input" value="secret123" readonly></div>
+<div class="form-group"><label>Username</label><input type="text" id="jwtUser" class="amount-input" value="admin"></div>
+<div class="form-group"><label>Role</label>
+<select id="jwtRole" class="account-select"><option value="user">user</option><option value="admin" selected>admin</option></select></div>
+<button class="btn btn-primary" onclick="forgeJWT()" id="forgeBtn" style="width:100%;">Forge Token</button>
+</div>
+<div class="card"><h3>Generated Token</h3>
+<div class="jwt-display" id="forgedJwt" style="min-height:60px;"><span class="text-muted">Click "Forge Token" to generate</span></div>
+<button class="btn btn-success" onclick="submitJWT()" id="submitBtn" style="width:100%;margin-top:0.75rem;" disabled>Submit to Admin Panel</button>
+</div>
+</div>
+<div class="tx-log" id="serverLog" style="max-height:200px;"><div class="text-muted">Waiting...</div></div>
+<div class="card" id="flagSection" style="display:none;">
+<h3>Flag Captured</h3>
+<div class="flag-display"></div>
+</div>
+</section>
+</div></div>
+<footer>Cyber Guardians Society CTF &bull; JWT Authentication Bypass</footer>
+<script>
+function showTab(n){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('nav a').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active');var i={home:0,challenge:1};var l=document.querySelectorAll('nav a');if(l[i[n]])l[i[n]].classList.add('active')}
+function log(m,c){var l=document.getElementById('serverLog');var e=document.createElement('div');e.className='tx-entry '+(c||'');var t=new Date().toLocaleTimeString();e.textContent='['+t+'] '+m;l.appendChild(e);l.scrollTop=l.scrollHeight;var p=l.querySelector('.text-muted');if(p)p.style.display='none'}
+var currentToken='';
+function btoaUrl(s){return btoa(s).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')}
+function forgeJWT(){
+var header={"alg":"HS256","typ":"JWT"};
+var payload={"user":document.getElementById('jwtUser').value,"role":document.getElementById('jwtRole').value,"iat":Math.floor(Date.now()/1000)};
+var h=btoaUrl(JSON.stringify(header));
+var p=btoaUrl(JSON.stringify(payload));
+var key=document.getElementById('secretKey').value;
+// Simulate signing with HMAC-SHA256
+var sigInput=h+'.'+p;
+var fakeSig=btoaUrl(sigInput+'|'+key);
+currentToken=h+'.'+p+'.'+fakeSig;
+document.getElementById('forgedJwt').innerHTML='<span class="jwt-part-header">'+h+'</span>.<span class="jwt-part-payload">'+p+'</span>.<span class="jwt-part-sig">'+fakeSig+'</span>';
+document.getElementById('submitBtn').disabled=false;
+log('JWT forged with role: '+payload.role+'','tx-race');
+}
+function submitJWT(){
+if(!currentToken){log('No token to submit.','tx-failed');return}
+log('=== Submitting JWT to admin panel ===','tx-race');
+log('[Server] Verifying JWT signature...','');
+setTimeout(function(){
+log('[Server] Signature valid with key: secret123','tx-success');
+setTimeout(function(){
+log('[Server] Decoding payload...','');
+setTimeout(function(){
+try{
+var parts=currentToken.split('.');
+var payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+log('[Server] User: '+payload.user+', Role: '+payload.role+'','');
+if(payload.role==='admin'){
+log('[Server] ADMIN ACCESS GRANTED','tx-success');
+setTimeout(function(){
+log('[Server] Welcome, '+payload.user+'! Here is the flag:','tx-success');
+setTimeout(function(){
+document.querySelector('#flagSection .flag-display').textContent='CGS{jwt_alg0r1thm_n0ne}';
+document.getElementById('flagSection').style.display='block';
+document.getElementById('flagSection').scrollIntoView({behavior:'smooth'});
+},300);
+},300);
+}else{
+log('[Server] Access DENIED. User role: '+payload.role+' (admin required)','tx-failed');
+}
+}catch(e){log('[Server] Error decoding token','tx-failed')}
+},300);
+},300);
+},300);
+}
+</script>
+</body>
+</html>

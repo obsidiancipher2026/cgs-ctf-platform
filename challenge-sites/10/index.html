@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/10/">
+  <title>Reflected XSS - Cookie Stealer Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .comment-box { background: rgba(0,0,0,0.2); border: 1px solid rgba(0,217,255,0.15); border-radius: 4px; padding: 0.75rem; margin: 0.5rem 0; font-size: 0.9rem; }
+    .comment-box .author { color: var(--accent-cyan); font-weight: 600; font-size: 0.8rem; }
+    .comment-box .text { color: var(--text-primary); margin-top: 0.3rem; }
+    .comment-box .time { color: var(--text-secondary); font-size: 0.7rem; }
+    .xss-alert { animation: pulse 0.5s 3; }
+  </style>
+</head>
+<body>
+<nav><ul><li><a href="#" class="active" onclick="showTab('home')">Home</a></li><li><a href="#" onclick="showTab('exploit')">Exploit Lab</a></li></ul></nav>
+<div class="hero"><div class="hero-content"><h1>Reflected XSS - Cookie Stealer</h1><p>Exploit a reflected cross-site scripting vulnerability to steal an admin's cookie.</p>
+<div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+<span class="badge" style="background:rgba(255,215,0,0.2);color:var(--accent-yellow);border:1px solid rgba(255,215,0,0.4);">Medium</span>
+<span class="badge badge-points">100 points</span></div></div></div>
+<div class="container">
+<div id="tab-home" class="tab-content active">
+<section><h2>Challenge</h2><div class="card"><p>A social media site reflects user input in the page. An admin bot will visit any URL you submit. The admin has a cookie that contains a flag.</p></div>
+
+<div class="text-center mt-2"><button class="btn btn-primary" id="enterLabBtn">Enter Exploit Lab</button></div></section>
+</div>
+<div id="tab-exploit" class="tab-content">
+<section><h2>Vulnerable App</h2>
+  <div class="alert-warning">User input is reflected in the page. Certain HTML tags are filtered. The admin bot simulates a real browser visit.</div>
+<div class="grid-2">
+<div class="card"><h3>Search</h3>
+<div class="form-group"><label>Search posts:</label>
+<input type="text" id="searchBox" class="amount-input" placeholder="Type your XSS payload here...">
+<button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" id="searchBtn">Search</button></div>
+<div id="searchResult" class="mt-2"></div>
+</div>
+<div class="card"><h3>Report to Admin</h3>
+<p class="text-muted small">Submit the page URL (including your payload) for the admin bot to visit. The admin has a special cookie that will be revealed if your XSS payload executes.</p>
+<div class="form-group"><label>Full URL to send to admin:</label>
+<input type="text" id="botUrl" class="amount-input" placeholder="Paste the page URL with your payload here">
+<button class="btn btn-danger" style="width:100%;margin-top:0.5rem;" id="reportBtn">Send to Admin Bot</button></div>
+<div id="botResult" class="mt-2"></div>
+</div>
+</div>
+<div class="card"><h3>Captured Cookies</h3>
+<div class="tx-log" id="cookieLog" style="min-height:100px;"><div class="text-muted">No cookies captured yet. Exploit the XSS to steal the admin's cookie.</div></div></div>
+<div class="card" id="flagSection" style="display:none;">
+<h3>Flag Captured</h3>
+<div class="flag-display"></div></div>
+</section>
+</div></div>
+<footer>Cyber Guardians Society CTF &bull; Reflected XSS - Cookie Stealer</footer>
+<script>
+function showTab(n){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('nav a').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active');var i={home:0,exploit:1};var l=document.querySelectorAll('nav a');if(l[i[n]])l[i[n]].classList.add('active')}
+function logCookie(msg,c){var l=document.getElementById('cookieLog');var e=document.createElement('div');e.className='tx-entry '+(c||'');var t=new Date().toLocaleTimeString();e.textContent='['+t+'] '+msg;l.appendChild(e);l.scrollTop=l.scrollHeight;var p=l.querySelector('.text-muted');if(p)p.style.display='none'}
+document.addEventListener('DOMContentLoaded',function(){
+document.getElementById('searchBtn').addEventListener('click',searchPosts);
+document.getElementById('reportBtn').addEventListener('click',reportToAdmin);
+document.getElementById('enterLabBtn').addEventListener('click',function(){showTab('exploit')});
+});
+function searchPosts(){var q=document.getElementById('searchBox').value;var sanitized=q.replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<script\b[^>]*>/gi,'');var r=document.getElementById('searchResult');r.innerHTML='<div class="comment-box"><div class="author">System</div><div class="text">Search results for: '+sanitized+'</div><div class="time">No posts found matching your query.</div></div>';if(sanitized!==q&&q.match(/<script/i)){setTimeout(function(){r.innerHTML+='<div class="comment-box" style="border-color:var(--accent-red);"><div class="author" style="color:var(--accent-red);">Filtered</div><div class="text">That tag is not allowed. Try a different approach.</div></div>';},100)}else{if(q.match(/<img[^>]*onerror/i)||q.match(/<svg[^>]*onload/i)||q.match(/<body[^>]*onload/i)||q.match(/<input[^>]*onfocus/i)||q.match(/<details[^>]*ontoggle/i)||q.match(/<video[^>]*onerror/i)||q.match(/<iframe[^>]*onload/i)){setTimeout(function(){r.innerHTML+='<div class="comment-box xss-alert" style="border-color:var(--accent-orange);"><div class="author" style="color:var(--accent-orange);">Executed</div><div class="text">The admin bot might fall for this if submitted through the report form.</div></div>';logCookie('XSS triggered with: '+sanitized.substring(0,60),'tx-race');},200)}}}
+function reportToAdmin(){var url=document.getElementById('botUrl').value.trim();var result=document.getElementById('botResult');if(!url){result.innerHTML='<span class="tx-failed">Enter a URL</span>';return}result.innerHTML='<span class="tx-pending">Admin bot visiting: '+url.replace(/</g,'&lt;')+' ...</span>';setTimeout(function(){var decoded=decodeURIComponent(url);if(decoded.match(/<script/i)){result.innerHTML='<span class="tx-failed">Admin bot blocked the URL. Looks suspicious.</span>';logCookie('Admin bot rejected request — script tags detected and blocked.','tx-failed')}else if(decoded.match(/<img[^>]*onerror/i)||decoded.match(/<svg[^>]*onload/i)||decoded.match(/<body[^>]*onload/i)||decoded.match(/<input[^>]*onfocus/i)||decoded.match(/<details[^>]*ontoggle/i)||decoded.match(/<video[^>]*onerror/i)||decoded.match(/<iframe[^>]*onload/i)){result.innerHTML='<span style="color:var(--accent-green);">Admin bot visited and executed your payload!</span>';logCookie('Admin cookie intercepted: flag=CGS{r3fl3ct3d_xss_v1a}','tx-success');setTimeout(function(){document.querySelector('#flagSection .flag-display').textContent='CGS{r3fl3ct3d_xss_v1a}';document.getElementById('flagSection').style.display='block';document.getElementById('flagSection').scrollIntoView({behavior:'smooth'})},400)}else{result.innerHTML='<span class="tx-failed">Admin bot visited but nothing executed. Try a different event handler.</span>';logCookie('Admin bot visited — no XSS triggered.','tx-pending')}},1500)}
+</script>
+</body>
+</html>

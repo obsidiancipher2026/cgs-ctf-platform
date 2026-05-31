@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/7/">
+  <title>DevDash - Developer Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav><ul><li><a href="#" class="active">Dashboard</a></li><li><a href="#docs">API Docs</a></li><li><a href="#status">Status</a></li></ul></nav>
+<div class="hero"><div class="hero-content"><h1>DevDash</h1><p>Developer API Dashboard — Manage your integrations and API keys.</p>
+<div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+<span class="badge" style="background:rgba(0,255,136,0.2);color:var(--accent-green);border:1px solid rgba(0,255,136,0.4);">Easy</span>
+<span class="badge badge-points">45 points</span></div></div></div>
+<div class="container">
+<section><h2>API Overview</h2><div class="card"><p>Your API integrations are managed through this dashboard. The client-side application loads configuration from <code>js/app.js</code>.</p></div></section>
+<section id="docs"><h2>API Documentation</h2><div class="card"><h3>Authentication</h3><p>All API requests require a valid API key in the <code>Authorization</code> header. Your keys are listed below:</p>
+<div class="alert-info" style="margin-top:1rem;"><strong>Active API Key:</strong> <code>REPLACE_WITH_REAL_KEY</code></div></div></section>
+<section id="status"><h2>System Status</h2><div class="card"><div id="statusDisplay" style="text-align:center;padding:1rem;"><p>Loading status...</p></div></div></section>
+</div>
+<footer><p>&copy; 2025 DevDash. All rights reserved.</p></footer>
+<script src="js/app.js"></script>
+</body>
+</html>

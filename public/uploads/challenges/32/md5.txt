@@ -1,0 +1,16 @@
+# Weak Hash Function - MD5 Collision
+# Two different messages that produce the SAME MD5 hash.
+# Find or verify an MD5 collision to prove the weakness.
+#
+# Decoy: CGS{md5_collision}
+# Decoy: CGS{hash_collision}
+# Decoy: CGS{weak_hash}
+#
+# Known MD5 collision pair (differ at position 21: 'A' vs 'E'):
+# import hashlib
+# a = "TEXTCOLLBYfGiJUETHQ4hAcKSMd5zYpgqf1YRDhkmxHkhPWptrkoyz28wnI9V0aHeAuaKnak"
+# b = "TEXTCOLLBYfGiJUETHQ4hEcKSMd5zYpgqf1YRDhkmxHkhPWptrkoyz28wnI9V0aHeAuaKnak"
+# h1 = hashlib.md5(a.encode()).hexdigest()
+# h2 = hashlib.md5(b.encode()).hexdigest()
+# print(f'MD5: {h1}')
+# print(f'Collision: {h1 == h2}')

@@ -1,0 +1,49 @@
+# Vigenère Cipher - Known Plaintext Attack
+# Part of the plaintext is known. Use it to recover the key,
+# then decrypt the full message.
+#
+# Decoy: CGS{vigenere_key_recover}
+# Decoy: CGS{vigenere_break}
+# Decoy: CGS{repeating_key}
+#
+# Known plaintext (18 chars): CGS{v1g3n3r3_k3y_r
+# Corresponding ciphertext:    MKQ{v1q3l3r3_o3n_u
+# Full ciphertext: MKQ{v1q3l3r3_o3n_u3g0k3u}
+# Key length: 6
+#
+# The key advances for EVERY character position: key[i % key_len]
+# To recover key[i], find an alpha position p where p % key_len == i
+# in the known plaintext.
+#
+# Decryption script:
+# def recover_key(plaintext, ciphertext, key_length):
+#     key = [None] * key_length
+#     for i in range(len(plaintext)):
+#         if plaintext[i].isalpha() and ciphertext[i].isalpha():
+#             k = i % key_length
+#             if key[k] is None:
+#                 shift = (ord(ciphertext[i].upper()) - ord(plaintext[i].upper())) % 26
+#                 key[k] = chr(shift + ord('A'))
+#     return ''.join(key)
+#
+# def vigenere_decrypt(ciphertext, key):
+#     plaintext = ""
+#     for i, char in enumerate(ciphertext):
+#         if char.isalpha():
+#             shift = ord(key[i % len(key)].upper()) - ord('A')
+#             if char.isupper():
+#                 plaintext += chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
+#             else:
+#                 plaintext += chr((ord(char) - ord('a') - shift) % 26 + ord('a'))
+#         else:
+#             plaintext += char
+#     return plaintext
+#
+# known_pt = "CGS{v1g3n3r3_k3y_r"
+# known_ct = "MKQ{v1q3l3r3_o3n_u"
+# key = recover_key(known_pt, known_ct, 6)
+# print(f"Recovered key: {key}")
+#
+# full_ct = "MKQ{v1q3l3r3_o3n_u3g0k3u}"
+# flag = vigenere_decrypt(full_ct, key)
+# print(f"Flag: {flag}")

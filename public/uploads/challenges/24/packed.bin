@@ -1,0 +1,1 @@
+MZ fake PE packed executable\r\nUPX0_PACKER_STUB\r\nDecoy: CGS{unpack_binary}\r\nDecoy: CGS{packed_executable}\r\nDecoy: CGS{upx_unpacking}\r\nUPX1_PACKED_DATA\r\n---XOR_ENCODED_FLAG_BELOW--unpack to reveal--\r\n¼¸¬Ë Ì ÎË\r\n---END_PACKED_DATA---\r\nThe flag is: CGS{upp4ck_th3_b1n4ry}\r\nUse upx -d to unpack this binary

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="4" fill="#0a0a0f"/>
+  <path d="M16 4L4 10v12l12 6 12-6V10L16 4z" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+  <path d="M16 8l-8 4v8l8 4 8-4v-8l-8-4z" fill="none" stroke="#7b2ff7" stroke-width="1"/>
+  <text x="16" y="21" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="10" font-weight="bold">CGS</text>
+</svg>

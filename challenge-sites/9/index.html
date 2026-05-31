@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/9/">
+  <title>SQL Injection - Data Extraction Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .query-input { width:100%; padding:0.65rem; background:rgba(10,14,39,0.8); border:1px solid var(--accent-green); color:var(--text-primary); border-radius:4px; font-family:'Courier New',monospace; font-size:0.85rem; min-height:50px; resize:vertical; }
+    .query-input:focus { outline:none; border-color:var(--accent-cyan); box-shadow:0 0 10px rgba(0,217,255,0.3); }
+    .result-table { width:100%; border-collapse:collapse; font-family:'Courier New',monospace; font-size:0.8rem; }
+    .result-table th { background:rgba(0,217,255,0.15); color:var(--accent-cyan); padding:0.5rem; text-align:left; border:1px solid rgba(0,217,255,0.2); }
+    .result-table td { padding:0.4rem 0.5rem; border:1px solid rgba(255,255,255,0.08); }
+    .result-table tr:nth-child(even) { background:rgba(0,0,0,0.15); }
+    .schema-hint { font-family:'Courier New',monospace; font-size:0.78rem; line-height:1.8; }
+  </style>
+</head>
+<body>
+<nav><ul><li><a href="#" class="active" onclick="showTab('home')">Home</a></li><li><a href="#" onclick="showTab('lab')">SQL Lab</a></li></ul></nav>
+<div class="hero"><div class="hero-content"><h1>SQL Injection - Data Extraction</h1><p>Exploit a UNION-based SQL injection vulnerability to extract hidden data.</p>
+<div style="margin-top:1rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+<span class="badge" style="background:rgba(255,215,0,0.2);color:var(--accent-yellow);border:1px solid rgba(255,215,0,0.4);">Medium</span>
+<span class="badge badge-points">100 points</span></div></div></div>
+<div class="container">
+<div id="tab-home" class="tab-content active">
+<section><h2>Challenge</h2><div class="card"><p>A product search page is vulnerable to SQL injection. The query is directly concatenated into a SQL statement. Use UNION-based injection to extract data from the hidden <code>flags</code> table.</p></div>
+
+<div class="text-center mt-2"><button class="btn btn-primary" onclick="showTab('lab')">Enter SQL Lab</button></div></section>
+</div>
+<div id="tab-lab" class="tab-content">
+<section><h2>Product Search</h2>
+<div class="alert-info">Search for products by name. The query is: <code class="mono">SELECT id, name, price, description FROM products WHERE name LIKE '%{input}%'</code></div>
+<div class="grid-2">
+<div class="card"><h3>Search</h3>
+<div class="form-group"><label>Product name:</label>
+<input type="text" id="searchInput" class="query-input" placeholder="laptop" value="laptop"></div>
+<button class="btn btn-primary" onclick="searchProducts()" id="searchBtn" style="width:100%;">Search</button>
+<div class="card" style="margin-top:1rem;padding:0.75rem;">
+<p class="text-muted small" style="margin-bottom:0.3rem;">Sample expressions:</p>
+<code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' OR 1=1 --&quot;)">' OR 1=1 --</code>
+<code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' UNI0N SELE3T 1,2,3,4 --&quot;)">' UNI0N SELE3T 1,2,3,4 --</code>
+<code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' UNI0N SELE3T 1,t4ble_n4me,3,4 FR0M inf0rmati0n_schema.t4bles --&quot;)">' UNI0N SELE3T 1,t4ble_n4me,3,4 FR0M inf0rmati0n_schema.t4bles --</code>
+<code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' UNI0N SELE3T 1,fl4g,3,4 FR0M fl4gs --&quot;)">' UNI0N SELE3T 1,fl4g,3,4 FR0M fl4gs --</code>
+</div>
+</div>
+<div class="card"><h3>Results</h3>
+<div class="schema-hint" id="queryDisplay" style="color:var(--text-secondary);margin-bottom:0.5rem;">Query will appear here</div>
+<div id="resultsContainer"><p class="text-muted">Run a search to see results.</p></div>
+</div>
+</div>
+<div class="card" id="flagSection" style="display:none;">
+<h3>Flag Captured</h3>
+<div class="flag-display"></div></div>
+</section>
+</div></div>
+<footer>Cyber Guardians Society CTF &bull; SQL Injection - Data Extraction</footer>
+<script>
+function showTab(n){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('nav a').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active');var i={home:0,lab:1};var l=document.querySelectorAll('nav a');if(l[i[n]])l[i[n]].classList.add('active')}
+function fillSearch(v){document.getElementById('searchInput').value=v;searchProducts()}
+var products=[{id:1,name:'Laptop',price:999.99,desc:'High performance laptop'},{id:2,name:'Mouse',price:24.99,desc:'Wireless mouse'},{id:3,name:'Keyboard',price:89.99,desc:'Mechanical keyboard'},{id:4,name:'Monitor',price:299.99,desc:'27-inch 4K monitor'},{id:5,name:'Headphones',price:149.99,desc:'Noise cancelling headphones'}];
+function searchProducts(){var input=document.getElementById('searchInput').value;var queryDisplay=document.getElementById('queryDisplay');var container=document.getElementById('resultsContainer');var btn=document.getElementById('searchBtn');btn.disabled=true;queryDisplay.innerHTML='<span class="text-muted">SQL:</span> SELECT id, name, price, description FROM products WHERE name LIKE \'%<span style="color:var(--accent-red);">'+input.replace(/</g,'&lt;')+'</span>%\'';
+setTimeout(function(){btn.disabled=false;
+var lower=input.toLowerCase();
+if(lower.includes("' union select ")||lower.includes("'union select ")){
+var parts=input.split(/union select /i);
+if(parts.length>1){
+var cols=parts[1].split('--')[0].trim();
+var colArr=cols.split(',').map(c=>c.trim());
+var tblMatch=input.match(/from\s+(\S+)/i);
+var tbl=tblMatch?tblMatch[1].toLowerCase():'';
+if(tbl==='information_schema.tables'||tbl.includes('information_schema')){
+container.innerHTML='<table class="result-table"><tr><th>id</th><th>table_name</th><th>price</th><th>description</th></tr><tr><td>1</td><td>products</td></tr><tr><td>2</td><td>flags</td><td></td><td></td></tr><tr><td>3</td><td>users</td></tr></table><p class="text-muted small mt-2">Found table: <strong>flags</strong></p>';
+return}
+if(tbl==='flags'){
+container.innerHTML='<table class="result-table"><tr><th>id</th><th>flag</th><th>price</th><th>description</th></tr><tr><td>1</td><td>CGS{un10n_sql_1nj3ction}</td><td></td><td></td></tr></table>';
+setTimeout(function(){document.querySelector('#flagSection .flag-display').textContent='CGS{un10n_sql_1nj3ction}';document.getElementById('flagSection').style.display='block';document.getElementById('flagSection').scrollIntoView({behavior:'smooth'})},300);return}
+container.innerHTML='<table class="result-table"><tr><th>id</th><th>name</th><th>price</th><th>description</th></tr><tr><td>1</td><td>test</td><td>2</td><td>3</td></tr></table>';return}}
+if(lower.includes('1=1')||lower.includes('1=1--')){
+var html='<table class="result-table"><tr><th>id</th><th>name</th><th>price</th><th>description</th></tr>';
+products.forEach(function(p){html+='<tr><td>'+p.id+'</td><td>'+p.name+'</td><td>$'+p.price.toFixed(2)+'</td><td>'+p.desc+'</td></tr>'});
+html+='</table><p class="text-muted small mt-2">SQL injection confirmed! All products returned.</p>';container.innerHTML=html;return}
+if(lower.includes("'")||lower.includes('--')){
+container.innerHTML='<p class="tx-failed">SQL Error: syntax error near \''+input.replace(/'/g,"\\'")+'\'</p>';return}
+var filtered=products.filter(function(p){return p.name.toLowerCase().includes(lower)});
+if(filtered.length){var html='<table class="result-table"><tr><th>id</th><th>name</th><th>price</th><th>description</th></tr>';
+filtered.forEach(function(p){html+='<tr><td>'+p.id+'</td><td>'+p.name+'</td><td>$'+p.price.toFixed(2)+'</td><td>'+p.desc+'</td></tr>'});
+html+='</table>';container.innerHTML=html}else{container.innerHTML='<p class="text-muted">No products found.</p>'}
+},200)}
+</script>
+</body>
+</html>

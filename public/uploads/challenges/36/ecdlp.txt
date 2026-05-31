@@ -1,0 +1,20 @@
+# Elliptic Curve Discrete Logarithm (Pohlig-Hellman Attack)
+# Recover the private key d where Q = d*G using Pohlig-Hellman.
+# The curve order is smooth (has small prime factors).
+#
+# Curve: y^2 = x^3 + ax + b mod p
+# p = 100003
+# a = 1
+# b = 1
+# G = (0, 1)
+# order(G) = 100181 = 17 * 71 * 83
+# Q = d*G = (41441, 38231)
+#
+# The flag has been AES-ECB encrypted using the SHA-256 hash of d
+# as the encryption key (first 16 bytes):
+# Ciphertext (base64): kFMrrrGys/4kuq6uBySefteG9okyHCCjttkfbkY44Qk=
+#
+# Fake flags (appear via strings command):
+CGS{ec_discrete_log}
+CGS{pohlig_hellman}
+CGS{ecdlp_break}

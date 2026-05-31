@@ -1,0 +1,30 @@
+# Caesar Cipher Decryption Challenge
+# Decrypt this message using Caesar cipher (ROT3 / shift by 3)
+#
+# Tip: Use the Python script below or CyberChef
+#
+# Decoy: CGS{caesar_cipher_break}
+# Decoy: CGS{rot3_cipher}
+# Decoy: CGS{substitution_cipher}
+#
+# Encrypted message:
+FJV{f43v4u_f1sk3u_eu34n}
+#
+# Decryption script:
+# def caesar_decrypt(ciphertext, shift):
+#     result = ""
+#     for char in ciphertext:
+#         if char.isalpha():
+#             if char.isupper():
+#                 result += chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
+#             else:
+#                 result += chr((ord(char) - ord('a') - shift) % 26 + ord('a'))
+#         else:
+#             result += char
+#     return result
+#
+# for shift in range(26):
+#     plaintext = caesar_decrypt("FJV{f43v4u_f1sk3u_eu34n}", shift)
+#     if "CGS{" in plaintext:
+#         print(f"Found: {plaintext}")
+#         break

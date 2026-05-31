@@ -1,0 +1,56 @@
+# Meet-in-the-Middle Attack on Double AES Encryption
+# A known plaintext is encrypted twice with two different single-byte keys.
+# Recover both keys using a meet-in-the-middle attack.
+#
+# Known plaintext: "This is a known plaintext."
+# Known plaintext ciphertext (base64): UHX3IgydrASycfVxr8UamlykdyPIa3hWCA1Vb5mvITU=
+#
+# Flag ciphertext (base64): kNMdPraYPKEbTOavgFwfIkFDHLszeQUdZdbP8VwYvJc=
+#
+# Both ciphertexts use the same keys K1 and K2:
+#   Known CT = Enc(Enc(known_pt, K1), K2)
+#   Flag CT  = Enc(Enc(flag, K1), K2)
+#
+# Double encryption: C = Enc(Enc(P, K1), K2)
+# Both K1 and K2 are single bytes (0-255), repeated to fill the 16-byte AES key.
+#
+# MITM attack:
+# from Crypto.Cipher import AES
+# from Crypto.Util.Padding import pad, unpad
+# import base64
+#
+# # Decode the base64 ciphertexts
+# known_pt = b"This is a known plaintext."
+# known_ct = base64.b64decode('UHX3IgydrASycfVxr8UamlykdyPIa3hWCA1Vb5mvITU=')
+# flag_ct  = base64.b64decode('kNMdPraYPKEbTOavgFwfIkFDHLszeQUdZdbP8VwYvJc=')
+#
+# # Step 1: Build forward table from known plaintext
+# forward = {}
+# for k in range(256):
+#     cipher = AES.new(bytes([k]*16), AES.MODE_ECB)
+#     intermediate = cipher.encrypt(pad(known_pt, 16))
+#     forward[intermediate] = k
+#
+# # Step 2: Backward search using known ciphertext
+# for k in range(256):
+#     cipher = AES.new(bytes([k]*16), AES.MODE_ECB)
+#     decrypted = cipher.decrypt(known_ct)
+#     if decrypted in forward:
+#         k1 = forward[decrypted]
+#         k2 = k
+#         print(f'Key 1: {k1}, Key 2: {k2}')
+#
+#         # Verify with known plaintext
+#         cipher1 = AES.new(bytes([k1]*16), AES.MODE_ECB)
+#         cipher2 = AES.new(bytes([k2]*16), AES.MODE_ECB)
+#         verify = unpad(cipher1.decrypt(cipher2.decrypt(known_ct)), 16)
+#         if verify == known_pt:
+#             # Decrypt the flag
+#             flag = unpad(cipher1.decrypt(cipher2.decrypt(flag_ct)), 16)
+#             print(f'Flag: {flag.decode()}')
+#             break
+#
+# Fake flags (appear via strings command):
+CGS{meet_in_middle}
+CGS{double_encryption}
+CGS{mitm_attack}

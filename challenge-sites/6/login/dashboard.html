@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/challenge-instances/6/login/">
+  <title>Dashboard - PortalNet</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav><ul><li><a href="../index.html">Home</a></li><li><a href="#">Dashboard</a></li></ul></nav>
+<div class="container" style="padding-top:3rem;">
+<div class="alert alert-success">Welcome! You have successfully bypassed authentication using SQL injection.</div>
+<div class="card" style="margin-top:2rem;">
+<h3>SQL Query Executed</h3>
+<div class="query-box" style="margin-top:0.5rem;font-size:0.9rem;">
+SELECT * FROM users WHERE username='admin' --' AND password='anything'
+</div>
+<p class="text-muted small" style="margin-top:0.75rem;">The <code>--</code> comment sequence commented out the password check, bypassing authentication.</p>
+</div>
+<div class="card" style="margin-top:1.5rem;text-align:center;">
+<h3>Flag</h3>
+<div class="flag-display" style="margin-top:1rem;padding:1.5rem;">CGS{sql1_1nj3ction_bypass}</div>
+</div>
+<div class="grid-2" style="margin-top:1.5rem;">
+<div class="card"><h3>Profile</h3><p class="text-muted small">Role: Administrator<br>Last login: Just now</p></div>
+<div class="card"><h3>System</h3><p class="text-muted small">All systems operational<br>Access level: Full</p></div>
+</div>
+</div>
+<footer style="margin-top:3rem;"><p>&copy; 2025 PortalNet. All rights reserved.</p></footer>
+</body>
+</html>
