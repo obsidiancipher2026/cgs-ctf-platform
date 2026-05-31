@@ -206,19 +206,6 @@ export async function authenticate(request: Request): Promise<{ user: AuthUser; 
       }
     }
 
-    if (user.role === 'admin' && config.admin.fingerprintEnforced && user.lastIp && user.lastIp !== clientIp) {
-      await prisma.log.create({
-        data: {
-          action: 'admin_session_ip_change',
-          userId: user.id,
-          ipAddress: clientIp,
-          severity: 'critical',
-          details: JSON.stringify({ previousIp: user.lastIp, userAgent: userAgent.slice(0, 200) }),
-        },
-      })
-      return { user: null as unknown as AuthUser, error: new Response(JSON.stringify({ detail: 'Session IP changed' }), { status: 403, headers: { 'Content-Type': 'application/json' } }) }
-    }
-
     return {
       user: {
         id: user.id,
