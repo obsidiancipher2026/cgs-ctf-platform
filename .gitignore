@@ -2,7 +2,6 @@
 .env
 .env.local
 .env*.local
-<<<<<<< HEAD
 
 # Node
 node_modules/
@@ -11,7 +10,6 @@ node_modules/
 # Database
 prisma/dev.db
 prisma/dev.db-journal
-=======
 frontend/.env.local
 frontend/.env*.local
 
@@ -23,7 +21,6 @@ frontend/.next/
 # Database
 frontend/prisma/dev.db
 frontend/prisma/dev.db-journal
->>>>>>> 3faa2baf685d32f0a41b1e08f244efdb5a8ea6e6
 
 # IDE
 .vscode/
@@ -33,13 +30,10 @@ frontend/prisma/dev.db-journal
 *~
 .DS_Store
 Thumbs.db
-<<<<<<< HEAD
 node_modules/ 
-=======
 
 # OS
 .DS_Store
 Thumbs.db
->>>>>>> 3faa2baf685d32f0a41b1e08f244efdb5a8ea6e6
 .vercel
 .env*
