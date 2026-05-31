@@ -480,7 +480,7 @@ export default function AdminPage() {
           <div className="cyber-card rounded-2xl p-6 sm:p-8 border-cyber-blue/30">
             <div className="text-center mb-8">
               <Shield className="w-12 h-12 sm:w-16 sm:h-16 text-cyber-red mx-auto mb-4" />
-              <h1 className="font-cyber text-xl sm:text-2xl text-white">Super Admin Access</h1>
+              <h1 className="font-cyber text-xl sm:text-2xl text-white">Command & Control Center</h1>
               <p className="text-gray-500 font-mono text-sm mt-2">Authorized personnel only</p>
             </div>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -526,7 +526,7 @@ export default function AdminPage() {
 
           <Shield className={`w-5 h-5 sm:w-6 sm:h-6 text-cyber-red flex-shrink-0 transition-all duration-300 ${sidebarVisible ? 'opacity-100' : 'opacity-0 sm:opacity-100'}`} />
           <h1 className="font-cyber font-bold text-xl sm:text-2xl text-white flex-1 min-w-0 truncate">
-            Super Admin Panel
+            Command & Control Center
           </h1>
           <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-cyber-blue transition-colors rounded-lg hover:bg-cyber-blue/5" title="Logout">
             <LogOut className="w-5 h-5" />
