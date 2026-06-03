@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChevronRight, Linkedin, Github, Youtube, MessageCircle } from 'lucide-react';
+import { ChevronRight, Linkedin, Github, Youtube, MessageCircle, Mail } from 'lucide-react';
 
 const sections = [
   {
@@ -96,6 +96,7 @@ export default function About() {
                 <a href="https://github.com/OperationZero-GHH" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
                 <a href="https://wa.me/923261458036" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
                 <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
+                <a href="mailto:sakingplays@gmail.com" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
               </div>
             </div>
             <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
@@ -109,6 +110,7 @@ export default function About() {
                 <a href="https://github.com/CyberGuardiansSociety" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
                 <a href="https://wa.me/923272243678" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
                 <a href="https://www.linkedin.com/in/muhammad-saad-13ab46298/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
+                <a href="mailto:mrgill2792@gmail.com" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
               </div>
             </div>
           </div>
