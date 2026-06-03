@@ -107,7 +107,7 @@ export default function About() {
               <p className="text-orange-400 font-mono text-xs mt-1">Challenges and Platform Security Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Designing challenges and ensuring platform security</p>
               <div className="flex items-center justify-center gap-3 mt-3">
-                <a href="https://github.com/CyberGuardiansSociety" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
+                <a href="https://github.com/saad-838" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
                 <a href="https://wa.me/923272243678" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
                 <a href="https://www.linkedin.com/in/muhammad-saad-13ab46298/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mrgill2792@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
