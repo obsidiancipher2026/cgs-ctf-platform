@@ -77,7 +77,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="group flex items-center gap-2" aria-label="Home">
-            <img src="/images/logo.png" alt="CGS Logo" className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+            <img src="/images/logo.png" alt="CGS Logo" className="w-10 h-10 sm:w-12 sm:h-12 object-contain" />
             <span className="font-cyber font-bold text-base sm:text-lg text-white neon-pulse">
               CyberGuardiansSocietyCTF
             </span>

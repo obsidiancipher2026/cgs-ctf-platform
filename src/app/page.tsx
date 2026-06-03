@@ -58,7 +58,7 @@ export default function Home() {
               transition={{ delay: 0.15 }}
               className="flex justify-center mb-6"
             >
-              <img src="/images/logo.png" alt="CGS Logo" className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 object-contain" />
+              <img src="/images/logo.png" alt="CGS Logo" className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain" />
             </motion.div>
 
             <GlitchText
