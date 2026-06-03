@@ -175,7 +175,7 @@ export default function About() {
                   <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-5 h-5" /></a>
                   <a href="https://www.youtube.com/@ObsidianCipher20" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-red transition-colors"><Youtube className="w-5 h-5" /></a>
                   <a href="https://github.com/CyberGuardiansSociety" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-5 h-5" /></a>
-                  <a href="https://chat.whatsapp.com/invite/cyberguardians" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-5 h-5" /></a>
+                  <a href="https://chat.whatsapp.com/DUvTs6TiEEj2CwTfG7eG9n" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-5 h-5" /></a>
                 </div>
               </div>
             </div>
