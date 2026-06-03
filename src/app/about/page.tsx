@@ -86,16 +86,16 @@ export default function About() {
           <h2 className="text-2xl sm:text-3xl font-cyber font-bold text-white mb-8">Platform Developers</h2>
           <div className="flex flex-col sm:flex-row justify-center gap-8 items-center">
             <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyber-cyan to-cyber-purple flex items-center justify-center mb-4 shadow-lg shadow-cyber-cyan/20">
-                <span className="text-3xl font-cyber font-black text-white">SA</span>
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-cyan/20 ring-2 ring-cyber-cyan/50">
+                <img src="/images/shayan-ahmed.jpeg" alt="Shayan Ahmed" className="w-full h-full object-cover" />
               </div>
               <h3 className="font-cyber text-white text-lg font-bold">Shayan Ahmed</h3>
               <p className="text-cyber-cyan font-mono text-xs mt-1">Founder &amp; Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Building and maintaining the CTF platform infrastructure</p>
             </div>
             <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyber-red to-orange-500 flex items-center justify-center mb-4 shadow-lg shadow-cyber-red/20">
-                <span className="text-3xl font-cyber font-black text-white">MS</span>
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-red/20 ring-2 ring-orange-500/50">
+                <img src="/images/muhammad-saad.jpeg" alt="Muhammad Saad" className="w-full h-full object-cover" />
               </div>
               <h3 className="font-cyber text-white text-lg font-bold">Muhammad Saad</h3>
               <p className="text-orange-400 font-mono text-xs mt-1">Challenges and Platform Security Organizer</p>
