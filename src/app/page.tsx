@@ -45,7 +45,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5 mb-4">
               <Terminal className="w-4 h-4 text-cyber-cyan" />
               <span className="text-cyber-cyan text-xs tracking-widest uppercase">
                 Season 2026 • Registration Open
@@ -56,14 +56,14 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
-              className="flex justify-center mb-6"
+              className="flex justify-center mb-2"
             >
               <img src="/images/logo.png" alt="CGS Logo" className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 object-contain" />
             </motion.div>
 
             <GlitchText
               text="Cyber Guardians Society"
-              className="text-3xl sm:text-4xl md:text-7xl font-cyber font-black text-white mb-4 tracking-tight"
+              className="text-3xl sm:text-4xl md:text-7xl font-cyber font-black text-white mb-2 tracking-tight"
             />
 
             <motion.h2
