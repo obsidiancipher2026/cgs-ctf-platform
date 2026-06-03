@@ -52,6 +52,15 @@ export default function Home() {
               </span>
             </div>
 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="flex justify-center mb-6"
+            >
+              <img src="/images/logo.png" alt="CGS Logo" className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 object-contain" />
+            </motion.div>
+
             <GlitchText
               text="Cyber Guardians Society"
               className="text-3xl sm:text-4xl md:text-7xl font-cyber font-black text-white mb-4 tracking-tight"
