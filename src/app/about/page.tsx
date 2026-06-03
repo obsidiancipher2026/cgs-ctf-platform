@@ -92,6 +92,11 @@ export default function About() {
               <h3 className="font-cyber text-white text-lg font-bold">Shayan Ahmed</h3>
               <p className="text-cyber-cyan font-mono text-xs mt-1">Founder &amp; Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Building and maintaining the CTF platform infrastructure</p>
+              <div className="flex items-center justify-center gap-3 mt-3">
+                <a href="https://github.com/OperationZero-GHH" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
+                <a href="https://wa.me/923261458036" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
+                <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
+              </div>
             </div>
             <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
               <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-red/20 ring-2 ring-orange-500/50">
@@ -100,6 +105,11 @@ export default function About() {
               <h3 className="font-cyber text-white text-lg font-bold">Muhammad Saad</h3>
               <p className="text-orange-400 font-mono text-xs mt-1">Challenges and Platform Security Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Designing challenges and ensuring platform security</p>
+              <div className="flex items-center justify-center gap-3 mt-3">
+                <a href="https://github.com/CyberGuardiansSociety" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
+                <a href="https://wa.me/923272243678" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
+                <a href="https://www.linkedin.com/in/muhammad-saad-13ab46298/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
+              </div>
             </div>
           </div>
         </motion.div>
