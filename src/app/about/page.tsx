@@ -87,7 +87,7 @@ export default function About() {
           <div className="flex flex-col sm:flex-row justify-center gap-8 items-center">
             <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
               <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-cyan/20 ring-2 ring-cyber-cyan/50">
-                <img src="/images/shayan-ahmed.jpeg" alt="Shayan Ahmed" className="w-full h-full object-cover" />
+                <img src="/images/replaced-image.jpg" alt="Shayan Ahmed" className="w-full h-full object-cover" />
               </div>
               <h3 className="font-cyber text-white text-lg font-bold">Shayan Ahmed</h3>
               <p className="text-cyber-cyan font-mono text-xs mt-1">Founder &amp; Organizer</p>
