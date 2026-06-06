@@ -52,15 +52,6 @@ export default function Home() {
               </span>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.15 }}
-              className="flex justify-center mb-2"
-            >
-              <img src="/images/logo.png" alt="CGS Logo" className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 object-contain" />
-            </motion.div>
-
             <GlitchText
               text="Cyber Guardians Society"
               className="text-3xl sm:text-4xl md:text-7xl font-cyber font-black text-white mb-2 tracking-tight"
@@ -105,6 +96,23 @@ export default function Home() {
                 Leaderboard
               </Link>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-12 sm:py-16 px-4 border-t border-cyber-cyan/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-lg sm:text-xl font-cyber font-bold text-gray-400 mb-6 tracking-widest uppercase">
+              Sponsored By
+            </h2>
+            <div className="flex justify-center">
+              <img src="/images/tryhackme-logo.png" alt="TryHackMe" className="h-12 sm:h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+            </div>
           </motion.div>
         </div>
       </section>
