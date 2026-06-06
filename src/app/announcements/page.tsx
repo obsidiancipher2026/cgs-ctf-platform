@@ -133,7 +133,7 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                     onClick={() => setSelected(a)}
-                    className="w-full text-left cyber-card rounded-xl px-5 py-4 border border-gray-800/60 hover:border-cyber-blue/30 hover:shadow-[0_0_15px_rgba(0,150,255,0.08)] transition-all duration-200 group cursor-pointer"
+                    className="w-full text-left cyber-card-glow rounded-xl px-5 py-4 transition-all duration-200 group cursor-pointer"
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-10 h-10 rounded-xl bg-cyber-blue/10 border border-cyber-blue/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -249,7 +249,7 @@ export default function AnnouncementsPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto cyber-card rounded-2xl p-6 sm:p-8 border border-cyber-blue/20 shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto cyber-card-glow rounded-2xl p-6 sm:p-8 shadow-2xl"
             >
               {/* Close button */}
               <button

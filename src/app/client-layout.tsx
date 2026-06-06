@@ -14,6 +14,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <div>
       <div className="scan-line" />
+      <div className="aurora-overlay" />
+      <div className="cyber-particles" />
       <div className="fixed inset-0 z-0 pointer-events-none opacity-30 bg-jap-circuit" />
       <CyberBackground />
       <Navbar />

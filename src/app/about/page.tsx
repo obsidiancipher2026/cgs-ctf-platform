@@ -64,12 +64,18 @@ export default function About() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="cyber-card rounded-xl p-4 sm:p-5 group"
-                style={{ borderLeftColor: section.color, borderLeftWidth: 3 }}
+                className="cyber-card-glow rounded-xl p-4 sm:p-5 group"
+                style={{ borderLeft: `3px solid ${section.color}` }}
               >
                 <div className="min-w-0">
-                  <h2 className="font-cyber text-white text-base sm:text-lg mb-2">{section.title}</h2>
-                  <p className="text-gray-400 font-mono text-xs sm:text-sm leading-relaxed">{section.content}</p>
+                  <motion.h2
+                    className="font-cyber text-white text-base sm:text-lg mb-2"
+                    whileHover={{ x: 4 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    {section.title}
+                  </motion.h2>
+                  <p className="text-gray-400 font-mono text-xs sm:text-sm leading-relaxed group-hover:text-gray-300 transition-colors duration-300">{section.content}</p>
                 </div>
               </motion.div>
             );
@@ -85,11 +91,18 @@ export default function About() {
         >
           <h2 className="text-2xl sm:text-3xl font-cyber font-bold text-white mb-8">Platform Developers</h2>
           <div className="flex flex-col sm:flex-row justify-center gap-8 items-center">
-            <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-cyan/20 ring-2 ring-cyber-cyan/50">
-                <img src="/images/replaced-image.jpg" alt="Shayan Ahmed" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="font-cyber text-white text-lg font-bold">Shayan Ahmed</h3>
+            <motion.div
+              className="cyber-card-glow rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center"
+              whileHover={{ y: -8 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              <motion.div
+                className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-cyan/20 ring-2 ring-cyber-cyan/50"
+                whileHover={{ scale: 1.08, boxShadow: '0 0 40px rgba(0, 229, 255, 0.3)' }}
+              >
+                <img src="/images/replaced-image.jpg" alt="Shayan Ahmed" className="w-full h-full object-cover img-glow" />
+              </motion.div>
+              <h3 className="font-cyber text-white text-lg font-bold">{'>>'} Shayan Ahmed</h3>
               <p className="text-cyber-cyan font-mono text-xs mt-1">Founder &amp; Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Building and maintaining the CTF platform infrastructure</p>
               <div className="flex items-center justify-center gap-3 mt-3">
@@ -98,12 +111,19 @@ export default function About() {
                 <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sakingplays@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
               </div>
-            </div>
-            <div className="cyber-card rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-red/20 ring-2 ring-orange-500/50">
-                <img src="/images/muhammad-saad.jpeg" alt="Muhammad Saad" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="font-cyber text-white text-lg font-bold">Muhammad Saad</h3>
+            </motion.div>
+            <motion.div
+              className="cyber-card-glow rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center"
+              whileHover={{ y: -8 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              <motion.div
+                className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-red/20 ring-2 ring-orange-500/50"
+                whileHover={{ scale: 1.08, boxShadow: '0 0 40px rgba(255, 0, 51, 0.3)' }}
+              >
+                <img src="/images/muhammad-saad.jpeg" alt="Muhammad Saad" className="w-full h-full object-cover img-glow" />
+              </motion.div>
+              <h3 className="font-cyber text-white text-lg font-bold">{'>>'} Muhammad Saad</h3>
               <p className="text-orange-400 font-mono text-xs mt-1">Challenges and Platform Security Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Designing challenges and ensuring platform security</p>
               <div className="flex items-center justify-center gap-3 mt-3">
@@ -112,7 +132,7 @@ export default function About() {
                 <a href="https://www.linkedin.com/in/muhammad-saad-13ab46298/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mrgill2792@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
               </div>
-            </div>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -120,10 +140,10 @@ export default function About() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="cyber-card rounded-xl p-6 sm:p-8 mt-8 text-center"
+          className="cyber-card-glow rounded-xl p-6 sm:p-8 mt-8 text-center"
         >
           <h2 className="font-cyber text-white text-lg sm:text-xl mb-4">
-            Ready to <span className="text-cyber-green">join</span> the fight?
+            Ready to <span className="text-cyber-green text-glow-green">join</span> the fight?
           </h2>
           <p className="text-gray-400 font-mono text-sm mb-6 max-w-lg mx-auto">
             Register now and start your journey. Every expert was once a beginner.
@@ -131,14 +151,14 @@ export default function About() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="/register"
-              className="cyber-btn inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 border border-cyber-cyan/50 text-white font-cyber text-sm hover:from-cyber-cyan/30 hover:to-cyber-purple/30 transition-all"
+              className="cyber-btn cyber-btn-ripple inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 border border-cyber-cyan/50 text-white font-cyber text-sm hover:from-cyber-cyan/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,229,255,0.2)] transition-all duration-300"
             >
               Get Started
               <ChevronRight className="w-4 h-4" />
             </a>
             <a
               href="/scoreboard"
-              className="cyber-btn inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-cyber-cyan/20 text-cyber-cyan font-cyber text-sm hover:bg-cyber-cyan/10 transition-all"
+              className="cyber-btn cyber-btn-ripple inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-cyber-cyan/20 text-cyber-cyan font-cyber text-sm hover:bg-cyber-cyan/10 hover:border-cyber-cyan/50 transition-all duration-300"
             >
               View Leaderboard
             </a>

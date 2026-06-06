@@ -101,7 +101,7 @@ export default function ChallengesPage() {
           animate={{ width: sidebarOpen ? 220 : 0, opacity: sidebarOpen ? 1 : 0 }}
           className="flex-shrink-0 overflow-hidden hidden lg:block"
         >
-          <div className="cyber-card rounded-xl p-4 sticky top-24 w-[220px]">
+          <div className="cyber-card-glow rounded-xl p-4 sticky top-24 w-[220px]">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="flex items-center gap-2 text-gray-400 font-mono text-xs uppercase tracking-wider mb-3 hover:text-white transition-colors">
               <Filter className="w-3 h-3" /> Filters {sidebarOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             </button>
@@ -243,7 +243,7 @@ export default function ChallengesPage() {
                     >
                       <Link
                         href={`/challenges/${challenge.id}`}
-                        className="block cyber-card rounded-xl p-4 border border-gray-800/60 hover:border-cyber-blue/30 transition-all duration-300 h-full flex flex-col hover:shadow-lg hover:shadow-cyber-blue/5 hover:-translate-y-0.5 group"
+                        className="block cyber-card-glow rounded-xl p-4 h-full flex flex-col group"
                       >
                         <div className="flex items-center gap-2 mb-2">
                           <span className="flex items-center gap-1 text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded" style={{ backgroundColor: `${cat.color}15`, color: cat.color }}>

@@ -88,9 +88,14 @@ export default function RegisterPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-2xl"
       >
-        <div className="cyber-card rounded-2xl p-6 sm:p-10 border-cyber-blue/20">
+        <div className="cyber-card-glow rounded-2xl p-6 sm:p-10">
           <div className="text-center mb-8">
-            <Shield className="w-12 h-12 text-cyber-blue mx-auto mb-5" />
+            <motion.div
+              animate={{ opacity: [0.8, 1, 0.8], scale: [1, 1.05, 1] }}
+              transition={{ duration: 3, repeat: Infinity }}
+            >
+              <Shield className="w-12 h-12 text-cyber-blue mx-auto mb-5" />
+            </motion.div>
             <h1 className="font-cyber text-xl sm:text-2xl text-white">Create Account</h1>
             <p className="text-gray-500 font-mono text-xs sm:text-sm mt-2">Join the Cyber Guardians Society</p>
           </div>
@@ -226,7 +231,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="cyber-btn w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-purple/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-purple/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="cyber-btn cyber-btn-ripple w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-purple/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,150,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
               {loading ? 'Creating Account...' : 'Create Account'}

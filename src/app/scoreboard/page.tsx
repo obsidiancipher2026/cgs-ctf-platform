@@ -191,12 +191,12 @@ export default function ScoreboardPage() {
                        initial={{ opacity: 0, x: -15 }}
                        animate={{ opacity: 1, x: 0 }}
                        transition={{ delay: idx * 0.02 }}
-                       className={`relative rounded-xl transition-all duration-200 ${
-                         isCurrentUser
-                           ? 'bg-cyber-blue/10 border border-cyber-blue/30'
-                           : isTop3
-                             ? 'bg-gray-900/60 border border-gray-800/50'
-                             : 'bg-gray-900/40 border border-gray-800/30 hover:border-gray-700/50 hover:bg-gray-900/60'
+                     className={`relative rounded-xl transition-all duration-200 ${
+                          isCurrentUser
+                            ? 'cyber-card-glow border-cyber-blue/30'
+                            : isTop3
+                              ? 'bg-gray-900/60 border border-gray-800/50'
+                              : 'bg-gray-900/40 border border-gray-800/30 hover:border-gray-700/50 hover:bg-gray-900/60'
                        }`}
                        style={isTop3 ? { boxShadow: `0 0 15px ${top!.glow}` } : {}}
                      >

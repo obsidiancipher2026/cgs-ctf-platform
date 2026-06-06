@@ -103,7 +103,7 @@ export default function FlagSubmitPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-7">
-          <div className="cyber-card rounded-2xl p-5 sm:p-8 border-cyber-blue/20">
+          <div className="cyber-card-glow rounded-2xl p-5 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-gray-400 font-mono text-xs mb-2">Challenge</label>
@@ -156,7 +156,7 @@ export default function FlagSubmitPage() {
               <button
                 type="submit"
                 disabled={submitting || !challengeId || !flag.trim()}
-                className="cyber-btn w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-green/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-green/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="cyber-btn cyber-btn-ripple w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-green/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-green/30 hover:shadow-[0_0_30px_rgba(0,229,255,0.2)] disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Flag className="w-4 h-4" />}
                 {submitting ? 'Submitting...' : 'Submit Flag'}
@@ -247,7 +247,7 @@ export default function FlagSubmitPage() {
           </div>
 
           <div className="lg:col-span-5">
-          <div className="cyber-card rounded-2xl p-5 sm:p-8 border-cyber-blue/10">
+          <div className="cyber-card-glow rounded-2xl p-5 sm:p-8">
             <h2 className="text-white font-cyber text-lg mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-gray-500" /> Recent Submissions
             </h2>

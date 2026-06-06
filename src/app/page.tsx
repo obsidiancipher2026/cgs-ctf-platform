@@ -32,25 +32,32 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <section className="relative min-h-[90vh] flex items-center justify-center px-4 cyber-grid-bg overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-cyber-cyan/5 via-transparent to-transparent" />
-        <div className="absolute top-20 right-10 text-[200px] font-black text-cyber-cyan/5 pointer-events-none select-none leading-none hidden sm:block">
+        <div className="absolute inset-0 bg-gradient-to-b from-cyber-cyan/8 via-cyber-purple/3 to-transparent" />
+        <div className="absolute top-20 right-10 text-[200px] font-black text-cyber-cyan/5 pointer-events-none select-none leading-none hidden sm:block animate-cyber-float">
           技
         </div>
-        <div className="absolute bottom-20 left-10 text-[160px] font-black text-cyber-red/5 pointer-events-none select-none leading-none hidden sm:block">
+        <div className="absolute bottom-20 left-10 text-[160px] font-black text-cyber-red/5 pointer-events-none select-none leading-none hidden sm:block animate-cyber-float" style={{ animationDelay: '-4s' }}>
           電
         </div>
+        <div className="absolute top-1/4 left-5 w-32 h-32 rounded-full border border-cyber-cyan/10 animate-cyber-float pointer-events-none" style={{ animationDelay: '-2s' }} />
+        <div className="absolute bottom-1/4 right-5 w-24 h-24 rounded-full border border-cyber-purple/10 animate-cyber-float pointer-events-none" style={{ animationDelay: '-6s' }} />
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5 mb-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5 mb-4 hover:border-cyber-cyan/60 hover:shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all duration-300"
+            >
               <Terminal className="w-4 h-4 text-cyber-cyan" />
-              <span className="text-cyber-cyan text-xs tracking-widest uppercase">
+              <span className="text-cyber-cyan text-xs tracking-widest uppercase animate-pulse-soft">
                 Season 2026 • Registration Open
               </span>
-            </div>
+            </motion.div>
 
             <GlitchText
               text="Cyber Guardians Society"
@@ -61,7 +68,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl md:text-4xl font-cyber font-bold bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-red bg-clip-text text-transparent mb-6"
+              className="text-2xl md:text-4xl font-cyber font-bold shimmer-text mb-6"
             >
               Capture The Flag Competition
             </motion.h2>
@@ -83,14 +90,14 @@ export default function Home() {
             >
               <Link
                 href="/challenges"
-                className="cyber-btn group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 border border-cyber-cyan/50 text-white text-sm font-semibold hover:from-cyber-cyan/30 hover:to-cyber-purple/30 transition-all"
+                className="cyber-btn cyber-btn-ripple group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 border border-cyber-cyan/50 text-white text-sm font-semibold hover:from-cyber-cyan/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,229,255,0.2)] transition-all duration-300"
               >
                 View Challenges
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/scoreboard"
-                className="cyber-btn inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-cyber-cyan/20 text-cyber-cyan text-sm font-semibold hover:bg-cyber-cyan/10 transition-all"
+                className="cyber-btn cyber-btn-ripple inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-cyber-cyan/20 text-cyber-cyan text-sm font-semibold hover:bg-cyber-cyan/10 hover:border-cyber-cyan/50 hover:shadow-[0_0_20px_rgba(0,229,255,0.1)] transition-all duration-300"
               >
                 <Trophy className="w-4 h-4" />
                 Leaderboard
@@ -138,12 +145,12 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="cyber-card rounded-xl p-6 group transition-all"
+                  className="cyber-card-glow rounded-xl p-6 group transition-all duration-500"
                   style={{ borderTopColor: feat.color, borderTopWidth: 2 }}
                 >
-                  <Icon className="w-8 h-8 mb-4" style={{ color: feat.color }} />
+                  <Icon className="w-8 h-8 mb-4 group-hover:scale-110 transition-transform duration-300" style={{ color: feat.color }} />
                   <h3 className="font-cyber font-bold text-white text-lg mb-2">{feat.title}</h3>
-                  <p className="text-gray-400 text-sm">{feat.desc}</p>
+                  <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">{feat.desc}</p>
                 </motion.div>
               );
             })}
@@ -167,12 +174,18 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.08 }}
-                className="cyber-card rounded-xl p-6 text-center group cursor-pointer"
-                whileHover={{ y: -5 }}
+                className="cyber-card-glow rounded-xl p-6 text-center group cursor-pointer"
+                whileHover={{ y: -8 }}
               >
-                <div className="text-4xl mb-3">{cat.icon}</div>
-                <h3 className="font-cyber font-bold text-white text-sm mb-1">{cat.name}</h3>
-                <p className="text-gray-500 text-xs">{cat.desc}</p>
+                <motion.div
+                  className="text-4xl mb-3 inline-block"
+                  whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {cat.icon}
+                </motion.div>
+                <h3 className="font-cyber font-bold text-white text-sm mb-1 group-hover:text-glow-cyan transition-all duration-300">{cat.name}</h3>
+                <p className="text-gray-500 text-xs group-hover:text-gray-400 transition-colors duration-300">{cat.desc}</p>
               </motion.div>
             ))}
           </div>
