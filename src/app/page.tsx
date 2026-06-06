@@ -111,7 +111,10 @@ export default function Home() {
               Sponsored By
             </h2>
             <div className="flex justify-center">
-              <img src="/images/tryhackme-logo.svg" alt="TryHackMe" className="h-20 sm:h-28 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
+                <img src="/images/tryhackme-logo.svg" alt="TryHackMe" className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 object-contain" />
+                <span className="text-5xl sm:text-6xl md:text-7xl font-cyber font-bold text-white tracking-tight">TryHackMe</span>
+              </div>
             </div>
           </motion.div>
         </div>
