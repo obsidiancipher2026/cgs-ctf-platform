@@ -111,7 +111,7 @@ export default function Home() {
               Sponsored By
             </h2>
             <div className="flex justify-center">
-              <img src="/images/tryhackme-logo.png" alt="TryHackMe" className="h-20 sm:h-28 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <img src="/images/tryhackme-logo.svg" alt="TryHackMe" className="h-20 sm:h-28 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
           </motion.div>
         </div>
