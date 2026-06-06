@@ -107,11 +107,11 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-lg sm:text-xl font-cyber font-bold text-gray-400 mb-6 tracking-widest uppercase">
+            <h2 className="text-lg sm:text-xl font-cyber font-bold text-white mb-6 tracking-widest uppercase">
               Sponsored By
             </h2>
             <div className="flex justify-center">
-              <img src="/images/tryhackme-logo.png" alt="TryHackMe" className="h-12 sm:h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <img src="/images/tryhackme-logo.png" alt="TryHackMe" className="h-20 sm:h-28 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
           </motion.div>
         </div>
