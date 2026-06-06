@@ -6,32 +6,32 @@ import { ChevronRight, Linkedin, Github, MessageCircle, Mail } from 'lucide-reac
 const sections = [
   {
     title: 'Who We Are',
-    content: 'Cyber Guardians Society (CGS) is a community of cybersecurity enthusiasts, ethical hackers, and security professionals dedicated to advancing the art of cyber defense through competitive Capture The Flag challenges.',
+    content: 'In this new world, one that is riddled with secrets and hidden paths and adversaries, Cyber Guardians Society was formed for the people who will not be spectators anymore. Cyber Guardians Society consists of people from all walks of life who are united in their passion and dedication towards discovering something that others miss. Our aim is to take you out of your comfort zones through realistic attacks and challenges.',
     color: '#00d4ff',
   },
   {
     title: 'Our Mission',
-    content: 'We aim to foster a hands-on learning environment where participants can develop practical cybersecurity skills through real-world scenarios. Our platform bridges the gap between theoretical knowledge and practical application.',
+    content: 'Every vulnerability tells a story. Our mission is to create an environment where aspiring and experienced security enthusiasts can sharpen their skills through authentic cyber warfare simulations. We believe cybersecurity is not learned from slides and textbooks alone. It is mastered through exploration, experimentation, and discovery. By blending education with competition, we prepare the next generation of defenders to navigate an increasingly complex digital battlefield.',
     color: '#7b2ff7',
   },
   {
-    title: 'What is a CTF?',
-    content: 'Capture The Flag (CTF) is a cybersecurity competition where participants solve challenges across various categories to find hidden "flags" — special strings that prove you have successfully completed a task. Flags are submitted through the platform to earn points and climb the leaderboard.',
+    title: 'Enter The Arena',
+    content: 'Not every challenge is what it seems. Hidden throughout the platform are secrets waiting to be uncovered. Each challenge conceals a flag, a piece of digital proof that confirms your success. To find it, you\'ll need to think differently, analyze carefully, and sometimes venture down paths others overlook. Every solved challenge reveals another layer of the puzzle. Every flag brings you one step closer to mastery.',
     color: '#00ff88',
   },
   {
-    title: 'Challenge Categories',
-    content: 'Our challenges span Cryptography, Web Exploitation, Reverse Engineering, Forensics, and Miscellaneous categories. Each category tests different skills, from breaking encryption algorithms to exploiting web vulnerabilities and analyzing binary executables.',
+    title: 'The Challenges',
+    content: 'Behind every system lies a weakness. Our challenge ecosystem covers multiple cybersecurity domains, each designed to test a unique skillset: Cryptography — Ancient ciphers. Modern encryption. Hidden messages waiting to be revealed. Web Exploitation — Discover flaws buried beneath seemingly secure applications. Reverse Engineering — Dissect binaries, unravel logic, and expose hidden functionality. Digital Forensics — Follow the evidence, reconstruct events, and uncover the truth. Miscellaneous — Expect the unexpected. Some puzzles refuse to fit neatly into categories.',
     color: '#ffd700',
   },
   {
-    title: 'Community',
-    content: 'We believe in learning together. Join our community of like-minded individuals, participate in discussions, share knowledge, and grow your skills. Competition is friendly — every challenge solved is a victory for the entire community.',
+    title: 'Beyond Competition',
+    content: 'Knowledge grows strongest when shared. Cyber Guardians Society is more than a platform. It is a gathering place for explorers, researchers, and problem-solvers who thrive on curiosity. Exchange ideas, discuss techniques, learn from others, and contribute to a community built around continuous growth. The leaderboard measures progress. The journey measures expertise.',
     color: '#ff2d79',
   },
   {
-    title: 'Getting Started',
-    content: 'New to CTF? Start with our easy challenges and work your way up. Each challenge includes hints that can be purchased with points. Use the knowledge from solved challenges to tackle harder ones. The scoreboard tracks your progress in real-time.',
+    title: 'Begin Your Journey',
+    content: 'Every expert was once staring at their first challenge. Start with the easier missions, learn the fundamentals, and gradually unlock more difficult objectives. When the path forward becomes unclear, hints can illuminate the next step, but true satisfaction comes from discovering the answer yourself. Some challenges test your knowledge. Others test your persistence. The question is simple: How deep are you willing to go?',
     color: '#00f0ff',
   },
 ];
