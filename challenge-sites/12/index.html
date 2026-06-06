@@ -4,16 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <base href="/challenge-instances/12/">
-  <title>JWT Authentication Bypass Lab</title>
+  <title>JWT Authentication Bypass</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .jwt-display { font-family: 'Courier New', monospace; font-size: 0.72rem; word-break: break-all; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; max-height: 120px; overflow-y: auto; }
+    .jwt-display { font-family: 'Courier New', monospace; font-size: 0.72rem; word-break: break-all; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; max-height: 200px; overflow-y: auto; }
     .jwt-part-header { color: var(--accent-red); }
     .jwt-part-payload { color: var(--accent-green); }
     .jwt-part-sig { color: var(--accent-orange); }
     .jwt-decode-table { width:100%; font-size:0.82rem; }
     .jwt-decode-table td { padding:0.4rem 0.5rem; border-bottom:1px solid rgba(255,255,255,0.05); }
     .jwt-decode-table td:first-child { color:var(--text-secondary); width:100px; }
+    .url-box { background: rgba(0,0,0,0.4); border: 1px solid var(--accent-cyan); border-radius: 4px; padding: 1rem; font-family: 'Courier New', monospace; font-size: 0.75rem; word-break: break-all; color: var(--accent-cyan); margin-bottom: 1rem; }
+    .url-box .url-label { color: var(--text-secondary); font-size: 0.7rem; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 1px; }
+    .url-box .token-highlight { background: rgba(255,215,0,0.15); padding: 0.1rem 0.3rem; border-radius: 2px; }
+    .copy-btn { font-size: 0.7rem; padding: 0.3rem 0.8rem; cursor: pointer; float: right; }
   </style>
 </head>
 <body>
@@ -24,91 +28,187 @@
 <span class="badge badge-points">105 points</span></div></div></div>
 <div class="container">
 <div id="tab-home" class="tab-content active">
-<section><h2>Challenge</h2><div class="card"><p>The admin panel uses JWT for authentication with a weak, guessable secret key <code>secret123</code>. Forge a JWT with <code>role: admin</code> to access the protected panel and retrieve the flag.</p></div>
-
+<section><h2>Challenge</h2><div class="card"><p>The admin panel uses JWT for authentication with a weak, guessable secret key <code>secret123</code>. Forge a JWT with <code>role: admin</code> to access the protected panel and retrieve the flag.</p>
+<p class="text-muted small mt-2">Your guest token is embedded in the page URL. Decode it, modify the role to "admin", re-sign it, and pass it back via the URL.</p></div>
 <div class="text-center mt-2"><button class="btn btn-primary" onclick="showTab('challenge')">Go to Challenge</button></div></section>
 </div>
 <div id="tab-challenge" class="tab-content">
-<section><h2>JWT Forge Lab</h2>
-<div class="card"><h3>Example User Token</h3>
-<div class="jwt-display" id="exampleJwt">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ3Vlc3QiLCJyb2xlIjoidXNlciIsImlhdCI6MTY4MDAwMDAwMH0.abcdef1234567890abcdef1234567890abcdef12</div>
-<div class="grid-2" style="margin-top:1rem;">
-<div><p class="text-muted small">Header (base64): <code>{"alg":"HS256","typ":"JWT"}</code></p></div>
-<div><p class="text-muted small">Payload (base64): <code>{"user":"guest","role":"user","iat":1680000000}</code></p></div>
+<section><h2>Token from URL</h2>
+<div class="card">
+  <h3>Your Guest Token</h3>
+  <p class="text-muted small">The JWT is passed as a query parameter in the URL bar above. Copy the token, decode it, forge an admin token, and paste it back into the URL.</p>
+  <div class="url-box" id="urlDisplay">
+    <div class="url-label">Current URL</div>
+    <span id="urlText"></span>
+  </div>
+  <div class="jwt-display" id="jwtDisplay">
+    <span class="text-muted">Loading token...</span>
+  </div>
 </div>
-<p class="text-muted small mt-2">The server verifies the token using the secret key. The key is weak: <code>secret123</code></p>
+
+<div class="card">
+  <h3>Decoded Token</h3>
+  <div id="decodedContent">
+    <p class="text-muted">No token data</p>
+  </div>
 </div>
-<div class="grid-2">
-<div class="card"><h3>Forge Admin Token</h3>
-<div class="form-group"><label>Secret Key</label><input type="text" id="secretKey" class="amount-input" value="secret123" readonly></div>
-<div class="form-group"><label>Username</label><input type="text" id="jwtUser" class="amount-input" value="admin"></div>
-<div class="form-group"><label>Role</label>
-<select id="jwtRole" class="account-select"><option value="user">user</option><option value="admin" selected>admin</option></select></div>
-<button class="btn btn-primary" onclick="forgeJWT()" id="forgeBtn" style="width:100%;">Forge Token</button>
+
+<div id="flagSection" class="card" style="display:none;">
+  <h3>Admin Access Granted</h3>
+  <div class="flag-display" id="flagText"></div>
+  <p class="text-muted small text-center mt-2">You successfully forged an admin JWT token.</p>
 </div>
-<div class="card"><h3>Generated Token</h3>
-<div class="jwt-display" id="forgedJwt" style="min-height:60px;"><span class="text-muted">Click "Forge Token" to generate</span></div>
-<button class="btn btn-success" onclick="submitJWT()" id="submitBtn" style="width:100%;margin-top:0.75rem;" disabled>Submit to Admin Panel</button>
-</div>
-</div>
-<div class="tx-log" id="serverLog" style="max-height:200px;"><div class="text-muted">Waiting...</div></div>
-<div class="card" id="flagSection" style="display:none;">
-<h3>Flag Captured</h3>
-<div class="flag-display"></div>
+
+<div class="card">
+  <h3>Instructions</h3>
+  <ol class="text-muted small" style="margin-left:1.2rem;line-height:2;">
+    <li>Copy the token from the <strong>URL bar</strong></li>
+    <li>Decode the payload — change <code>"role":"user"</code> to <code>"role":"admin"</code></li>
+    <li>Re-sign with the secret key: <code>secret123</code> using <code>alg: HS256</code></li>
+    <li>Replace the token in the URL: <code>?token=&lt;your_forged_jwt&gt;</code> and press Enter</li>
+    <li>If the token is valid with <code>role: admin</code>, the flag will appear</li>
+  </ol>
+  <div class="alert-info mt-2">
+    <strong>Hint:</strong> The server uses HMAC-SHA256 with secret <code>secret123</code>. Use an online tool or <code>jwt.io</code> to forge your token.
+  </div>
 </div>
 </section>
 </div></div>
 <footer>Cyber Guardians Society CTF &bull; JWT Authentication Bypass</footer>
 <script>
 function showTab(n){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('nav a').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active');var i={home:0,challenge:1};var l=document.querySelectorAll('nav a');if(l[i[n]])l[i[n]].classList.add('active')}
-function log(m,c){var l=document.getElementById('serverLog');var e=document.createElement('div');e.className='tx-entry '+(c||'');var t=new Date().toLocaleTimeString();e.textContent='['+t+'] '+m;l.appendChild(e);l.scrollTop=l.scrollHeight;var p=l.querySelector('.text-muted');if(p)p.style.display='none'}
-var currentToken='';
-function btoaUrl(s){return btoa(s).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')}
-function forgeJWT(){
-var header={"alg":"HS256","typ":"JWT"};
-var payload={"user":document.getElementById('jwtUser').value,"role":document.getElementById('jwtRole').value,"iat":Math.floor(Date.now()/1000)};
-var h=btoaUrl(JSON.stringify(header));
-var p=btoaUrl(JSON.stringify(payload));
-var key=document.getElementById('secretKey').value;
-// Simulate signing with HMAC-SHA256
-var sigInput=h+'.'+p;
-var fakeSig=btoaUrl(sigInput+'|'+key);
-currentToken=h+'.'+p+'.'+fakeSig;
-document.getElementById('forgedJwt').innerHTML='<span class="jwt-part-header">'+h+'</span>.<span class="jwt-part-payload">'+p+'</span>.<span class="jwt-part-sig">'+fakeSig+'</span>';
-document.getElementById('submitBtn').disabled=false;
-log('JWT forged with role: '+payload.role+'','tx-race');
+
+function log(m,c){var l=document.getElementById('serverLog');if(!l)return;var e=document.createElement('div');e.className='tx-entry '+(c||'');var t=new Date().toLocaleTimeString();e.textContent='['+t+'] '+m;l.appendChild(e);l.scrollTop=l.scrollHeight;var p=l.querySelector('.text-muted');if(p)p.style.display='none'}
+
+function b64uDecode(s) {
+  try {
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    return JSON.parse(atob(s));
+  } catch(e) { return null; }
 }
-function submitJWT(){
-if(!currentToken){log('No token to submit.','tx-failed');return}
-log('=== Submitting JWT to admin panel ===','tx-race');
-log('[Server] Verifying JWT signature...','');
-setTimeout(function(){
-log('[Server] Signature valid with key: secret123','tx-success');
-setTimeout(function(){
-log('[Server] Decoding payload...','');
-setTimeout(function(){
-try{
-var parts=currentToken.split('.');
-var payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
-log('[Server] User: '+payload.user+', Role: '+payload.role+'','');
-if(payload.role==='admin'){
-log('[Server] ADMIN ACCESS GRANTED','tx-success');
-setTimeout(function(){
-log('[Server] Welcome, '+payload.user+'! Here is the flag:','tx-success');
-setTimeout(function(){
-document.querySelector('#flagSection .flag-display').textContent='CGS{jwt_alg0r1thm_n0ne}';
-document.getElementById('flagSection').style.display='block';
-document.getElementById('flagSection').scrollIntoView({behavior:'smooth'});
-},300);
-},300);
-}else{
-log('[Server] Access DENIED. User role: '+payload.role+' (admin required)','tx-failed');
+
+function b64uEncode(obj) {
+  try {
+    var s = btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    return s;
+  } catch(e) { return ''; }
 }
-}catch(e){log('[Server] Error decoding token','tx-failed')}
-},300);
-},300);
-},300);
+
+function readTokenFromURL() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('token') || '';
 }
+
+function buildCleanURL(token) {
+  var url = new URL(window.location.href);
+  if (token) url.searchParams.set('token', token);
+  else url.searchParams.delete('token');
+  return url.toString();
+}
+
+function updateURL(token) {
+  var newUrl = buildCleanURL(token);
+  window.history.replaceState({}, '', newUrl);
+}
+
+function decodeJWT(token) {
+  var parts = token.split('.');
+  if (parts.length !== 3) return null;
+  return {
+    header: b64uDecode(parts[0]),
+    payload: b64uDecode(parts[1]),
+    signature: parts[2],
+    raw: { header: parts[0], payload: parts[1], sig: parts[2] }
+  };
+}
+
+function formatJWTDisplay(token) {
+  var parts = token.split('.');
+  if (parts.length !== 3) return token;
+  return '<span class="jwt-part-header">' + parts[0] + '</span>.' +
+         '<span class="jwt-part-payload">' + parts[1] + '</span>.' +
+         '<span class="jwt-part-sig">' + parts[2] + '</span>';
+}
+
+function isAdminToken(token) {
+  var decoded = decodeJWT(token);
+  return decoded && decoded.payload && decoded.payload.role === 'admin';
+}
+
+// Simulate server-side JWT verification
+function verifyJWT(token) {
+  var decoded = decodeJWT(token);
+  if (!decoded) return { valid: false, reason: 'Invalid JWT format' };
+  if (!decoded.header || !decoded.payload) return { valid: false, reason: 'Cannot decode JWT parts' };
+  if (decoded.payload.role !== 'admin') return { valid: false, reason: 'Access DENIED. Role: ' + decoded.payload.role + ' (admin required)' };
+  return { valid: true, user: decoded.payload.user || 'unknown' };
+}
+
+function renderPage() {
+  var token = readTokenFromURL();
+  var urlText = document.getElementById('urlText');
+  var jwtDisplay = document.getElementById('jwtDisplay');
+  var decodedContent = document.getElementById('decodedContent');
+  var flagSection = document.getElementById('flagSection');
+
+  // Show the URL
+  var url = new URL(window.location.href);
+  urlText.innerHTML = url.protocol + '//' + url.host + url.pathname + '?token=<span class="token-highlight">' + (token ? token.substring(0, 30) + '...' : '') + '</span>';
+
+  if (!token) {
+    // Generate a default guest token if none in URL
+    var now = Math.floor(Date.now() / 1000);
+    var header = { alg: 'HS256', typ: 'JWT' };
+    var payload = { user: 'guest', role: 'user', iat: now };
+    var h = b64uEncode(header);
+    var p = b64uEncode(payload);
+    var fakeSig = b64uEncode({ dummy: h + '.' + p + '|secret123' });
+    token = h + '.' + p + '.' + fakeSig;
+    updateURL(token);
+    urlText.innerHTML = new URL(window.location.href).toString().replace(token, '<span class="token-highlight">' + token.substring(0, 30) + '...</span>');
+  }
+
+  jwtDisplay.innerHTML = formatJWTDisplay(token);
+
+  var decoded = decodeJWT(token);
+  if (decoded && decoded.payload) {
+    var payload = decoded.payload;
+    var html = '<table class="jwt-decode-table">';
+    for (var key in payload) {
+      html += '<tr><td>' + key + '</td><td style="color:' + (key === 'role' && payload[key] === 'admin' ? 'var(--accent-green)' : 'var(--text-primary)') + ';font-weight:' + (key === 'role' ? '700' : '400') + '">' + JSON.stringify(payload[key]) + '</td></tr>';
+    }
+    html += '</table>';
+    if (decoded.header) {
+      html += '<div class="text-muted small" style="margin-top:0.5rem;">Algorithm: <code>' + (decoded.header.alg || 'unknown') + '</code></div>';
+    }
+    decodedContent.innerHTML = html;
+
+    // Check if admin
+    if (payload.role === 'admin') {
+      flagSection.style.display = 'block';
+      document.getElementById('flagText').textContent = 'CGS{jwt_alg0r1thm_n0ne}';
+    } else {
+      flagSection.style.display = 'none';
+    }
+  } else {
+    decodedContent.innerHTML = '<p class="text-muted">Invalid token format. Use three base64url-encoded parts separated by dots.</p>';
+    flagSection.style.display = 'none';
+  }
+}
+
+// Re-render when URL changes (user navigates with new token)
+window.addEventListener('popstate', renderPage);
+document.addEventListener('DOMContentLoaded', renderPage);
+// Also check periodically for URL changes (in case of hash/fragment navigation)
+setInterval(function() {
+  var currentToken = readTokenFromURL();
+  if (currentToken !== window._lastToken) {
+    window._lastToken = currentToken;
+    renderPage();
+  }
+}, 500);
+window._lastToken = readTokenFromURL();
 </script>
 </body>
 </html>

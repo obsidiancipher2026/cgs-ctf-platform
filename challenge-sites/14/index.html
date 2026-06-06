@@ -10,10 +10,10 @@
     #serverLog { min-height: 120px; }
     .tx-log .tx-entry .time { color: var(--text-secondary); margin-right: 0.5rem; font-size: 0.75rem; }
     #detectionBanner { display: none; }
+    .click-counter { font-size: 2rem; font-weight: 700; font-family: 'Courier New', monospace; color: var(--accent-cyan); }
   </style>
 </head>
 <body>
-
 <nav>
   <ul>
     <li><a href="#" class="active" onclick="showTab('dashboard')">Dashboard</a></li>
@@ -21,7 +21,6 @@
     <li><a href="#" onclick="showTab('logs')">Server Logs</a></li>
   </ul>
 </nav>
-
 <div class="hero">
   <div class="hero-content">
     <h1>Race Condition - Privilege Escalation</h1>
@@ -32,27 +31,22 @@
     </div>
   </div>
 </div>
-
 <div class="container">
-
 <!-- DASHBOARD TAB -->
 <div id="tab-dashboard" class="tab-content active">
   <section>
     <h2>Account Overview</h2>
-
     <div class="card">
       <h3>Welcome, user_6742</h3>
       <p class="text-muted small">FastBank Premium Checking Account</p>
-
       <div class="balance-box">
         <div class="label">Current Balance</div>
         <div class="amount" id="balanceDisplay">$100.00</div>
       </div>
-
       <div class="grid-2">
         <div class="stat-box">
           <div class="stat-number" id="txCountStat">0</div>
-          <div class="stat-label">Transactions</div>
+          <div class="stat-label">Transfers Sent</div>
         </div>
         <div class="stat-box">
           <div class="stat-number" id="txTotalStat">$0.00</div>
@@ -60,37 +54,31 @@
         </div>
       </div>
     </div>
-
     <div class="card">
       <h3>Challenge</h3>
-      <p>The server has a TOCTOU vulnerability in its balance check. Exploit it to escalate privileges.</p>
+      <p>The server has a TOCTOU vulnerability in its balance check. Exploit it by sending multiple rapid transfers before the server can update your balance.</p>
+      <p class="text-muted small mt-2">Send <strong>10 rapid transfers of $100 each</strong> by clicking "Send Transfer" as fast as you can. If you beat the race window, all 10 will pass the balance check before any deduction occurs.</p>
     </div>
-
     <div class="text-center mt-2">
       <button class="btn btn-primary" onclick="showTab('transfer')">Go to Transfer</button>
     </div>
   </section>
 </div>
-
 <!-- TRANSFER TAB -->
 <div id="tab-transfer" class="tab-content">
   <section>
     <h2>Fund Transfer</h2>
-
     <div class="alert-info">
-      <strong>Server logic:</strong> The server checks <code class="mono">balance >= amount</code>, then processes the transfer, then deducts. There is a <strong>200ms delay</strong> between the check and the deduction &mdash; this is your race window.
+      <strong>Server logic:</strong> The server checks <code class="mono">balance >= amount</code>, then processes the transfer, then deducts. There is a <strong>~300ms delay</strong> between the check and the deduction &mdash; this is your race window. Click "Send Transfer" as fast as you can to send 10 x $100 before the first deduction completes!
     </div>
-
     <div id="detectionBanner" class="alert-danger">
-      <strong>Security alert:</strong> Anomalous activity detected! Total transfers ($<span id="totalSentDetected">0.00</span>) exceed your initial balance ($100.00). An admin has been notified.
+      <strong>Security alert:</strong> Anomalous activity detected! Total transfers ($<span id="totalSentDetected">0.00</span>) exceed your initial balance ($100.00). The TOCTOU vulnerability has been confirmed.
     </div>
-
     <div id="flagSection" style="display:none;" class="card">
       <h3>Flag Captured</h3>
       <div class="flag-display">CGS{r4c3_c0ndition}</div>
-      <p class="text-muted small text-center mt-2">You exploited the TOCTOU race condition to transfer more money than your balance allowed. The admin flagged your account and revealed the secret.</p>
+      <p class="text-muted small text-center mt-2">You exploited the TOCTOU race condition by sending 10 rapid-fire transfers before the server could deduct. The race condition flag has been revealed.</p>
     </div>
-
     <div class="grid-2">
       <div class="card">
         <h3>Single Transfer</h3>
@@ -111,27 +99,24 @@
         </div>
         <div class="form-group">
           <label for="amountInput">Amount ($)</label>
-          <input type="number" id="amountInput" class="amount-input" value="10" min="0.01" step="0.01">
+          <input type="number" id="amountInput" class="amount-input" value="100" min="1" step="1">
         </div>
         <button class="btn btn-primary" onclick="singleTransfer()" id="singleTxBtn">Send Transfer</button>
         <div id="singleResult" class="mt-2 small text-muted"></div>
       </div>
-
       <div class="card">
-        <h3>Race Attack</h3>
-        <p class="text-muted small">Send <strong>10 simultaneous $100 transfers</strong> to all accounts. Each request passes the balance check before the server can deduct.</p>
-        <div style="margin-top:0.75rem;">
-          <button class="btn btn-race" onclick="raceAttack()" id="raceBtn">Launch Race Attack</button>
-          <button class="btn" onclick="resetChallenge()" style="margin-left:0.5rem;">Reset</button>
+        <h3>Race Progress</h3>
+        <p class="text-muted small">Send 10 x $100 transfers as fast as you can. Each successful transfer adds to the counter below.</p>
+        <div class="text-center" style="margin:1.5rem 0;">
+          <div class="click-counter" id="raceProgressCount">0</div>
+          <div class="text-muted small">/ 10 transfers sent</div>
         </div>
-        <div id="raceProgress" class="mt-2" style="display:none;">
-          <div class="server-log" id="raceLog">
-            <span class="text-muted">Preparing race conditions...</span>
-          </div>
+        <div class="server-log" id="raceLog">
+          <span class="text-muted">Click "Send Transfer" 10 times rapidly to exploit the race condition.</span>
         </div>
+        <button class="btn" onclick="resetChallenge()" style="margin-top:0.75rem;width:100%;">Reset Challenge</button>
       </div>
     </div>
-
     <div class="card">
       <h3>Transaction Log</h3>
       <div class="tx-log" id="txLog">
@@ -140,33 +125,25 @@
     </div>
   </section>
 </div>
-
 <!-- LOGS TAB -->
 <div id="tab-logs" class="tab-content">
   <section>
     <h2>Server-Side Processing Log</h2>
     <p class="text-muted small">This shows exactly how the server processes each transfer request, revealing the TOCTOU vulnerability.</p>
-
     <div class="card">
       <h3>Server Trace</h3>
       <div class="server-log" id="serverLog" style="min-height: 300px; max-height: 500px;">
         <span class="text-muted">Waiting for transactions...</span>
       </div>
     </div>
-
     <div class="card" id="summarySection" style="display:none;">
       <h3>Race Condition Analysis</h3>
       <div class="code-block" id="analysisContent"></div>
     </div>
   </section>
 </div>
-
 </div>
-
-<footer>
-  Cyber Guardians Society CTF &bull; Race Condition Challenge
-</footer>
-
+<footer>Cyber Guardians Society CTF &bull; Race Condition Challenge</footer>
 <script>
 var balance = 100.00;
 var initialBalance = 100.00;
@@ -176,7 +153,9 @@ var txLog = [];
 var serverLogEntries = [];
 var isProcessing = false;
 var raceConditionFlag = false;
-var raceInProgress = false;
+var pendingTransfers = 0;
+var lastClickTime = 0;
+var raceWindowActive = false;
 
 var accounts = [
   { id: 'ACC-1001', name: 'Alice' },
@@ -208,6 +187,7 @@ function updateUI() {
   document.getElementById('balanceDisplay').textContent = formatMoney(balance);
   document.getElementById('txCountStat').textContent = txCount;
   document.getElementById('txTotalStat').textContent = formatMoney(totalSent);
+  document.getElementById('raceProgressCount').textContent = txCount;
 }
 
 function addTxLogEntry(account, amount, status, detail) {
@@ -225,8 +205,8 @@ function renderTxLog() {
   var html = '';
   for (var i = txLog.length - 1; i >= 0; i--) {
     var t = txLog[i];
-    var statusClass = t.status === 'success' ? 'tx-success' : t.status === 'failed' ? 'tx-failed' : 'tx-race';
-    var statusText = t.status === 'success' ? 'Sent' : t.status === 'failed' ? 'Failed' : 'RACE';
+    var statusClass = t.status === 'success' || t.status === 'race' ? 'tx-success' : t.status === 'failed' ? 'tx-failed' : 'tx-race';
+    var statusText = t.status === 'race' ? 'RACE' : t.status === 'success' ? 'Sent' : 'Failed';
     html += '<div class="tx-entry ' + statusClass + '">';
     html += '<span class="time">[' + t.time + ']</span>';
     html += '<strong>' + statusText + '</strong> ';
@@ -260,7 +240,7 @@ function renderServerLog() {
 }
 
 // Simulate server-side processing with TOCTOU vulnerability
-function serverProcessTransfer(account, amount, isRace) {
+function serverProcessTransfer(account, amount) {
   return new Promise(function(resolve) {
     var txId = 'TX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4);
 
@@ -268,7 +248,6 @@ function serverProcessTransfer(account, amount, isRace) {
     addServerLog('check', '[SERVER] TX ' + txId + ': Checking balance... balance=' + formatMoney(balance) + ' >= amount=' + formatMoney(amount) + ' ? ' + (balance >= amount ? 'YES' : 'NO'));
 
     if (balance < amount) {
-      // Balance check fails immediately
       addServerLog('error', '[SERVER] TX ' + txId + ': INSUFFICIENT FUNDS. Balance=' + formatMoney(balance) + ' < amount=' + formatMoney(amount));
       addTxLogEntry(account, amount, 'failed', 'Insufficient funds (balance=' + formatMoney(balance) + ')');
       resolve({ success: false, reason: 'insufficient_funds' });
@@ -276,21 +255,27 @@ function serverProcessTransfer(account, amount, isRace) {
     }
 
     // Step 2: Simulate processing delay (THE RACE WINDOW)
-    var delay = isRace ? 150 + Math.random() * 100 : 200; // Slight variation for realism
+    var delay = 200 + Math.random() * 200; // 200-400ms window for manual exploitation
     addServerLog('check', '[SERVER] TX ' + txId + ': Balance check PASSED. Processing transfer (delay=' + Math.round(delay) + 'ms)...');
 
     setTimeout(function() {
       // Step 3: Deduct balance (TIME OF USE)
-      // NOTE: No re-check — the check already passed above. This IS the vulnerability.
       addServerLog('deduct', '[SERVER] TX ' + txId + ': Deducting ' + formatMoney(amount) + ' from balance.');
 
       balance -= amount;
       totalSent += amount;
       txCount++;
+      pendingTransfers--;
 
       addServerLog('complete', '[SERVER] TX ' + txId + ': Transfer COMPLETE. New balance=' + formatMoney(balance) + '. Total sent=' + formatMoney(totalSent));
-      addTxLogEntry(account, amount, isRace ? 'race' : 'success', 'Balance now: ' + formatMoney(balance));
+      addTxLogEntry(account, amount, 'race', 'Balance now: ' + formatMoney(balance));
       updateUI();
+
+      // Log to race progress
+      var raceLog = document.getElementById('raceLog');
+      if (raceLog) {
+        raceLog.innerHTML = '<span class="log-complete">[' + new Date().toLocaleTimeString() + '] Transfer #' + txCount + ' completed. Total sent: ' + formatMoney(totalSent) + '</span>\n';
+      }
 
       // Check if anomalous (race condition detected)
       if (totalSent > initialBalance && !raceConditionFlag) {
@@ -306,7 +291,6 @@ function serverProcessTransfer(account, amount, isRace) {
 }
 
 function singleTransfer() {
-  if (raceInProgress) return;
   var select = document.getElementById('recipientSelect');
   var account = select.value + ' (' + select.options[select.selectedIndex].text.split(' (')[0] + ')';
   var amount = parseFloat(document.getElementById('amountInput').value);
@@ -316,61 +300,21 @@ function singleTransfer() {
     return;
   }
 
-  document.getElementById('singleTxBtn').disabled = true;
-  document.getElementById('singleResult').innerHTML = '<span class="log-check">Processing...</span>';
+  pendingTransfers++;
+  var raceLog = document.getElementById('raceLog');
 
-  serverProcessTransfer(account, amount, false).then(function(result) {
-    document.getElementById('singleTxBtn').disabled = false;
+  document.getElementById('singleResult').innerHTML = '<span class="log-check">Transfer #' + (txCount + 1) + ' sent... (' + pendingTransfers + ' pending)</span>';
+
+  if (raceLog) {
+    raceLog.innerHTML = '<span class="log-check">[' + new Date().toLocaleTimeString() + '] Transfer #' + (txCount + 1) + ' initiated (' + formatMoney(amount) + ')... ' + pendingTransfers + ' pending</span>';
+  }
+
+  serverProcessTransfer(account, amount).then(function(result) {
     if (result.success) {
-      document.getElementById('singleResult').innerHTML = '<span style="color:var(--accent-green);">Transfer successful! Sent ' + formatMoney(amount) + ' to ' + account + '</span>';
+      document.getElementById('singleResult').innerHTML = '<span style="color:var(--accent-green);">Transfer #' + txCount + ' complete! Sent ' + formatMoney(amount) + ' to ' + account + '</span>';
     } else {
       document.getElementById('singleResult').innerHTML = '<span class="error-line">Transfer failed: ' + result.reason + '</span>';
     }
-  });
-}
-
-function raceAttack() {
-  if (raceInProgress) return;
-  raceInProgress = true;
-
-  document.getElementById('raceBtn').disabled = true;
-  document.getElementById('raceBtn').textContent = 'Race in progress...';
-  document.getElementById('raceProgress').style.display = 'block';
-  document.getElementById('raceLog').innerHTML = '<span class="log-check">Launching race attack with 10 simultaneous $100 transfers...</span>\n';
-
-  // Send 10 requests at the EXACT SAME TIME (all promises created before any resolve)
-  var promises = [];
-  var amount = 100;
-
-  for (var i = 0; i < 10; i++) {
-    var account = accounts[i];
-    var accountLabel = account.id + ' (' + account.name + ')';
-    // All 10 requests are launched simultaneously
-    promises.push(serverProcessTransfer(accountLabel, amount, true));
-  }
-
-  var raceLog = document.getElementById('raceLog');
-  var logContent = '<span class="log-check">[' + new Date().toLocaleTimeString() + '] Race attack initiated: 10 x $100 = $1000 requested simultaneously</span>\n';
-
-  Promise.all(promises).then(function(results) {
-    var successCount = 0;
-    var failCount = 0;
-    for (var i = 0; i < results.length; i++) {
-      if (results[i].success) successCount++;
-      else failCount++;
-    }
-
-    logContent += '<span class="log-complete">[' + new Date().toLocaleTimeString() + '] Race attack complete: ' + successCount + ' succeeded, ' + failCount + ' failed</span>\n';
-    logContent += '<span class="log-deduct">[' + new Date().toLocaleTimeString() + '] Total transferred: ' + formatMoney(totalSent) + ' (initial balance was ' + formatMoney(initialBalance) + ')</span>\n';
-
-    if (successCount > 1 && totalSent > initialBalance) {
-      logContent += '<span class="log-error">[' + new Date().toLocaleTimeString() + '] SECURITY ANOMALY DETECTED: Total sent exceeds initial balance!</span>\n';
-    }
-
-    raceLog.innerHTML = logContent;
-    raceInProgress = false;
-    document.getElementById('raceBtn').disabled = false;
-    document.getElementById('raceBtn').textContent = 'Launch Race Attack';
   });
 }
 
@@ -385,13 +329,21 @@ function triggerFlag() {
   analysis.textContent += '// Initial balance: ' + formatMoney(initialBalance) + '\n';
   analysis.textContent += '// Total transferred: ' + formatMoney(totalSent) + '\n';
   analysis.textContent += '// Excess amount: ' + formatMoney(totalSent - initialBalance) + '\n';
-  analysis.textContent += '// Transactions: ' + txCount + '\n';
+  analysis.textContent += '// Transfers sent: ' + txCount + '\n';
   analysis.textContent += '// \n';
   analysis.textContent += '// The server checked "balance >= amount" but the balance was not\n';
   analysis.textContent += '// updated between concurrent requests. All requests passed the\n';
   analysis.textContent += '// check before any deduction occurred.';
+  analysis.textContent += '\n// \n';
+  analysis.textContent += '// Attack vector: Manual rapid-fire transfers (TOCTOU race condition)\n';
+  analysis.textContent += '// User sent ' + txCount + ' rapid transfers before the first deduction completed.';
 
   document.getElementById('summarySection').style.display = 'block';
+
+  var raceLog = document.getElementById('raceLog');
+  if (raceLog) {
+    raceLog.innerHTML = '<span class="log-error">[' + new Date().toLocaleTimeString() + '] RACE CONDITION CONFIRMED! Total sent (' + formatMoney(totalSent) + ') exceeds initial balance (' + formatMoney(initialBalance) + ')</span>\n';
+  }
 
   setTimeout(function() {
     document.getElementById('flagSection').style.display = 'block';
@@ -406,16 +358,19 @@ function resetChallenge() {
   txLog = [];
   serverLogEntries = [];
   raceConditionFlag = false;
-  raceInProgress = false;
+  pendingTransfers = 0;
 
   document.getElementById('flagSection').style.display = 'none';
   document.getElementById('detectionBanner').style.display = 'none';
   document.getElementById('summarySection').style.display = 'none';
-  document.getElementById('raceProgress').style.display = 'none';
-  document.getElementById('raceBtn').disabled = false;
-  document.getElementById('raceBtn').textContent = 'Launch Race Attack';
   document.getElementById('singleResult').innerHTML = '';
   document.getElementById('singleTxBtn').disabled = false;
+  document.getElementById('raceProgressCount').textContent = '0';
+
+  var raceLog = document.getElementById('raceLog');
+  if (raceLog) {
+    raceLog.innerHTML = '<span class="text-muted">Challenge reset. Click "Send Transfer" 10 times rapidly to exploit the race condition.</span>';
+  }
 
   renderTxLog();
   renderServerLog();
