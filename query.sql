@@ -1,0 +1,1 @@
+SELECT id, title, category, flag, flagMode, isPublished, points, difficulty FROM Challenge ORDER BY id;

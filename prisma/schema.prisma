@@ -167,3 +167,4 @@ model ScanTransaction {
   userAgent     String?
   createdAt     DateTime @default(now())
 }
+
