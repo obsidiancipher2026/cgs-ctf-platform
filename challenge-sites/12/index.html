@@ -7,13 +7,6 @@
   <title>JWT Authentication Bypass</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .jwt-display { font-family: 'Courier New', monospace; font-size: 0.72rem; word-break: break-all; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; max-height: 200px; overflow-y: auto; }
-    .jwt-part-header { color: var(--accent-red); }
-    .jwt-part-payload { color: var(--accent-green); }
-    .jwt-part-sig { color: var(--accent-orange); }
-    .token-input { width:100%; padding:0.65rem; background:rgba(10,14,39,0.8); border:1px solid var(--accent-cyan); color:var(--text-primary); border-radius:4px; font-family:'Courier New',monospace; font-size:0.75rem; word-break:break-all; resize:vertical; min-height:60px; }
-    .token-input:focus { outline:none; border-color:var(--accent-cyan); box-shadow:0 0 10px rgba(0,217,255,0.3); }
-  </style>
 </head>
 <body>
 <nav><ul><li><a href="#" class="active">Challenge</a></li></ul></nav>
@@ -37,14 +30,35 @@ function b64uDecode(s) {
   } catch(e) { return null; }
 }
 
+function b64uEncode(obj) {
+  try {
+    return btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  } catch(e) { return ''; }
+}
+
 function readTokenFromURL() {
   var params = new URLSearchParams(window.location.search);
   return params.get('token') || '';
 }
 
+function setTokenInURL(token) {
+  var url = new URL(window.location.href);
+  url.searchParams.set('token', token);
+  window.history.replaceState({}, '', url.toString());
+}
+
 function checkToken() {
   var token = readTokenFromURL();
-  if (!token) return;
+  if (!token) {
+    var now = Math.floor(Date.now() / 1000);
+    var header = { alg: 'HS256', typ: 'JWT' };
+    var payload = { user: 'guest', role: 'user', iat: now };
+    var h = b64uEncode(header);
+    var p = b64uEncode(payload);
+    var fakeSig = b64uEncode({ dummy: h + '.' + p + '|secret123' });
+    token = h + '.' + p + '.' + fakeSig;
+    setTokenInURL(token);
+  }
   var parts = token.split('.');
   if (parts.length !== 3) return;
   try {
