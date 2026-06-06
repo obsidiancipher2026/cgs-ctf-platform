@@ -138,16 +138,7 @@ O:3:"Log":1:{s:4:"file";s:18:"/etc/passwd";}
 <span class="cm">// s:18:"..."  — String value (18 chars)</span>
         </div>
 
-        <div class="payload-builder" style="margin-top:1rem;">
-          <label style="display:block;margin-bottom:0.3rem;">Quick Payload Builder</label>
-          <select id="targetFile" style="width:100%;margin-bottom:0.5rem;">
-            <option value="/etc/passwd">/etc/passwd (Linux users)</option>
-            <option value="/etc/hosts">/etc/hosts</option>
-            <option value="/flag">/flag</option>
-            <option value="/var/www/html/flag.txt">/var/www/html/flag.txt</option>
-          </select>
-          <div style="font-family:'Courier New',monospace;font-size:0.78rem;background:rgba(0,0,0,0.3);padding:0.5rem;border-radius:4px;word-break:break-all;" id="payloadPreview">O:3:"Log":1:{s:4:"file";s:18:"/etc/passwd";}</div>
-        </div>
+
       </div>
 
       <div class="card">
@@ -261,18 +252,7 @@ function showTab(name) {
   if (links[idx[name]]) links[idx[name]].classList.add('active');
 }
 
-// Payload builder
-function updatePayloadPreview() {
-  var file = document.getElementById('targetFile').value;
-  var fileLen = file.length;
-  var serialized = 'O:3:"Log":1:{s:4:"file";s:' + fileLen + ':"' + file + '";}';
-  document.getElementById('payloadPreview').textContent = serialized;
-  // Update both textareas
-  document.getElementById('rawData').value = serialized;
-  document.getElementById('serialData').value = btoa(serialized);
-}
-
-document.getElementById('targetFile').addEventListener('change', updatePayloadPreview);
+// Payload builder has been removed — users must craft serialized payload manually
 
 // Allow manual editing
 document.getElementById('rawData').addEventListener('input', function() {
@@ -416,8 +396,9 @@ function sendPayload() {
   }, 300);
 }
 
-// Initialize payload builder
-updatePayloadPreview();
+// Initialize serialized data with a sample payload
+document.getElementById('rawData').value = 'O:3:"Log":1:{s:4:"file";s:10:"/etc/hosts";}';
+document.getElementById('serialData').value = btoa(document.getElementById('rawData').value);
 </script>
 </body>
 </html>

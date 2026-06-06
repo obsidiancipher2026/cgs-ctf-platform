@@ -41,7 +41,7 @@
 <code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' OR 1=1 --&quot;)">' OR 1=1 --</code>
 <code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' UNI0N SELE3T 1,2,3,4 --&quot;)">' UNI0N SELE3T 1,2,3,4 --</code>
 <code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' UNI0N SELE3T 1,t4ble_n4me,3,4 FR0M inf0rmati0n_schema.t4bles --&quot;)">' UNI0N SELE3T 1,t4ble_n4me,3,4 FR0M inf0rmati0n_schema.t4bles --</code>
-<code class="mono" style="display:block;padding:0.2rem 0;cursor:pointer;font-size:0.78rem;" onclick="fillSearch(&quot;' UNI0N SELE3T 1,fl4g,3,4 FR0M fl4gs --&quot;)">' UNI0N SELE3T 1,fl4g,3,4 FR0M fl4gs --</code>
+
 </div>
 </div>
 <div class="card"><h3>Results</h3>
@@ -57,7 +57,7 @@
 <footer>Cyber Guardians Society CTF &bull; SQL Injection - Data Extraction</footer>
 <script>
 function showTab(n){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('nav a').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active');var i={home:0,lab:1};var l=document.querySelectorAll('nav a');if(l[i[n]])l[i[n]].classList.add('active')}
-function fillSearch(v){document.getElementById('searchInput').value=v;searchProducts()}
+function fillSearch(v){document.getElementById('searchInput').value=v;document.getElementById('searchInput').focus()}
 var products=[{id:1,name:'Laptop',price:999.99,desc:'High performance laptop'},{id:2,name:'Mouse',price:24.99,desc:'Wireless mouse'},{id:3,name:'Keyboard',price:89.99,desc:'Mechanical keyboard'},{id:4,name:'Monitor',price:299.99,desc:'27-inch 4K monitor'},{id:5,name:'Headphones',price:149.99,desc:'Noise cancelling headphones'}];
 function searchProducts(){var input=document.getElementById('searchInput').value;var queryDisplay=document.getElementById('queryDisplay');var container=document.getElementById('resultsContainer');var btn=document.getElementById('searchBtn');btn.disabled=true;queryDisplay.innerHTML='<span class="text-muted">SQL:</span> SELECT id, name, price, description FROM products WHERE name LIKE \'%<span style="color:var(--accent-red);">'+input.replace(/</g,'&lt;')+'</span>%\'';
 setTimeout(function(){btn.disabled=false;
