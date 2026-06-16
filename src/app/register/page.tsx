@@ -182,16 +182,16 @@ export default function RegisterPage() {
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Country</label>
-                <input type="text" value={form.country} onChange={(e) => update('country', e.target.value)} className={inputClass} placeholder="e.g. PK" />
+                <label className={labelClass}>Country <span className="text-cyber-blue">*</span></label>
+                <input type="text" value={form.country} onChange={(e) => update('country', e.target.value)} className={inputClass} placeholder="e.g. PK" required />
                 <p className="text-gray-500 font-mono text-[10px] mt-1">Please write your country name in short form (e.g. PK, IND, UAE)</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="sm:col-span-1">
-                <label className={labelClass}>College / University</label>
-                <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="(optional)" />
+                <label className={labelClass}>College / University <span className="text-cyber-blue">*</span></label>
+                <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="e.g. NUST" required />
                 <p className="text-gray-500 font-mono text-[10px] mt-1">Please write your college/university name in short form</p>
               </div>
               <div>
