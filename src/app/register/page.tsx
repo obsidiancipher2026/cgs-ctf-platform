@@ -228,6 +228,12 @@ export default function RegisterPage() {
               </span>
             </label>
 
+            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+              <p className="text-amber-400 font-cyber text-sm text-center">
+                After registration, please wait for admin approval for account activation.
+              </p>
+            </div>
+
             <button
               type="submit"
               disabled={loading}

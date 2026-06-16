@@ -11,7 +11,7 @@ import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await api.login(sanitizeInput(username), password);
+      const data = await api.login(sanitizeInput(email), password);
       setAuth(data.user);
       try {
         const csrfData = await api.getCsrfToken();
@@ -58,13 +58,13 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-                  <label className="block text-gray-400 font-mono text-xs mb-2">Scoreboard Name</label>
+                  <label className="block text-gray-400 font-mono text-xs mb-2">Email</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm"
-                  placeholder="your_scoreboard_name"
+                  placeholder="agent@cyberguardians.io"
                 required
               />
             </div>
