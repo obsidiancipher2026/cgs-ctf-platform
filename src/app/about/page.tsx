@@ -100,9 +100,9 @@ export default function About() {
                 className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-cyan/20 ring-2 ring-cyber-cyan/50"
                 whileHover={{ scale: 1.08, boxShadow: '0 0 40px rgba(0, 229, 255, 0.3)' }}
               >
-                <img src="/images/replaced-image.jpg" alt="Shayan Ahmed" className="w-full h-full object-cover img-glow" />
+                <img src="/images/shayan-ahmed.jpeg" alt="Shayan Ahmed" className="w-full h-full object-cover img-glow" />
               </motion.div>
-              <h3 className="font-cyber text-white text-lg font-bold">{'>>'} Shayan Ahmed</h3>
+              <h3 className="font-cyber text-white text-lg font-bold">Shayan Ahmed</h3>
               <p className="text-cyber-cyan font-mono text-xs mt-1">Founder &amp; Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Building and maintaining the CTF platform infrastructure</p>
               <div className="flex items-center justify-center gap-3 mt-3">
@@ -123,7 +123,7 @@ export default function About() {
               >
                 <img src="/images/muhammad-saad.jpeg" alt="Muhammad Saad" className="w-full h-full object-cover img-glow" />
               </motion.div>
-              <h3 className="font-cyber text-white text-lg font-bold">{'>>'} Muhammad Saad</h3>
+              <h3 className="font-cyber text-white text-lg font-bold">Muhammad Saad</h3>
               <p className="text-orange-400 font-mono text-xs mt-1">Challenges and Platform Security Organizer</p>
               <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Designing challenges and ensuring platform security</p>
               <div className="flex items-center justify-center gap-3 mt-3">
