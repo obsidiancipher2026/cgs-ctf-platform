@@ -1,16 +1,14 @@
 import { z } from 'zod'
 import prisma from '@/lib/prisma'
 import { jsonResponse, getClientIp } from '@/lib/auth'
-import { sanitizeText, validatePasswordStrength } from '@/lib/sanitizer'
+import { sanitizeText } from '@/lib/sanitizer'
 import { getPasswordHash } from '@/lib/auth'
 
 const UserCreateSchema = z.object({
   username: z.string().min(3).max(50),
   email: z.string().email().max(120),
   password: z.string().min(8),
-  first_name: z.string().min(1).max(100),
-  middle_name: z.string().max(100).optional(),
-  last_name: z.string().max(100).optional(),
+  full_name: z.string().min(1).max(100),
   gender: z.string().max(50).optional(),
   country: z.string().max(100).optional(),
   college: z.string().max(200).optional(),
@@ -30,19 +28,12 @@ export async function POST(request: Request) {
 
     const username = sanitizeText(data.username, 50)
     const email = sanitizeText(data.email, 120)
-    const firstName = sanitizeText(data.first_name, 100)
-    const middleName = sanitizeText(data.middle_name || '', 100)
-    const lastName = sanitizeText(data.last_name || '', 100)
+    const fullName = sanitizeText(data.full_name, 100)
     const gender = sanitizeText(data.gender || '', 50)
     const country = sanitizeText(data.country || '', 100)
     const college = sanitizeText(data.college || '', 200)
     const ageGroup = sanitizeText(data.age_group || '', 50)
     const playerType = sanitizeText(data.player_type || '', 50)
-
-    const pwError = validatePasswordStrength(data.password)
-    if (pwError) {
-      return jsonResponse({ detail: pwError }, 400)
-    }
 
     const existing = await prisma.user.findFirst({
       where: { OR: [{ username }, { email }] },
@@ -55,9 +46,9 @@ export async function POST(request: Request) {
       data: {
         username,
         email,
-        firstName,
-        middleName: middleName || null,
-        lastName: lastName || null,
+        firstName: fullName,
+        middleName: null,
+        lastName: null,
         gender: gender || null,
         country: country || null,
         college: college || null,

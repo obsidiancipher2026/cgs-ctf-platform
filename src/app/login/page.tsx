@@ -66,6 +66,7 @@ export default function LoginPage() {
                 className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm"
                   placeholder="agent@cyberguardians.io"
                 required
+                autoComplete="email"
               />
             </div>
 
@@ -79,6 +80,7 @@ export default function LoginPage() {
                   className="cyber-input w-full px-4 py-3 pr-12 rounded-lg font-mono text-sm"
                   placeholder="••••••••"
                   required
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"

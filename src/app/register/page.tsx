@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
-    first_name: '', middle_name: '', last_name: '',
+    full_name: '',
     username: '', email: '', password: '', confirmPassword: '',
     gender: '', country: '', college: '',
     age_group: '', player_type: '', agreed_tos: false,
@@ -48,16 +48,14 @@ export default function RegisterPage() {
       toast.error('Passwords do not match');
       return;
     }
-    if (!form.first_name.trim()) {
-      toast.error('First name is required');
+    if (!form.full_name.trim()) {
+      toast.error('Full name is required');
       return;
     }
     setLoading(true);
     try {
       await api.register(sanitizeObject({
-        first_name: form.first_name,
-        middle_name: form.middle_name || undefined,
-        last_name: form.last_name || undefined,
+        full_name: form.full_name,
         username: form.username,
         email: form.email,
         password: form.password,
@@ -120,29 +118,19 @@ export default function RegisterPage() {
             </div>
           ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className={labelClass}>First Name <span className="text-cyber-blue">*</span></label>
-                <input type="text" value={form.first_name} onChange={(e) => update('first_name', e.target.value)} className={inputClass} placeholder="John" required />
-              </div>
-              <div>
-                <label className={labelClass}>Middle Name</label>
-                <input type="text" value={form.middle_name} onChange={(e) => update('middle_name', e.target.value)} className={inputClass} placeholder="(optional)" />
-              </div>
-              <div>
-                <label className={labelClass}>Last Name</label>
-                <input type="text" value={form.last_name} onChange={(e) => update('last_name', e.target.value)} className={inputClass} placeholder="(optional)" />
-              </div>
+            <div>
+              <label className={labelClass}>Full Name <span className="text-cyber-blue">*</span></label>
+              <input type="text" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} className={inputClass} placeholder="John Doe" required autoComplete="name" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Scoreboard Name <span className="text-cyber-blue">*</span></label>
-                <input type="text" value={form.username} onChange={(e) => update('username', e.target.value)} className={inputClass} placeholder="choose_callsign" required minLength={3} />
+                <input type="text" value={form.username} onChange={(e) => update('username', e.target.value)} className={inputClass} placeholder="choose_callsign" required minLength={3} autoComplete="username" />
               </div>
               <div>
                 <label className={labelClass}>Email <span className="text-cyber-blue">*</span></label>
-                <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={inputClass} placeholder="agent@cyberguardians.io" required />
+                <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={inputClass} placeholder="agent@cyberguardians.io" required autoComplete="email" />
               </div>
             </div>
 
@@ -150,23 +138,15 @@ export default function RegisterPage() {
               <div>
                 <label className={labelClass}>Password <span className="text-cyber-blue">*</span></label>
                 <div className="relative">
-                  <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} className={inputClass + " pr-12"} placeholder="••••••••" required minLength={6} />
+                  <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} className={inputClass + " pr-12"} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyber-blue transition-colors">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
-{form.password && (
-    <div className="h-1.5 rounded-full bg-gray-800 overflow-hidden mt-1">
-      <div
-        className="h-full rounded-full bg-cyber-blue transition-all duration-300"
-        style={{ width: `${Math.min(100, (form.password.length / 10) * 100)}%` }}
-      />
-    </div>
-  )}
               <div>
                 <label className={labelClass}>Confirm Password <span className="text-cyber-blue">*</span></label>
-                <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={inputClass} placeholder="••••••••" required minLength={6} />
+                <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={inputClass} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
               </div>
             </div>
 

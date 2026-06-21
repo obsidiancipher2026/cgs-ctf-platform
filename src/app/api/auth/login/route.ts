@@ -40,7 +40,9 @@ export async function POST(request: Request) {
     // Item 14: Apply tarpit BEFORE querying user to prevent timing-based user enumeration
     await tarpitDelay(clientIp)
 
-    const user = await prisma.user.findUnique({ where: { username } })
+    const user = await prisma.user.findFirst({
+      where: { OR: [{ username }, { email: username }] },
+    })
 
     if (!user || !(await verifyPassword(data.password, user.hashedPassword))) {
       await prisma.log.create({

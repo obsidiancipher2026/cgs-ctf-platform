@@ -52,7 +52,7 @@ class ApiClient {
 
   async register(data: {
     username: string; email: string; password: string;
-    first_name: string; middle_name?: string; last_name?: string;
+    full_name: string;
     gender?: string; country?: string; college?: string;
     age_group?: string; player_type?: string; agreed_tos: boolean;
   }) {
