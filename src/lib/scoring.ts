@@ -50,3 +50,20 @@ export async function getSolverCount(challengeId: number): Promise<number> {
     where: { challengeId, isCorrect: true },
   })
 }
+
+export async function recalculateAllScores(): Promise<void> {
+  const users = await prisma.user.findMany({
+    where: { isBanned: false, status: 'active' },
+    select: { id: true },
+  })
+
+  for (const user of users) {
+    const score = await getScore(user.id)
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { score },
+    })
+  }
+
+  await recalculateRankings()
+}

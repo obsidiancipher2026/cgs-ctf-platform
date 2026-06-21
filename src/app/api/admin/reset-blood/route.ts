@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma'
 import { authenticate, requireAdmin, jsonResponse, getClientIp } from '@/lib/auth'
 import { config } from '@/lib/config'
 import { csrfProtection } from '@/lib/csrf'
+import { recalculateAllScores } from '@/lib/scoring'
 
 export async function POST(request: Request) {
   const { user, error } = await authenticate(request)
@@ -16,6 +17,7 @@ export async function POST(request: Request) {
   if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
   await prisma.challenge.updateMany({ data: { bloodPoints: 0, firstBloodUserId: null } })
+  await recalculateAllScores()
   await prisma.log.create({ data: { action: 'all_blood_reset', userId: user.id, ipAddress: clientIp, severity: 'suspicious' } })
   return jsonResponse({ message: 'All blood points have been reset' })
 }

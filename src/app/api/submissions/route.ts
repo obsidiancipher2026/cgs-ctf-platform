@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma'
 import { config } from '@/lib/config'
 import { authenticate, jsonResponse, getClientIp } from '@/lib/auth'
 import { validateFlagStrict } from '@/lib/sanitizer'
-import { recalculateRankings, getSolverCount } from '@/lib/scoring'
+import { recalculateRankings } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,42 +83,49 @@ export async function POST(request: Request) {
       isCorrect = flag.trim() === challenge.flag?.trim()
     }
 
-    const correctCount = isCorrect ? await getSolverCount(challenge_id) : 0
-    const isFirstBlood = correctCount === 0
-
-    const submission = await prisma.submission.create({
-      data: {
-        challengeId: challenge_id,
-        userId: user.id,
-        teamId: user.teamId || null,
-        flagProvided: flag,
-        isCorrect,
-        ipAddress: clientIp,
-      },
-    })
-
-    await prisma.log.create({
-      data: {
-        action: 'flag_submitted',
-        userId: user.id,
-        ipAddress: clientIp,
-        severity: isCorrect ? 'info' : 'suspicious',
-        details: JSON.stringify({ challenge_id, correct: isCorrect }),
-      },
-    })
-
     if (isCorrect) {
-      const pointsToAward = challenge.points + (isFirstBlood ? challenge.bloodPoints : 0)
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { score: { increment: pointsToAward } },
+      const result = await prisma.$transaction(async (tx) => {
+        const correctCount = await tx.submission.count({
+          where: { challengeId: challenge_id, isCorrect: true },
+        })
+        const isFirstBlood = correctCount === 0
+
+        const pointsToAward = challenge.points + (isFirstBlood ? challenge.bloodPoints : 0)
+
+        await tx.submission.create({
+          data: {
+            challengeId: challenge_id,
+            userId: user.id,
+            teamId: user.teamId || null,
+            flagProvided: flag,
+            isCorrect: true,
+            ipAddress: clientIp,
+          },
+        })
+
+        await tx.user.update({
+          where: { id: user.id },
+          data: { score: { increment: pointsToAward } },
+        })
+
+        await tx.challenge.update({
+          where: { id: challenge_id },
+          data: {
+            solverCount: { increment: 1 },
+            ...(isFirstBlood ? { firstBloodUserId: user.id } : {}),
+          },
+        })
+
+        return { pointsToAward, isFirstBlood }
       })
 
-      await prisma.challenge.update({
-        where: { id: challenge_id },
+      await prisma.log.create({
         data: {
-          solverCount: { increment: 1 },
-          ...(isFirstBlood ? { firstBloodUserId: user.id } : {}),
+          action: 'flag_submitted',
+          userId: user.id,
+          ipAddress: clientIp,
+          severity: 'info',
+          details: JSON.stringify({ challenge_id, correct: true, first_blood: result.isFirstBlood }),
         },
       })
 
@@ -126,11 +133,32 @@ export async function POST(request: Request) {
 
       return jsonResponse({
         correct: true,
-        message: 'Correct flag! Points awarded.',
-        points_awarded: pointsToAward,
-        first_blood: isFirstBlood,
+        message: result.isFirstBlood ? 'Correct flag! First blood + bonus!' : 'Correct flag! Points awarded.',
+        points_awarded: result.pointsToAward,
+        first_blood: result.isFirstBlood,
       })
     } else {
+      await prisma.submission.create({
+        data: {
+          challengeId: challenge_id,
+          userId: user.id,
+          teamId: user.teamId || null,
+          flagProvided: flag,
+          isCorrect: false,
+          ipAddress: clientIp,
+        },
+      })
+
+      await prisma.log.create({
+        data: {
+          action: 'flag_submitted',
+          userId: user.id,
+          ipAddress: clientIp,
+          severity: 'suspicious',
+          details: JSON.stringify({ challenge_id, correct: false }),
+        },
+      })
+
       return jsonResponse({
         correct: false,
         message: 'Incorrect flag. Try again.',

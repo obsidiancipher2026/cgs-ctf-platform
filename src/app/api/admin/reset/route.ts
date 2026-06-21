@@ -16,6 +16,8 @@ export async function POST(request: Request) {
   if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
   await prisma.user.updateMany({ data: { score: 0, ranking: 0 } })
+  await prisma.challenge.updateMany({ data: { solverCount: 0, firstBloodUserId: null } })
+  await prisma.submission.deleteMany()
   await prisma.log.create({ data: { action: 'competition_reset', userId: user.id, ipAddress: clientIp, severity: 'suspicious' } })
   return jsonResponse({ message: 'Competition has been reset' })
 }
