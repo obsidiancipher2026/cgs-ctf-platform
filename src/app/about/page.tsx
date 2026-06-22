@@ -6,32 +6,32 @@ import { ChevronRight, Linkedin, Github, MessageCircle, Mail } from 'lucide-reac
 const sections = [
   {
     title: 'Who We Are',
-    content: 'In this new world, one that is riddled with secrets and hidden paths and adversaries, Cyber Guardians Society was formed for the people who will not be spectators anymore. Cyber Guardians Society consists of people from all walks of life who are united in their passion and dedication towards discovering something that others miss. Our aim is to take you out of your comfort zones through realistic attacks and challenges.',
+    content: 'Cyber Guardians Society is for people who love solving problems and finding hidden things. We welcome everyone — no matter your background. Our goal is simple: teach you to think like a hacker through real challenges.',
     color: '#00d4ff',
   },
   {
     title: 'Our Mission',
-    content: 'Every vulnerability tells a story. Our mission is to create an environment where aspiring and experienced security enthusiasts can sharpen their skills through authentic cyber warfare simulations. We believe cybersecurity is not learned from slides and textbooks alone. It is mastered through exploration, experimentation, and discovery. By blending education with competition, we prepare the next generation of defenders to navigate an increasingly complex digital battlefield.',
+    content: 'We believe the best way to learn cybersecurity is by actually doing it. Our platform gives you real practice, not just theory. Train through real hacking simulations. Learn by exploring, not just reading. Build skills you can actually use.',
     color: '#7b2ff7',
   },
   {
     title: 'Enter The Arena',
-    content: 'Not every challenge is what it seems. Hidden throughout the platform are secrets waiting to be uncovered. Each challenge conceals a flag, a piece of digital proof that confirms your success. To find it, you\'ll need to think differently, analyze carefully, and sometimes venture down paths others overlook. Every solved challenge reveals another layer of the puzzle. Every flag brings you one step closer to mastery.',
+    content: 'Each challenge hides a secret called a flag. Find it and you prove you solved the challenge. It won\'t be easy — you have to look carefully and think outside the box. Find hidden flags inside each challenge. Every flag you find moves you forward. You earn your progress here.',
     color: '#00ff88',
   },
   {
     title: 'The Challenges',
-    content: 'Behind every system lies a weakness. Our challenge ecosystem covers multiple cybersecurity domains, each designed to test a unique skillset: Cryptography — Ancient ciphers. Modern encryption. Hidden messages waiting to be revealed. Web Exploitation — Discover flaws buried beneath seemingly secure applications. Reverse Engineering — Dissect binaries, unravel logic, and expose hidden functionality. Digital Forensics — Follow the evidence, reconstruct events, and uncover the truth. Miscellaneous — Expect the unexpected. Some puzzles refuse to fit neatly into categories.',
+    content: 'We cover all the major areas of cybersecurity: Cryptography — Break codes and hidden messages. Web Exploitation — Find weaknesses in websites. Reverse Engineering — Take apart programs and understand how they work. Digital Forensics — Investigate digital evidence like a detective. Miscellaneous — Anything and everything unexpected.',
     color: '#ffd700',
   },
   {
     title: 'Beyond Competition',
-    content: 'Knowledge grows strongest when shared. Cyber Guardians Society is more than a platform. It is a gathering place for explorers, researchers, and problem-solvers who thrive on curiosity. Exchange ideas, discuss techniques, learn from others, and contribute to a community built around continuous growth. The leaderboard measures progress. The journey measures expertise.',
+    content: 'This is more than just a game. Cyber Guardians is a community where people help each other grow. Share ideas and tips with others. Track your progress on the leaderboard. Grow together through learning and teamwork.',
     color: '#ff2d79',
   },
   {
     title: 'Begin Your Journey',
-    content: 'Every expert was once staring at their first challenge. Start with the easier missions, learn the fundamentals, and gradually unlock more difficult objectives. When the path forward becomes unclear, hints can illuminate the next step, but true satisfaction comes from discovering the answer yourself. Some challenges test your knowledge. Others test your persistence. The question is simple: How deep are you willing to go?',
+    content: 'Start small, learn the basics, and slowly take on harder challenges. If you get stuck, hints are there to help — but try on your own first. Begin with easy challenges and build up. Use hints only when you really need them. Some challenges test your knowledge. Some test how much you don\'t give up.',
     color: '#00f0ff',
   },
 ];

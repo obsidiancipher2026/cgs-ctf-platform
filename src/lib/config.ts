@@ -3,6 +3,17 @@ function parseCSV(value: string | undefined): string[] {
   return value.split(',').map(s => s.trim()).filter(Boolean)
 }
 
+function requireEnv(name: string, fallback?: string): string {
+  const value = process.env[name] || fallback
+  if (!value) {
+    throw new Error(
+      `[FATAL] Required environment variable ${name} is not set. ` +
+      `The application cannot start without it. Set it in your environment or .env file.`
+    )
+  }
+  return value
+}
+
 export const config = {
   appName: process.env.APP_NAME || process.env.NEXT_PUBLIC_APP_NAME || 'Cyber Guardians Society CTF',
   version: process.env.NEXT_PUBLIC_VERSION || '1.0.0',
@@ -10,7 +21,7 @@ export const config = {
   debug: process.env.NODE_ENV === 'development',
 
   jwt: {
-    secret: process.env.JWT_SECRET || 'change-me-in-production',
+    secret: requireEnv('JWT_SECRET'),
     algorithm: 'HS256',
     accessExpireMinutes: parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '15', 10),
     refreshExpireDays: parseInt(process.env.REFRESH_TOKEN_EXPIRE_DAYS || '7', 10),
@@ -21,11 +32,11 @@ export const config = {
   },
 
   admin: {
-    username: process.env.ADMIN_USERNAME || '',
-    password: process.env.ADMIN_PASSWORD || '',
+    username: requireEnv('ADMIN_USERNAME'),
+    password: requireEnv('ADMIN_PASSWORD'),
     email: process.env.ADMIN_EMAIL || 'admin@cyberguardians.io',
     allowedIPs: parseCSV(process.env.ADMIN_ALLOWED_IPS),
-    accessKey: process.env.ADMIN_ACCESS_KEY || '',
+    accessKey: requireEnv('ADMIN_ACCESS_KEY'),
     secretPath: process.env.ADMIN_SECRET_PATH || 'superuser',
     fingerprintEnforced: process.env.ADMIN_FINGERPRINT_ENFORCED !== 'false',
     honeytokenUsernames: parseCSV(process.env.ADMIN_HONEYTOKEN_USERNAMES),

@@ -4,19 +4,26 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  const hashedPassword = await bcrypt.hash('%7O#sidianC!pher26AtT_G', 12)
+  const adminPassword = process.env.ADMIN_PASSWORD
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@cyberguardians.io'
+
+  if (!adminPassword) {
+    console.error('[FATAL] ADMIN_PASSWORD environment variable is required for seeding.')
+    console.error('Run: ADMIN_PASSWORD=your-password npx prisma db seed')
+    process.exit(1)
+  }
+
+  const hashedPassword = await bcrypt.hash(adminPassword, 12)
 
   await prisma.user.upsert({
-    where: { username: 'Master' },
+    where: { username: process.env.ADMIN_USERNAME || 'admin' },
     update: {},
     create: {
-      username: 'Master',
-      email: 'master@cgs.local',
+      username: process.env.ADMIN_USERNAME || 'admin',
+      email: adminEmail,
       hashedPassword,
-      passwordPlain: '%7O#sidianC!pher26AtT_G',
       role: 'admin',
       status: 'active',
-      firstName: 'Master',
     },
   })
 
