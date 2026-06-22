@@ -26,6 +26,7 @@ export async function GET(request: Request) {
     challenge_title: s.challenge.title,
     flag_provided: s.flagProvided,
     is_correct: s.isCorrect,
+    is_first_blood: s.isCorrect && s.challenge.firstBloodUserId === s.userId,
     ip_address: s.ipAddress,
     created_at: s.createdAt,
     team_id: s.teamId,
@@ -46,6 +47,6 @@ export async function DELETE(request: Request) {
 
   await prisma.submission.deleteMany()
   await prisma.user.updateMany({ data: { score: 0, ranking: 0 } })
-  await prisma.challenge.updateMany({ data: { solverCount: 0 } })
-  return jsonResponse({ message: 'All submissions cleared, scores and solver counts reset' })
+  await prisma.challenge.updateMany({ data: { solverCount: 0, firstBloodUserId: null } })
+  return jsonResponse({ message: 'All submissions cleared, scores, solver counts, and blood data reset' })
 }

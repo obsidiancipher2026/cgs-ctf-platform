@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma'
 import { authenticate, requireAdmin, jsonResponse, getClientIp } from '@/lib/auth'
 import { config } from '@/lib/config'
 import { csrfProtection } from '@/lib/csrf'
-import { recalculateRankings } from '@/lib/scoring'
+import { recalculateRankings, getScore } from '@/lib/scoring'
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const { user, error } = await authenticate(request)
@@ -24,15 +24,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const userIds = [...new Set(correctSubs.map(s => s.userId))]
 
   await prisma.submission.deleteMany({ where: { challengeId, isCorrect: true } })
-  await prisma.challenge.update({ where: { id: challengeId }, data: { solverCount: 0 } })
+  await prisma.challenge.update({ where: { id: challengeId }, data: { solverCount: 0, firstBloodUserId: null } })
 
   for (const uid of userIds) {
-    const remaining = await prisma.submission.findMany({
-      where: { userId: uid, isCorrect: true },
-      include: { challenge: true },
-    })
-    const total = remaining.reduce((sum, s) => sum + s.challenge.points, 0)
-    await prisma.user.update({ where: { id: uid }, data: { score: total, ranking: 0 } })
+    const score = await getScore(uid)
+    await prisma.user.update({ where: { id: uid }, data: { score, ranking: 0 } })
   }
 
   await prisma.log.create({ data: { action: 'challenge_solves_reset', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ challengeId }) } })

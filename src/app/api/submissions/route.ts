@@ -177,7 +177,7 @@ export async function GET(request: Request) {
   const submissions = await prisma.submission.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: 'desc' },
-    include: { challenge: { select: { title: true, points: true } } },
+    include: { challenge: { select: { title: true, points: true, firstBloodUserId: true } } },
   })
 
   return jsonResponse(submissions.map(s => ({
@@ -187,6 +187,7 @@ export async function GET(request: Request) {
     challenge_points: s.challenge.points,
     flag_provided: s.flagProvided,
     is_correct: s.isCorrect,
+    is_first_blood: s.isCorrect && s.challenge.firstBloodUserId === user.id,
     created_at: s.createdAt,
   })))
 }
