@@ -687,41 +687,97 @@ export default function AdminPage() {
                           })}
                         </div>
                       )}
-                      <div className="card rounded-xl p-6">
-                        <h3 className="font-display text-txt-primary mb-4">Danger Zone</h3>
-                        <div className="flex flex-wrap gap-3">
-                          <button onClick={handleReset} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-core)] font-mono text-sm hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
-                            <RefreshCw className="w-4 h-4" /> Reset Competition
-                          </button>
-                          <button onClick={async () => {
-                            if (!confirm('Reset ALL blood points across all challenges? This cannot be undone.')) return;
-                            try { await api.resetAllBlood(); toast.success('All blood points reset'); loadTabData('dashboard'); }
-                            catch { toast.error('Failed to reset blood points'); }
-                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-sm hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
-                            <Droplet className="w-4 h-4" /> Reset All Blood Points
-                          </button>
-                          <button onClick={async () => {
-                            if (!confirm('Auto-assign blood points to all challenges with 0 blood? (Easy=25, Medium=50, Hard=75, Expert=100)')) return;
-                            try {
-                              const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token);
-                              const res = await fetch('/api/admin/challenges/backfill-blood', { method: 'POST', headers: { 'x-csrf-token': t.csrf_token } });
-                              const data = await res.json();
-                              toast.success(data.message || 'Blood points backfilled');
-                              loadTabData('dashboard');
-                            } catch { toast.error('Failed to backfill blood points'); }
-                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-sm hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center justify-center gap-2">
-                            <Droplet className="w-4 h-4" /> Backfill Blood Points
-                          </button>
-                          <button onClick={async () => {
-                            if (!confirm('Invalidate ALL sessions? All users will need to login again.')) return;
-                            try { await api.invalidateAllSessions(); toast.success('All sessions invalidated'); }
-                            catch { toast.error('Failed to invalidate sessions'); }
-                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(255,140,0,0.1)] border border-[rgba(255,140,0,0.3)] text-[#FF8C00] font-mono text-sm hover:bg-[rgba(255,140,0,0.2)] transition-all flex items-center justify-center gap-2">
-                            <AlertTriangle className="w-4 h-4" /> Invalidate All Sessions
-                          </button>
+                      <div className="card rounded-xl p-6 border border-[rgba(224,32,32,0.2)]">
+                        <div className="flex items-center gap-2 mb-5">
+                          <AlertTriangle className="w-5 h-5 text-[var(--red-core)]" />
+                          <h3 className="font-display text-txt-primary text-lg">Danger Zone</h3>
                         </div>
-                        <div className="mt-4">
-                          <h4 className="font-display text-txt-secondary text-xs mb-3">Audit &amp; Security Checks</h4>
+
+                        {/* Destructive Actions */}
+                        <div className="mb-5">
+                          <h4 className="font-display text-txt-secondary text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <RefreshCw className="w-3 h-3" /> Competition Actions
+                          </h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onClick={handleReset} className="px-4 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-core)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
+                              <RefreshCw className="w-4 h-4" /> Reset Competition
+                            </button>
+                            <button onClick={async () => {
+                              if (!confirm('Invalidate ALL sessions? All users will need to login again.')) return;
+                              try { await api.invalidateAllSessions(); toast.success('All sessions invalidated'); }
+                              catch { toast.error('Failed to invalidate sessions'); }
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(255,140,0,0.1)] border border-[rgba(255,140,0,0.3)] text-[#FF8C00] font-mono text-xs hover:bg-[rgba(255,140,0,0.2)] transition-all flex items-center justify-center gap-2">
+                              <Lock className="w-4 h-4" /> Invalidate All Sessions
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Blood Points */}
+                        <div className="mb-5">
+                          <h4 className="font-display text-txt-secondary text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <Droplet className="w-3 h-3" /> Blood Points
+                          </h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onClick={async () => {
+                              if (!confirm('Reset ALL blood points across all challenges? This cannot be undone.')) return;
+                              try { await api.resetAllBlood(); toast.success('All blood points reset'); loadTabData('dashboard'); }
+                              catch { toast.error('Failed to reset blood points'); }
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
+                              <Droplet className="w-4 h-4" /> Reset All Blood Points
+                            </button>
+                            <button onClick={async () => {
+                              if (!confirm('Auto-assign blood points to all challenges with 0 blood? (Easy=25, Medium=50, Hard=75, Expert=100)')) return;
+                              try {
+                                const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token);
+                                const res = await fetch('/api/admin/challenges/backfill-blood', { method: 'POST', headers: { 'x-csrf-token': t.csrf_token } });
+                                const data = await res.json();
+                                toast.success(data.message || 'Blood points backfilled');
+                                loadTabData('dashboard');
+                              } catch { toast.error('Failed to backfill blood points'); }
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center justify-center gap-2">
+                              <Droplet className="w-4 h-4" /> Backfill Blood Points
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Challenge Management */}
+                        <div className="mb-5">
+                          <h4 className="font-display text-txt-secondary text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <Swords className="w-3 h-3" /> Challenge Cleanup
+                          </h4>
+                          <div className="grid grid-cols-1 gap-3">
+                            <button onClick={async () => {
+                              const titles = prompt('Enter challenge titles to delete (comma-separated):\nExample: Command Injection Ping Utility, Hex Dump Analysis');
+                              if (!titles) return;
+                              const titleList = titles.split(',').map(t => t.trim()).filter(Boolean);
+                              if (titleList.length === 0) return;
+                              if (!confirm(`Delete ${titleList.length} challenge(s)? This will remove all associated submissions and cannot be undone.`)) return;
+                              try {
+                                const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token);
+                                const res = await fetch('/api/admin/challenges/bulk-delete', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json', 'x-csrf-token': t.csrf_token },
+                                  body: JSON.stringify({ titles: titleList }),
+                                });
+                                const data = await res.json();
+                                if (data.deleted?.length > 0) {
+                                  toast.success(`Deleted: ${data.deleted.join(', ')}`);
+                                } else {
+                                  toast.error('No matching challenges found');
+                                }
+                                loadTabData('dashboard');
+                              } catch { toast.error('Failed to delete challenges'); }
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
+                              <Trash2 className="w-4 h-4" /> Remove Challenges by Title
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Audit & Security */}
+                        <div>
+                          <h4 className="font-display text-txt-secondary text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <Search className="w-3 h-3" /> Audit &amp; Security Checks
+                          </h4>
                           <div className="flex flex-wrap gap-2">
                             <button onClick={async () => {
                               try { const r = await api.auditScan(); toast.success(`Audit scan complete: ${r.anomalies?.length || 0} anomalies found`); } catch { toast.error('Audit scan failed'); }
@@ -998,6 +1054,7 @@ export default function AdminPage() {
                           <thead>
                             <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
                               <th className="p-3">ID</th>
+                              <th className="p-3">Player</th>
                               <th className="p-3">Challenge</th>
                               <th className="p-3">Result</th>
                               <th className="p-3">IP</th>
@@ -1008,6 +1065,7 @@ export default function AdminPage() {
                             {submissions.map((s: any) => (
                               <tr key={s.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
                                 <td className="p-3 font-mono text-xs text-txt-muted">{s.id}</td>
+                                <td className="p-3 font-mono text-xs text-txt-primary font-semibold">{s.username || '-'}</td>
                                 <td className="p-3 font-mono text-xs text-txt-primary">{s.challenge_title}</td>
                                 <td className="p-3">
                                   <span className={`text-xs font-mono ${s.is_correct ? 'text-[var(--success)]' : 'text-[var(--red-core)]'}`}>
@@ -1020,7 +1078,7 @@ export default function AdminPage() {
                             ))}
                             {submissions.length === 0 && (
                               <tr>
-                                <td colSpan={5} className="p-6 text-center text-txt-muted font-mono text-sm">No submissions yet</td>
+                                <td colSpan={6} className="p-6 text-center text-txt-muted font-mono text-sm">No submissions yet</td>
                               </tr>
                             )}
                           </tbody>
