@@ -15,9 +15,16 @@ const ChallengeCreateSchema = z.object({
   flag: z.string().optional(),
   hint: z.string().max(1000).optional(),
   maxAttempts: z.number().int().default(0),
-  bloodPoints: z.number().int().default(0),
+  bloodPoints: z.number().int().min(0).optional(),
   challengeType: z.enum(['asset', 'instance']).default('asset'),
 })
+
+const BLOOD_POINTS_BY_DIFFICULTY: Record<string, number> = {
+  easy: 25,
+  medium: 50,
+  hard: 75,
+  expert: 100,
+}
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const { user, error } = await authenticate(request)
@@ -38,6 +45,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   try {
     const body = await request.json()
     const data = ChallengeCreateSchema.parse(body)
+    const bloodPoints = data.bloodPoints ?? BLOOD_POINTS_BY_DIFFICULTY[data.difficulty] ?? 50
     const updated = await prisma.challenge.update({
       where: { id: challengeId },
       data: {
@@ -50,7 +58,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         flag: data.flag || null,
         hint: data.hint ? sanitizeText(data.hint, 1000) : null,
         maxAttempts: data.maxAttempts,
-        bloodPoints: data.bloodPoints,
+        bloodPoints,
         challengeType: data.challengeType,
       },
     })

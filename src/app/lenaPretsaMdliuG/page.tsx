@@ -57,8 +57,10 @@ export default function AdminPage() {
   const [editAnnouncementMsg, setEditAnnouncementMsg] = useState('');
   const [newChallenge, setNewChallenge] = useState({
     title: '', description: '', category: 'web', difficulty: 'easy',
-    points: 100, flagMode: 'dynamic_user', flag: '', hint: '', maxAttempts: 8, bloodPoints: 0, challengeType: 'asset',
+    points: 100, flagMode: 'dynamic_user', flag: '', hint: '', maxAttempts: 8, bloodPoints: 25, challengeType: 'asset',
   });
+
+  const bloodByDiff: Record<string, number> = { easy: 25, medium: 50, hard: 75, expert: 100 };
   const [credForm, setCredForm] = useState({ current_username: '', current_password: '', new_username: '', new_password: '' });
   const [passwordModal, setPasswordModal] = useState<{ userId: number; username: string } | null>(null);
   const [passwordModalValue, setPasswordModalValue] = useState('');
@@ -365,7 +367,7 @@ export default function AdminPage() {
     try {
       await api.adminCreateChallenge(newChallenge);
       toast.success('Challenge created!');
-      setNewChallenge({ title: '', description: '', category: 'web', difficulty: 'easy', points: 100, flagMode: 'dynamic_user', flag: '', hint: '', maxAttempts: 8, bloodPoints: 0, challengeType: 'asset' });
+      setNewChallenge({ title: '', description: '', category: 'web', difficulty: 'easy', points: 100, flagMode: 'dynamic_user', flag: '', hint: '', maxAttempts: 8, bloodPoints: 25, challengeType: 'asset' });
       loadTabData('challenges');
     } catch (err: any) { toast.error(err?.response?.data?.detail || 'Failed to create'); }
   };
@@ -404,17 +406,18 @@ export default function AdminPage() {
 
   const handleEditChallenge = (c: any) => {
     setEditingChallenge(c);
+    const diff = c.difficulty || 'easy';
     setEditChallengeForm({
       title: c.title || '',
       description: c.description || '',
       category: c.category || 'web',
-      difficulty: c.difficulty || 'easy',
+      difficulty: diff,
       points: c.points || 100,
       flagMode: c.flagMode || 'dynamic_user',
       flag: c.flag || '',
       hint: c.hint || '',
       maxAttempts: c.maxAttempts ?? 8,
-      bloodPoints: c.bloodPoints || 0,
+      bloodPoints: c.bloodPoints || bloodByDiff[diff] || 50,
       challengeType: c.challengeType || 'asset',
     });
   };
@@ -698,6 +701,18 @@ export default function AdminPage() {
                             <Droplet className="w-4 h-4" /> Reset All Blood Points
                           </button>
                           <button onClick={async () => {
+                            if (!confirm('Auto-assign blood points to all challenges with 0 blood? (Easy=25, Medium=50, Hard=75, Expert=100)')) return;
+                            try {
+                              const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token);
+                              const res = await fetch('/api/admin/challenges/backfill-blood', { method: 'POST', headers: { 'x-csrf-token': t.csrf_token } });
+                              const data = await res.json();
+                              toast.success(data.message || 'Blood points backfilled');
+                              loadTabData('dashboard');
+                            } catch { toast.error('Failed to backfill blood points'); }
+                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-sm hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center justify-center gap-2">
+                            <Droplet className="w-4 h-4" /> Backfill Blood Points
+                          </button>
+                          <button onClick={async () => {
                             if (!confirm('Invalidate ALL sessions? All users will need to login again.')) return;
                             try { await api.invalidateAllSessions(); toast.success('All sessions invalidated'); }
                             catch { toast.error('Failed to invalidate sessions'); }
@@ -862,7 +877,7 @@ export default function AdminPage() {
                             <option value="pwn">Pwn</option>
                             <option value="misc">Misc</option>
                           </select>
-                          <select value={newChallenge.difficulty} onChange={(e) => setNewChallenge({ ...newChallenge, difficulty: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
+                          <select value={newChallenge.difficulty} onChange={(e) => { const d = e.target.value; setNewChallenge({ ...newChallenge, difficulty: d, bloodPoints: bloodByDiff[d] || 50 }); }} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>
@@ -1977,7 +1992,7 @@ export default function AdminPage() {
                 <option value="pwn">Pwn</option>
                 <option value="misc">Misc</option>
               </select>
-              <select value={editChallengeForm.difficulty} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, difficulty: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
+              <select value={editChallengeForm.difficulty} onChange={(e) => { const d = e.target.value; setEditChallengeForm({ ...editChallengeForm, difficulty: d, bloodPoints: bloodByDiff[d] || 50 }); }} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
