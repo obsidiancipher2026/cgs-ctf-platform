@@ -2,141 +2,96 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Swords, Trophy, Flag, ArrowRight, Terminal, Shield, Linkedin, Github, MessageCircle } from 'lucide-react';
-import GlitchText from '@/components/ui/GlitchText';
+import { ArrowRight, Shield, Zap, Lock, Eye, AlertTriangle, FileCheck, Network, Key, Database, Search, Fingerprint } from 'lucide-react';
 
 const features = [
-  { icon: Shield, title: 'WAF Protection', desc: 'Advanced Web Application Firewall detecting SQLi, XSS, command injection, path traversal, and encoded payloads', color: '#ff4500' },
-  { icon: Shield, title: 'Rate Limiting', desc: 'Per-endpoint rate limits with escalating penalties and IP-based quotas for auth, admin, and submission endpoints', color: '#ff0033' },
-  { icon: Shield, title: 'Anomaly Detection', desc: 'JSON structure abuse, method enumeration, path probing, parameter pollution, and endpoint hammering detection', color: '#ff6347' },
-  { icon: Shield, title: 'Bot Detection', desc: 'Rate analysis, path scraping detection, scanner UA fingerprinting for acunetix, sqlmap, nessus and more', color: '#ff7f50' },
-  { icon: Shield, title: 'IP Quarantine & Blacklist', desc: 'Auto-quarantine high-risk IPs with manual block/unblock/whitelist controls', color: '#ff4500' },
-  { icon: Shield, title: 'CSRF Protection', desc: 'HMAC-based tokens on all admin mutating endpoints validated server-side', color: '#dc143c' },
-  { icon: Shield, title: 'Input Sanitization', desc: 'Strips HTML tags, encodes special chars on all POST/PUT/PATCH body and query params', color: '#ff0033' },
-  { icon: Shield, title: 'Account Lockout', desc: 'Progressive delays with CAPTCHA at 3 failures and lockout at 5 failures per IP', color: '#ff6347' },
-  { icon: Shield, title: 'Immutable Audit Log', desc: 'SHA256 chain-hash linking every log entry with integrity verification', color: '#ff4500' },
-  { icon: Shield, title: 'Fingerprint Anti-Sharing', desc: 'SHA256 device fingerprinting per user detecting multiple fingerprints per account', color: '#dc143c' },
-  { icon: Shield, title: 'Body Size Limit', desc: '100 KB limit for requests, 50 MB for file uploads with 413 rejection', color: '#ff0033' },
-  { icon: Shield, title: 'CORS Validation', desc: 'Validates Origin/Referer against allowed origins, blocks cross-origin mutating requests', color: '#ff6347' },
+  { icon: Shield, title: 'WAF Protection', desc: 'Advanced Web Application Firewall detecting SQLi, XSS, command injection, and encoded payloads', side: 'red' as const },
+  { icon: Zap, title: 'Rate Limiting', desc: 'Per-endpoint rate limits with escalating penalties and IP-based quotas', side: 'blue' as const },
+  { icon: Lock, title: 'Brute-Force Lockout', desc: 'Progressive tarpit delays with exponential backoff on failed login attempts', side: 'red' as const },
+  { icon: Key, title: 'HMAC Tokens', desc: 'CSRF protection via HMAC-based tokens on all admin mutating endpoints', side: 'blue' as const },
 ];
 
 const categories = [
-  { name: 'Cryptography', icon: '🔐', desc: 'Break ciphers and decode secrets', color: '#00ff88' },
-  { name: 'Web Exploitation', icon: '🌐', desc: 'Hack web applications and APIs', color: '#00e5ff' },
-  { name: 'Reverse Engineering', icon: '⚙️', desc: 'Decompile and analyze binaries', color: '#b300ff' },
-  { name: 'Forensics', icon: '🔍', desc: 'Investigate digital evidence', color: '#ffd700' },
-  { name: 'Miscellaneous', icon: '🎲', desc: 'Mixed challenges of all types', color: '#ff0033' },
+  { name: 'Cryptography', icon: '🔐', desc: 'Break codes and hidden messages', slug: 'crypto' },
+  { name: 'Web Exploitation', icon: '🌐', desc: 'Find weaknesses in websites', slug: 'web' },
+  { name: 'Reverse Engineering', icon: '⚙️', desc: 'Take apart programs and understand them', slug: 'reverse' },
+  { name: 'Forensics', icon: '🔎', desc: 'Investigate digital evidence', slug: 'forensics' },
+  { name: 'Miscellaneous', icon: '🎲', desc: 'Anything and everything unexpected', slug: 'misc' },
 ];
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <section className="relative min-h-[90vh] flex items-center justify-center px-4 cyber-grid-bg overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-cyber-cyan/8 via-cyber-purple/3 to-transparent" />
-        <div className="absolute top-20 right-10 text-[200px] font-black text-cyber-cyan/5 pointer-events-none select-none leading-none hidden sm:block animate-cyber-float">
-          技
-        </div>
-        <div className="absolute bottom-20 left-10 text-[160px] font-black text-cyber-red/5 pointer-events-none select-none leading-none hidden sm:block animate-cyber-float" style={{ animationDelay: '-4s' }}>
-          電
-        </div>
-        <div className="absolute top-1/4 left-5 w-32 h-32 rounded-full border border-cyber-cyan/10 animate-cyber-float pointer-events-none" style={{ animationDelay: '-2s' }} />
-        <div className="absolute bottom-1/4 right-5 w-24 h-24 rounded-full border border-cyber-purple/10 animate-cyber-float pointer-events-none" style={{ animationDelay: '-6s' }} />
+      {/* Hero */}
+      <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-cyber-grid opacity-30" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-core/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-core/5 rounded-full blur-3xl" />
+
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+            {/* Season Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5 mb-4 hover:border-cyber-cyan/60 hover:shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all duration-300"
+              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-border-c bg-surface mb-8"
             >
-              <Terminal className="w-4 h-4 text-cyber-cyan" />
-              <span className="text-cyber-cyan text-xs tracking-widest uppercase animate-pulse-soft">
-                Season 2026 • Registration Open
-              </span>
+              <span className="w-2 h-2 rounded-full bg-red-core animate-blink" />
+              <span className="text-txt-secondary text-xs font-mono uppercase tracking-widest">Season 2026 &middot; Registration Open</span>
             </motion.div>
 
-            <GlitchText
-              text="Cyber Guardians Society"
-              className="text-3xl sm:text-4xl md:text-7xl font-cyber font-black text-white mb-2 tracking-tight"
-            />
+            {/* Headline */}
+            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-7xl text-txt-primary mb-4 tracking-wide">
+              CYBER GUARDIANS SOCIETY
+            </h1>
 
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-2xl md:text-4xl font-cyber font-bold shimmer-text mb-6"
-            >
-              Capture The Flag Competition
-            </motion.h2>
+            {/* Sub-headline */}
+            <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl mb-6" style={{ background: 'linear-gradient(90deg, #E02020, #1A6EFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Capture. Exploit. Defend.
+            </h2>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-gray-400 text-lg max-w-2xl mx-auto mb-10"
-            >
-              Test your cybersecurity skills against the best. Solve challenges, capture flags, climb the leaderboard.
-            </motion.p>
+            {/* Body */}
+            <p className="text-txt-secondary text-base sm:text-lg max-w-2xl mx-auto mb-10">
+              Test your skills against the sharpest minds in cybersecurity.
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <Link
-                href="/challenges"
-                className="cyber-btn cyber-btn-ripple group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 border border-cyber-cyan/50 text-white text-sm font-semibold hover:from-cyber-cyan/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,229,255,0.2)] transition-all duration-300"
-              >
-                View Challenges
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/challenges" className="btn-primary px-8 py-4 text-sm inline-flex items-center justify-center gap-2">
+                View Challenges <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/scoreboard"
-                className="cyber-btn cyber-btn-ripple inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-cyber-cyan/20 text-cyber-cyan text-sm font-semibold hover:bg-cyber-cyan/10 hover:border-cyber-cyan/50 hover:shadow-[0_0_20px_rgba(0,229,255,0.1)] transition-all duration-300"
-              >
-                <Trophy className="w-4 h-4" />
+              <Link href="/scoreboard" className="btn-outline px-8 py-4 text-sm inline-flex items-center justify-center gap-2">
                 Leaderboard
               </Link>
-            </motion.div>
+            </div>
           </motion.div>
-        </div>
-      </section>
 
-      <section className="py-12 sm:py-16 px-4 border-t border-cyber-cyan/10">
-        <div className="max-w-4xl mx-auto text-center">
+          {/* Scroll indicator */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2"
           >
-            <h2 className="text-lg sm:text-xl font-cyber font-bold text-white mb-6 tracking-widest uppercase">
-              Sponsored By
-            </h2>
-            <div className="flex justify-center">
-              <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
-                <img src="/images/tryhackme-logo.svg" alt="TryHackMe" className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 object-contain" />
-                <span className="text-5xl sm:text-6xl md:text-7xl font-cyber font-bold text-white tracking-tight">TryHackMe</span>
-              </div>
+            <div className="w-5 h-8 border-2 border-border-c rounded-full flex justify-center pt-1.5">
+              <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-1 h-1 bg-blue-core rounded-full" />
             </div>
           </motion.div>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-2xl sm:text-3xl font-cyber font-bold text-white text-center mb-10 sm:mb-14"
-          >
-            Features
-          </motion.h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+      {/* Dual-beam divider */}
+      <div className="dual-beam" />
+
+      {/* Security Features */}
+      <section className="py-16 sm:py-20 px-4 bg-surface">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-12">
+            <span className="text-txt-muted text-xs font-mono uppercase tracking-[0.2em]">Platform Security</span>
+            <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mt-2">Built to Resist</h2>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
             {features.map((feat, i) => {
               const Icon = feat.icon;
               return (
@@ -145,12 +100,13 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="cyber-card-glow rounded-xl p-6 group transition-all duration-500"
-                  style={{ borderTopColor: feat.color, borderTopWidth: 2 }}
+                  className={`card card-lift p-6 border-l-2 ${feat.side === 'red' ? 'border-l-red-core' : 'border-l-blue-core'}`}
                 >
-                  <Icon className="w-8 h-8 mb-4 group-hover:scale-110 transition-transform duration-300" style={{ color: feat.color }} />
-                  <h3 className="font-cyber font-bold text-white text-lg mb-2">{feat.title}</h3>
-                  <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">{feat.desc}</p>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${feat.side === 'red' ? 'bg-red-dim/30' : 'bg-blue-dim/30'}`}>
+                    <Icon className={`w-5 h-5 ${feat.side === 'red' ? 'text-red-glow' : 'text-blue-glow'}`} />
+                  </div>
+                  <h3 className="font-body font-semibold text-txt-primary text-sm mb-1">{feat.title}</h3>
+                  <p className="text-txt-secondary text-xs leading-relaxed">{feat.desc}</p>
                 </motion.div>
               );
             })}
@@ -158,76 +114,52 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 px-4 bg-cyber-dark/50">
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-2xl sm:text-3xl font-cyber font-bold text-white text-center mb-10 sm:mb-14"
-          >
-            Categories
-          </motion.h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      {/* Categories */}
+      <section className="py-16 sm:py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-12">
+            <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary">What Will You Break?</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {categories.map((cat, i) => (
               <motion.div
                 key={cat.name}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.08 }}
-                className="cyber-card-glow rounded-xl p-6 text-center group cursor-pointer"
-                whileHover={{ y: -8 }}
               >
-                <motion.div
-                  className="text-4xl mb-3 inline-block"
-                  whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
-                  transition={{ duration: 0.4 }}
+                <Link
+                  href={`/challenges?category=${cat.slug}`}
+                  className="card card-lift glitch-hover block p-6 text-center group"
                 >
-                  {cat.icon}
-                </motion.div>
-                <h3 className="font-cyber font-bold text-white text-sm mb-1 group-hover:text-glow-cyan transition-all duration-300">{cat.name}</h3>
-                <p className="text-gray-500 text-xs group-hover:text-gray-400 transition-colors duration-300">{cat.desc}</p>
+                  <div className="text-3xl mb-3">{cat.icon}</div>
+                  <h3 className="font-body font-semibold text-txt-primary text-sm mb-1 group-hover:text-red-glow transition-colors">{cat.name}</h3>
+                  <p className="text-txt-muted text-xs">{cat.desc}</p>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-cyber-cyan/10 py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
-            <div className="text-center sm:text-left">
-              <h3 className="font-cyber font-bold text-sm text-white mb-3">Cyber Guardians Society</h3>
-              <p className="text-gray-500 font-mono text-xs leading-relaxed">Empowering the next generation of cybersecurity professionals through competitive CTF challenges.</p>
+      {/* CTA Banner */}
+      <section className="py-16 px-4 bg-surface border-t border-border-c">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
+            <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mb-4">Ready to prove yourself?</h2>
+            <p className="text-txt-secondary text-sm mb-8">Register now and start your journey. Every expert was once a beginner.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/register" className="btn-primary px-8 py-3 text-sm inline-flex items-center justify-center gap-2">
+                Register Now <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link href="/about" className="btn-outline px-8 py-3 text-sm inline-flex items-center justify-center">
+                Learn More
+              </Link>
             </div>
-            <div className="text-center sm:text-left">
-              <h3 className="font-cyber font-bold text-sm text-white mb-3">Quick Links</h3>
-              <div className="flex flex-col gap-2">
-                <Link href="/" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Home</Link>
-                <Link href="/about" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">About</Link>
-                <Link href="/announcements" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Announcements</Link>
-                <Link href="/challenges" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Challenges</Link>
-                <Link href="/scoreboard" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Scoreboard</Link>
-              </div>
-            </div>
-            <div className="text-center sm:text-left">
-              <h3 className="font-cyber font-bold text-sm text-white mb-3">Subscribe to Updates</h3>
-              <div className="flex gap-2">
-                <input type="email" placeholder="your@email.com" className="cyber-input flex-1 px-3 py-2 rounded-lg font-mono text-xs min-w-0" />
-                <button className="px-4 py-2 rounded-lg bg-cyber-cyan/20 border border-cyber-cyan/40 text-cyber-cyan font-mono text-xs hover:bg-cyber-cyan/30 transition-all whitespace-nowrap">
-                  Subscribe
-                </button>
-              </div>
-              <div className="flex items-center justify-center sm:justify-start gap-4 mt-4">
-                <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-5 h-5" /></a>
-                <a href="https://chat.whatsapp.com/DUvTs6TiEEj2CwTfG7eG9n" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-5 h-5" /></a>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-cyber-cyan/5 pt-4 text-center">
-            <p className="text-gray-600 font-mono text-[10px]">&copy; 2026 Cyber Guardians Society. All rights reserved.</p>
-          </div>
+          </motion.div>
         </div>
-      </footer>
+      </section>
     </div>
   );
 }

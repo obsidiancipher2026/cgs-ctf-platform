@@ -1,207 +1,90 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ChevronRight, Linkedin, Github, MessageCircle, Mail } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, MessageCircle, Mail } from 'lucide-react';
 
 const sections = [
-  {
-    title: 'Who We Are',
-    content: 'Cyber Guardians Society is for people who love solving problems and finding hidden things. We welcome everyone — no matter your background. Our goal is simple: teach you to think like a hacker through real challenges.',
-    color: '#00d4ff',
-  },
-  {
-    title: 'Our Mission',
-    content: 'We believe the best way to learn cybersecurity is by actually doing it. Our platform gives you real practice, not just theory. Train through real hacking simulations. Learn by exploring, not just reading. Build skills you can actually use.',
-    color: '#7b2ff7',
-  },
-  {
-    title: 'Enter The Arena',
-    content: 'Each challenge hides a secret called a flag. Find it and you prove you solved the challenge. It won\'t be easy — you have to look carefully and think outside the box. Find hidden flags inside each challenge. Every flag you find moves you forward. You earn your progress here.',
-    color: '#00ff88',
-  },
-  {
-    title: 'The Challenges',
-    content: 'We cover all the major areas of cybersecurity: Cryptography — Break codes and hidden messages. Web Exploitation — Find weaknesses in websites. Reverse Engineering — Take apart programs and understand how they work. Digital Forensics — Investigate digital evidence like a detective. Miscellaneous — Anything and everything unexpected.',
-    color: '#ffd700',
-  },
-  {
-    title: 'Beyond Competition',
-    content: 'This is more than just a game. Cyber Guardians is a community where people help each other grow. Share ideas and tips with others. Track your progress on the leaderboard. Grow together through learning and teamwork.',
-    color: '#ff2d79',
-  },
-  {
-    title: 'Begin Your Journey',
-    content: 'Start small, learn the basics, and slowly take on harder challenges. If you get stuck, hints are there to help — but try on your own first. Begin with easy challenges and build up. Use hints only when you really need them. Some challenges test your knowledge. Some test how much you don\'t give up.',
-    color: '#00f0ff',
-  },
+  { title: 'Who We Are', content: 'Cyber Guardians Society is for people who love solving problems and finding hidden things. We welcome everyone — no matter your background. Our goal is simple: teach you to think like a hacker through real challenges.', side: 'red' as const },
+  { title: 'Our Mission', content: 'We believe the best way to learn cybersecurity is by actually doing it. Our platform gives you real practice, not just theory. Train through real hacking simulations. Learn by exploring, not just reading. Build skills you can actually use.', side: 'blue' as const },
+  { title: 'Enter The Arena', content: 'Each challenge hides a secret called a flag. Find it and you prove you solved the challenge. It won\'t be easy — you have to look carefully and think outside the box. Find hidden flags inside each challenge. Every flag you find moves you forward. You earn your progress here.', side: 'red' as const },
+  { title: 'The Challenges', content: 'We cover all the major areas of cybersecurity: Cryptography — Break codes and hidden messages. Web Exploitation — Find weaknesses in websites. Reverse Engineering — Take apart programs and understand how they work. Digital Forensics — Investigate digital evidence like a detective. Miscellaneous — Anything and everything unexpected.', side: 'blue' as const },
+  { title: 'Beyond Competition', content: 'This is more than just a game. Cyber Guardians is a community where people help each other grow. Share ideas and tips with others. Track your progress on the leaderboard. Grow together through learning and teamwork.', side: 'red' as const },
+  { title: 'Begin Your Journey', content: 'Start small, learn the basics, and slowly take on harder challenges. If you get stuck, hints are there to help — but try on your own first. Begin with easy challenges and build up. Use hints only when you really need them. Some challenges test your knowledge. Some test how much you don\'t give up.', side: 'blue' as const },
 ];
 
 export default function About() {
   return (
     <div className="min-h-screen py-8 sm:py-12 px-4">
       <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10 sm:mb-16"
-        >
-           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/5 mb-6">
-            <span className="text-cyber-cyan font-mono text-xs tracking-widest uppercase">About Us</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-cyber font-black text-white mb-4">
-            About CGS
-          </h1>
-          <p className="text-gray-400 font-mono text-sm sm:text-base max-w-2xl mx-auto">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+          <span className="text-txt-muted text-xs font-mono uppercase tracking-[0.2em]">About Us</span>
+          <h1 className="font-display font-bold text-3xl sm:text-5xl text-txt-primary mt-2">About CGS</h1>
+          <p className="text-txt-secondary text-sm sm:text-base max-w-2xl mx-auto mt-4">
             Empowering the next generation of cybersecurity professionals through competitive challenges and community-driven learning.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sections.map((section, i) => {
-            return (
-              <motion.div
-                key={section.title}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.08 }}
-                className="cyber-card-glow rounded-xl p-4 sm:p-5 group"
-                style={{ borderLeft: `3px solid ${section.color}` }}
-              >
-                <div className="min-w-0">
-                  <motion.h2
-                    className="font-cyber text-white text-base sm:text-lg mb-2"
-                    whileHover={{ x: 4 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                  >
-                    {section.title}
-                  </motion.h2>
-                  <p className="text-gray-400 font-mono text-xs sm:text-sm leading-relaxed group-hover:text-gray-300 transition-colors duration-300">{section.content}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+        <div className="dual-beam" />
+
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+          {sections.map((section, i) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              className={`card card-lift p-5 border-l-2 ${section.side === 'red' ? 'border-l-red-core' : 'border-l-blue-core'}`}
+            >
+              <h2 className="font-display font-bold text-txt-primary text-lg mb-2">{section.title}</h2>
+              <p className="text-txt-secondary text-sm leading-relaxed">{section.content}</p>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Platform Developers Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-10 text-center"
-        >
-          <h2 className="text-2xl sm:text-3xl font-cyber font-bold text-white mb-8">Platform Developers</h2>
-          <div className="flex flex-col sm:flex-row justify-center gap-8 items-center">
-            <motion.div
-              className="cyber-card-glow rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center"
-              whileHover={{ y: -8 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              <motion.div
-                className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-cyan/20 ring-2 ring-cyber-cyan/50"
-                whileHover={{ scale: 1.08, boxShadow: '0 0 40px rgba(0, 229, 255, 0.3)' }}
-              >
-                <img src="/images/shayan-ahmed.jpeg" alt="Shayan Ahmed" className="w-full h-full object-cover img-glow" />
-              </motion.div>
-              <h3 className="font-cyber text-white text-lg font-bold">Shayan Ahmed</h3>
-              <p className="text-cyber-cyan font-mono text-xs mt-1">Founder &amp; Organizer</p>
-              <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Building and maintaining the CTF platform infrastructure</p>
-              <div className="flex items-center justify-center gap-3 mt-3">
-                <a href="https://github.com/OperationZero-GHH" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
-                <a href="https://wa.me/923261458036" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
-                <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sakingplays@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
-              </div>
-            </motion.div>
-            <motion.div
-              className="cyber-card-glow rounded-2xl p-6 sm:p-8 w-72 flex flex-col items-center"
-              whileHover={{ y: -8 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              <motion.div
-                className="w-24 h-24 rounded-full overflow-hidden mb-4 shadow-lg shadow-cyber-red/20 ring-2 ring-orange-500/50"
-                whileHover={{ scale: 1.08, boxShadow: '0 0 40px rgba(255, 0, 51, 0.3)' }}
-              >
-                <img src="/images/muhammad-saad.jpeg" alt="Muhammad Saad" className="w-full h-full object-cover img-glow" />
-              </motion.div>
-              <h3 className="font-cyber text-white text-lg font-bold">Muhammad Saad</h3>
-              <p className="text-orange-400 font-mono text-xs mt-1">Challenges and Platform Security Organizer</p>
-              <p className="text-gray-500 font-mono text-xs mt-3 max-w-[200px]">Designing challenges and ensuring platform security</p>
-              <div className="flex items-center justify-center gap-3 mt-3">
-                <a href="https://github.com/saad-838" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
-                <a href="https://wa.me/923272243678" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-4 h-4" /></a>
-                <a href="https://www.linkedin.com/in/muhammad-saad-13ab46298/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-4 h-4" /></a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mrgill2792@gmail.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-red transition-colors"><Mail className="w-4 h-4" /></a>
-              </div>
-            </motion.div>
-          </div>
+        {/* Developers */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-10">
+          <span className="text-txt-muted text-xs font-mono uppercase tracking-[0.2em]">Team</span>
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mt-2">Platform Developers</h2>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="cyber-card-glow rounded-xl p-6 sm:p-8 mt-8 text-center"
-        >
-          <h2 className="font-cyber text-white text-lg sm:text-xl mb-4">
-            Ready to <span className="text-cyber-green text-glow-green">join</span> the fight?
-          </h2>
-          <p className="text-gray-400 font-mono text-sm mb-6 max-w-lg mx-auto">
-            Register now and start your journey. Every expert was once a beginner.
-          </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
+          {[
+            { name: 'Shayan Ahmed', role: 'Founder & Organizer', img: '/images/shayan-ahmed.jpeg', github: 'https://github.com/OperationZero-GHH', linkedin: 'https://www.linkedin.com/in/shayanahmedmughal', whatsapp: 'https://wa.me/923261458036', email: 'https://mail.google.com/mail/?view=cm&fs=1&to=sakingplays@gmail.com' },
+            { name: 'Muhammad Saad', role: 'Challenges & Security Organizer', img: '/images/muhammad-saad.jpeg', github: 'https://github.com/saad-838', linkedin: 'https://www.linkedin.com/in/muhammad-saad-13ab46298/', whatsapp: 'https://wa.me/923272243678', email: 'https://mail.google.com/mail/?view=cm&fs=1&to=mrgill2792@gmail.com' },
+          ].map((dev) => (
+            <motion.div key={dev.name} className="card p-6 w-72 flex flex-col items-center text-center" whileHover={{ y: -4 }}>
+              <div className="w-20 h-20 rounded-full overflow-hidden mb-4 ring-2 ring-border-c">
+                <img src={dev.img} alt={dev.name} className="w-full h-full object-cover" />
+              </div>
+              <h3 className="font-body font-semibold text-txt-primary text-base">{dev.name}</h3>
+              <p className="text-blue-glow text-xs font-mono uppercase tracking-wider mt-1">{dev.role}</p>
+              <div className="flex items-center gap-3 mt-4">
+                <a href={dev.github} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-txt-primary transition-colors"><Github className="w-4 h-4" /></a>
+                <a href={dev.whatsapp} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-success transition-colors"><MessageCircle className="w-4 h-4" /></a>
+                <a href={dev.linkedin} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-blue-glow transition-colors"><Linkedin className="w-4 h-4" /></a>
+                <a href={dev.email} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-red-glow transition-colors"><Mail className="w-4 h-4" /></a>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="dual-beam" />
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center py-8">
+          <h2 className="font-display font-bold text-xl sm:text-2xl text-txt-primary mb-3">Ready to join the fight?</h2>
+          <p className="text-txt-secondary text-sm mb-6">Register now and start your journey. Every expert was once a beginner.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
-              href="/register"
-              className="cyber-btn cyber-btn-ripple inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyber-cyan/20 to-cyber-purple/20 border border-cyber-cyan/50 text-white font-cyber text-sm hover:from-cyber-cyan/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,229,255,0.2)] transition-all duration-300"
-            >
-              Get Started
-              <ChevronRight className="w-4 h-4" />
-            </a>
-            <a
-              href="/scoreboard"
-              className="cyber-btn cyber-btn-ripple inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-cyber-cyan/20 text-cyber-cyan font-cyber text-sm hover:bg-cyber-cyan/10 hover:border-cyber-cyan/50 transition-all duration-300"
-            >
+            <Link href="/register" className="btn-primary px-6 py-3 text-sm inline-flex items-center justify-center gap-2">
+              Get Started <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link href="/scoreboard" className="btn-outline px-6 py-3 text-sm inline-flex items-center justify-center">
               View Leaderboard
-            </a>
+            </Link>
           </div>
         </motion.div>
-
-        {/* Footer */}
-        <footer className="mt-12 border-t border-cyber-cyan/10 pt-8 pb-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
-              <div className="text-center sm:text-left">
-                <h3 className="font-cyber font-bold text-sm text-white mb-3">Cyber Guardians Society</h3>
-                <p className="text-gray-500 font-mono text-xs leading-relaxed">Empowering the next generation of cybersecurity professionals through competitive CTF challenges.</p>
-              </div>
-              <div className="text-center sm:text-left">
-                <h3 className="font-cyber font-bold text-sm text-white mb-3">Quick Links</h3>
-                <div className="flex flex-col gap-2">
-                  <a href="/" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Home</a>
-                  <a href="/about" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">About</a>
-                  <a href="/announcements" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Announcements</a>
-                  <a href="/challenges" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Challenges</a>
-                  <a href="/scoreboard" className="text-gray-500 font-mono text-xs hover:text-cyber-cyan transition-colors">Scoreboard</a>
-                </div>
-              </div>
-              <div className="text-center sm:text-left">
-                <h3 className="font-cyber font-bold text-sm text-white mb-3">Subscribe to Updates</h3>
-                <div className="flex gap-2">
-                  <input type="email" placeholder="your@email.com" className="cyber-input flex-1 px-3 py-2 rounded-lg font-mono text-xs min-w-0" />
-                  <button className="px-4 py-2 rounded-lg bg-cyber-cyan/20 border border-cyber-cyan/40 text-cyber-cyan font-mono text-xs hover:bg-cyber-cyan/30 transition-all whitespace-nowrap">
-                    Subscribe
-                  </button>
-                </div>
-                <div className="flex items-center justify-center sm:justify-start gap-4 mt-4">
-                  <a href="https://www.linkedin.com/in/shayanahmedmughal" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-cyan transition-colors"><Linkedin className="w-5 h-5" /></a>
-                  <a href="https://chat.whatsapp.com/DUvTs6TiEEj2CwTfG7eG9n" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-cyber-green transition-colors"><MessageCircle className="w-5 h-5" /></a>
-                </div>
-              </div>
-            </div>
-            <div className="border-t border-cyber-cyan/5 pt-4 text-center">
-              <p className="text-gray-600 font-mono text-[10px]">&copy; 2026 Cyber Guardians Society. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
       </div>
     </div>
   );

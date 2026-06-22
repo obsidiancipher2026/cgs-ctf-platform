@@ -11,10 +11,8 @@ import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
-    full_name: '',
-    username: '', email: '', password: '', confirmPassword: '',
-    gender: '', country: '', college: '',
-    age_group: '', player_type: '', agreed_tos: false,
+    full_name: '', username: '', email: '', password: '', confirmPassword: '',
+    gender: '', country: '', college: '', age_group: '', player_type: '', agreed_tos: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,11 +23,7 @@ export default function RegisterPage() {
     if (cooldown <= 0) return;
     const timer = setInterval(() => {
       setCooldown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          router.push('/');
-          return 0;
-        }
+        if (prev <= 1) { clearInterval(timer); router.push('/'); return 0; }
         return prev - 1;
       });
     }, 1000);
@@ -40,198 +34,154 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.agreed_tos) {
-      toast.error('You must agree to the Terms of Service and Privacy Policy');
-      return;
-    }
-    if (form.password !== form.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-    if (!form.full_name.trim()) {
-      toast.error('Full name is required');
-      return;
-    }
+    if (!form.agreed_tos) { toast.error('You must agree to the Terms of Service'); return; }
+    if (form.password !== form.confirmPassword) { toast.error('Passwords do not match'); return; }
+    if (!form.full_name.trim()) { toast.error('Full name is required'); return; }
     setLoading(true);
     try {
       await api.register(sanitizeObject({
-        full_name: form.full_name,
-        username: form.username,
-        email: form.email,
-        password: form.password,
-        gender: form.gender || undefined,
-        country: form.country || undefined,
-        college: form.college || undefined,
-        age_group: form.age_group || undefined,
-        player_type: form.player_type || undefined,
-        agreed_tos: form.agreed_tos,
+        full_name: form.full_name, username: form.username, email: form.email,
+        password: form.password, gender: form.gender || undefined, country: form.country || undefined,
+        college: form.college || undefined, age_group: form.age_group || undefined,
+        player_type: form.player_type || undefined, agreed_tos: form.agreed_tos,
       }));
       toast.success('Registration successful!');
       setCooldown(10);
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || 'Registration failed');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
-  const inputClass = "cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm";
-  const labelClass = "block text-gray-400 font-mono text-xs mb-2 tracking-wider";
-  const selectClass = "cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm appearance-none";
+  const inputClass = "input-field w-full px-4 py-3 text-sm";
+  const labelClass = "block text-txt-secondary text-xs font-medium mb-2 uppercase tracking-wider";
+  const selectClass = "input-field w-full px-4 py-3 text-sm appearance-none";
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-2xl"
-      >
-        <div className="cyber-card-glow rounded-2xl p-6 sm:p-10">
-          <div className="text-center mb-8">
-            <motion.div
-              animate={{ opacity: [0.8, 1, 0.8], scale: [1, 1.05, 1] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              <Shield className="w-12 h-12 text-cyber-blue mx-auto mb-5" />
-            </motion.div>
-            <h1 className="font-cyber text-xl sm:text-2xl text-white">Create Account</h1>
-            <p className="text-gray-500 font-mono text-xs sm:text-sm mt-2">Join the Cyber Guardians Society</p>
+    <div className="min-h-[90vh] flex items-center justify-center px-4 py-8 bg-surface">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl">
+        {cooldown > 0 ? (
+          <div className="bg-surface border border-border-c rounded-lg p-8 sm:p-10 text-center">
+            <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
+            <h2 className="font-display font-bold text-xl text-success mb-3">Registration Submitted!</h2>
+            <p className="text-txt-secondary text-sm mb-2">Your account is pending admin approval.</p>
+            <p className="text-txt-muted text-xs mb-6">You will be able to log in once an administrator activates your account.</p>
+            <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2.5 mb-4 overflow-hidden border border-border-c">
+              <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success transition-all duration-1000 ease-linear" style={{ width: `${((10 - cooldown) / 10) * 100}%` }} />
+            </div>
+            <p className="text-txt-muted text-xs">Redirecting to home page...</p>
           </div>
-
-          {cooldown > 0 ? (
-            <div className="text-center py-8">
-              <CheckCircle className="w-16 h-16 text-cyber-green mx-auto mb-6" />
-              <h2 className="font-cyber text-xl text-cyber-green mb-3">Registration Submitted!</h2>
-              <p className="text-gray-400 font-mono text-sm mb-2">
-                Your account is pending admin approval.
-              </p>
-              <p className="text-gray-500 font-mono text-xs mb-6">
-                You will be able to log in once an administrator activates your account.
-              </p>
-              <div className="w-full max-w-sm mx-auto bg-gray-800/50 rounded-full h-2.5 mb-4 overflow-hidden border border-cyber-blue/20">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-cyber-blue to-cyber-green transition-all duration-1000 ease-linear"
-                  style={{ width: `${((10 - cooldown) / 10) * 100}%` }}
-                />
-              </div>
-              <p className="text-gray-500 font-mono text-xs">Redirecting to home page...</p>
-            </div>
-          ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className={labelClass}>Full Name <span className="text-cyber-blue">*</span></label>
-              <input type="text" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} className={inputClass} placeholder="John Doe" required autoComplete="name" />
+        ) : (
+          <div className="bg-surface border border-border-c rounded-lg p-6 sm:p-10">
+            <div className="text-center mb-8">
+              <Shield className="w-10 h-10 text-red-core mx-auto mb-3" />
+              <h1 className="font-display font-bold text-2xl text-txt-primary">Join The Fight</h1>
+              <p className="text-txt-secondary text-sm mt-2">Create your Cyber Guardians Society account</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className={labelClass}>Scoreboard Name <span className="text-cyber-blue">*</span></label>
-                <input type="text" value={form.username} onChange={(e) => update('username', e.target.value)} className={inputClass} placeholder="choose_callsign" required minLength={3} autoComplete="username" />
+                <label className={labelClass}>Full Name <span className="text-red-core">*</span></label>
+                <input type="text" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} className={inputClass} placeholder="John Doe" required autoComplete="name" />
               </div>
-              <div>
-                <label className={labelClass}>Email <span className="text-cyber-blue">*</span></label>
-                <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={inputClass} placeholder="agent@cyberguardians.io" required autoComplete="email" />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>Password <span className="text-cyber-blue">*</span></label>
-                <div className="relative">
-                  <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} className={inputClass + " pr-12"} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyber-blue transition-colors">
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Scoreboard Name <span className="text-red-core">*</span></label>
+                  <input type="text" value={form.username} onChange={(e) => update('username', e.target.value)} className={inputClass} placeholder="choose_callsign" required minLength={3} autoComplete="username" />
+                </div>
+                <div>
+                  <label className={labelClass}>Email <span className="text-red-core">*</span></label>
+                  <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={inputClass} placeholder="agent@cyberguardians.io" required autoComplete="email" />
                 </div>
               </div>
-              <div>
-                <label className={labelClass}>Confirm Password <span className="text-cyber-blue">*</span></label>
-                <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={inputClass} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Password <span className="text-red-core">*</span></label>
+                  <div className="relative">
+                    <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} className={inputClass + " pr-12"} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-blue-core transition-colors">
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Confirm Password <span className="text-red-core">*</span></label>
+                  <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={inputClass} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
+                </div>
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Gender</label>
+                  <select value={form.gender} onChange={(e) => update('gender', e.target.value)} className={selectClass}>
+                    <option value="">Prefer not to say</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="non-binary">Non-binary</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Country <span className="text-red-core">*</span></label>
+                  <input type="text" value={form.country} onChange={(e) => update('country', e.target.value)} className={inputClass} placeholder="e.g. PK" required />
+                  <p className="text-txt-muted text-[10px] mt-1">Short form (e.g. PK, IND, UAE)</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-1">
+                  <label className={labelClass}>College / University <span className="text-red-core">*</span></label>
+                  <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="e.g. NUST" required />
+                  <p className="text-txt-muted text-[10px] mt-1">Short form</p>
+                </div>
+                <div>
+                  <label className={labelClass}>Age Group</label>
+                  <select value={form.age_group} onChange={(e) => update('age_group', e.target.value)} className={selectClass}>
+                    <option value="">Select</option>
+                    <option value="under_18">Under 18</option>
+                    <option value="18_24">18-24</option>
+                    <option value="25_34">25-34</option>
+                    <option value="35_44">35-44</option>
+                    <option value="45_plus">45+</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Player Type</label>
+                  <select value={form.player_type} onChange={(e) => update('player_type', e.target.value)} className={selectClass}>
+                    <option value="">Select</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="expert">Expert</option>
+                    <option value="ctf_veteran">CTF Veteran</option>
+                  </select>
+                </div>
+              </div>
+
+              <label className="flex items-start gap-3 cursor-pointer group pt-1">
+                <input type="checkbox" checked={form.agreed_tos} onChange={(e) => update('agreed_tos', e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-border-c bg-surface-2 text-blue-core focus:ring-blue-core/30 focus:ring-offset-0 cursor-pointer" />
+                <span className="text-txt-secondary text-xs sm:text-sm leading-relaxed select-none group-hover:text-txt-primary transition-colors">
+                  I agree to the <Link href="/terms" className="text-blue-glow underline">Terms of Service</Link> and <Link href="/privacy" className="text-blue-glow underline">Privacy Policy</Link>
+                </span>
+              </label>
+
+              <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
+                <p className="text-warning text-xs text-center font-medium">After registration, please wait for admin approval for account activation.</p>
+              </div>
+
+              <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+                {loading ? 'Creating Account...' : 'Create Account'}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <span className="text-txt-muted text-sm">Already have an account? </span>
+              <Link href="/login" className="text-blue-glow text-sm hover:underline">Login</Link>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>Gender</label>
-                <select value={form.gender} onChange={(e) => update('gender', e.target.value)} className={selectClass}>
-                  <option value="">Prefer not to say</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="non-binary">Non-binary</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass}>Country <span className="text-cyber-blue">*</span></label>
-                <input type="text" value={form.country} onChange={(e) => update('country', e.target.value)} className={inputClass} placeholder="e.g. PK" required />
-                <p className="text-gray-500 font-mono text-[10px] mt-1">Please write your country name in short form (e.g. PK, IND, UAE)</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="sm:col-span-1">
-                <label className={labelClass}>College / University <span className="text-cyber-blue">*</span></label>
-                <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="e.g. NUST" required />
-                <p className="text-gray-500 font-mono text-[10px] mt-1">Please write your college/university name in short form</p>
-              </div>
-              <div>
-                <label className={labelClass}>Age Group</label>
-                <select value={form.age_group} onChange={(e) => update('age_group', e.target.value)} className={selectClass}>
-                  <option value="">Select age group</option>
-                  <option value="under_18">Under 18</option>
-                  <option value="18_24">18 – 24</option>
-                  <option value="25_34">25 – 34</option>
-                  <option value="35_44">35 – 44</option>
-                  <option value="45_plus">45+</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass}>Player Type</label>
-                <select value={form.player_type} onChange={(e) => update('player_type', e.target.value)} className={selectClass}>
-                  <option value="">Select player type</option>
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                  <option value="expert">Expert</option>
-                  <option value="ctf_veteran">CTF Veteran</option>
-                </select>
-              </div>
-            </div>
-
-            <label className="flex items-start gap-3 cursor-pointer group pt-1">
-              <input type="checkbox" checked={form.agreed_tos} onChange={(e) => update('agreed_tos', e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-gray-600 bg-gray-800 text-cyber-blue focus:ring-cyber-blue/30 focus:ring-offset-0 cursor-pointer" />
-              <span className="text-gray-400 font-mono text-xs sm:text-sm leading-relaxed select-none group-hover:text-gray-300 transition-colors">
-                I agree to the{' '}
-                <Link href="/terms" className="text-cyber-blue underline decoration-cyber-blue/30 hover:decoration-cyber-blue transition-all">Terms of Service</Link>
-                {' '}and{' '}
-                <Link href="/privacy" className="text-cyber-blue underline decoration-cyber-blue/30 hover:decoration-cyber-blue transition-all">Privacy Policy</Link>
-              </span>
-            </label>
-
-            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
-              <p className="text-amber-400 font-cyber text-sm text-center">
-                After registration, please wait for admin approval for account activation.
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="cyber-btn cyber-btn-ripple w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-purple/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,150,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-              {loading ? 'Creating Account...' : 'Create Account'}
-            </button>
-          </form>
-          )}
-
-          <div className="mt-6 text-center">
-            <span className="text-gray-500 font-mono text-sm">Already have an account? </span>
-            <Link href="/login" className="text-cyber-blue font-mono text-sm hover:underline">
-              Login
-            </Link>
           </div>
-        </div>
+        )}
       </motion.div>
     </div>
   );

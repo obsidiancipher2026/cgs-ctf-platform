@@ -28,7 +28,7 @@ export default function LoginPage() {
         const csrfData = await api.getCsrfToken();
         setCsrfToken(csrfData.csrf_token);
       } catch {}
-      toast.success('Welcome back, hacker!');
+      toast.success('Welcome back, Guardian!');
       router.push('/challenges');
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || 'Login failed');
@@ -38,78 +38,65 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="cyber-card-glow rounded-2xl p-6 sm:p-8">
-          <div className="text-center mb-6 sm:mb-8">
-            <motion.div
-              animate={{ opacity: [0.8, 1, 0.8], scale: [1, 1.05, 1] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-cyber-blue mx-auto mb-4" />
-            </motion.div>
-            <h1 className="font-cyber text-xl sm:text-2xl text-white">Access Terminal</h1>
-            <p className="text-gray-500 font-mono text-xs sm:text-sm mt-2">Authenticate to continue</p>
+    <div className="min-h-[90vh] flex">
+      {/* Left Brand Panel */}
+      <div className="hidden lg:flex lg:w-[40%] relative bg-void items-center justify-center overflow-hidden">
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(224,32,32,0.08) 0%, transparent 50%, rgba(26,110,255,0.08) 100%)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-red-core/40 via-border-c to-blue-core/40" />
+        <div className="relative z-10 text-center px-8">
+          <Shield className="w-16 h-16 text-red-core mx-auto mb-6" />
+          <h2 className="font-display font-bold text-3xl text-txt-primary mb-3">Cyber Guardians Society</h2>
+          <p className="text-txt-secondary text-sm">Capture. Exploit. Defend.</p>
+        </div>
+      </div>
+
+      {/* Right Form Panel */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-surface">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+          <div className="lg:hidden text-center mb-8">
+            <Shield className="w-10 h-10 text-red-core mx-auto mb-3" />
+            <h2 className="font-display font-bold text-xl text-txt-primary">CGS CTF</h2>
           </div>
+
+          <h1 className="font-display font-bold text-2xl text-txt-primary mb-1">Welcome Back, Guardian</h1>
+          <p className="text-txt-secondary text-sm mb-8">Sign in to access the arena.</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-                  <label className="block text-gray-400 font-mono text-xs mb-2">Email</label>
+              <label className="block text-txt-secondary text-xs font-medium mb-2 uppercase tracking-wider">Email</label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm"
-                  placeholder="agent@cyberguardians.io"
-                required
-                autoComplete="email"
+                type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                className="input-field w-full px-4 py-3 text-sm"
+                placeholder="agent@cyberguardians.io" required autoComplete="email"
               />
             </div>
 
             <div>
-              <label className="block text-gray-400 font-mono text-xs mb-2">Password</label>
+              <label className="block text-txt-secondary text-xs font-medium mb-2 uppercase tracking-wider">Password</label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="cyber-input w-full px-4 py-3 pr-12 rounded-lg font-mono text-sm"
-                  placeholder="••••••••"
-                  required
-                  autoComplete="current-password"
+                  type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="input-field w-full px-4 py-3 pr-12 text-sm"
+                  placeholder="••••••••" required autoComplete="current-password"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyber-blue"
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-blue-core transition-colors">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="cyber-btn cyber-btn-ripple w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-purple/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-purple/30 hover:shadow-[0_0_30px_rgba(0,150,255,0.2)] disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
               {loading ? 'Authenticating...' : 'Login'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <span className="text-gray-500 font-mono text-sm">New recruit? </span>
-            <Link href="/register" className="text-cyber-blue font-mono text-sm hover:underline">
-              Register here
-            </Link>
+            <span className="text-txt-muted text-sm">New recruit? </span>
+            <Link href="/register" className="text-blue-glow text-sm hover:underline">Register here</Link>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }
