@@ -20,27 +20,31 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   debug: process.env.NODE_ENV === 'development',
 
-  jwt: {
-    secret: requireEnv('JWT_SECRET'),
-    algorithm: 'HS256',
-    accessExpireMinutes: parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '15', 10),
-    refreshExpireDays: parseInt(process.env.REFRESH_TOKEN_EXPIRE_DAYS || '7', 10),
+  get jwt() {
+    return {
+      secret: requireEnv('JWT_SECRET'),
+      algorithm: 'HS256',
+      accessExpireMinutes: parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '15', 10),
+      refreshExpireDays: parseInt(process.env.REFRESH_TOKEN_EXPIRE_DAYS || '7', 10),
+    }
   },
 
   cookie: {
     secure: process.env.COOKIE_SECURE === 'true',
   },
 
-  admin: {
-    username: requireEnv('ADMIN_USERNAME'),
-    password: requireEnv('ADMIN_PASSWORD'),
-    email: process.env.ADMIN_EMAIL || 'admin@cyberguardians.io',
-    allowedIPs: parseCSV(process.env.ADMIN_ALLOWED_IPS),
-    accessKey: requireEnv('ADMIN_ACCESS_KEY'),
-    secretPath: process.env.ADMIN_SECRET_PATH || 'superuser',
-    fingerprintEnforced: process.env.ADMIN_FINGERPRINT_ENFORCED !== 'false',
-    honeytokenUsernames: parseCSV(process.env.ADMIN_HONEYTOKEN_USERNAMES),
-    webhookUrl: process.env.ADMIN_WEBHOOK_URL || '',
+  get admin() {
+    return {
+      username: requireEnv('ADMIN_USERNAME'),
+      password: requireEnv('ADMIN_PASSWORD'),
+      email: process.env.ADMIN_EMAIL || 'admin@cyberguardians.io',
+      allowedIPs: parseCSV(process.env.ADMIN_ALLOWED_IPS),
+      accessKey: requireEnv('ADMIN_ACCESS_KEY'),
+      secretPath: process.env.ADMIN_SECRET_PATH || 'superuser',
+      fingerprintEnforced: process.env.ADMIN_FINGERPRINT_ENFORCED !== 'false',
+      honeytokenUsernames: parseCSV(process.env.ADMIN_HONEYTOKEN_USERNAMES),
+      webhookUrl: process.env.ADMIN_WEBHOOK_URL || '',
+    }
   },
 
   ctf: {

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut, User, Flag } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 const publicLinks = [
@@ -15,6 +15,7 @@ const publicLinks = [
 
 const protectedLinks = [
   { href: '/challenges', label: 'Challenges' },
+  { href: '/flag-submit', label: 'Flag Submit' },
   { href: '/scoreboard', label: 'Scoreboard' },
 ];
 

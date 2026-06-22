@@ -197,6 +197,7 @@ body.sidebar-open {
 .badge-easy { background: rgba(0, 214, 143, 0.15); color: var(--success); }
 .badge-medium { background: rgba(255, 184, 0, 0.15); color: var(--warning); }
 .badge-hard { background: rgba(224, 32, 32, 0.15); color: var(--red-core); }
+.badge-expert { background: rgba(120, 0, 200, 0.15); color: #A03CFF; }
 .badge-insane {
   background: linear-gradient(135deg, rgba(224, 32, 32, 0.2), rgba(120, 0, 200, 0.2));
   color: #ff4488;
