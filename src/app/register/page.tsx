@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Shield, UserPlus, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
+import { UserPlus, Eye, EyeOff, Loader2, CheckCircle, Shield, Swords, Trophy, Flag } from 'lucide-react';
 import { api } from '@/lib/api';
 import { sanitizeObject } from '@/lib/sanitize';
 import toast from 'react-hot-toast';
@@ -52,137 +52,216 @@ export default function RegisterPage() {
     } finally { setLoading(false); }
   };
 
-  const inputClass = "input-field w-full px-4 py-3 text-sm";
-  const labelClass = "block text-txt-secondary text-xs font-medium mb-2 uppercase tracking-wider";
-  const selectClass = "input-field w-full px-4 py-3 text-sm appearance-none";
+  const inputClass = "input-field w-full px-4 py-3 text-sm pl-10";
+  const labelClass = "block text-txt-secondary text-xs font-medium mb-1.5 uppercase tracking-wider";
+  const selectClass = "input-field w-full px-4 py-3 text-sm pl-10 appearance-none";
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center px-4 py-8 bg-surface">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl">
-        {cooldown > 0 ? (
-          <div className="bg-surface border border-border-c rounded-lg p-8 sm:p-10 text-center">
-            <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
-            <h2 className="font-display font-bold text-xl text-success mb-3">Registration Submitted!</h2>
-            <p className="text-txt-secondary text-sm mb-2">Your account is pending admin approval.</p>
-            <p className="text-txt-muted text-xs mb-6">You will be able to log in once an administrator activates your account.</p>
-            <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2.5 mb-4 overflow-hidden border border-border-c">
-              <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success transition-all duration-1000 ease-linear" style={{ width: `${((10 - cooldown) / 10) * 100}%` }} />
-            </div>
-            <p className="text-txt-muted text-xs">Redirecting to home page...</p>
+    <div className="min-h-[calc(100vh-4rem)] flex">
+      {/* Left Brand Panel */}
+      <div className="hidden lg:flex lg:w-[40%] relative bg-void items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-cyber-grid opacity-20" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(224,32,32,0.06) 0%, transparent 40%, rgba(26,110,255,0.06) 100%)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-red-core/40 via-border-c to-blue-core/40" />
+
+        <div className="relative z-10 text-center px-10 max-w-sm">
+          <img src="/images/logo.png" alt="CGS Logo" className="w-20 h-20 mx-auto mb-8 object-contain" />
+          <h2 className="font-display font-bold text-3xl text-txt-primary mb-3 tracking-wide">Join the Arena</h2>
+          <p className="text-txt-secondary text-sm mb-10 leading-relaxed">Create your account and start capturing flags.</p>
+
+          <div className="space-y-4 text-left">
+            {[
+              { icon: Swords, text: '5 challenge categories to master', color: 'text-red-glow' },
+              { icon: Trophy, text: 'Live competitive leaderboard', color: 'text-blue-glow' },
+              { icon: Flag, text: 'Hidden flags in every challenge', color: 'text-warning' },
+              { icon: Shield, text: 'Secure platform, fair play', color: 'text-success' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + i * 0.12 }}
+                className="flex items-center gap-3"
+              >
+                <div className="w-8 h-8 rounded bg-surface border border-border-c flex items-center justify-center flex-shrink-0">
+                  <item.icon className={`w-4 h-4 ${item.color}`} />
+                </div>
+                <span className="text-txt-secondary text-sm">{item.text}</span>
+              </motion.div>
+            ))}
           </div>
-        ) : (
-          <div className="bg-surface border border-border-c rounded-lg p-6 sm:p-10">
-            <div className="text-center mb-8">
-              <Shield className="w-10 h-10 text-red-core mx-auto mb-3" />
-              <h1 className="font-display font-bold text-2xl text-txt-primary">Join The Fight</h1>
-              <p className="text-txt-secondary text-sm mt-2">Create your Cyber Guardians Society account</p>
+        </div>
+      </div>
+
+      {/* Right Form Panel */}
+      <div className="flex-1 flex items-center justify-center px-6 py-10 bg-surface overflow-y-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg">
+          {cooldown > 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
+              <h2 className="font-display font-bold text-2xl text-success mb-3">Registration Submitted!</h2>
+              <p className="text-txt-secondary text-sm mb-2">Your account is pending admin approval.</p>
+              <p className="text-txt-muted text-xs mb-6">You will be able to log in once an administrator activates your account.</p>
+              <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2.5 mb-4 overflow-hidden border border-border-c">
+                <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success transition-all duration-1000 ease-linear" style={{ width: `${((10 - cooldown) / 10) * 100}%` }} />
+              </div>
+              <p className="text-txt-muted text-xs">Redirecting to home page...</p>
             </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className={labelClass}>Full Name <span className="text-red-core">*</span></label>
-                <input type="text" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} className={inputClass} placeholder="John Doe" required autoComplete="name" />
+          ) : (
+            <>
+              {/* Mobile Logo */}
+              <div className="lg:hidden text-center mb-6">
+                <img src="/images/logo.png" alt="CGS Logo" className="w-12 h-12 mx-auto mb-3 object-contain" />
+                <h2 className="font-display font-bold text-xl text-txt-primary">CGS CTF</h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className={labelClass}>Scoreboard Name <span className="text-red-core">*</span></label>
-                  <input type="text" value={form.username} onChange={(e) => update('username', e.target.value)} className={inputClass} placeholder="choose_callsign" required minLength={3} autoComplete="username" />
-                </div>
-                <div>
-                  <label className={labelClass}>Email <span className="text-red-core">*</span></label>
-                  <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={inputClass} placeholder="agent@cyberguardians.io" required autoComplete="email" />
-                </div>
+              {/* Header */}
+              <div className="mb-6">
+                <h1 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mb-2">Create Account</h1>
+                <p className="text-txt-secondary text-sm">Join Cyber Guardians Society and start your journey.</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Full Name */}
                 <div>
-                  <label className={labelClass}>Password <span className="text-red-core">*</span></label>
+                  <label className={labelClass}>Full Name <span className="text-red-core">*</span></label>
                   <div className="relative">
-                    <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} className={inputClass + " pr-12"} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-blue-core transition-colors">
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                    <input type="text" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} className={inputClass} placeholder="John Doe" required autoComplete="name" />
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                   </div>
                 </div>
-                <div>
-                  <label className={labelClass}>Confirm Password <span className="text-red-core">*</span></label>
-                  <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={inputClass} placeholder="••••••••" required minLength={8} autoComplete="new-password" />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className={labelClass}>Gender</label>
-                  <select value={form.gender} onChange={(e) => update('gender', e.target.value)} className={selectClass}>
-                    <option value="">Prefer not to say</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary</option>
-                    <option value="other">Other</option>
-                  </select>
+                {/* Username + Email */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Callsign <span className="text-red-core">*</span></label>
+                    <div className="relative">
+                      <input type="text" value={form.username} onChange={(e) => update('username', e.target.value)} className={inputClass} placeholder="h4ck3r_01" required minLength={3} autoComplete="username" />
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Email <span className="text-red-core">*</span></label>
+                    <div className="relative">
+                      <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className={inputClass} placeholder="you@email.com" required autoComplete="email" />
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className={labelClass}>Country <span className="text-red-core">*</span></label>
-                  <input type="text" value={form.country} onChange={(e) => update('country', e.target.value)} className={inputClass} placeholder="e.g. PK" required />
-                  <p className="text-txt-muted text-[10px] mt-1">Short form (e.g. PK, IND, UAE)</p>
+
+                {/* Password + Confirm */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Password <span className="text-red-core">*</span></label>
+                    <div className="relative">
+                      <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} className={inputClass + " pr-12"} placeholder="Min 8 characters" required minLength={8} autoComplete="new-password" />
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-blue-core transition-colors p-1">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Confirm Password <span className="text-red-core">*</span></label>
+                    <div className="relative">
+                      <input type={showPassword ? 'text' : 'password'} value={form.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className={inputClass} placeholder="Repeat password" required minLength={8} autoComplete="new-password" />
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="sm:col-span-1">
-                  <label className={labelClass}>College / University <span className="text-red-core">*</span></label>
-                  <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="e.g. NUST" required />
-                  <p className="text-txt-muted text-[10px] mt-1">Short form</p>
+                {/* Gender + Country */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Gender</label>
+                    <div className="relative">
+                      <select value={form.gender} onChange={(e) => update('gender', e.target.value)} className={selectClass}>
+                        <option value="">Prefer not to say</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="non-binary">Non-binary</option>
+                        <option value="other">Other</option>
+                      </select>
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Country <span className="text-red-core">*</span></label>
+                    <div className="relative">
+                      <input type="text" value={form.country} onChange={(e) => update('country', e.target.value)} className={inputClass} placeholder="e.g. PK" required />
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <p className="text-txt-muted text-[10px] mt-1">Short form (PK, IND, UAE)</p>
+                  </div>
                 </div>
-                <div>
-                  <label className={labelClass}>Age Group</label>
-                  <select value={form.age_group} onChange={(e) => update('age_group', e.target.value)} className={selectClass}>
-                    <option value="">Select</option>
-                    <option value="under_18">Under 18</option>
-                    <option value="18_24">18-24</option>
-                    <option value="25_34">25-34</option>
-                    <option value="35_44">35-44</option>
-                    <option value="45_plus">45+</option>
-                  </select>
+
+                {/* College + Age + Player Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-1">
+                    <label className={labelClass}>College <span className="text-red-core">*</span></label>
+                    <div className="relative">
+                      <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="e.g. NUST" required />
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
+                    </div>
+                    <p className="text-txt-muted text-[10px] mt-1">Short form</p>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Age Group</label>
+                    <div className="relative">
+                      <select value={form.age_group} onChange={(e) => update('age_group', e.target.value)} className={selectClass}>
+                        <option value="">Select</option>
+                        <option value="under_18">Under 18</option>
+                        <option value="18_24">18-24</option>
+                        <option value="25_34">25-34</option>
+                        <option value="35_44">35-44</option>
+                        <option value="45_plus">45+</option>
+                      </select>
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Skill Level</label>
+                    <div className="relative">
+                      <select value={form.player_type} onChange={(e) => update('player_type', e.target.value)} className={selectClass}>
+                        <option value="">Select</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="expert">Expert</option>
+                        <option value="ctf_veteran">CTF Veteran</option>
+                      </select>
+                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className={labelClass}>Player Type</label>
-                  <select value={form.player_type} onChange={(e) => update('player_type', e.target.value)} className={selectClass}>
-                    <option value="">Select</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                    <option value="expert">Expert</option>
-                    <option value="ctf_veteran">CTF Veteran</option>
-                  </select>
+
+                {/* Terms */}
+                <label className="flex items-start gap-3 cursor-pointer group pt-1">
+                  <input type="checkbox" checked={form.agreed_tos} onChange={(e) => update('agreed_tos', e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-border-c bg-surface-2 text-blue-core focus:ring-blue-core/30 focus:ring-offset-0 cursor-pointer" />
+                  <span className="text-txt-secondary text-xs sm:text-sm leading-relaxed select-none group-hover:text-txt-primary transition-colors">
+                    I agree to the <Link href="/terms" className="text-blue-glow hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-blue-glow hover:underline">Privacy Policy</Link>
+                  </span>
+                </label>
+
+                {/* Admin Approval Notice */}
+                <div className="p-3 rounded-lg bg-warning/5 border border-warning/20">
+                  <p className="text-warning/80 text-xs text-center">Account requires admin approval after registration.</p>
                 </div>
-              </div>
 
-              <label className="flex items-start gap-3 cursor-pointer group pt-1">
-                <input type="checkbox" checked={form.agreed_tos} onChange={(e) => update('agreed_tos', e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-border-c bg-surface-2 text-blue-core focus:ring-blue-core/30 focus:ring-offset-0 cursor-pointer" />
-                <span className="text-txt-secondary text-xs sm:text-sm leading-relaxed select-none group-hover:text-txt-primary transition-colors">
-                  I agree to the <Link href="/terms" className="text-blue-glow underline">Terms of Service</Link> and <Link href="/privacy" className="text-blue-glow underline">Privacy Policy</Link>
-                </span>
-              </label>
+                <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 text-sm flex items-center justify-center gap-2">
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                </button>
+              </form>
 
-              <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
-                <p className="text-warning text-xs text-center font-medium">After registration, please wait for admin approval for account activation.</p>
-              </div>
-
-              <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2">
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-                {loading ? 'Creating Account...' : 'Create Account'}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <span className="text-txt-muted text-sm">Already have an account? </span>
-              <Link href="/login" className="text-blue-glow text-sm hover:underline">Login</Link>
-            </div>
-          </div>
-        )}
-      </motion.div>
+              <p className="text-center mt-6 text-txt-muted text-xs">
+                Already have an account?{' '}
+                <Link href="/login" className="text-blue-glow hover:underline">Sign in</Link>
+              </p>
+            </>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 }

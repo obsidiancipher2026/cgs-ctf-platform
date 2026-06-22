@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Trophy, Flag, LogOut, User, Shield } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 const publicLinks = [
@@ -59,7 +59,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5" aria-label="Home">
-            <Shield className="w-7 h-7 text-red-core" />
+            <img src="/images/logo.png" alt="CGS Logo" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
             <span className="font-display font-bold text-lg text-txt-primary tracking-wide hidden sm:block">
               CyberGuardiansSocietyCTF
             </span>
@@ -183,7 +183,10 @@ export default function Navbar() {
             aria-label="Mobile navigation"
           >
             <div className="flex items-center justify-between px-5 py-4 border-b border-border-c">
-              <span className="font-display font-bold text-sm text-txt-primary uppercase tracking-wider">Menu</span>
+              <div className="flex items-center gap-2">
+                <img src="/images/logo.png" alt="CGS Logo" className="w-7 h-7 object-contain" />
+                <span className="font-display font-bold text-sm text-txt-primary tracking-wide">CGS CTF</span>
+              </div>
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 text-txt-muted hover:text-txt-primary rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow"
