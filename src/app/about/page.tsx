@@ -91,29 +91,38 @@ export default function About() {
 
         <div className="dual-beam" />
 
-        {/* Developers */}
+        {/* Team */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <span className="text-txt-muted text-xs font-mono uppercase tracking-[0.2em]">Team</span>
-          <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mt-2">Platform Developers</h2>
+          <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mt-2">Meet the Team</h2>
+          <p className="text-txt-secondary text-sm max-w-xl mx-auto mt-3">
+            The people behind CGS CTF — building, designing, and running it all.
+          </p>
         </motion.div>
 
-        <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
           {[
-            { name: 'Shayan Ahmed', role: 'Founder & Organizer', img: '/images/shayan-ahmed.jpeg', github: 'https://github.com/OperationZero-GHH', linkedin: 'https://www.linkedin.com/in/shayanahmedmughal', whatsapp: 'https://wa.me/923261458036', email: 'https://mail.google.com/mail/?view=cm&fs=1&to=sakingplays@gmail.com' },
-            { name: 'Muhammad Saad', role: 'Challenges & Security Organizer', img: '/images/muhammad-saad.jpeg', github: 'https://github.com/saad-838', linkedin: 'https://www.linkedin.com/in/muhammad-saad-13ab46298/', whatsapp: 'https://wa.me/923272243678', email: 'https://mail.google.com/mail/?view=cm&fs=1&to=mrgill2792@gmail.com' },
-          ].map((dev) => (
-            <motion.div key={dev.name} className="card p-6 w-72 flex flex-col items-center text-center" whileHover={{ y: -4 }}>
+            { name: 'Shayan Ahmed', role: 'Founder / Director', desc: 'Vision and leadership', img: '/images/shayan-ahmed.jpeg' },
+            { name: 'Muhammad Saad', role: 'Deputy Lead', desc: 'Coordination and execution', img: '/images/muhammad-saad.jpeg' },
+            { name: 'Muhammad Taha', role: 'Technical Lead', desc: 'Cybersecurity and CTFs', img: '/images/muhammad-taha.jpeg' },
+            { name: 'Esha Javed', role: 'Graphics Design Lead', desc: 'Design and branding', img: '/images/esha-javed.jpeg' },
+            { name: 'Jannat Fatima', role: 'Media & Communications Lead', desc: 'Social media management and announcements', img: '/images/jannat-fatima.jpg' },
+            { name: 'Asad Malik', role: 'Event Management Lead', desc: 'Event planning and execution', img: '/images/asad-malik.jpeg' },
+            { name: 'Bisma Noor', role: 'Community & Outreach Lead', desc: 'Engagement and collaborations', img: '/images/bisma-noor.jpeg' },
+          ].map((member, i) => (
+            <motion.div
+              key={member.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              className="card card-lift p-5 flex flex-col items-center text-center"
+            >
               <div className="w-20 h-20 rounded-full overflow-hidden mb-4 ring-2 ring-border-c">
-                <img src={dev.img} alt={dev.name} className="w-full h-full object-cover" />
+                <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
               </div>
-              <h3 className="font-body font-semibold text-txt-primary text-base">{dev.name}</h3>
-              <p className="text-blue-glow text-xs font-mono uppercase tracking-wider mt-1">{dev.role}</p>
-              <div className="flex items-center gap-3 mt-4">
-                <a href={dev.github} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-txt-primary transition-colors"><Github className="w-4 h-4" /></a>
-                <a href={dev.whatsapp} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-success transition-colors"><MessageCircle className="w-4 h-4" /></a>
-                <a href={dev.linkedin} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-blue-glow transition-colors"><Linkedin className="w-4 h-4" /></a>
-                <a href={dev.email} target="_blank" rel="noopener noreferrer" className="text-txt-muted hover:text-red-glow transition-colors"><Mail className="w-4 h-4" /></a>
-              </div>
+              <h3 className="font-body font-semibold text-txt-primary text-base">{member.name}</h3>
+              <p className="text-blue-glow text-xs font-mono uppercase tracking-wider mt-1">{member.role}</p>
+              <p className="text-txt-muted text-xs mt-2">{member.desc}</p>
             </motion.div>
           ))}
         </div>
