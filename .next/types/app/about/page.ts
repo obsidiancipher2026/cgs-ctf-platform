@@ -1,4 +1,4 @@
-// File: C:\Users\CyberGuardiansSociet\Documents\My Personal Data\Cyber Guardians Society CTF\frontend\src\app\about\page.tsx
+// File: C:\Users\CGS\Documents\cgs-ctf-platform\src\app\about\page.tsx
 import * as entry from '../../../../src/app/about/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -467,50 +467,114 @@ export default function AdminPage() {
 
   if (authChecking) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-cyber-blue animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[var(--void)]">
+        <Loader2 className="w-8 h-8 text-[var(--blue-core)] animate-spin" />
       </div>
     );
   }
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md">
-          <div className="cyber-card rounded-2xl p-6 sm:p-8 border-cyber-blue/30">
-            <div className="text-center mb-8">
-              <Shield className="w-12 h-12 sm:w-16 sm:h-16 text-cyber-red mx-auto mb-4" />
-              <h1 className="font-cyber text-xl sm:text-2xl text-white">Command & Control Center</h1>
-              <p className="text-gray-500 font-mono text-sm mt-2">Authorized personnel only</p>
+      <div className="min-h-screen flex bg-[var(--void)]">
+        <div className="hidden lg:flex lg:w-[45%] relative flex-col items-center justify-center p-12 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)] via-[var(--void)] to-[var(--surface-2)]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--red-core)] to-transparent opacity-40" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--blue-core)] to-transparent opacity-40" />
+          <div className="relative z-10 text-center max-w-sm">
+            <img src="/images/logo.png" alt="CGS" className="w-20 h-20 mx-auto mb-6 object-contain" />
+            <h2 className="font-display text-3xl font-bold text-txt-primary mb-3 tracking-tight">CGS CTF Platform</h2>
+            <p className="text-txt-muted font-mono text-sm mb-8 leading-relaxed">Command & Control Center — Restricted Access</p>
+            <div className="space-y-3 text-left">
+              {[
+                { icon: Shield, text: 'Real-time threat monitoring & WAF' },
+                { icon: Users, text: 'User management & access control' },
+                { icon: Swords, text: 'Challenge lifecycle management' },
+                { icon: Radio, text: 'Live competition control' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                  <item.icon className="w-4 h-4 text-[var(--blue-core)] flex-shrink-0" />
+                  <span className="text-txt-secondary font-mono text-xs">{item.text}</span>
+                </div>
+              ))}
             </div>
+          </div>
+        </div>
+
+        <div className="w-full lg:w-[55%] flex items-center justify-center px-6 py-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-md">
+            <div className="lg:hidden flex items-center gap-3 mb-8">
+              <img src="/images/logo.png" alt="CGS" className="w-10 h-10 object-contain" />
+              <div>
+                <h1 className="font-display text-lg font-bold text-txt-primary">CGS CTF Platform</h1>
+                <p className="text-txt-muted font-mono text-xs">Command & Control Center</p>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-5 h-5 text-[var(--red-core)]" />
+                <h1 className="font-display text-xl font-bold text-txt-primary">Admin Access</h1>
+              </div>
+              <p className="text-txt-muted font-mono text-sm">Authenticate to access the control center</p>
+            </div>
+
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-gray-400 font-mono text-xs mb-2">Secret Key</label>
-                <input type="password" value={loginForm.accessKey} onChange={(e) => setLoginForm({ ...loginForm, accessKey: e.target.value })} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" placeholder="Enter secret key" required />
+                <label className="block text-txt-secondary font-mono text-xs mb-2 uppercase tracking-wider">Secret Key</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" />
+                  <input
+                    type="password"
+                    value={loginForm.accessKey}
+                    onChange={(e) => setLoginForm({ ...loginForm, accessKey: e.target.value })}
+                    className="input-field w-full pl-10 pr-4 py-3 rounded-lg font-mono text-sm"
+                    placeholder="Enter secret key"
+                    required
+                  />
+                </div>
               </div>
               <div>
-                <label className="block text-gray-400 font-mono text-xs mb-2">Password</label>
-                <input type="password" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" required />
+                <label className="block text-txt-secondary font-mono text-xs mb-2 uppercase tracking-wider">Password</label>
+                <div className="relative">
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" />
+                  <input
+                    type="password"
+                    value={loginForm.password}
+                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                    className="input-field w-full pl-10 pr-4 py-3 rounded-lg font-mono text-sm"
+                    placeholder="Enter password"
+                    required
+                  />
+                </div>
               </div>
-              <button type="submit" disabled={authChecking} className="cyber-btn w-full py-3 rounded-lg bg-gradient-to-r from-cyber-blue/20 to-cyber-purple/20 border border-cyber-blue/50 text-white font-cyber text-sm hover:from-cyber-blue/30 hover:to-cyber-purple/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
+              <button
+                type="submit"
+                disabled={authChecking}
+                className="w-full py-3 rounded-lg bg-[var(--red-core)] text-white font-display font-semibold text-sm uppercase tracking-widest hover:bg-[var(--red-glow)] hover:shadow-[0_0_20px_rgba(224,32,32,0.3)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              >
                 {authChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
                 {authChecking ? 'Authenticating...' : 'Authenticate'}
               </button>
             </form>
-          </div>
-        </motion.div>
+
+            <div className="mt-6 pt-6 border-t border-[var(--border)]">
+              <button onClick={() => router.push('/login')} className="w-full py-2.5 rounded-lg bg-transparent border border-[var(--blue-core)] text-[var(--blue-core)] font-display font-semibold text-sm uppercase tracking-wider hover:bg-[rgba(26,110,255,0.1)] transition-all flex items-center justify-center gap-2">
+                Back to User Login
+              </button>
+            </div>
+          </motion.div>
+        </div>
       </div>
     );
   }
 
-  return (<div>
-    <div className="min-h-screen py-4 sm:py-6 px-3 sm:px-4">
+  return (<div className="bg-[var(--void)] min-h-screen">
+    <div className="py-4 sm:py-6 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          {/* Sidebar toggle with smooth icon transition */}
           <button
-            className="relative p-2 text-gray-400 hover:text-cyber-blue transition-colors focus:outline-none focus:ring-2 focus:ring-cyber-blue/50 rounded-lg group"
+            className="relative p-2 text-txt-secondary hover:text-[var(--blue-core)] transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(26,110,255,0.5)] rounded-lg group"
             onClick={() => setSidebarVisible(prev => !prev)}
             title={sidebarVisible ? 'Close sidebar' : 'Open sidebar'}
           >
@@ -524,11 +588,11 @@ export default function AdminPage() {
             </div>
           </button>
 
-          <Shield className={`w-5 h-5 sm:w-6 sm:h-6 text-cyber-red flex-shrink-0 transition-all duration-300 ${sidebarVisible ? 'opacity-100' : 'opacity-0 sm:opacity-100'}`} />
-          <h1 className="font-cyber font-bold text-xl sm:text-2xl text-white flex-1 min-w-0 truncate">
+          <img src="/images/logo.png" alt="CGS" className="w-7 h-7 flex-shrink-0 object-contain" />
+          <h1 className="font-display font-bold text-xl sm:text-2xl text-txt-primary flex-1 min-w-0 truncate">
             Command & Control Center
           </h1>
-          <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-cyber-blue transition-colors rounded-lg hover:bg-cyber-blue/5" title="Logout">
+          <button onClick={handleLogout} className="p-2 text-txt-secondary hover:text-[var(--red-core)] transition-colors rounded-lg hover:bg-[rgba(224,32,32,0.05)]" title="Logout">
             <LogOut className="w-5 h-5" />
           </button>
         </div>
@@ -555,11 +619,11 @@ export default function AdminPage() {
               lg:relative lg:flex-shrink-0 lg:transition-[width] lg:duration-300 lg:ease-in-out
               lg:bg-transparent lg:border-0
               fixed lg:static inset-y-0 left-0 z-50
-              bg-[#0a0a1a] border-r border-cyber-blue/10
+              bg-[var(--surface)] border-r border-[rgba(26,110,255,0.1)]
               overflow-y-auto overflow-x-hidden
               transition-all duration-300 ease-in-out
               ${sidebarVisible ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-              ${sidebarVisible ? 'shadow-[2px_0_20px_rgba(0,212,255,0.08)]' : ''}
+              ${sidebarVisible ? 'shadow-[2px_0_20px_rgba(26,110,255,0.08)]' : ''}
             `}
           >
             <div className={`w-48 lg:w-full flex flex-col gap-1 p-4 pt-16 lg:pt-3 ${sidebarVisible ? '' : 'lg:hidden'}`}>
@@ -571,8 +635,8 @@ export default function AdminPage() {
                     onClick={() => { handleTabChange(tab.id); if (window.innerWidth < 1024) setSidebarVisible(false); }}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-mono text-xs sm:text-sm transition-all duration-200 text-left whitespace-nowrap ${
                       activeTab === tab.id
-                        ? 'bg-cyber-blue/10 text-cyber-blue border border-cyber-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.1)]'
-                        : 'text-gray-400 hover:text-white hover:bg-cyber-blue/5 border border-transparent'
+                        ? 'bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] border border-[rgba(26,110,255,0.2)] shadow-[0_0_15px_rgba(26,110,255,0.1)]'
+                        : 'text-txt-secondary hover:text-txt-primary hover:bg-[rgba(26,110,255,0.05)] border border-transparent'
                     }`}
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
@@ -587,7 +651,7 @@ export default function AdminPage() {
           <div className="flex-1 min-w-0 transition-all duration-300">
             {tabLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-cyber-blue animate-spin" />
+                <Loader2 className="w-8 h-8 text-[var(--blue-core)] animate-spin" />
               </div>
             ) : (
               <AnimatePresence mode="wait">
@@ -603,65 +667,65 @@ export default function AdminPage() {
                       {dashboard && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                           {[
-                            { label: 'Users', value: dashboard.total_users, icon: Users, color: '#00d4ff' },
-                            { label: 'Challenges', value: dashboard.total_challenges || 0, icon: Swords, color: '#7b2ff7' },
-                            { label: 'Suspicious Logs', value: dashboard.suspicious_logs, icon: Activity, color: '#ff2d79' },
+                            { label: 'Users', value: dashboard.total_users, icon: Users, color: 'var(--blue-core)' },
+                            { label: 'Challenges', value: dashboard.total_challenges || 0, icon: Swords, color: '#A03CFF' },
+                            { label: 'Suspicious Logs', value: dashboard.suspicious_logs, icon: Activity, color: 'var(--red-glow)' },
                           ].map((item, i) => {
                             const Icon = item.icon;
                             return (
-                              <div key={i} className="cyber-card rounded-xl p-3 sm:p-4">
+                              <div key={i} className="card rounded-xl p-3 sm:p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                   <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: item.color }} />
-                                  <span className="text-gray-400 font-mono text-xs">{item.label}</span>
+                                  <span className="text-txt-secondary font-mono text-xs">{item.label}</span>
                                 </div>
-                                <span className="font-cyber text-xl sm:text-2xl text-white">{item.value}</span>
+                                <span className="font-display text-xl sm:text-2xl text-txt-primary">{item.value}</span>
                               </div>
                             );
                           })}
                         </div>
                       )}
-                      <div className="cyber-card rounded-xl p-6">
-                        <h3 className="font-cyber text-white mb-4">Danger Zone</h3>
+                      <div className="card rounded-xl p-6">
+                        <h3 className="font-display text-txt-primary mb-4">Danger Zone</h3>
                         <div className="flex flex-wrap gap-3">
-                          <button onClick={handleReset} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-cyber-red/10 border border-cyber-red/30 text-cyber-red font-mono text-sm hover:bg-cyber-red/20 transition-all flex items-center justify-center gap-2">
+                          <button onClick={handleReset} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-core)] font-mono text-sm hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
                             <RefreshCw className="w-4 h-4" /> Reset Competition
                           </button>
                           <button onClick={async () => {
                             if (!confirm('Reset ALL blood points across all challenges? This cannot be undone.')) return;
                             try { await api.resetAllBlood(); toast.success('All blood points reset'); loadTabData('dashboard'); }
                             catch { toast.error('Failed to reset blood points'); }
-                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-sm hover:bg-red-500/20 transition-all flex items-center justify-center gap-2">
+                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-sm hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
                             <Droplet className="w-4 h-4" /> Reset All Blood Points
                           </button>
                           <button onClick={async () => {
                             if (!confirm('Invalidate ALL sessions? All users will need to login again.')) return;
                             try { await api.invalidateAllSessions(); toast.success('All sessions invalidated'); }
                             catch { toast.error('Failed to invalidate sessions'); }
-                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 font-mono text-sm hover:bg-orange-500/20 transition-all flex items-center justify-center gap-2">
+                          }} className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[rgba(255,140,0,0.1)] border border-[rgba(255,140,0,0.3)] text-[#FF8C00] font-mono text-sm hover:bg-[rgba(255,140,0,0.2)] transition-all flex items-center justify-center gap-2">
                             <AlertTriangle className="w-4 h-4" /> Invalidate All Sessions
                           </button>
                         </div>
                         <div className="mt-4">
-                          <h4 className="font-cyber text-gray-400 text-xs mb-3">Audit &amp; Security Checks</h4>
+                          <h4 className="font-display text-txt-secondary text-xs mb-3">Audit &amp; Security Checks</h4>
                           <div className="flex flex-wrap gap-2">
                             <button onClick={async () => {
                               try { const r = await api.auditScan(); toast.success(`Audit scan complete: ${r.anomalies?.length || 0} anomalies found`); } catch { toast.error('Audit scan failed'); }
-                            }} className="px-4 py-2 rounded-lg bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue font-mono text-xs hover:bg-cyber-blue/20 transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-xs hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center gap-1">
                               <Search className="w-3 h-3" /> Audit Scan
                             </button>
                             <button onClick={async () => {
                               try { const r = await api.collusionScan(); toast.success(`Collusion scan: ${r.flagged?.length || 0} suspicious groups`); } catch { toast.error('Collusion scan failed'); }
-                            }} className="px-4 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 font-mono text-xs hover:bg-purple-500/20 transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(160,60,255,0.1)] border border-[rgba(160,60,255,0.3)] text-[#A03CFF] font-mono text-xs hover:bg-[rgba(160,60,255,0.2)] transition-all flex items-center gap-1">
                               <Users className="w-3 h-3" /> Collusion Scan
                             </button>
                             <button onClick={async () => {
                               try { const r = await api.qaRun(); toast.success(`QA check: ${r.checklist?.length || 0} items`); } catch { toast.error('QA mode not enabled'); }
-                            }} className="px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 font-mono text-xs hover:bg-green-500/20 transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center gap-1">
                               <FileText className="w-3 h-3" /> QA Checklist
                             </button>
                             <button onClick={async () => {
                               try { const r = await api.qaChmod(); toast.success(`Chmod check: ${r.writable_dirs || 0} writable dirs`); } catch { toast.error('Chmod check failed'); }
-                            }} className="px-4 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-mono text-xs hover:bg-yellow-500/20 transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(255,184,0,0.1)] border border-[rgba(255,184,0,0.3)] text-[var(--warning)] font-mono text-xs hover:bg-[rgba(255,184,0,0.2)] transition-all flex items-center gap-1">
                               <Lock className="w-3 h-3" /> Chmod Check
                             </button>
                           </div>
@@ -673,7 +737,7 @@ export default function AdminPage() {
                   {activeTab === 'users' && (
                     <div>
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-gray-400 font-mono text-xs">
+                        <span className="text-txt-secondary font-mono text-xs">
                           {users.filter(u => u.status === 'pending').length} pending approvals
                         </span>
                         <button
@@ -684,15 +748,15 @@ export default function AdminPage() {
                               loadTabData('users');
                             } catch { toast.error('Failed to approve all'); }
                           }}
-                          className="px-4 py-2 rounded-lg bg-cyber-green/10 border border-cyber-green/30 text-cyber-green font-mono text-xs hover:bg-cyber-green/20 transition-all flex items-center gap-2"
+                          className="px-4 py-2 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center gap-2"
                         >
                           <CheckCircle className="w-3.5 h-3.5" /> Approve All Pending
                         </button>
                       </div>
                       <div className="overflow-x-auto">
-                      <table className="w-full text-left cyber-table">
+                      <table className="w-full text-left admin-table">
                         <thead>
-                          <tr className="text-gray-400 font-mono text-xs uppercase tracking-wider border-b border-cyber-blue/10">
+                          <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
                             <th className="p-3">Username</th>
                             <th className="p-3">Email</th>
                             <th className="p-3">Solves</th>
@@ -703,66 +767,66 @@ export default function AdminPage() {
                         </thead>
                         <tbody>
                           {users.map((u: any) => (
-                            <tr key={u.id} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/5 transition-colors">
-                              <td className="p-3 font-mono text-sm text-white flex items-center gap-2">
+                            <tr key={u.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                              <td className="p-3 font-mono text-sm text-txt-primary flex items-center gap-2">
                                 {u.avatar_url && (
                                   <img src={u.avatar_url} alt="" className="w-6 h-6 rounded-full" />
                                 )}
                                 {u.username}
                               </td>
-                              <td className="p-3 font-mono text-xs text-gray-400">{u.email}</td>
-                              <td className="p-3 font-mono text-sm text-yellow-400">{u.solves}</td>
-                              <td className="p-3 font-mono text-sm text-cyber-green">{u.score}</td>
+                              <td className="p-3 font-mono text-xs text-txt-secondary">{u.email}</td>
+                              <td className="p-3 font-mono text-sm text-[var(--warning)]">{u.solves}</td>
+                              <td className="p-3 font-mono text-sm text-[var(--success)]">{u.score}</td>
                               <td className="p-3">
                                 {u.is_banned ? (
-                                  <span className="text-xs font-mono text-cyber-red">Banned</span>
+                                  <span className="text-xs font-mono text-[var(--red-core)]">Banned</span>
                                 ) : u.status === 'pending' ? (
-                                  <span className="text-xs font-mono text-yellow-400">Pending</span>
+                                  <span className="text-xs font-mono text-[var(--warning)]">Pending</span>
                                 ) : u.status === 'active' ? (
-                                  <span className="text-xs font-mono text-cyber-green">Active</span>
+                                  <span className="text-xs font-mono text-[var(--success)]">Active</span>
                                 ) : u.status === 'rejected' ? (
-                                  <span className="text-xs font-mono text-cyber-red">Rejected</span>
+                                  <span className="text-xs font-mono text-[var(--red-core)]">Rejected</span>
                                 ) : (
-                                  <span className="text-xs font-mono text-gray-500">{u.status}</span>
+                                  <span className="text-xs font-mono text-txt-muted">{u.status}</span>
                                 )}
                               </td>
                               <td className="p-3">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   {u.status === 'pending' && (
                                     <div>
-                                      <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-cyber-green/10 text-cyber-green hover:bg-cyber-green/20 transition-all" title="Approve">
+                                      <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Approve">
                                         <CheckCircle className="w-3.5 h-3.5" />
                                       </button>
-                                      <button onClick={() => handleReject(u.id)} className="p-1.5 rounded-lg bg-cyber-red/10 text-cyber-red hover:bg-cyber-red/20 transition-all" title="Reject">
+                                      <button onClick={() => handleReject(u.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Reject">
                                         <UserX className="w-3.5 h-3.5" />
                                       </button>
                                     </div>
                                   )}
                                   {!u.is_banned ? (
-                                    <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-cyber-red/10 text-cyber-red hover:bg-cyber-red/20 transition-all" title="Ban">
+                                    <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Ban">
                                       <Ban className="w-3.5 h-3.5" />
                                     </button>
                                   ) : (
-                                    <button onClick={() => handleUnban(u.id)} className="p-1.5 rounded-lg bg-cyber-green/10 text-cyber-green hover:bg-cyber-green/20 transition-all" title="Unban">
+                                    <button onClick={() => handleUnban(u.id)} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Unban">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
                                   )}
-                                  <button onClick={() => { setUsernameModal({ userId: u.id, username: u.username }); setUsernameModalValue(''); }} className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all" title="Edit Username">
+                                  <button onClick={() => { setUsernameModal({ userId: u.id, username: u.username }); setUsernameModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-glow)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title="Edit Username">
                                     <Pencil className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => { setPasswordModal({ userId: u.id, username: u.username }); setPasswordModalValue(''); }} className="p-1.5 rounded-lg bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-all" title="Change Password">
+                                  <button onClick={() => { setPasswordModal({ userId: u.id, username: u.username }); setPasswordModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title="Change Password">
                                     <KeyRound className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleResetScore(u.id, u.username)} className="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-all" title="Reset Score">
+                                  <button onClick={() => handleResetScore(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(255,184,0,0.1)] text-[var(--warning)] hover:bg-[rgba(255,184,0,0.2)] transition-all" title="Reset Score">
                                     <RefreshCw className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleResetBlood(u.id, u.username)} className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all" title="Reset Blood Points">
+                                  <button onClick={() => handleResetBlood(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Reset Blood Points">
                                     <Droplet className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleResetUserSolves(u.id, u.username)} className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-all" title="Reset Solves">
+                                  <button onClick={() => handleResetUserSolves(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(160,60,255,0.1)] text-[#A03CFF] hover:bg-[rgba(160,60,255,0.2)] transition-all" title="Reset Solves">
                                     <Flag className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleDeleteUser(u.id, u.username)} className="p-1.5 rounded-lg bg-cyber-red/10 text-cyber-red hover:bg-cyber-red/20 transition-all" title="Delete">
+                                  <button onClick={() => handleDeleteUser(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Delete">
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
                                 </div>
@@ -778,18 +842,18 @@ export default function AdminPage() {
                   {activeTab === 'challenges' && (
                     <div className="space-y-6">
                       {/* Create Challenge */}
-                      <div className="cyber-card rounded-xl p-4 sm:p-6">
-                        <h3 className="font-cyber text-white text-sm mb-4 flex items-center gap-2">
-                          <Plus className="w-4 h-4 text-cyber-green" /> Create Challenge
+                      <div className="card rounded-xl p-4 sm:p-6">
+                        <h3 className="font-display text-txt-primary text-sm mb-4 flex items-center gap-2">
+                          <Plus className="w-4 h-4 text-[var(--success)]" /> Create Challenge
                         </h3>
                         <form onSubmit={handleCreateChallenge} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                           <div className="sm:col-span-2 lg:col-span-3">
-                            <input type="text" value={newChallenge.title} onChange={(e) => setNewChallenge({ ...newChallenge, title: e.target.value })} placeholder="Title" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            <input type="text" value={newChallenge.title} onChange={(e) => setNewChallenge({ ...newChallenge, title: e.target.value })} placeholder="Title" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
                           </div>
                           <div className="sm:col-span-2 lg:col-span-3">
-                            <textarea value={newChallenge.description} onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })} placeholder="Description" rows={3} className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            <textarea value={newChallenge.description} onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })} placeholder="Description" rows={3} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
                           </div>
-                          <select value={newChallenge.category} onChange={(e) => setNewChallenge({ ...newChallenge, category: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+                          <select value={newChallenge.category} onChange={(e) => setNewChallenge({ ...newChallenge, category: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                             <option value="web">Web</option>
                             <option value="crypto">Crypto</option>
                             <option value="reverse">Reverse</option>
@@ -798,42 +862,42 @@ export default function AdminPage() {
                             <option value="pwn">Pwn</option>
                             <option value="misc">Misc</option>
                           </select>
-                          <select value={newChallenge.difficulty} onChange={(e) => setNewChallenge({ ...newChallenge, difficulty: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+                          <select value={newChallenge.difficulty} onChange={(e) => setNewChallenge({ ...newChallenge, difficulty: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>
                             <option value="expert">Expert</option>
                           </select>
-                          <select value={newChallenge.flagMode} onChange={(e) => setNewChallenge({ ...newChallenge, flagMode: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+                          <select value={newChallenge.flagMode} onChange={(e) => setNewChallenge({ ...newChallenge, flagMode: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                             <option value="dynamic_user">Dynamic (Per User)</option>
                             <option value="static">Static</option>
                             <option value="dynamic_team">Dynamic (Per Team)</option>
                           </select>
-                          <select value={newChallenge.challengeType} onChange={(e) => setNewChallenge({ ...newChallenge, challengeType: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+                          <select value={newChallenge.challengeType} onChange={(e) => setNewChallenge({ ...newChallenge, challengeType: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                             <option value="asset">Asset (Downloadable)</option>
                             <option value="instance">Instance (In-Browser)</option>
                           </select>
                           <div>
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Flag</label>
-                            <input type="text" value={newChallenge.flag} onChange={(e) => setNewChallenge({ ...newChallenge, flag: e.target.value })} placeholder="Type challenge flag here" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Flag</label>
+                            <input type="text" value={newChallenge.flag} onChange={(e) => setNewChallenge({ ...newChallenge, flag: e.target.value })} placeholder="Type challenge flag here" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Points</label>
-                            <input type="number" value={newChallenge.points} onChange={(e) => setNewChallenge({ ...newChallenge, points: parseInt(e.target.value) || 0 })} placeholder="Score for solving" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Points</label>
+                            <input type="number" value={newChallenge.points} onChange={(e) => setNewChallenge({ ...newChallenge, points: parseInt(e.target.value) || 0 })} placeholder="Score for solving" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
                           </div>
                           <div>
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Max Attempts</label>
-                            <input type="number" value={newChallenge.maxAttempts} onChange={(e) => setNewChallenge({ ...newChallenge, maxAttempts: parseInt(e.target.value) || 8 })} placeholder="8 = default" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Max Attempts</label>
+                            <input type="number" value={newChallenge.maxAttempts} onChange={(e) => setNewChallenge({ ...newChallenge, maxAttempts: parseInt(e.target.value) || 8 })} placeholder="8 = default" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Blood Points</label>
-                            <input type="number" value={newChallenge.bloodPoints} onChange={(e) => setNewChallenge({ ...newChallenge, bloodPoints: parseInt(e.target.value) || 0 })} placeholder="Bonus for first solver" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Blood Points</label>
+                            <input type="number" value={newChallenge.bloodPoints} onChange={(e) => setNewChallenge({ ...newChallenge, bloodPoints: parseInt(e.target.value) || 0 })} placeholder="Bonus for first solver" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
                           <div className="sm:col-span-2 lg:col-span-3">
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Hint</label>
-                            <textarea value={newChallenge.hint} onChange={(e) => setNewChallenge({ ...newChallenge, hint: e.target.value })} placeholder="Hint (optional)" rows={2} className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Hint</label>
+                            <textarea value={newChallenge.hint} onChange={(e) => setNewChallenge({ ...newChallenge, hint: e.target.value })} placeholder="Hint (optional)" rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
-                          <button type="submit" className="sm:col-span-2 lg:col-span-3 px-6 py-3 rounded-xl bg-cyber-green/10 border border-cyber-green/30 text-cyber-green font-mono text-sm hover:bg-cyber-green/20 transition-all flex items-center justify-center gap-2">
+                          <button type="submit" className="sm:col-span-2 lg:col-span-3 px-6 py-3 rounded-xl bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-sm hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center justify-center gap-2">
                             <Plus className="w-4 h-4" /> Create Challenge
                           </button>
                         </form>
@@ -841,9 +905,9 @@ export default function AdminPage() {
 
                       {/* Challenge List */}
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left cyber-table">
+                        <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-gray-400 font-mono text-xs uppercase tracking-wider border-b border-cyber-blue/10">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Title</th>
                               <th className="p-3">Category</th>
@@ -858,36 +922,36 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {challenges.map((c: any) => (
-                              <tr key={c.id} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/5 transition-colors">
-                                <td className="p-3 font-mono text-xs text-gray-500">{c.id}</td>
-                                <td className="p-3 font-mono text-sm text-white">{c.title}</td>
-                                <td className="p-3 font-mono text-xs text-cyber-blue">{c.category}</td>
+                              <tr key={c.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                                <td className="p-3 font-mono text-xs text-txt-muted">{c.id}</td>
+                                <td className="p-3 font-mono text-sm text-txt-primary">{c.title}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--blue-core)]">{c.category}</td>
                                 <td className="p-3 font-mono text-xs">{c.difficulty}</td>
-                                <td className="p-3 font-mono text-sm text-cyber-green">{c.points}</td>
-                                <td className="p-3 font-mono text-xs text-cyber-purple">{c.flagMode}</td>
-                                <td className="p-3 font-mono text-xs text-red-400">{c.bloodPoints || 0}</td>
-                                <td className="p-3 font-mono text-xs text-yellow-400">{c.solverCount}</td>
+                                <td className="p-3 font-mono text-sm text-[var(--success)]">{c.points}</td>
+                                <td className="p-3 font-mono text-xs text-[#A03CFF]">{c.flagMode}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--red-glow)]">{c.bloodPoints || 0}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--warning)]">{c.solverCount}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.isPublished ? 'bg-cyber-green/10 text-cyber-green' : 'bg-gray-500/10 text-gray-400'}`}>
+                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.isPublished ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
                                     {c.isPublished ? 'Published' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-3">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-all" title={c.isPublished ? 'Unpublish' : 'Publish'}>
+                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.isPublished ? 'Unpublish' : 'Publish'}>
                                       {c.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     </button>
-                                    <button onClick={() => handleEditChallenge(c)} className="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-all" title="Edit Challenge">
+                                    <button onClick={() => handleEditChallenge(c)} className="p-1.5 rounded-lg bg-[rgba(255,184,0,0.1)] text-[var(--warning)] hover:bg-[rgba(255,184,0,0.2)] transition-all" title="Edit Challenge">
                                       <Settings className="w-3.5 h-3.5" />
                                     </button>
-                                    <label className={`p-1.5 rounded-lg cursor-pointer transition-all ${uploadingId === c.id ? 'bg-cyber-green/10 text-cyber-green animate-pulse' : 'bg-cyber-green/10 text-cyber-green hover:bg-cyber-green/20'}`} title="Upload Asset">
+                                    <label className={`p-1.5 rounded-lg cursor-pointer transition-all ${uploadingId === c.id ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)] animate-pulse' : 'bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)]'}`} title="Upload Asset">
                                       <input type="file" className="hidden" onChange={(e) => handleFileSelect(c.id, e)} />
                                       {uploadingId === c.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                                     </label>
-                                    <button onClick={() => handleResetChallengeSolves(c.id, c.title)} className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-all" title="Reset Solves">
+                                    <button onClick={() => handleResetChallengeSolves(c.id, c.title)} className="p-1.5 rounded-lg bg-[rgba(160,60,255,0.1)] text-[#A03CFF] hover:bg-[rgba(160,60,255,0.2)] transition-all" title="Reset Solves">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
-                                    <button onClick={() => handleDeleteChallenge(c.id)} className="p-1.5 rounded-lg bg-red-900/30 text-cyber-red hover:bg-red-900/50 transition-all" title="Delete Challenge">
+                                    <button onClick={() => handleDeleteChallenge(c.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.3)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.5)] transition-all" title="Delete Challenge">
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </button>
                                   </div>
@@ -903,21 +967,21 @@ export default function AdminPage() {
                   {activeTab === 'submissions' && (
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-cyber text-lg text-white flex items-center gap-2">
-                          <Flag className="w-5 h-5 text-cyber-blue" /> Submissions
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Flag className="w-5 h-5 text-[var(--blue-core)]" /> Submissions
                         </h3>
                         <button onClick={async () => {
                           if (!confirm('Clear ALL submissions? This will also reset all scores and solver counts.')) return;
                           try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); await api.clearSubmissions(); toast.success('All submissions cleared, scores reset'); loadTabData('submissions'); }
                           catch { toast.error('Failed to clear submissions'); }
-                        }} className="cyber-btn px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono hover:bg-red-500/20 transition-all flex items-center gap-1">
+                        }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center gap-1">
                           <Trash2 className="w-3 h-3" /> Clear Submissions
                         </button>
                       </div>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left cyber-table">
+                        <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-gray-400 font-mono text-xs uppercase tracking-wider border-b border-cyber-blue/10">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Challenge</th>
                               <th className="p-3">Result</th>
@@ -927,21 +991,21 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {submissions.map((s: any) => (
-                              <tr key={s.id} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/5 transition-colors">
-                                <td className="p-3 font-mono text-xs text-gray-500">{s.id}</td>
-                                <td className="p-3 font-mono text-xs text-white">{s.challenge_title}</td>
+                              <tr key={s.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                                <td className="p-3 font-mono text-xs text-txt-muted">{s.id}</td>
+                                <td className="p-3 font-mono text-xs text-txt-primary">{s.challenge_title}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono ${s.is_correct ? 'text-cyber-green' : 'text-cyber-red'}`}>
+                                  <span className={`text-xs font-mono ${s.is_correct ? 'text-[var(--success)]' : 'text-[var(--red-core)]'}`}>
                                     {s.is_correct ? 'CORRECT' : 'WRONG'}
                                   </span>
                                 </td>
-                                <td className="p-3 font-mono text-xs text-gray-500">{s.ip_address || '-'}</td>
-                                <td className="p-3 font-mono text-xs text-gray-500">{new Date(s.created_at).toLocaleString()}</td>
+                                <td className="p-3 font-mono text-xs text-txt-muted">{s.ip_address || '-'}</td>
+                                <td className="p-3 font-mono text-xs text-txt-muted">{new Date(s.created_at).toLocaleString()}</td>
                               </tr>
                             ))}
                             {submissions.length === 0 && (
                               <tr>
-                                <td colSpan={5} className="p-6 text-center text-gray-500 font-mono text-sm">No submissions yet</td>
+                                <td colSpan={5} className="p-6 text-center text-txt-muted font-mono text-sm">No submissions yet</td>
                               </tr>
                             )}
                           </tbody>
@@ -952,38 +1016,38 @@ export default function AdminPage() {
 
                   {activeTab === 'announcements' && (
                     <div className="space-y-6">
-                      <div className="cyber-card rounded-xl p-6">
-                        <h3 className="font-cyber text-white mb-4 flex items-center gap-2">
-                          <Bell className="w-4 h-4 text-cyber-yellow" />
+                      <div className="card rounded-xl p-6">
+                        <h3 className="font-display text-txt-primary mb-4 flex items-center gap-2">
+                          <Bell className="w-4 h-4 text-[var(--warning)]" />
                           New Announcement
                         </h3>
                         <form onSubmit={handleAnnouncement} className="space-y-4">
                           <div>
-                            <label className="block text-gray-400 font-mono text-xs mb-2">Title</label>
-                            <input type="text" value={announcementTitle} onChange={(e) => setAnnouncementTitle(e.target.value)} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" required />
+                            <label className="block text-txt-secondary font-mono text-xs mb-2">Title</label>
+                            <input type="text" value={announcementTitle} onChange={(e) => setAnnouncementTitle(e.target.value)} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" required />
                           </div>
                           <div>
-                            <label className="block text-gray-400 font-mono text-xs mb-2">Message</label>
-                            <textarea value={announcementMsg} onChange={(e) => setAnnouncementMsg(e.target.value)} rows={4} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" required />
+                            <label className="block text-txt-secondary font-mono text-xs mb-2">Message</label>
+                            <textarea value={announcementMsg} onChange={(e) => setAnnouncementMsg(e.target.value)} rows={4} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" required />
                           </div>
-                          <button type="submit" className="cyber-btn px-6 py-3 rounded-xl bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue font-mono text-sm hover:bg-cyber-blue/20 transition-all flex items-center gap-2">
+                          <button type="submit" className="admin-action-btn px-6 py-3 rounded-xl bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center gap-2">
                             <Bell className="w-4 h-4" /> Send Announcement
                           </button>
                         </form>
                       </div>
 
                       <div className="space-y-3">
-                        <h3 className="font-cyber text-white text-lg flex items-center gap-2 px-1">
-                          <Activity className="w-4 h-4 text-gray-500" />
+                        <h3 className="font-display text-txt-primary text-lg flex items-center gap-2 px-1">
+                          <Activity className="w-4 h-4 text-txt-muted" />
                           Existing Announcements
                         </h3>
                         {announcementsList.length === 0 ? (
-                          <div className="cyber-card rounded-xl p-10 text-center">
-                            <Bell className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                            <p className="text-gray-500 font-mono text-sm">No announcements yet</p>
+                          <div className="card rounded-xl p-10 text-center">
+                            <Bell className="w-10 h-10 text-txt-muted mx-auto mb-3" />
+                            <p className="text-txt-muted font-mono text-sm">No announcements yet</p>
                           </div>
                         ) : announcementsList.map((a: any) => (
-                          <div key={a.id} className="cyber-card rounded-xl p-5 border-l-4" style={{ borderLeftColor: '#ffd700' }}>
+                          <div key={a.id} className="card rounded-xl p-5 border-l-4" style={{ borderLeftColor: '#ffd700' }}>
                             <div className="flex items-start justify-between gap-4">
                               <div className="min-w-0 flex-1">
                                 {editingAnnouncement?.id === a.id ? (
@@ -992,28 +1056,28 @@ export default function AdminPage() {
                                       type="text"
                                       value={editAnnouncementTitle}
                                       onChange={(e) => setEditAnnouncementTitle(e.target.value)}
-                                      className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm"
+                                      className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm"
                                     />
                                     <textarea
                                       value={editAnnouncementMsg}
                                       onChange={(e) => setEditAnnouncementMsg(e.target.value)}
                                       rows={3}
-                                      className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm"
+                                      className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm"
                                     />
                                     <div className="flex gap-2">
-                                      <button onClick={handleSaveEditAnnouncement} className="cyber-btn px-4 py-2 rounded-lg bg-cyber-green/10 border border-cyber-green/30 text-cyber-green font-mono text-xs hover:bg-cyber-green/20 transition-all">
+                                      <button onClick={handleSaveEditAnnouncement} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all">
                                         Save
                                       </button>
-                                      <button onClick={() => setEditingAnnouncement(null)} className="cyber-btn px-4 py-2 rounded-lg bg-gray-500/10 border border-gray-500/30 text-gray-400 font-mono text-xs hover:bg-gray-500/20 transition-all">
+                                      <button onClick={() => setEditingAnnouncement(null)} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-xs hover:bg-[rgba(122,156,192,0.2)] transition-all">
                                         Cancel
                                       </button>
                                     </div>
                                   </div>
                                 ) : (
                                   <div>
-                                    <h4 className="font-cyber text-white text-sm mb-1">{a.title}</h4>
-                                    <p className="text-gray-400 font-mono text-xs whitespace-pre-wrap line-clamp-2">{a.message}</p>
-                                    <p className="text-gray-600 font-mono text-xs mt-2">{new Date(a.created_at).toLocaleString()}</p>
+                                    <h4 className="font-display text-txt-primary text-sm mb-1">{a.title}</h4>
+                                    <p className="text-txt-secondary font-mono text-xs whitespace-pre-wrap line-clamp-2">{a.message}</p>
+                                    <p className="text-txt-muted font-mono text-xs mt-2">{new Date(a.created_at).toLocaleString()}</p>
                                   </div>
                                 )}
                               </div>
@@ -1021,14 +1085,14 @@ export default function AdminPage() {
                                 <div className="flex gap-2 flex-shrink-0">
                                   <button
                                     onClick={() => { setEditingAnnouncement(a); setEditAnnouncementTitle(a.title); setEditAnnouncementMsg(a.message); }}
-                                    className="p-2 rounded-lg bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue hover:bg-cyber-blue/20 transition-all"
+                                    className="p-2 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all"
                                     title="Edit"
                                   >
                                     <Pencil className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => handleDeleteAnnouncement(a.id)}
-                                    className="p-2 rounded-lg bg-cyber-red/10 border border-cyber-red/30 text-cyber-red hover:bg-cyber-red/20 transition-all"
+                                    className="p-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all"
                                     title="Delete"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -1045,21 +1109,21 @@ export default function AdminPage() {
                   {activeTab === 'logs' && (
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-cyber text-lg text-white flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-cyber-blue" /> System Logs
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Activity className="w-5 h-5 text-[var(--blue-core)]" /> System Logs
                         </h3>
                         <button onClick={async () => {
                           if (!confirm('Clear all system logs? This cannot be undone.')) return;
                           try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); await api.clearLogs(); toast.success('All logs cleared'); loadTabData('logs'); }
                           catch { toast.error('Failed to clear logs'); }
-                        }} className="cyber-btn px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono hover:bg-red-500/20 transition-all flex items-center gap-1">
+                        }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center gap-1">
                           <Trash2 className="w-3 h-3" /> Clear Logs
                         </button>
                       </div>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left cyber-table">
+                        <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-gray-400 font-mono text-xs uppercase tracking-wider border-b border-cyber-blue/10">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Action</th>
                               <th className="p-3">Severity</th>
@@ -1069,18 +1133,18 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {logs.map((log: any) => (
-                              <tr key={log.id} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/5 transition-colors">
-                                <td className="p-3 font-mono text-xs text-gray-500">{log.id}</td>
-                                <td className="p-3 font-mono text-xs text-white">{log.action}</td>
+                              <tr key={log.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                                <td className="p-3 font-mono text-xs text-txt-muted">{log.id}</td>
+                                <td className="p-3 font-mono text-xs text-txt-primary">{log.action}</td>
                                 <td className="p-3">
                                   <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${
-                                    log.severity === 'suspicious' ? 'bg-cyber-red/10 text-cyber-red' :
-                                    log.severity === 'info' ? 'bg-cyber-blue/10 text-cyber-blue' :
-                                    'bg-gray-500/10 text-gray-400'
+                                    log.severity === 'suspicious' ? 'bg-[rgba(224,32,32,0.1)] text-[var(--red-core)]' :
+                                    log.severity === 'info' ? 'bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)]' :
+                                    'bg-[rgba(122,156,192,0.1)] text-txt-secondary'
                                   }`}>{log.severity}</span>
                                 </td>
-                                <td className="p-3 font-mono text-xs text-gray-500">{log.ip_address || '-'}</td>
-                                <td className="p-3 font-mono text-xs text-gray-500">{new Date(log.created_at).toLocaleString()}</td>
+                                <td className="p-3 font-mono text-xs text-txt-muted">{log.ip_address || '-'}</td>
+                                <td className="p-3 font-mono text-xs text-txt-muted">{new Date(log.created_at).toLocaleString()}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1092,8 +1156,8 @@ export default function AdminPage() {
                   {activeTab === 'warmup' && (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between flex-wrap gap-3">
-                        <h3 className="font-cyber text-lg text-white flex items-center gap-2">
-                          <Flame className="w-5 h-5 text-orange-400" /> Warmup Challenges (Web: Easy/Medium/Hard)
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Flame className="w-5 h-5 text-[#FF8C00]" /> Warmup Challenges (Web: Easy/Medium/Hard)
                         </h3>
                         <button
                           onClick={async () => {
@@ -1107,15 +1171,15 @@ export default function AdminPage() {
                               loadTabData('challenges');
                             } catch { toast.error('Failed to publish all Web challenges'); }
                           }}
-                          className="px-5 py-2.5 rounded-xl bg-cyber-blue/15 border border-cyber-blue/40 text-cyber-blue font-mono text-sm hover:bg-cyber-blue/25 transition-all flex items-center gap-2"
+                          className="px-5 py-2.5 rounded-xl bg-[rgba(26,110,255,0.15)] border border-[rgba(26,110,255,0.4)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.25)] transition-all flex items-center gap-2"
                         >
                           <CheckCircle className="w-4 h-4" /> Publish All Web Challenges
                         </button>
                       </div>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left cyber-table">
+                        <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-gray-400 font-mono text-xs uppercase tracking-wider border-b border-cyber-blue/10">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Title</th>
                               <th className="p-3">Difficulty</th>
@@ -1128,32 +1192,32 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {warmupChallenges.length === 0 ? (
-                              <tr><td colSpan={8} className="p-6 text-center text-gray-500 font-mono text-sm">No warmup challenges found</td></tr>
+                              <tr><td colSpan={8} className="p-6 text-center text-txt-muted font-mono text-sm">No warmup challenges found</td></tr>
                             ) : warmupChallenges.map((c: any) => (
-                              <tr key={c.id} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/5 transition-colors">
-                                <td className="p-3 font-mono text-xs text-gray-500">{c.id}</td>
-                                <td className="p-3 font-mono text-sm text-white">{c.title}</td>
+                              <tr key={c.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                                <td className="p-3 font-mono text-xs text-txt-muted">{c.id}</td>
+                                <td className="p-3 font-mono text-sm text-txt-primary">{c.title}</td>
                                 <td className="p-3 font-mono text-xs capitalize">{c.difficulty}</td>
-                                <td className="p-3 font-mono text-sm text-cyber-green">{c.points}</td>
-                                <td className="p-3 font-mono text-xs text-cyber-purple">{c.challengeType}</td>
-                                <td className="p-3 font-mono text-xs text-yellow-400">{c.solverCount}</td>
+                                <td className="p-3 font-mono text-sm text-[var(--success)]">{c.points}</td>
+                                <td className="p-3 font-mono text-xs text-[#A03CFF]">{c.challengeType}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--warning)]">{c.solverCount}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.isPublished ? 'bg-cyber-green/10 text-cyber-green' : 'bg-gray-500/10 text-gray-400'}`}>
+                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.isPublished ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
                                     {c.isPublished ? 'Published' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-3">
                                   <div className="flex items-center gap-2">
-                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-all" title={c.isPublished ? 'Unpublish' : 'Publish'}>
+                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.isPublished ? 'Unpublish' : 'Publish'}>
                                       {c.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     </button>
                                     {c.challengeType === 'asset' && (
-                                      <label className="p-1.5 rounded-lg bg-cyber-green/10 text-cyber-green hover:bg-cyber-green/20 cursor-pointer transition-all" title="Download Assets">
+                                      <label className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] cursor-pointer transition-all" title="Download Assets">
                                         <Upload className="w-3.5 h-3.5" />
                                       </label>
                                     )}
                                     {c.challengeType === 'instance' && (
-                                      <span className="p-1.5 rounded-lg bg-cyber-blue/10 text-cyber-blue text-[10px] font-mono">Open Instance</span>
+                                      <span className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] text-[10px] font-mono">Open Instance</span>
                                     )}
                                   </div>
                                 </td>
@@ -1168,22 +1232,22 @@ export default function AdminPage() {
                   {activeTab === 'security' && (
                     <div className="space-y-6">
                       {liveAlerts.length > 0 && (
-                        <div className="cyber-card rounded-xl p-3 border-red-500/50 bg-red-900/10">
+                        <div className="card rounded-xl p-3 border-[rgba(224,32,32,0.5)] bg-[rgba(224,32,32,0.1)]">
                           <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-cyber text-xs text-red-400 flex items-center gap-1">
+                            <h4 className="font-display text-xs text-[var(--red-glow)] flex items-center gap-1">
                               <Radio className="w-3 h-3 animate-pulse" /> LIVE ATTACKS {wsConnected ? '(Connected)' : '(Reconnecting...)'}
                             </h4>
-                            <button onClick={() => setLiveAlerts([])} className="text-gray-500 hover:text-white text-xs">Dismiss alerts</button>
+                            <button onClick={() => setLiveAlerts([])} className="text-txt-muted hover:text-txt-primary text-xs">Dismiss alerts</button>
                           </div>
                           <div className="space-y-1 max-h-24 overflow-y-auto">
                             <AnimatePresence>
                               {liveAlerts.slice(0, 5).map((alert: any) => (
                                 <motion.div key={alert.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-xs font-mono">
-                                  <span className="text-red-400">▶</span>
-                                  <span className="text-orange-400 w-20 truncate">{alert.attack_type}</span>
-                                  <span className="text-gray-400">{alert.ip}</span>
-                                  <span className="text-yellow-400">{alert.risk_score}</span>
-                                  <span className="text-gray-500 w-32 truncate">{alert.endpoint}</span>
+                                  <span className="text-[var(--red-glow)]">▶</span>
+                                  <span className="text-[#FF8C00] w-20 truncate">{alert.attack_type}</span>
+                                  <span className="text-txt-secondary">{alert.ip}</span>
+                                  <span className="text-[var(--warning)]">{alert.risk_score}</span>
+                                  <span className="text-txt-muted w-32 truncate">{alert.endpoint}</span>
                                 </motion.div>
                               ))}
                             </AnimatePresence>
@@ -1192,18 +1256,18 @@ export default function AdminPage() {
                       )}
 
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-cyber text-lg text-white flex items-center gap-2">
-                          <Shield className="w-5 h-5 text-cyber-red" /> Security Dashboard
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Shield className="w-5 h-5 text-[var(--red-core)]" /> Security Dashboard
                         </h3>
                         <button onClick={() => { loadTabData('security'); }}
-                          className="cyber-btn px-3 py-1.5 rounded-lg border border-cyber-blue/30 text-cyber-blue text-xs hover:bg-cyber-blue/10 transition-all flex items-center gap-1">
+                          className="admin-action-btn px-3 py-1.5 rounded-lg border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] text-xs hover:bg-[rgba(26,110,255,0.1)] transition-all flex items-center gap-1">
                           <RefreshCw className="w-3 h-3" /> Refresh
                         </button>
                       </div>
 
-                      <div className="cyber-card rounded-xl p-4 mb-4">
-                        <h4 className="font-cyber text-sm text-white mb-3 flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-cyber-red" /> Security Features
+                      <div className="card rounded-xl p-4 mb-4">
+                        <h4 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-[var(--red-core)]" /> Security Features
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                           {Object.entries({
@@ -1224,8 +1288,8 @@ export default function AdminPage() {
                           }).map(([key, label]) => {
                             const enabled = securityFeatures[key] ?? true;
                             return (
-                              <div key={key} className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${enabled ? 'bg-green-500/5 border-green-500/25' : 'bg-red-500/5 border-red-500/25'}`}>
-                                <span className={`text-xs font-mono ${enabled ? 'text-green-400' : 'text-red-400'}`}>{label}</span>
+                              <div key={key} className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${enabled ? 'bg-[rgba(0,214,143,0.05)] border-[rgba(0,214,143,0.25)]' : 'bg-[rgba(224,32,32,0.05)] border-[rgba(224,32,32,0.25)]'}`}>
+                                <span className={`text-xs font-mono ${enabled ? 'text-[var(--success)]' : 'text-[var(--red-glow)]'}`}>{label}</span>
                                 <button
                                   onClick={async () => {
                                     setFeatureToggling(key);
@@ -1242,7 +1306,7 @@ export default function AdminPage() {
                                     setFeatureToggling(null);
                                   }}
                                   disabled={featureToggling === key}
-                                  className={`ml-2 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all ${enabled ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-green-500/20 text-green-400 hover:bg-green-500/30'} ${featureToggling === key ? 'opacity-50 cursor-wait' : ''}`}
+                                  className={`ml-2 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all ${enabled ? 'bg-[rgba(224,32,32,0.2)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.3)]' : 'bg-[rgba(0,214,143,0.2)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.3)]'} ${featureToggling === key ? 'opacity-50 cursor-wait' : ''}`}
                                 >
                                   {featureToggling === key ? <Loader2 className="w-3 h-3 animate-spin inline" /> : enabled ? 'Disable' : 'Enable'}
                                 </button>
@@ -1254,133 +1318,133 @@ export default function AdminPage() {
 
                       {securityStatsData && (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          <div className="cyber-card rounded-xl p-4 text-center border-red-500/30">
-                            <div className="text-2xl font-cyber font-bold text-red-400">{securityStatsData.total_attacks}</div>
-                            <div className="text-gray-500 text-xs mt-1">Total Attacks</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(224,32,32,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[var(--red-glow)]">{securityStatsData.total_attacks}</div>
+                            <div className="text-txt-muted text-xs mt-1">Total Attacks</div>
                           </div>
-                          <div className="cyber-card rounded-xl p-4 text-center border-red-500/30">
-                            <div className="text-2xl font-cyber font-bold text-orange-400">{securityStatsData.high_count + securityStatsData.critical_count}</div>
-                            <div className="text-gray-500 text-xs mt-1">Critical/High</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(224,32,32,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[#FF8C00]">{securityStatsData.high_count + securityStatsData.critical_count}</div>
+                            <div className="text-txt-muted text-xs mt-1">Critical/High</div>
                           </div>
-                          <div className="cyber-card rounded-xl p-4 text-center border-cyber-blue/30">
-                            <div className="text-2xl font-cyber font-bold text-cyber-blue">{securityStatsData.blocked_count}</div>
-                            <div className="text-gray-500 text-xs mt-1">Blocked</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(26,110,255,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[var(--blue-core)]">{securityStatsData.blocked_count}</div>
+                            <div className="text-txt-muted text-xs mt-1">Blocked</div>
                           </div>
-                          <div className="cyber-card rounded-xl p-4 text-center border-yellow-500/30">
-                            <div className="text-2xl font-cyber font-bold text-yellow-400">{securityStatsData.unique_ips}</div>
-                            <div className="text-gray-500 text-xs mt-1">Unique IPs</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(255,184,0,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[var(--warning)]">{securityStatsData.unique_ips}</div>
+                            <div className="text-txt-muted text-xs mt-1">Unique IPs</div>
                           </div>
                         </div>
                       )}
 
                       {securityStatsData && securityStatsData.top_attack_types && (
-                        <div className="cyber-card rounded-xl p-4">
-                          <h4 className="font-cyber text-sm text-white mb-3">Top Attack Types</h4>
+                        <div className="card rounded-xl p-4">
+                          <h4 className="font-display text-sm text-txt-primary mb-3">Top Attack Types</h4>
                           <div className="space-y-2">
                             {securityStatsData.top_attack_types.map((t: any, i: number) => (
                               <div key={i} className="flex items-center gap-2">
-                                <span className="text-red-400 text-xs font-mono w-32 truncate">{t.type || 'unknown'}</span>
-                                <div className="flex-1 bg-cyber-dark/50 rounded-full h-2">
-                                  <div className="bg-red-500/60 h-2 rounded-full" style={{ width: `${Math.min(100, (t.count / (securityStatsData.total_attacks || 1)) * 100)}%` }} />
+                                <span className="text-[var(--red-glow)] text-xs font-mono w-32 truncate">{t.type || 'unknown'}</span>
+                                <div className="flex-1 bg-[#0a0f18]/50 rounded-full h-2">
+                                  <div className="bg-[rgba(224,32,32,0.6)] h-2 rounded-full" style={{ width: `${Math.min(100, (t.count / (securityStatsData.total_attacks || 1)) * 100)}%` }} />
                                 </div>
-                                <span className="text-gray-400 text-xs font-mono w-12 text-right">{t.count}</span>
+                                <span className="text-txt-secondary text-xs font-mono w-12 text-right">{t.count}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                       )}
 
-                      <div className="cyber-card rounded-xl p-4">
-                        <h4 className="font-cyber text-sm text-white mb-3">Security Settings</h4>
+                      <div className="card rounded-xl p-4">
+                        <h4 className="font-display text-sm text-txt-primary mb-3">Security Settings</h4>
                         {securitySettingsData && (
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                             <div>
-                              <span className="text-gray-500">Blacklisted IPs</span>
-                              <div className="text-red-400 font-mono">{securitySettingsData.blacklisted_ips?.length || 0}</div>
+                              <span className="text-txt-muted">Blacklisted IPs</span>
+                              <div className="text-[var(--red-glow)] font-mono">{securitySettingsData.blacklisted_ips?.length || 0}</div>
                             </div>
                             <div>
-                              <span className="text-gray-500">Whitelisted IPs</span>
-                              <div className="text-green-400 font-mono">{securitySettingsData.whitelisted_ips?.length || 0}</div>
+                              <span className="text-txt-muted">Whitelisted IPs</span>
+                              <div className="text-[var(--success)] font-mono">{securitySettingsData.whitelisted_ips?.length || 0}</div>
                             </div>
                             <div>
-                              <span className="text-gray-500">Active Quarantines</span>
-                              <div className="text-orange-400 font-mono">{securitySettingsData.active_quarantines || 0}</div>
+                              <span className="text-txt-muted">Active Quarantines</span>
+                              <div className="text-[#FF8C00] font-mono">{securitySettingsData.active_quarantines || 0}</div>
                             </div>
                             <div>
-                              <span className="text-gray-500">Chain Integrity</span>
-                              <div className="text-cyber-blue font-mono">Active</div>
+                              <span className="text-txt-muted">Chain Integrity</span>
+                              <div className="text-[var(--blue-core)] font-mono">Active</div>
                             </div>
                           </div>
                         )}
                       </div>
 
-                      <div className="cyber-card rounded-xl p-4">
-                        <h4 className="font-cyber text-sm text-white mb-3">Security Features Overview</h4>
+                      <div className="card rounded-xl p-4">
+                        <h4 className="font-display text-sm text-txt-primary mb-3">Security Features Overview</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">WAF Engine</div>
-                            <div className="text-gray-500 leading-relaxed">Detects SQLi, XSS, command injection, path traversal, encoded payloads. Blocks at risk_score &ge; 3.0.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">WAF Engine</div>
+                            <div className="text-txt-muted leading-relaxed">Detects SQLi, XSS, command injection, path traversal, encoded payloads. Blocks at risk_score &ge; 3.0.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Rate Limiting</div>
-                            <div className="text-gray-500 leading-relaxed">Per-endpoint limits (auth: 5/15s, admin: 30/60s, submissions: 10/60s). Escalating penalties x1→x32.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Rate Limiting</div>
+                            <div className="text-txt-muted leading-relaxed">Per-endpoint limits (auth: 5/15s, admin: 30/60s, submissions: 10/60s). Escalating penalties x1→x32.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Anomaly Detection</div>
-                            <div className="text-gray-500 leading-relaxed">JSON structure abuse, method enumeration, path probing, parameter pollution, endpoint hammering.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Anomaly Detection</div>
+                            <div className="text-txt-muted leading-relaxed">JSON structure abuse, method enumeration, path probing, parameter pollution, endpoint hammering.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Bot Detection</div>
-                            <div className="text-gray-500 leading-relaxed">Rate analysis, path scraping, regular intervals, scanner UA detection (acunetix, sqlmap, nessus…).</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Bot Detection</div>
+                            <div className="text-txt-muted leading-relaxed">Rate analysis, path scraping, regular intervals, scanner UA detection (acunetix, sqlmap, nessus…).</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">IP Quarantine &amp; Blacklist</div>
-                            <div className="text-gray-500 leading-relaxed">Auto-quarantine high-risk IPs (5 min). Manual block/unblock/whitelist via buttons below.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">IP Quarantine &amp; Blacklist</div>
+                            <div className="text-txt-muted leading-relaxed">Auto-quarantine high-risk IPs (5 min). Manual block/unblock/whitelist via buttons below.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">CSRF Protection</div>
-                            <div className="text-gray-500 leading-relaxed">HMAC-based tokens on all admin mutating endpoints (POST/PUT/DELETE). Validated server-side.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">CSRF Protection</div>
+                            <div className="text-txt-muted leading-relaxed">HMAC-based tokens on all admin mutating endpoints (POST/PUT/DELETE). Validated server-side.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Input Sanitization</div>
-                            <div className="text-gray-500 leading-relaxed">Strips HTML tags, encodes special chars on POST/PUT/PATCH body and query params.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Input Sanitization</div>
+                            <div className="text-txt-muted leading-relaxed">Strips HTML tags, encodes special chars on POST/PUT/PATCH body and query params.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Account Lockout</div>
-                            <div className="text-gray-500 leading-relaxed">Progressive delays (0→1200s). CAPTCHA at 3 failures. Lockout at 5 IP or 15 IP-level failures.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Account Lockout</div>
+                            <div className="text-txt-muted leading-relaxed">Progressive delays (0→1200s). CAPTCHA at 3 failures. Lockout at 5 IP or 15 IP-level failures.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Immutable Audit Log</div>
-                            <div className="text-gray-500 leading-relaxed">SHA256 chain-hash linking every log entry. Integrity verification via "Check Chain" below.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Immutable Audit Log</div>
+                            <div className="text-txt-muted leading-relaxed">SHA256 chain-hash linking every log entry. Integrity verification via "Check Chain" below.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Fingerprinting &amp; Anti-Sharing</div>
-                            <div className="text-gray-500 leading-relaxed">SHA256(ip|ua|accept-lang) per user. Detects multiple fingerprints per account, rapid submissions.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Fingerprinting &amp; Anti-Sharing</div>
+                            <div className="text-txt-muted leading-relaxed">SHA256(ip|ua|accept-lang) per user. Detects multiple fingerprints per account, rapid submissions.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">Request Body Size Limit</div>
-                            <div className="text-gray-500 leading-relaxed">100 KB for regular requests, 50 MB for file uploads. Returns 413 if exceeded.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Request Body Size Limit</div>
+                            <div className="text-txt-muted leading-relaxed">100 KB for regular requests, 50 MB for file uploads. Returns 413 if exceeded.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-gray-800/30 border border-gray-700/30">
-                            <div className="text-cyber-blue font-mono text-[11px] font-bold mb-1">CORS Origin Validation</div>
-                            <div className="text-gray-500 leading-relaxed">Validates Origin/Referer against allowed origins. Blocks cross-origin mutating requests.</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
+                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">CORS Origin Validation</div>
+                            <div className="text-txt-muted leading-relaxed">Validates Origin/Referer against allowed origins. Blocks cross-origin mutating requests.</div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="cyber-card rounded-xl p-4">
-                        <h4 className="font-cyber text-sm text-white mb-3">Block IP</h4>
+                      <div className="card rounded-xl p-4">
+                        <h4 className="font-display text-sm text-txt-primary mb-3">Block IP</h4>
                         <div className="flex gap-2">
                           <input type="text" value={securityBlockIp} onChange={(e) => setSecurityBlockIp(e.target.value)}
                             placeholder="IP address to block..."
-                            className="cyber-input flex-1 px-3 py-2 rounded-lg font-mono text-xs" />
+                            className="input-field flex-1 px-3 py-2 rounded-lg font-mono text-xs" />
                           <button onClick={async () => {
                             if (!securityBlockIp) return;
                             await api.blockIp(securityBlockIp, 'Admin block');
                             toast.success(`Blocked ${securityBlockIp}`);
                             setSecurityBlockIp('');
                             loadTabData('security');
-                          }} className="cyber-btn px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono hover:bg-red-500/20 transition-all">
+                          }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all">
                             Block
                           </button>
                         </div>
@@ -1388,7 +1452,7 @@ export default function AdminPage() {
 
                       <div className="flex gap-2 flex-wrap mb-2">
                         <select value={securityFilterSeverity} onChange={(e) => setSecurityFilterSeverity(e.target.value)}
-                          className="cyber-input px-3 py-1.5 rounded-lg font-mono text-xs w-28 bg-cyber-dark">
+                          className="input-field px-3 py-1.5 rounded-lg font-mono text-xs w-28 bg-[#0a0f18]">
                           <option value="">All Severity</option>
                           <option value="critical">Critical</option>
                           <option value="high">High</option>
@@ -1396,7 +1460,7 @@ export default function AdminPage() {
                           <option value="low">Low</option>
                         </select>
                         <select value={securityFilterType} onChange={(e) => setSecurityFilterType(e.target.value)}
-                          className="cyber-input px-3 py-1.5 rounded-lg font-mono text-xs w-36 bg-cyber-dark">
+                          className="input-field px-3 py-1.5 rounded-lg font-mono text-xs w-36 bg-[#0a0f18]">
                           <option value="">All Types</option>
                           <option value="sql">SQL Injection</option>
                           <option value="xss">XSS</option>
@@ -1406,59 +1470,59 @@ export default function AdminPage() {
                           <option value="rate">Rate Limit</option>
                         </select>
                         <button onClick={() => loadTabData('security')}
-                          className="cyber-btn px-3 py-1.5 rounded-lg border border-cyber-blue/30 text-cyber-blue text-xs hover:bg-cyber-blue/10 transition-all">
+                          className="admin-action-btn px-3 py-1.5 rounded-lg border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] text-xs hover:bg-[rgba(26,110,255,0.1)] transition-all">
                           <RefreshCw className="w-3 h-3 inline mr-1" /> Filter
                         </button>
                         <button onClick={async () => {
                           if (!confirm('Clear ALL attack detection results? This cannot be undone.')) return;
                           try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); await api.clearSecurityLogs(); toast.success('All detection results cleared'); loadTabData('security'); }
                           catch { toast.error('Failed to clear detection results'); }
-                        }} className="cyber-btn px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono hover:bg-red-500/20 transition-all flex items-center gap-1">
+                        }} className="admin-action-btn px-3 py-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center gap-1">
                           <Trash2 className="w-3 h-3" /> Clear All Detection Results
                         </button>
                       </div>
 
-                      <div className="cyber-card rounded-xl overflow-hidden">
+                      <div className="card rounded-xl overflow-hidden">
                         <div className="overflow-x-auto">
                           <table className="w-full text-xs">
                             <thead>
-                              <tr className="border-b border-cyber-cyan/10">
-                                <th className="text-left p-3 text-gray-500 font-mono">Time</th>
-                                <th className="text-left p-3 text-gray-500 font-mono">Type</th>
-                                <th className="text-left p-3 text-gray-500 font-mono">Severity</th>
-                                <th className="text-left p-3 text-gray-500 font-mono">IP</th>
-                                <th className="text-left p-3 text-gray-500 font-mono">Risk</th>
-                                <th className="text-left p-3 text-gray-500 font-mono">Action</th>
-                                <th className="text-left p-3 text-gray-500 font-mono">Status</th>
+                              <tr className="border-b border-[rgba(26,110,255,0.1)]">
+                                <th className="text-left p-3 text-txt-muted font-mono">Time</th>
+                                <th className="text-left p-3 text-txt-muted font-mono">Type</th>
+                                <th className="text-left p-3 text-txt-muted font-mono">Severity</th>
+                                <th className="text-left p-3 text-txt-muted font-mono">IP</th>
+                                <th className="text-left p-3 text-txt-muted font-mono">Risk</th>
+                                <th className="text-left p-3 text-txt-muted font-mono">Action</th>
+                                <th className="text-left p-3 text-txt-muted font-mono">Status</th>
                               </tr>
                             </thead>
                             <tbody>
                               {securityLogsData.length === 0 && (
-                                <tr><td colSpan={7} className="p-6 text-center text-gray-600 font-mono">No attack logs recorded</td></tr>
+                                <tr><td colSpan={7} className="p-6 text-center text-txt-muted font-mono">No attack logs recorded</td></tr>
                               )}
                               {securityLogsData.map((log: any) => (
-                                <tr key={log.id} className="border-b border-cyber-cyan/5 hover:bg-cyber-cyan/5 transition-colors">
-                                  <td className="p-3 text-gray-400 font-mono whitespace-nowrap">{new Date(log.created_at).toLocaleString()}</td>
+                                <tr key={log.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                                  <td className="p-3 text-txt-secondary font-mono whitespace-nowrap">{new Date(log.created_at).toLocaleString()}</td>
                                   <td className="p-3">
-                                    <span className="font-mono text-cyber-blue">{log.attack_type}</span>
+                                    <span className="font-mono text-[var(--blue-core)]">{log.attack_type}</span>
                                   </td>
                                   <td className="p-3">
                                     <span className={`px-2 py-0.5 rounded text-xs font-mono ${
-                                      log.severity === 'critical' ? 'bg-red-500/20 text-red-400' :
-                                      log.severity === 'high' ? 'bg-orange-500/20 text-orange-400' :
-                                      log.severity === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                                      'bg-gray-500/20 text-gray-400'
+                                      log.severity === 'critical' ? 'bg-[rgba(224,32,32,0.2)] text-[var(--red-glow)]' :
+                                      log.severity === 'high' ? 'bg-[rgba(255,140,0,0.2)] text-[#FF8C00]' :
+                                      log.severity === 'medium' ? 'bg-[rgba(255,184,0,0.2)] text-[var(--warning)]' :
+                                      'bg-[rgba(122,156,192,0.2)] text-txt-secondary'
                                     }`}>{log.severity}</span>
                                   </td>
-                                  <td className="p-3 font-mono text-gray-400">{log.ip_address}</td>
+                                  <td className="p-3 font-mono text-txt-secondary">{log.ip_address}</td>
                                   <td className="p-3">
                                     <span className={`font-mono ${
-                                      log.risk_score >= 9 ? 'text-red-400' :
-                                      log.risk_score >= 7 ? 'text-orange-400' :
-                                      log.risk_score >= 5 ? 'text-yellow-400' : 'text-gray-400'
+                                      log.risk_score >= 9 ? 'text-[var(--red-glow)]' :
+                                      log.risk_score >= 7 ? 'text-[#FF8C00]' :
+                                      log.risk_score >= 5 ? 'text-[var(--warning)]' : 'text-txt-secondary'
                                     }`}>{log.risk_score.toFixed(1)}</span>
                                   </td>
-                                  <td className="p-3 font-mono text-gray-400">{log.action_taken}</td>
+                                  <td className="p-3 font-mono text-txt-secondary">{log.action_taken}</td>
                                   <td className="p-3">
                                     <div className="flex gap-1">
                                       {!log.reviewed ? (
@@ -1466,22 +1530,22 @@ export default function AdminPage() {
                                           await api.reviewAttackLog(log.id);
                                           toast.success('Reviewed');
                                           loadTabData('security');
-                                        }} className="px-2 py-0.5 rounded text-xs border border-cyber-blue/30 text-cyber-blue hover:bg-cyber-blue/10 transition-all">Review</button>
+                                        }} className="px-2 py-0.5 rounded text-xs border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.1)] transition-all">Review</button>
                                       ) : (
-                                        <span className="text-green-400 text-xs font-mono">✓ Reviewed</span>
+                                        <span className="text-[var(--success)] text-xs font-mono">✓ Reviewed</span>
                                       )}
                                       {log.blocked ? (
                                         <button onClick={async () => {
                                           await api.unblockIp(log.ip_address);
                                           toast.success(`Unblocked ${log.ip_address}`);
                                           loadTabData('security');
-                                        }} className="px-2 py-0.5 rounded text-xs border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-all">Unblock</button>
+                                        }} className="px-2 py-0.5 rounded text-xs border border-[rgba(0,214,143,0.3)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.1)] transition-all">Unblock</button>
                                       ) : null}
                                       <button onClick={async () => {
                                         await api.blockIp(log.ip_address, 'Attack log action');
                                         toast.success(`Blocked ${log.ip_address}`);
                                         loadTabData('security');
-                                      }} className="px-2 py-0.5 rounded text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all">Block</button>
+                                      }} className="px-2 py-0.5 rounded text-xs border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.1)] transition-all">Block</button>
                                     </div>
                                   </td>
                                 </tr>
@@ -1495,9 +1559,9 @@ export default function AdminPage() {
 
                   {activeTab === 'realflags' && (
                     <div className="space-y-6">
-                      <div className="cyber-card rounded-xl p-5 sm:p-6">
-                        <h3 className="font-cyber text-white text-sm mb-5 flex items-center gap-2 border-b border-cyber-blue/10 pb-3">
-                          <Lock className="w-4 h-4 text-cyber-blue" /> Store Secret Flag
+                      <div className="card rounded-xl p-5 sm:p-6">
+                        <h3 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(26,110,255,0.1)] pb-3">
+                          <Lock className="w-4 h-4 text-[var(--blue-core)]" /> Store Secret Flag
                         </h3>
                         <form onSubmit={async (e) => {
                           e.preventDefault();
@@ -1511,36 +1575,36 @@ export default function AdminPage() {
                           }
                         }} className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
                           <div className="sm:col-span-2">
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1.5 uppercase tracking-wider">Challenge Name</label>
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Challenge Name</label>
                             <input type="text" value={realFlagForm.challenge_name} onChange={(e) => setRealFlagForm({ ...realFlagForm, challenge_name: e.target.value })}
-                              placeholder="Enter challenge name" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                              placeholder="Enter challenge name" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
                           </div>
                           <div className="sm:col-span-2">
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1.5 uppercase tracking-wider">Flag</label>
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Flag</label>
                             <textarea value={realFlagForm.flag} onChange={(e) => setRealFlagForm({ ...realFlagForm, flag: e.target.value })}
-                              placeholder="Paste secret flag here" rows={2} className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                              placeholder="Paste secret flag here" rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
                           </div>
                           <div>
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1.5 uppercase tracking-wider">Category</label>
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Category</label>
                             <input type="text" value={realFlagForm.category} onChange={(e) => setRealFlagForm({ ...realFlagForm, category: e.target.value })}
-                              placeholder="e.g. Web, Crypto" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                              placeholder="e.g. Web, Crypto" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
                           <div>
-                            <label className="block text-gray-500 font-mono text-[10px] mb-1.5 uppercase tracking-wider">Notes</label>
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Notes</label>
                             <input type="text" value={realFlagForm.notes} onChange={(e) => setRealFlagForm({ ...realFlagForm, notes: e.target.value })}
-                              placeholder="Additional notes" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                              placeholder="Additional notes" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
-                          <button type="submit" className="sm:col-span-2 mt-1 px-6 py-2.5 rounded-xl bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue font-mono text-sm hover:bg-cyber-blue/20 transition-all flex items-center justify-center gap-2">
+                          <button type="submit" className="sm:col-span-2 mt-1 px-6 py-2.5 rounded-xl bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center justify-center gap-2">
                             <Lock className="w-4 h-4" /> Store Flag
                           </button>
                         </form>
                       </div>
 
-                      <div className="cyber-card rounded-xl overflow-hidden">
+                      <div className="card rounded-xl overflow-hidden">
                         <div className="overflow-x-auto">
                           <table className="w-full text-left">
                             <thead>
-                              <tr className="text-gray-500 font-mono text-[11px] uppercase tracking-wider border-b border-cyber-blue/10 bg-black/20">
+                              <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)] bg-black/20">
                                 <th className="p-3 pl-5 font-medium">ID</th>
                                 <th className="p-3 font-medium">Challenge</th>
                                 <th className="p-3 font-medium">Flag</th>
@@ -1551,27 +1615,27 @@ export default function AdminPage() {
                             </thead>
                             <tbody>
                               {realFlags.length === 0 ? (
-                                <tr><td colSpan={6} className="p-10 text-center text-gray-600 font-mono text-sm">No secret flags stored yet</td></tr>
+                                <tr><td colSpan={6} className="p-10 text-center text-txt-muted font-mono text-sm">No secret flags stored yet</td></tr>
                               ) : realFlags.map((f: any) => (
-                                <tr key={f.id} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/[0.03] transition-colors">
+                                <tr key={f.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.03)] transition-colors">
                                   {editRealFlag?.id === f.id ? (
                                     <>
-                                      <td className="p-3 pl-5 font-mono text-xs text-gray-500 align-top pt-4">{f.id}</td>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted align-top pt-4">{f.id}</td>
                                       <td className="p-3">
                                         <input type="text" value={editRealFlagForm.challenge_name} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, challenge_name: e.target.value })}
-                                          className="cyber-input w-full px-2.5 py-1.5 rounded font-mono text-xs" />
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
                                       </td>
                                       <td className="p-3">
                                         <textarea value={editRealFlagForm.flag} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, flag: e.target.value })}
-                                          className="cyber-input w-full px-2.5 py-1.5 rounded font-mono text-xs" rows={1} />
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" rows={1} />
                                       </td>
                                       <td className="p-3">
                                         <input type="text" value={editRealFlagForm.category} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, category: e.target.value })}
-                                          className="cyber-input w-full px-2.5 py-1.5 rounded font-mono text-xs" />
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
                                       </td>
                                       <td className="p-3">
                                         <input type="text" value={editRealFlagForm.notes} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, notes: e.target.value })}
-                                          className="cyber-input w-full px-2.5 py-1.5 rounded font-mono text-xs" />
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
                                       </td>
                                       <td className="p-3 pr-5 align-top pt-4">
                                         <div className="flex gap-1.5 justify-end">
@@ -1582,10 +1646,10 @@ export default function AdminPage() {
                                               setEditRealFlag(null);
                                               loadTabData('realflags');
                                             } catch { toast.error('Failed'); }
-                                          }} className="p-1.5 rounded-lg bg-cyber-green/10 text-cyber-green hover:bg-cyber-green/20 transition-all" title="Save">
+                                          }} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Save">
                                             <CheckCircle className="w-3.5 h-3.5" />
                                           </button>
-                                          <button onClick={() => setEditRealFlag(null)} className="p-1.5 rounded-lg bg-gray-500/10 text-gray-400 hover:bg-gray-500/20 transition-all" title="Cancel">
+                                          <button onClick={() => setEditRealFlag(null)} className="p-1.5 rounded-lg bg-[rgba(122,156,192,0.1)] text-txt-secondary hover:bg-[rgba(122,156,192,0.2)] transition-all" title="Cancel">
                                             <X className="w-3.5 h-3.5" />
                                           </button>
                                         </div>
@@ -1593,22 +1657,22 @@ export default function AdminPage() {
                                     </>
                                   ) : (
                                     <>
-                                      <td className="p-3 pl-5 font-mono text-xs text-gray-500">{f.id}</td>
-                                      <td className="p-3 font-mono text-sm text-white font-medium">{f.challenge_name}</td>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{f.id}</td>
+                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium">{f.challenge_name}</td>
                                       <td className="p-3 font-mono text-xs max-w-[220px] truncate" title={f.flag} style={{color: '#ff4500'}}>{f.flag}</td>
-                                      <td className="p-3 font-mono text-xs text-gray-400">{f.category || <span className="text-gray-600">-</span>}</td>
-                                      <td className="p-3 font-mono text-xs text-gray-400 max-w-[180px] truncate" title={f.notes || ''}>{f.notes || <span className="text-gray-600">-</span>}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{f.category || <span className="text-txt-muted">-</span>}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary max-w-[180px] truncate" title={f.notes || ''}>{f.notes || <span className="text-txt-muted">-</span>}</td>
                                       <td className="p-3 pr-5">
                                         <div className="flex gap-1.5 justify-end">
                                           <button onClick={() => { setEditRealFlag(f); setEditRealFlagForm({ challenge_name: f.challenge_name, flag: f.flag, category: f.category || '', notes: f.notes || '' }); }}
-                                            className="p-1.5 rounded-lg bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-all" title="Edit">
+                                            className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title="Edit">
                                             <Pencil className="w-3.5 h-3.5" />
                                           </button>
                                           <button onClick={async () => {
                                             if (!confirm(`Delete flag for "${f.challenge_name}"?`)) return;
                                             try { await api.deleteRealFlag(f.id); toast.success('Deleted'); loadTabData('realflags'); }
                                             catch { toast.error('Failed'); }
-                                          }} className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all" title="Delete">
+                                          }} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Delete">
                                             <Trash2 className="w-3.5 h-3.5" />
                                           </button>
                                         </div>
@@ -1626,11 +1690,11 @@ export default function AdminPage() {
 
                   {activeTab === 'live' && (
                     <div className="space-y-6">
-                      <div className="cyber-card rounded-xl p-5 sm:p-6">
-                        <h3 className="font-cyber text-white text-sm mb-5 flex items-center gap-2 border-b border-cyber-blue/10 pb-3">
-                          <Radio className="w-4 h-4 text-cyber-blue" /> Live Challenge Control
+                      <div className="card rounded-xl p-5 sm:p-6">
+                        <h3 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(26,110,255,0.1)] pb-3">
+                          <Radio className="w-4 h-4 text-[var(--blue-core)]" /> Live Challenge Control
                         </h3>
-                        <p className="text-gray-500 font-mono text-xs mb-5">Publish or unpublish challenges by category and difficulty. Current counts shown for each group.</p>
+                        <p className="text-txt-muted font-mono text-xs mb-5">Publish or unpublish challenges by category and difficulty. Current counts shown for each group.</p>
 
                         {(() => {
                           const categories = ['web', 'reverse', 'crypto', 'forensics', 'osint'];
@@ -1674,14 +1738,14 @@ export default function AdminPage() {
                                   const total = liveChallenges.filter(c => c.category === cat).length;
                                   const pub = liveChallenges.filter(c => c.category === cat && c.isPublished).length;
                                   return (
-                                    <div key={cat} className="cyber-card rounded-xl p-4 border border-cyber-blue/10">
-                                      <h4 className="font-cyber text-white text-sm mb-2 uppercase tracking-wider">{catLabels[cat]}</h4>
-                                      <p className="text-gray-500 font-mono text-xs mb-3">{pub}/{total} published</p>
+                                    <div key={cat} className="card rounded-xl p-4 border border-[rgba(26,110,255,0.1)]">
+                                      <h4 className="font-display text-txt-primary text-sm mb-2 uppercase tracking-wider">{catLabels[cat]}</h4>
+                                      <p className="text-txt-muted font-mono text-xs mb-3">{pub}/{total} published</p>
                                       <div className="flex gap-2">
-                                        <button onClick={() => handleToggleCategory('publish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 font-mono text-xs hover:bg-green-500/20 transition-all">
+                                        <button onClick={() => handleToggleCategory('publish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all">
                                           Publish All
                                         </button>
-                                        <button onClick={() => handleToggleCategory('unpublish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs hover:bg-red-500/20 transition-all">
+                                        <button onClick={() => handleToggleCategory('unpublish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all">
                                           Unpublish All
                                         </button>
                                       </div>
@@ -1694,7 +1758,7 @@ export default function AdminPage() {
                               <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                   <thead>
-                                    <tr className="text-gray-500 font-mono text-[11px] uppercase tracking-wider border-b border-cyber-blue/10 bg-black/20">
+                                    <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)] bg-black/20">
                                       <th className="p-3 pl-5 font-medium">Category</th>
                                       {difficulties.map(d => (
                                         <th key={d} className="p-3 font-medium text-center">{diffLabels[d]}</th>
@@ -1703,8 +1767,8 @@ export default function AdminPage() {
                                   </thead>
                                   <tbody>
                                     {categories.map(cat => (
-                                      <tr key={cat} className="border-b border-cyber-blue/5 hover:bg-cyber-blue/[0.03] transition-colors">
-                                        <td className="p-3 pl-5 font-mono text-sm text-white font-medium">{catLabels[cat]}</td>
+                                      <tr key={cat} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.03)] transition-colors">
+                                        <td className="p-3 pl-5 font-mono text-sm text-txt-primary font-medium">{catLabels[cat]}</td>
                                         {difficulties.map(diff => {
                                           const total = countFor(cat, diff);
                                           const pub = publishedCount(cat, diff);
@@ -1712,22 +1776,22 @@ export default function AdminPage() {
                                             <td key={diff} className="p-3 text-center">
                                               {total > 0 ? (
                                                 <div className="flex flex-col items-center gap-1.5">
-                                                  <span className="font-mono text-xs text-gray-400">{pub}/{total}</span>
+                                                  <span className="font-mono text-xs text-txt-secondary">{pub}/{total}</span>
                                                   <div className="flex gap-1">
                                                     <button onClick={() => handleToggle('publish', cat, diff)}
                                                       disabled={pub === total}
-                                                      className="px-2 py-1 rounded bg-green-500/10 border border-green-500/30 text-green-400 font-mono text-[10px] hover:bg-green-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                                      className="px-2 py-1 rounded bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-[10px] hover:bg-[rgba(0,214,143,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                                                       Live
                                                     </button>
                                                     <button onClick={() => handleToggle('unpublish', cat, diff)}
                                                       disabled={pub === 0}
-                                                      className="px-2 py-1 rounded bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-[10px] hover:bg-red-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                                      className="px-2 py-1 rounded bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-[10px] hover:bg-[rgba(224,32,32,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                                                       Draft
                                                     </button>
                                                   </div>
                                                 </div>
                                               ) : (
-                                                <span className="font-mono text-xs text-gray-600">—</span>
+                                                <span className="font-mono text-xs text-txt-muted">—</span>
                                               )}
                                             </td>
                                           );
@@ -1745,26 +1809,26 @@ export default function AdminPage() {
                   )}
 
                   {activeTab === 'settings' && (
-                    <div className="cyber-card rounded-xl p-6">
-                      <h3 className="font-cyber text-white mb-4">Change Admin Credentials</h3>
+                    <div className="card rounded-xl p-6">
+                      <h3 className="font-display text-txt-primary mb-4">Change Admin Credentials</h3>
                       <form onSubmit={handleChangeCredentials} className="space-y-4 max-w-md">
                         <div>
-                          <label className="block text-gray-400 font-mono text-xs mb-2">Current Username</label>
-                          <input type="text" value={credForm.current_username} onChange={(e) => setCredForm({ ...credForm, current_username: e.target.value })} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" required />
+                          <label className="block text-txt-secondary font-mono text-xs mb-2">Current Username</label>
+                          <input type="text" value={credForm.current_username} onChange={(e) => setCredForm({ ...credForm, current_username: e.target.value })} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" required />
                         </div>
                         <div>
-                          <label className="block text-gray-400 font-mono text-xs mb-2">Current Password</label>
-                          <input type="password" value={credForm.current_password} onChange={(e) => setCredForm({ ...credForm, current_password: e.target.value })} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" required />
+                          <label className="block text-txt-secondary font-mono text-xs mb-2">Current Password</label>
+                          <input type="password" value={credForm.current_password} onChange={(e) => setCredForm({ ...credForm, current_password: e.target.value })} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" required />
                         </div>
                         <div>
-                          <label className="block text-gray-400 font-mono text-xs mb-2">New Username (optional)</label>
-                          <input type="text" value={credForm.new_username} onChange={(e) => setCredForm({ ...credForm, new_username: e.target.value })} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" />
+                          <label className="block text-txt-secondary font-mono text-xs mb-2">New Username (optional)</label>
+                          <input type="text" value={credForm.new_username} onChange={(e) => setCredForm({ ...credForm, new_username: e.target.value })} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" />
                         </div>
                         <div>
-                          <label className="block text-gray-400 font-mono text-xs mb-2">New Password (optional)</label>
-                          <input type="password" value={credForm.new_password} onChange={(e) => setCredForm({ ...credForm, new_password: e.target.value })} className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm" />
+                          <label className="block text-txt-secondary font-mono text-xs mb-2">New Password (optional)</label>
+                          <input type="password" value={credForm.new_password} onChange={(e) => setCredForm({ ...credForm, new_password: e.target.value })} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" />
                         </div>
-                        <button type="submit" className="cyber-btn px-6 py-3 rounded-xl bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue font-mono text-sm hover:bg-cyber-blue/20 transition-all flex items-center gap-2">
+                        <button type="submit" className="admin-action-btn px-6 py-3 rounded-xl bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center gap-2">
                           <Settings className="w-4 h-4" /> Update Credentials
                         </button>
                       </form>
@@ -1792,17 +1856,17 @@ export default function AdminPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="cyber-card rounded-2xl p-6 w-full max-w-md border-cyber-blue/30"
+            className="card rounded-2xl p-6 w-full max-w-md border-[rgba(26,110,255,0.3)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-cyber text-white text-lg mb-2">Change Password</h3>
-            <p className="text-gray-400 font-mono text-xs mb-4">User: <span className="text-cyber-blue">{passwordModal.username}</span></p>
+            <h3 className="font-display text-txt-primary text-lg mb-2">Change Password</h3>
+            <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--blue-core)]">{passwordModal.username}</span></p>
             <input
               type="text"
               value={passwordModalValue}
               onChange={(e) => setPasswordModalValue(e.target.value)}
               placeholder="New password (min 8 chars)"
-              className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm mb-4"
+              className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm mb-4"
               autoFocus
               minLength={8}
             />
@@ -1810,14 +1874,14 @@ export default function AdminPage() {
               <button
                 onClick={handleAdminChangePassword}
                 disabled={passwordModalLoading || passwordModalValue.length < 8}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue font-mono text-sm hover:bg-cyber-blue/20 disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] disabled:opacity-50 transition-all"
               >
                 {passwordModalLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Save'}
               </button>
               <button
                 onClick={() => { setPasswordModal(null); setPasswordModalValue(''); }}
                 disabled={passwordModalLoading}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-gray-500/10 border border-gray-500/30 text-gray-400 font-mono text-sm hover:bg-gray-500/20 disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(122,156,192,0.2)] disabled:opacity-50 transition-all"
               >
                 Cancel
               </button>
@@ -1841,17 +1905,17 @@ export default function AdminPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="cyber-card rounded-2xl p-6 w-full max-w-md border-cyan-500/30"
+            className="card rounded-2xl p-6 w-full max-w-md border-[rgba(26,110,255,0.3)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-cyber text-white text-lg mb-2">Edit Username</h3>
-            <p className="text-gray-400 font-mono text-xs mb-4">User: <span className="text-cyan-400">{usernameModal.username}</span></p>
+            <h3 className="font-display text-txt-primary text-lg mb-2">Edit Username</h3>
+            <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--blue-glow)]">{usernameModal.username}</span></p>
             <input
               type="text"
               value={usernameModalValue}
               onChange={(e) => setUsernameModalValue(e.target.value)}
               placeholder="New username (min 3 chars)"
-              className="cyber-input w-full px-4 py-3 rounded-lg font-mono text-sm mb-4"
+              className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm mb-4"
               autoFocus
               minLength={3}
             />
@@ -1859,14 +1923,14 @@ export default function AdminPage() {
               <button
                 onClick={handleAdminChangeUsername}
                 disabled={usernameModalLoading || usernameModalValue.trim().length < 3}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-sm hover:bg-cyan-500/20 disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-glow)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] disabled:opacity-50 transition-all"
               >
                 {usernameModalLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Save'}
               </button>
               <button
                 onClick={() => { setUsernameModal(null); setUsernameModalValue(''); }}
                 disabled={usernameModalLoading}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-gray-500/10 border border-gray-500/30 text-gray-400 font-mono text-sm hover:bg-gray-500/20 disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(122,156,192,0.2)] disabled:opacity-50 transition-all"
               >
                 Cancel
               </button>
@@ -1890,21 +1954,21 @@ export default function AdminPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="cyber-card rounded-2xl p-4 sm:p-6 w-[95vw] sm:w-[90vw] md:max-w-2xl border-cyber-yellow/30 my-auto"
+            className="card rounded-2xl p-4 sm:p-6 w-[95vw] sm:w-[90vw] md:max-w-2xl border-[rgba(255,184,0,0.3)] my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-cyber text-white text-lg mb-2 flex items-center gap-2">
-              <Settings className="w-5 h-5 text-yellow-400" /> Edit Challenge
+            <h3 className="font-display text-txt-primary text-lg mb-2 flex items-center gap-2">
+              <Settings className="w-5 h-5 text-[var(--warning)]" /> Edit Challenge
             </h3>
-            <p className="text-gray-400 font-mono text-xs mb-4">ID: <span className="text-yellow-400">{editingChallenge.id}</span></p>
+            <p className="text-txt-secondary font-mono text-xs mb-4">ID: <span className="text-[var(--warning)]">{editingChallenge.id}</span></p>
             <form onSubmit={handleUpdateChallenge} className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div className="md:col-span-2">
-                <input type="text" value={editChallengeForm.title} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, title: e.target.value })} placeholder="Title" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                <input type="text" value={editChallengeForm.title} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, title: e.target.value })} placeholder="Title" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
               </div>
               <div className="md:col-span-2">
-                <textarea value={editChallengeForm.description} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, description: e.target.value })} placeholder="Description" rows={3} className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                <textarea value={editChallengeForm.description} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, description: e.target.value })} placeholder="Description" rows={3} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
               </div>
-              <select value={editChallengeForm.category} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, category: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+              <select value={editChallengeForm.category} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, category: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                 <option value="web">Web</option>
                 <option value="crypto">Crypto</option>
                 <option value="reverse">Reverse</option>
@@ -1913,46 +1977,46 @@ export default function AdminPage() {
                 <option value="pwn">Pwn</option>
                 <option value="misc">Misc</option>
               </select>
-              <select value={editChallengeForm.difficulty} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, difficulty: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+              <select value={editChallengeForm.difficulty} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, difficulty: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
                 <option value="expert">Expert</option>
               </select>
-              <select value={editChallengeForm.flagMode} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, flagMode: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+              <select value={editChallengeForm.flagMode} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, flagMode: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                 <option value="dynamic_user">Dynamic (Per User)</option>
                 <option value="static">Static</option>
                 <option value="dynamic_team">Dynamic (Per Team)</option>
               </select>
-              <select value={editChallengeForm.challengeType} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, challengeType: e.target.value })} className="cyber-input px-4 py-2.5 rounded-lg font-mono text-sm">
+              <select value={editChallengeForm.challengeType} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, challengeType: e.target.value })} className="input-field px-4 py-2.5 rounded-lg font-mono text-sm">
                 <option value="asset">Asset (Downloadable)</option>
                 <option value="instance">Instance (In-Browser)</option>
               </select>
               <div>
-                <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Flag</label>
-                <input type="text" value={editChallengeForm.flag} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, flag: e.target.value })} placeholder="Challenge answer flag" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Flag</label>
+                <input type="text" value={editChallengeForm.flag} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, flag: e.target.value })} placeholder="Challenge answer flag" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
               </div>
               <div>
-                <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Points</label>
-                <input type="number" value={editChallengeForm.points} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, points: parseInt(e.target.value) || 0 })} placeholder="Score for solving" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Points</label>
+                <input type="number" value={editChallengeForm.points} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, points: parseInt(e.target.value) || 0 })} placeholder="Score for solving" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
               </div>
               <div>
-                <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Max Attempts</label>
-                <input type="number" value={editChallengeForm.maxAttempts} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, maxAttempts: parseInt(e.target.value) || 8 })} placeholder="8 = default" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Max Attempts</label>
+                <input type="number" value={editChallengeForm.maxAttempts} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, maxAttempts: parseInt(e.target.value) || 8 })} placeholder="8 = default" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
               </div>
               <div>
-                <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Blood Points</label>
-                <input type="number" value={editChallengeForm.bloodPoints} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, bloodPoints: parseInt(e.target.value) || 0 })} placeholder="Bonus for first solver" className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Blood Points</label>
+                <input type="number" value={editChallengeForm.bloodPoints} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, bloodPoints: parseInt(e.target.value) || 0 })} placeholder="Bonus for first solver" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-gray-500 font-mono text-[10px] mb-1 uppercase tracking-wider">Hint</label>
-                <textarea value={editChallengeForm.hint} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, hint: e.target.value })} placeholder="Hint (optional)" rows={2} className="cyber-input w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Hint</label>
+                <textarea value={editChallengeForm.hint} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, hint: e.target.value })} placeholder="Hint (optional)" rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
               </div>
               <div className="md:col-span-2 flex gap-3">
                 <button
                   type="submit"
                   disabled={editChallengeLoading}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-mono text-sm hover:bg-yellow-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(255,184,0,0.1)] border border-[rgba(255,184,0,0.3)] text-[var(--warning)] font-mono text-sm hover:bg-[rgba(255,184,0,0.2)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                 >
                   {editChallengeLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
                   {editChallengeLoading ? 'Saving...' : 'Save Changes'}
@@ -1961,7 +2025,7 @@ export default function AdminPage() {
                   type="button"
                   onClick={() => setEditingChallenge(null)}
                   disabled={editChallengeLoading}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-gray-500/10 border border-gray-500/30 text-gray-400 font-mono text-sm hover:bg-gray-500/20 disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(122,156,192,0.2)] disabled:opacity-50 transition-all"
                 >
                   Cancel
                 </button>
