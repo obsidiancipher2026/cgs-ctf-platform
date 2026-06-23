@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { config } from '@/lib/config'
 import { jsonResponse, getClientIp, setAuthCookies, createAccessToken, createRefreshToken, verifyPassword, generateFingerprint, upgradePasswordHash } from '@/lib/auth'
 import { sanitizeText } from '@/lib/sanitizer'
+import { wafGuard } from '@/lib/security-middleware'
 
 const UserLoginSchema = z.object({
   username: z.string(),
@@ -30,8 +31,14 @@ async function tarpitDelay(clientIp: string): Promise<void> {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const data = UserLoginSchema.parse(body)
     const clientIp = getClientIp(request)
+
+    const wafResult = await wafGuard(request, '/api/auth/login', clientIp, body)
+    if (wafResult?.blocked) {
+      return jsonResponse({ detail: wafResult.detail }, wafResult.statusCode)
+    }
+
+    const data = UserLoginSchema.parse(body)
     const username = sanitizeText(data.username, 50)
     const userAgent = request.headers.get('user-agent') || ''
     const acceptLang = request.headers.get('accept-language') || ''

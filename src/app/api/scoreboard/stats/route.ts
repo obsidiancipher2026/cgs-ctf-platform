@@ -1,18 +1,29 @@
 import prisma from '@/lib/prisma'
 import { jsonResponse } from '@/lib/auth'
+import { getCached, setCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  const totalUsers = await prisma.user.count({ where: { isBanned: false, status: 'active' } })
-  const totalChallenges = await prisma.challenge.count({ where: { isPublished: true } })
-  const totalSubmissions = await prisma.submission.count()
-  const totalCorrect = await prisma.submission.count({ where: { isCorrect: true } })
+const CACHE_TTL = 10000
 
-  return jsonResponse({
+export async function GET() {
+  const cached = getCached<ReturnType<typeof jsonResponse>>('scoreboard:stats')
+  if (cached) return cached
+
+  const [totalUsers, totalChallenges, totalSubmissions, totalCorrect] = await Promise.all([
+    prisma.user.count({ where: { isBanned: false, status: 'active' } }),
+    prisma.challenge.count({ where: { isPublished: true } }),
+    prisma.submission.count(),
+    prisma.submission.count({ where: { isCorrect: true } }),
+  ])
+
+  const response = jsonResponse({
     total_users: totalUsers,
     total_challenges: totalChallenges,
     total_submissions: totalSubmissions,
     total_correct: totalCorrect,
   })
+
+  setCache('scoreboard:stats', response, CACHE_TTL)
+  return response
 }

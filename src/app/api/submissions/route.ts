@@ -3,6 +3,8 @@ import { config } from '@/lib/config'
 import { authenticate, jsonResponse, getClientIp } from '@/lib/auth'
 import { validateFlagStrict } from '@/lib/sanitizer'
 import { recalculateRankings } from '@/lib/scoring'
+import { invalidateCache } from '@/lib/cache'
+import { wafGuard } from '@/lib/security-middleware'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +19,11 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { challenge_id, flag } = body
     const clientIp = getClientIp(request)
+
+    const wafResult = await wafGuard(request, '/api/submissions', clientIp, body)
+    if (wafResult?.blocked) {
+      return jsonResponse({ detail: wafResult.detail }, wafResult.statusCode)
+    }
 
     if (!challenge_id || !flag) {
       return jsonResponse({ detail: 'Challenge ID and flag are required' }, 400)
@@ -130,6 +137,7 @@ export async function POST(request: Request) {
       })
 
       await recalculateRankings()
+      invalidateCache('scoreboard:')
 
       return jsonResponse({
         correct: true,

@@ -162,3 +162,15 @@ export async function runSecurityCheck(
 
   return null
 }
+
+export async function wafGuard(
+  request: Request,
+  path: string,
+  clientIp: string,
+  body?: unknown,
+): Promise<SecurityCheckResult | null> {
+  const query: Record<string, string | string[]> = {}
+  const url = new URL(request.url)
+  url.searchParams.forEach((v, k) => { query[k] = v })
+  return runSecurityCheck(path, request.method, clientIp, request.headers, body ?? null, query)
+}

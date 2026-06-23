@@ -2,22 +2,16 @@ import prisma from './prisma'
 
 export async function recalculateRankings(): Promise<void> {
   try {
-    const users = await prisma.user.findMany({
-      where: { isBanned: false, status: 'active' },
-      orderBy: [
-        { score: 'desc' },
-        { updatedAt: 'asc' },
-      ],
-    })
-
-    const updates = users.map((user, index) =>
-      prisma.user.update({
-        where: { id: user.id },
-        data: { ranking: index + 1 },
-      }),
-    )
-
-    await prisma.$transaction(updates)
+    await prisma.$executeRawUnsafe(`
+      WITH ranked AS (
+        SELECT id, ROW_NUMBER() OVER (ORDER BY score DESC, "updatedAt" ASC) as rank
+        FROM "User"
+        WHERE "isBanned" = false AND status = 'active'
+      )
+      UPDATE "User" SET ranking = ranked.rank
+      FROM ranked
+      WHERE "User".id = ranked.id
+    `)
   } catch (error) {
     console.error('Failed to recalculate rankings', error)
   }

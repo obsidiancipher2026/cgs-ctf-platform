@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { config } from '@/lib/config'
 import { jsonResponse, getClientIp, setAuthCookies, createAccessToken, createRefreshToken, verifyPassword, getPasswordHash, generateFingerprint } from '@/lib/auth'
+import { wafGuard } from '@/lib/security-middleware'
 
 // HTTP Tarpit for admin login — exponential backoff on failed attempts
 // Mirrors the protection on the regular user login endpoint
@@ -29,6 +30,12 @@ export async function POST(request: Request) {
     }
 
     const clientIp = getClientIp(request)
+
+    const wafResult = await wafGuard(request, '/api/auth/admin/login', clientIp, body)
+    if (wafResult?.blocked) {
+      return jsonResponse({ detail: wafResult.detail }, wafResult.statusCode)
+    }
+
     const userAgent = request.headers.get('user-agent') || ''
     const acceptLang = request.headers.get('accept-language') || ''
     const fingerprint = generateFingerprint(clientIp, userAgent, acceptLang)

@@ -1,12 +1,19 @@
 import prisma from '@/lib/prisma'
 import { jsonResponse } from '@/lib/auth'
+import { getCached, setCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
+
+const CACHE_TTL = 8000
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200)
   const offset = parseInt(url.searchParams.get('offset') || '0', 10)
+
+  const cacheKey = `scoreboard:${limit}:${offset}`
+  const cached = getCached<ReturnType<typeof jsonResponse>>(cacheKey)
+  if (cached) return cached
 
   const users = await prisma.user.findMany({
     where: { isBanned: false, status: 'active' },
@@ -31,30 +38,30 @@ export async function GET(request: Request) {
 
   const userIds = users.map(u => u.id)
 
-  const solvedCounts = await prisma.submission.groupBy({
-    by: ['userId'],
-    where: { userId: { in: userIds }, isCorrect: true },
-    _count: { id: true },
-  })
+  const [solvedCounts, bloodResult, lastTimes, teams] = await Promise.all([
+    prisma.submission.groupBy({
+      by: ['userId'],
+      where: { userId: { in: userIds }, isCorrect: true },
+      _count: { id: true },
+    }),
+    prisma.challenge.groupBy({
+      by: ['firstBloodUserId'],
+      where: { firstBloodUserId: { in: userIds }, bloodPoints: { gt: 0 } },
+      _sum: { bloodPoints: true },
+    }),
+    prisma.submission.groupBy({
+      by: ['userId'],
+      where: { userId: { in: userIds }, isCorrect: true },
+      _max: { createdAt: true },
+    }),
+    prisma.team.findMany({
+      where: { id: { in: users.map(u => u.teamId).filter(Boolean) as number[] } },
+    }),
+  ])
+
   const solvedMap = new Map(solvedCounts.map(s => [s.userId, s._count.id]))
-
-  const bloodResult = await prisma.challenge.groupBy({
-    by: ['firstBloodUserId'],
-    where: { firstBloodUserId: { in: userIds }, bloodPoints: { gt: 0 } },
-    _sum: { bloodPoints: true },
-  })
   const bloodMap = new Map(bloodResult.map(b => [b.firstBloodUserId!, b._sum.bloodPoints || 0]))
-
-  const lastTimes = await prisma.submission.groupBy({
-    by: ['userId'],
-    where: { userId: { in: userIds }, isCorrect: true },
-    _max: { createdAt: true },
-  })
   const lastTimeMap = new Map(lastTimes.map(l => [l.userId, l._max.createdAt]))
-
-  const teams = await prisma.team.findMany({
-    where: { id: { in: users.map(u => u.teamId).filter(Boolean) as number[] } },
-  })
   const teamMap = new Map(teams.map(t => [t.id, t]))
 
   const entries = users.map(u => ({
@@ -74,5 +81,7 @@ export async function GET(request: Request) {
     where: { isBanned: false, status: 'active' },
   })
 
-  return jsonResponse({ entries, total_count: totalCount })
+  const response = jsonResponse({ entries, total_count: totalCount })
+  setCache(cacheKey, response, CACHE_TTL)
+  return response
 }

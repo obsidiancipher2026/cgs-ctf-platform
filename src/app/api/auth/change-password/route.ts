@@ -1,12 +1,20 @@
 import prisma from '@/lib/prisma'
 import { authenticate, jsonResponse, getClientIp, verifyPassword, getPasswordHash, invalidateAllSessions } from '@/lib/auth'
 import { validatePasswordStrength } from '@/lib/sanitizer'
+import { wafGuard } from '@/lib/security-middleware'
 
 export async function POST(request: Request) {
   const { user, error } = await authenticate(request)
   if (error) return error
 
   const body = await request.json().catch(() => ({}))
+
+  const clientIp = getClientIp(request)
+  const wafResult = await wafGuard(request, '/api/auth/change-password', clientIp, body)
+  if (wafResult?.blocked) {
+    return jsonResponse({ detail: wafResult.detail }, wafResult.statusCode)
+  }
+
   const { current_password, new_password } = body
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } })

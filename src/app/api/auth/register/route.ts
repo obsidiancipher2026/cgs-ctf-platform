@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { jsonResponse, getClientIp } from '@/lib/auth'
 import { sanitizeText } from '@/lib/sanitizer'
 import { getPasswordHash } from '@/lib/auth'
+import { wafGuard } from '@/lib/security-middleware'
 
 const UserCreateSchema = z.object({
   username: z.string().min(3).max(50),
@@ -20,6 +21,13 @@ const UserCreateSchema = z.object({
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+    const clientIp = getClientIp(request)
+
+    const wafResult = await wafGuard(request, '/api/auth/register', clientIp, body)
+    if (wafResult?.blocked) {
+      return jsonResponse({ detail: wafResult.detail }, wafResult.statusCode)
+    }
+
     const data = UserCreateSchema.parse(body)
 
     if (!data.agreed_tos) {
