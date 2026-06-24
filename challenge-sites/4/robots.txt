@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /VERKR2EySlhiSFU9
-Disallow: /admin-panel
-Disallow: /superadminpanel
-Disallow: /administrator
