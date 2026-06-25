@@ -1047,6 +1047,66 @@
       "firstBloodUserId": null,
       "createdAt": "2026-05-31T05:54:04.150Z",
       "updatedAt": "2026-05-31T05:55:44.856Z"
+    },
+    {
+      "id": 57,
+      "title": "NovaSec Portal",
+      "description": "NovaSec Labs just launched their shiny new company portal. Their security team is confident there's nothing interesting here — 'just a clean page,' they said. But web servers talk in more ways than one. Sometimes the most important message isn't what gets displayed on screen.",
+      "category": "web",
+      "difficulty": "easy",
+      "points": 100,
+      "flagMode": "static",
+      "flag": "CGS{h3ad3rs_sp34k_l0ud3r_th4n_p4g3s}",
+      "hint": "Web servers communicate using more than just HTML. Open DevTools. Click the Network tab. Reload the page. Select the main document request. Look at the Response Headers panel.",
+      "maxAttempts": 0,
+      "isPublished": true,
+      "solverCount": 0,
+      "fileUrl": "/challenge-instances/17/",
+      "challengeType": "instance",
+      "bloodPoints": 10,
+      "firstBloodUserId": null,
+      "createdAt": "2026-06-25T00:00:00.000Z",
+      "updatedAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 58,
+      "title": "TimeVault",
+      "description": "TimeVault is counting down to something classified. The developers were in a rush and pushed their work straight to production. While everyone stares at the ticking clock, the real secret is hidden in how the page is dressed — not in what it does.",
+      "category": "web",
+      "difficulty": "easy",
+      "points": 100,
+      "flagMode": "static",
+      "flag": "CGS{css_v4r1abl3s_4r3_m0r3_th4n_c0l0rs}",
+      "hint": "The secret isn't in the JavaScript. Look at how the page is styled. CSS supports custom properties — variables defined at :root. Developers sometimes store things there out of habit. Check the style tag in the page head.",
+      "maxAttempts": 0,
+      "isPublished": true,
+      "solverCount": 0,
+      "fileUrl": "/challenge-instances/18/",
+      "challengeType": "instance",
+      "bloodPoints": 10,
+      "firstBloodUserId": null,
+      "createdAt": "2026-06-25T00:00:00.000Z",
+      "updatedAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 59,
+      "title": "DebugMode",
+      "description": "CGS SysMonitor is an internal dashboard used to track system health across the Cyber Guardians infrastructure. An engineer left debug mode enabled before deploying to production. The logs on screen look normal. But not everything shows on screen — and not everything the system says is for your eyes. Or is it?",
+      "category": "web",
+      "difficulty": "easy",
+      "points": 100,
+      "flagMode": "static",
+      "flag": "CGS{c0ns0l3_l0gs_d0nt_l13_t0_y0u}",
+      "hint": "Developers leave messages while they code. Where do those messages usually go? Open your browser DevTools and click the Console tab. Then wait a few seconds and watch carefully.",
+      "maxAttempts": 0,
+      "isPublished": true,
+      "solverCount": 0,
+      "fileUrl": "/challenge-instances/19/",
+      "challengeType": "instance",
+      "bloodPoints": 10,
+      "firstBloodUserId": null,
+      "createdAt": "2026-06-25T00:00:00.000Z",
+      "updatedAt": "2026-06-25T00:00:00.000Z"
     }
   ],
   "realFlags": [
@@ -1619,6 +1679,36 @@
       "createdBy": null,
       "createdAt": "2026-05-31T06:18:57.656Z",
       "updatedAt": "2026-05-31T06:18:57.656Z"
+    },
+    {
+      "id": 78,
+      "challengeName": "NovaSec Portal",
+      "flag": "CGS{h3ad3rs_sp34k_l0ud3r_th4n_p4g3s}",
+      "category": "Web",
+      "notes": "Easy - 100pts",
+      "createdBy": 1,
+      "createdAt": "2026-06-25T00:00:00.000Z",
+      "updatedAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 79,
+      "challengeName": "TimeVault",
+      "flag": "CGS{css_v4r1abl3s_4r3_m0r3_th4n_c0l0rs}",
+      "category": "Web",
+      "notes": "Easy - 100pts",
+      "createdBy": 1,
+      "createdAt": "2026-06-25T00:00:00.000Z",
+      "updatedAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 80,
+      "challengeName": "DebugMode",
+      "flag": "CGS{c0ns0l3_l0gs_d0nt_l13_t0_y0u}",
+      "category": "Web",
+      "notes": "Easy - 100pts",
+      "createdBy": 1,
+      "createdAt": "2026-06-25T00:00:00.000Z",
+      "updatedAt": "2026-06-25T00:00:00.000Z"
     }
   ],
   "announcements": [
@@ -2019,6 +2109,87 @@
       "userId": 1,
       "severity": "info",
       "createdAt": "2026-05-31T06:30:24.554Z"
+    },
+    {
+      "id": 328,
+      "action": "challenge_created",
+      "details": "{\"title\":\"NovaSec Portal\"}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 329,
+      "action": "challenge_created",
+      "details": "{\"title\":\"TimeVault\"}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 330,
+      "action": "challenge_created",
+      "details": "{\"title\":\"DebugMode\"}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:00.000Z"
+    },
+    {
+      "id": 331,
+      "action": "challenge_toggled",
+      "details": "{\"id\":57,\"published\":true}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:01.000Z"
+    },
+    {
+      "id": 332,
+      "action": "challenge_toggled",
+      "details": "{\"id\":58,\"published\":true}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:01.000Z"
+    },
+    {
+      "id": 333,
+      "action": "challenge_toggled",
+      "details": "{\"id\":59,\"published\":true}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:01.000Z"
+    },
+    {
+      "id": 334,
+      "action": "real_flag_created",
+      "details": "{\"challenge_name\":\"NovaSec Portal\"}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:01.000Z"
+    },
+    {
+      "id": 335,
+      "action": "real_flag_created",
+      "details": "{\"challenge_name\":\"TimeVault\"}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:01.000Z"
+    },
+    {
+      "id": 336,
+      "action": "real_flag_created",
+      "details": "{\"challenge_name\":\"DebugMode\"}",
+      "ipAddress": "::1",
+      "userId": 1,
+      "severity": "info",
+      "createdAt": "2026-06-25T00:00:01.000Z"
     }
   ],
   "attackLogs": [],
