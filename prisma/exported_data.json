@@ -343,7 +343,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/17/strings-challenge.bin",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T09:49:47.839Z",
       "updatedAt": "2026-05-31T06:03:03.365Z"
@@ -363,7 +363,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/18/buffer-overflow.bin",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:32:53.311Z",
       "updatedAt": "2026-05-31T06:03:04.043Z"
@@ -383,7 +383,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/19/flag.hex",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:33:54.085Z",
       "updatedAt": "2026-05-31T06:03:04.675Z"
@@ -403,7 +403,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/20/challenge.bin",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:35:01.456Z",
       "updatedAt": "2026-05-31T06:03:05.367Z"
@@ -423,7 +423,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/21/password-check.bin",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:38:33.385Z",
       "updatedAt": "2026-05-31T06:03:06.493Z"
@@ -443,7 +443,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/22/script.pyc",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:40:07.058Z",
       "updatedAt": "2026-05-31T06:03:12.811Z"
@@ -463,7 +463,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/23/challenge.js",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:45:06.031Z",
       "updatedAt": "2026-05-31T06:03:13.342Z"
@@ -483,7 +483,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/24/packed.bin",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:45:06.223Z",
       "updatedAt": "2026-05-31T06:03:13.929Z"
@@ -503,7 +503,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/25/crypto.bin",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 25,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T10:45:06.379Z",
       "updatedAt": "2026-05-31T06:03:14.479Z"
@@ -523,7 +523,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/26/caesar.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:20:16.121Z",
       "updatedAt": "2026-05-31T06:03:15.020Z"
@@ -543,7 +543,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/27/xor.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:20:16.138Z",
       "updatedAt": "2026-05-31T06:03:15.616Z"
@@ -563,7 +563,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/28/base64.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:20:16.145Z",
       "updatedAt": "2026-05-31T06:03:29.076Z"
@@ -583,7 +583,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/29/substitution.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 10,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:20:16.155Z",
       "updatedAt": "2026-05-31T06:03:18.810Z"
@@ -603,7 +603,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/30/rsa.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:37:58.562Z",
       "updatedAt": "2026-05-31T06:03:19.358Z"
@@ -623,7 +623,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/31/aes.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:37:58.589Z",
       "updatedAt": "2026-05-31T06:03:19.815Z"
@@ -643,7 +643,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/32/md5.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:37:58.603Z",
       "updatedAt": "2026-05-31T06:03:20.262Z"
@@ -663,7 +663,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/33/vigenere.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 15,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T13:37:58.616Z",
       "updatedAt": "2026-05-31T06:03:20.809Z"
@@ -683,7 +683,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/34/ecdsa.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 25,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T14:46:22.758Z",
       "updatedAt": "2026-05-31T06:03:21.639Z"
@@ -703,7 +703,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/35/coppersmith.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 25,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T14:46:22.775Z",
       "updatedAt": "2026-05-31T06:03:22.272Z"
@@ -723,7 +723,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/36/ecdlp.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 25,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T14:46:22.789Z",
       "updatedAt": "2026-05-31T06:03:23.568Z"
@@ -743,7 +743,7 @@
       "solverCount": 0,
       "fileUrl": "/uploads/challenges/37/mitm.txt",
       "challengeType": "asset",
-      "bloodPoints": 0,
+      "bloodPoints": 25,
       "firstBloodUserId": null,
       "createdAt": "2026-05-29T14:46:22.803Z",
       "updatedAt": "2026-05-31T06:03:24.061Z"
