@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Megaphone, Loader2, X, ChevronLeft, ChevronRight, Clock, Calendar, ArrowUpRight } from 'lucide-react';
-import { api } from '@/lib/api';
+import { Loader2, X, ChevronLeft, ChevronRight, Clock, Calendar, ArrowUpRight, Radio, Siren } from 'lucide-react';
 
 function linkify(text: string) {
   const pattern = /(https?:\/\/[^\s<]+|\/[a-zA-Z0-9_\-./?&=]+)/g;
@@ -54,7 +53,7 @@ export default function AnnouncementsPage() {
   const [selected, setSelected] = useState<any | null>(null);
 
   useEffect(() => {
-    api.getAnnouncements().then(setAnnouncements).catch(() => {}).finally(() => setLoading(false));
+    import('@/lib/api').then(({ api }) => api.getAnnouncements().then(setAnnouncements).catch(() => {}).finally(() => setLoading(false)));
   }, []);
 
   const totalPages = Math.max(1, Math.ceil(announcements.length / PER_PAGE));
@@ -75,27 +74,35 @@ export default function AnnouncementsPage() {
   return (
     <div className="min-h-screen py-8 sm:py-12 px-4">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10 sm:mb-12">
-          <span className="text-txt-muted text-xs font-mono uppercase tracking-[0.2em]">Latest News</span>
-          <h1 className="font-display font-bold text-3xl sm:text-5xl text-txt-primary mt-2">News & Updates</h1>
-          <p className="text-txt-secondary text-sm sm:text-base max-w-2xl mx-auto mt-4">
-            Stay informed with the latest announcements, event updates, and platform changes.
+        {/* Hero - SOC Mission Feed */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 sm:mb-12">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="pulse-dot" />
+            <span className="eyebrow text-[10px]">Live Feed</span>
+          </div>
+          <h1 className="font-display font-bold text-3xl sm:text-5xl text-txt-primary">Mission Updates</h1>
+          <p className="text-txt-secondary text-sm sm:text-base max-w-2xl mt-4">
+            Real-time intelligence from Cyber Guardians Society. Track platform changes, event alerts, and critical bulletins.
           </p>
         </motion.div>
+
+        <div className="gradient-divider" />
 
         {loading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="w-8 h-8 text-blue-core animate-spin" />
           </div>
         ) : announcements.length === 0 ? (
-          <div className="text-center py-20">
-            <Bell className="w-12 h-12 text-txt-muted mx-auto mb-4" />
-            <p className="text-txt-secondary text-sm">No announcements yet. Check back later!</p>
-          </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
+            <div className="w-16 h-16 rounded-2xl bg-surface border border-border-c flex items-center justify-center mx-auto mb-5">
+              <Radio className="w-7 h-7 text-txt-muted" />
+            </div>
+            <p className="text-txt-secondary text-sm font-medium">No transmissions yet</p>
+            <p className="text-txt-muted text-xs mt-2">Check back when the next broadcast drops.</p>
+          </motion.div>
         ) : (
           <>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {paged.map((a: any, i: number) => (
                 <motion.button
                   key={a.id}
@@ -103,24 +110,19 @@ export default function AnnouncementsPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
                   onClick={() => setSelected(a)}
-                  className="w-full text-left card card-lift px-5 py-4 group cursor-pointer border-l-2 border-l-blue-core hover:border-l-red-core transition-all"
+                  className="w-full text-left card card-lift px-5 py-4 group cursor-pointer gradient-border-left hover:border-[var(--border-accent)] hover:shadow-[0_0_24px_rgba(26,110,255,0.1)] transition-all duration-300"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-blue-dim/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Bell className="w-5 h-5 text-blue-glow" />
+                  <div className="pl-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h2 className="font-body font-semibold text-txt-primary text-sm sm:text-base truncate group-hover:text-blue-glow transition-colors">{a.title}</h2>
+                      <span className="text-[10px] font-mono text-txt-muted whitespace-nowrap">{formatDate(a.created_at)}</span>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h2 className="font-body font-semibold text-txt-primary text-sm sm:text-base truncate group-hover:text-blue-glow transition-colors">{a.title}</h2>
-                        <span className="text-[10px] font-mono text-txt-muted whitespace-nowrap">{formatDate(a.created_at)}</span>
-                      </div>
-                      <p className="text-txt-muted text-xs leading-relaxed line-clamp-2">{extractPreview(a.message)}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="flex items-center gap-1 text-[10px] font-mono text-txt-muted">
-                          <Clock className="w-3 h-3" /> {formatTime(a.created_at)}
-                        </span>
-                        <span className="text-[10px] font-mono text-blue-core/60 group-hover:text-blue-core transition-colors ml-auto">Read more &rarr;</span>
-                      </div>
+                    <p className="text-txt-muted text-xs leading-relaxed line-clamp-2">{extractPreview(a.message)}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="flex items-center gap-1 text-[10px] font-mono text-txt-muted">
+                        <Clock className="w-3 h-3" /> {formatTime(a.created_at)}
+                      </span>
+                      <span className="text-[10px] font-mono text-blue-core/60 group-hover:text-blue-core transition-colors ml-auto">Read full &rarr;</span>
                     </div>
                   </div>
                 </motion.button>
@@ -156,7 +158,10 @@ export default function AnnouncementsPage() {
               <button onClick={closeModal} className="absolute top-4 right-4 p-2 text-txt-muted hover:text-txt-primary transition-colors">
                 <X className="w-4 h-4" />
               </button>
-              <h2 className="font-display font-bold text-lg sm:text-xl text-txt-primary pr-8 mb-4">{selected.title}</h2>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="pulse-dot" />
+                <h2 className="font-display font-bold text-lg sm:text-xl text-txt-primary">{selected.title}</h2>
+              </div>
               <div className="flex flex-wrap items-center gap-3 mb-5 pb-4 border-b border-border-c">
                 <span className="flex items-center gap-1.5 text-xs font-mono text-txt-muted">
                   <Calendar className="w-3.5 h-3.5" /> {formatDate(selected.created_at)}
@@ -167,7 +172,7 @@ export default function AnnouncementsPage() {
               </div>
               <div className="text-txt-secondary text-sm leading-relaxed break-words">{renderMessage(selected.message)}</div>
               <div className="mt-6 pt-4 border-t border-border-c">
-                <button onClick={closeModal} className="btn-outline px-4 py-2 text-xs">Back to Announcements</button>
+                <button onClick={closeModal} className="btn-outline px-4 py-2 text-xs">Back to Feed</button>
               </div>
             </motion.div>
           </motion.div>

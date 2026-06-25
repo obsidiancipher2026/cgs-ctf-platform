@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, LogOut, User, Flag } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 const publicLinks = [
@@ -18,6 +18,43 @@ const protectedLinks = [
   { href: '/flag-submit', label: 'Flag Submit' },
   { href: '/scoreboard', label: 'Scoreboard' },
 ];
+
+function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`relative px-4 py-2 text-sm font-medium transition-all duration-200 group ${
+        isActive ? 'text-txt-primary' : 'text-txt-secondary hover:text-txt-primary'
+      }`}
+    >
+      {label}
+      <span
+        className={`absolute bottom-0 left-2 right-2 h-[2px] rounded-full transition-all duration-300 ${
+          isActive
+            ? 'bg-gradient-to-r from-red-core to-blue-core opacity-100'
+            : 'bg-transparent group-hover:bg-blue-core/40 opacity-0 group-hover:opacity-100'
+        }`}
+      />
+    </Link>
+  );
+}
+
+function MobileNavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+        isActive
+          ? 'text-txt-primary bg-blue-dim/30 gradient-border-left'
+          : 'text-txt-secondary hover:text-txt-primary hover:bg-surface hover:pl-6'
+      }`}
+    >
+      {label}
+    </Link>
+  );
+}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,68 +85,34 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-void/90 backdrop-blur-xl border-b border-border-c'
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 navbar-glass${scrolled ? ' scrolled' : ''}`}
       role="navigation"
       aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5" aria-label="Home">
+          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="Home">
             <img src="/images/logo.png" alt="CGS Logo" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
             <span className="font-display font-bold text-lg text-txt-primary tracking-wide hidden sm:block">
               CyberGuardiansSocietyCTF
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
-            {publicLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 text-sm font-medium transition-colors relative ${
-                    isActive
-                      ? 'text-txt-primary'
-                      : 'text-txt-secondary hover:text-txt-primary'
-                  }`}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-red-core rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
-            {isAuthenticated && protectedLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 text-sm font-medium transition-colors relative ${
-                    isActive
-                      ? 'text-txt-primary'
-                      : 'text-txt-secondary hover:text-txt-primary'
-                  }`}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-blue-core rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
+          {/* Desktop Nav - Centered */}
+          <div className="hidden md:flex items-center justify-center flex-1 gap-1">
+            {publicLinks.map((link) => (
+              <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+            ))}
+            {isAuthenticated && protectedLinks.map((link) => (
+              <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+            ))}
+          </div>
 
-            {/* Auth Section */}
+          {/* Desktop Auth Section */}
+          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 ml-4 pl-4 border-l border-border-c">
+              <div className="flex items-center gap-3">
                 <Link
                   href="/profile"
                   className="flex items-center gap-2 px-3 py-1.5 text-sm text-txt-secondary hover:text-txt-primary transition-colors"
@@ -126,17 +129,11 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 ml-4 pl-4 border-l border-border-c">
-                <Link
-                  href="/login"
-                  className="btn-outline px-4 py-1.5 text-xs"
-                >
+              <div className="flex items-center gap-2">
+                <Link href="/login" className="btn-outline px-4 py-1.5 text-xs">
                   Login
                 </Link>
-                <Link
-                  href="/register"
-                  className="btn-primary px-4 py-1.5 text-xs"
-                >
+                <Link href="/register" className="btn-primary px-4 py-1.5 text-xs">
                   Register
                 </Link>
               </div>
@@ -151,7 +148,22 @@ export default function Navbar() {
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <motion.div
+                animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -4 }}
+                className="absolute w-5 h-[2px] bg-current rounded-full"
+                style={{ transformOrigin: 'center' }}
+              />
+              <motion.div
+                animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                className="absolute w-5 h-[2px] bg-current rounded-full"
+              />
+              <motion.div
+                animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 4 }}
+                className="absolute w-5 h-[2px] bg-current rounded-full"
+                style={{ transformOrigin: 'center' }}
+              />
+            </div>
           </button>
         </div>
       </div>
@@ -198,38 +210,12 @@ export default function Navbar() {
             </div>
 
             <div className="px-3 py-4 space-y-1">
-              {publicLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? 'text-txt-primary bg-blue-dim/30 border-l-2 border-blue-core'
-                        : 'text-txt-secondary hover:text-txt-primary hover:bg-surface'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-              {isAuthenticated && protectedLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? 'text-txt-primary bg-blue-dim/30 border-l-2 border-blue-core'
-                        : 'text-txt-secondary hover:text-txt-primary hover:bg-surface'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
+              {publicLinks.map((link) => (
+                <MobileNavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} onClick={() => setIsOpen(false)} />
+              ))}
+              {isAuthenticated && protectedLinks.map((link) => (
+                <MobileNavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} onClick={() => setIsOpen(false)} />
+              ))}
             </div>
 
             <div className="border-t border-border-c mx-3" />
@@ -239,6 +225,7 @@ export default function Navbar() {
                 <div className="space-y-2">
                   <Link
                     href="/profile"
+                    onClick={() => setIsOpen(false)}
                     className="block px-4 py-3 rounded-lg bg-surface border border-border-c"
                   >
                     <div className="text-txt-primary font-semibold text-sm">{user?.username}</div>
