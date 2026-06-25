@@ -49,66 +49,6 @@
       "updatedAt": "2026-05-31T06:03:01.296Z"
     },
     {
-      "id": 3,
-      "title": "Obsidian Portal",
-      "description": "find the hidden encoded flag",
-      "category": "web",
-      "difficulty": "medium",
-      "points": 150,
-      "flagMode": "static",
-      "flag": "CGS{CONGRATS_YOU_FOUND_THE_MULTILAYER_ENCODED_FLAG}",
-      "hint": "multi layer, encoded, parts more than 3",
-      "maxAttempts": 0,
-      "isPublished": true,
-      "solverCount": 0,
-      "fileUrl": "/challenge-instances/3/",
-      "challengeType": "instance",
-      "bloodPoints": 0,
-      "firstBloodUserId": null,
-      "createdAt": "2026-05-28T07:34:24.484Z",
-      "updatedAt": "2026-05-30T22:28:24.315Z"
-    },
-    {
-      "id": 4,
-      "title": "Phantom Gateway",
-      "description": "A company website has an admin panel they forgot to hide. Find the admin login page and access the dashboard to get the flag. Try common admin paths, check robots.txt, and look in the page source.",
-      "category": "web",
-      "difficulty": "easy",
-      "points": 50,
-      "flagMode": "static",
-      "flag": "CGS{b4se64_d0cod3d_secr37}",
-      "hint": "Try common admin paths like /admin or /administrator. Check the robots.txt file. Look in the page source comments.",
-      "maxAttempts": 0,
-      "isPublished": true,
-      "solverCount": 0,
-      "fileUrl": "/challenge-instances/4/",
-      "challengeType": "instance",
-      "bloodPoints": 0,
-      "firstBloodUserId": null,
-      "createdAt": "2026-05-28T08:24:21.876Z",
-      "updatedAt": "2026-06-06T09:04:53.525Z"
-    },
-    {
-      "id": 5,
-      "title": "NexaVault Token",
-      "description": "A user's password reset token is encoded but not encrypted. A password reset email was sent containing a link with a token. Can you decode the token to find the flag?",
-      "category": "web",
-      "difficulty": "easy",
-      "points": 40,
-      "flagMode": "static",
-      "flag": "CGS{sql1_1nj3ction_bypass}",
-      "hint": "The token looks unusual - try a Base64 decoder. Online tools can help decode this. Base64 strings often end with = signs.",
-      "maxAttempts": 0,
-      "isPublished": true,
-      "solverCount": 0,
-      "fileUrl": "/challenge-instances/5/",
-      "challengeType": "instance",
-      "bloodPoints": 3,
-      "firstBloodUserId": null,
-      "createdAt": "2026-05-28T08:46:05.170Z",
-      "updatedAt": "2026-06-06T09:04:53.552Z"
-    },
-    {
       "id": 6,
       "title": "NullSec Auth",
       "description": "A simple login form with no input validation. Bypass the login and access the user dashboard to get the flag. Try entering special characters in the username field and observe what happens.",
@@ -146,46 +86,6 @@
       "bloodPoints": 0,
       "firstBloodUserId": null,
       "createdAt": "2026-05-28T09:13:21.056Z",
-      "updatedAt": "2026-05-30T22:28:24.315Z"
-    },
-    {
-      "id": 8,
-      "title": "PingSweep Internal",
-      "description": "A website has a \"ping checker\" tool that is vulnerable to OS command injection. It passes user input directly to the system ping command. Try to execute additional commands to read a sensitive file and retrieve the flag.",
-      "category": "web",
-      "difficulty": "easy",
-      "points": 50,
-      "flagMode": "static",
-      "flag": "CGS{c0mmand_1nj3ction}",
-      "hint": "What if you try adding another command after a semicolon? Try: 8.8.8.8; ls. Linux commands can be chained together.",
-      "maxAttempts": 0,
-      "isPublished": true,
-      "solverCount": 0,
-      "fileUrl": "/challenge-instances/8/",
-      "challengeType": "instance",
-      "bloodPoints": 0,
-      "firstBloodUserId": null,
-      "createdAt": "2026-05-28T09:19:32.635Z",
-      "updatedAt": "2026-05-30T22:28:24.315Z"
-    },
-    {
-      "id": 9,
-      "title": "ShadowLedger",
-      "description": "A product search page filters by category but is vulnerable to SQL injection. Extract the admin's email and password from the users table using a UNION-based SQL injection attack to retrieve the flag.",
-      "category": "web",
-      "difficulty": "medium",
-      "points": 100,
-      "flagMode": "static",
-      "flag": "CGS{un10n_sql_1nj3ction}",
-      "hint": "Try adding UNION SELECT to the category parameter. You need to match the number of columns. Look for user table information in error messages.",
-      "maxAttempts": 0,
-      "isPublished": true,
-      "solverCount": 0,
-      "fileUrl": "/challenge-instances/9/",
-      "challengeType": "instance",
-      "bloodPoints": 0,
-      "firstBloodUserId": null,
-      "createdAt": "2026-05-28T09:24:52.973Z",
       "updatedAt": "2026-05-30T22:28:24.315Z"
     },
     {
@@ -1121,26 +1021,6 @@
       "updatedAt": "2026-05-29T18:03:09.424Z"
     },
     {
-      "id": 3,
-      "challengeName": "Phantom Gateway",
-      "flag": "CGS{adm1n_p4n3l_f0und}",
-      "category": "Web",
-      "notes": "Easy",
-      "createdBy": 1,
-      "createdAt": "2026-05-28T08:41:57.170Z",
-      "updatedAt": "2026-05-29T18:05:14.127Z"
-    },
-    {
-      "id": 4,
-      "challengeName": "NexaVault Token",
-      "flag": "CGS{b64encoding_is_not_encryption}",
-      "category": "Web",
-      "notes": "Easy",
-      "createdBy": 1,
-      "createdAt": "2026-05-28T09:10:10.500Z",
-      "updatedAt": "2026-05-29T18:05:32.157Z"
-    },
-    {
       "id": 5,
       "challengeName": "NullSec Auth",
       "flag": "CGS{sql1_1nj3ction_bypass}",
@@ -1159,26 +1039,6 @@
       "createdBy": 1,
       "createdAt": "2026-05-28T09:40:00.178Z",
       "updatedAt": "2026-05-29T18:05:23.275Z"
-    },
-    {
-      "id": 7,
-      "challengeName": "PingSweep Internal",
-      "flag": "CGS{c0mmand_1nj3ction}",
-      "category": "Web",
-      "notes": "Easy",
-      "createdBy": 1,
-      "createdAt": "2026-05-28T09:40:17.645Z",
-      "updatedAt": "2026-05-29T18:05:48.105Z"
-    },
-    {
-      "id": 8,
-      "challengeName": "ShadowLedger",
-      "flag": "CGS{un10n_sql_1nj3ction}",
-      "category": "Web",
-      "notes": "Medium",
-      "createdBy": 1,
-      "createdAt": "2026-05-28T09:40:35.725Z",
-      "updatedAt": "2026-05-29T18:06:19.293Z"
     },
     {
       "id": 9,
@@ -1561,16 +1421,6 @@
       "updatedAt": "2026-05-31T06:02:14.575Z"
     },
     {
-      "id": 66,
-      "challengeName": "Obsidian Portal",
-      "flag": "CGS{CONGRATS_YOU_FOUND_THE_MULTILAYER_ENCODED_FLAG}",
-      "category": "misc",
-      "notes": null,
-      "createdBy": null,
-      "createdAt": "2026-05-31T06:17:38.343Z",
-      "updatedAt": "2026-05-31T06:17:38.343Z"
-    },
-    {
       "id": 67,
       "challengeName": "Specter Payload",
       "flag": "CGS{deser1al1zat10n_rce}",
@@ -1619,16 +1469,6 @@
       "createdBy": null,
       "createdAt": "2026-05-31T06:17:38.452Z",
       "updatedAt": "2026-05-31T06:17:38.452Z"
-    },
-    {
-      "id": 72,
-      "challengeName": "Obsidian Portal",
-      "flag": "CGS{CONGRATS_YOU_FOUND_THE_MULTILAYER_ENCODED_FLAG}",
-      "category": "web",
-      "notes": null,
-      "createdBy": null,
-      "createdAt": "2026-05-31T06:18:57.597Z",
-      "updatedAt": "2026-05-31T06:18:57.597Z"
     },
     {
       "id": 73,
