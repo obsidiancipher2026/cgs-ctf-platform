@@ -574,6 +574,224 @@ body.sidebar-open {
   100% { background-position: 0% 50%; }
 }
 
+/* ─── Team Tree Hierarchy ─── */
+.tree-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.tree-spine {
+  width: 2px;
+  height: 36px;
+  background: linear-gradient(to bottom, var(--red-core), var(--blue-core));
+  flex-shrink: 0;
+  position: relative;
+}
+.tree-spine::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue-core);
+  box-shadow: 0 0 8px var(--blue-core);
+}
+
+.tree-branch-area {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 28px;
+}
+.tree-branch-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 14px;
+  background: linear-gradient(to bottom, var(--blue-core), var(--blue-core));
+}
+.tree-branch-area::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--blue-core) 15%, var(--blue-core) 85%, transparent);
+}
+
+.tree-leads-row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 20px);
+  width: 100%;
+  max-width: 800px;
+  padding-top: 0;
+}
+.tree-leads-row > .tree-lead-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 160px;
+}
+.tree-leads-row > .tree-lead-node::before {
+  content: '';
+  display: block;
+  width: 2px;
+  height: 14px;
+  background: var(--blue-core);
+  opacity: 0.5;
+  margin-bottom: 0;
+}
+
+/* Tree card variants */
+.tree-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.tree-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--gradient-border);
+  border-radius: 3px 0 0 3px;
+}
+.tree-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 30px rgba(26, 110, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+.tree-card-founder {
+  padding: clamp(16px, 3vw, 24px) clamp(20px, 4vw, 32px);
+  width: fit-content;
+  min-width: 200px;
+}
+.tree-card-founder .tree-avatar {
+  width: clamp(56px, 6vw, 72px);
+  height: clamp(56px, 6vw, 72px);
+  border: 2px solid transparent;
+  background: linear-gradient(var(--glass-bg), var(--glass-bg)) padding-box,
+              var(--gradient-border) border-box;
+  box-shadow: 0 0 24px rgba(224, 32, 32, 0.2);
+}
+
+.tree-card-deputy {
+  padding: clamp(14px, 2vw, 20px) clamp(18px, 3vw, 28px);
+  width: fit-content;
+  min-width: 180px;
+}
+.tree-card-deputy .tree-avatar {
+  width: clamp(48px, 5vw, 60px);
+  height: clamp(48px, 5vw, 60px);
+  border: 2px solid rgba(26, 110, 255, 0.4);
+  box-shadow: 0 0 16px rgba(26, 110, 255, 0.15);
+}
+
+.tree-card-lead {
+  padding: 12px 10px;
+  width: 100%;
+  min-width: 0;
+}
+.tree-card-lead .tree-avatar {
+  width: clamp(36px, 4vw, 48px);
+  height: clamp(36px, 4vw, 48px);
+  border: 2px solid rgba(26, 110, 255, 0.25);
+}
+
+.tree-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+.tree-card:hover .tree-avatar {
+  border-color: var(--blue-core);
+  box-shadow: 0 0 20px rgba(26, 110, 255, 0.2);
+}
+
+.tree-role-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tree-role-badge.founder {
+  background: rgba(224, 32, 32, 0.12);
+  color: var(--red-core);
+  border: 1px solid rgba(224, 32, 32, 0.25);
+}
+.tree-role-badge.deputy {
+  background: rgba(26, 110, 255, 0.12);
+  color: var(--blue-core);
+  border: 1px solid rgba(26, 110, 255, 0.25);
+}
+.tree-role-badge.lead {
+  background: rgba(26, 110, 255, 0.08);
+  color: var(--blue-glow);
+  border: 1px solid rgba(26, 110, 255, 0.15);
+}
+
+/* Founder crown dot indicator */
+.tree-crown {
+  display: inline-flex;
+  width: 7px;
+  height: 7px;
+  background: var(--red-core);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(224, 32, 32, 0.5);
+  margin-right: 4px;
+  vertical-align: middle;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Mobile tree: collapse to stacked list */
+@media (max-width: 768px) {
+  .tree-spine { display: none; }
+  .tree-branch-area { display: none; }
+  .tree-leads-row::before { display: none; }
+  .tree-leads-row > .tree-lead-node::before { display: none; }
+  .tree-leads-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 320px;
+  }
+  .tree-leads-row > .tree-lead-node {
+    max-width: 260px;
+    width: 100%;
+  }
+  .tree-card-lead {
+    padding: 14px 16px;
+  }
+  .tree-card-deputy {
+    margin-bottom: 4px;
+  }
+}
+
 /* ─── Reduced Motion ─── */
 @media (prefers-reduced-motion: reduce) {
   .scan-line { animation: none; display: none; }

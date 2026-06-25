@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Target, Swords, BookOpen, Users, Rocket, Flag, Trophy, Eye, Lock, CheckCircle, AlertTriangle, MapPin } from 'lucide-react';
+import { ArrowRight, Shield, Target, Swords, Rocket, Flag, Trophy, Eye, Lock, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const pillars = [
   { icon: Shield, title: 'Who We Are', content: 'Cyber Guardians Society is for people who love solving problems and finding hidden things. We welcome everyone — no matter your background. Our goal is simple: teach you to think like a hacker through real challenges.', accent: 'red' as const },
@@ -113,33 +113,93 @@ export default function About() {
 
         <div className="gradient-divider" />
 
-        {/* Section 4: Team */}
+        {/* Section 4: Team — Hierarchy Tree */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <span className="eyebrow">Team</span>
+          <span className="eyebrow">Command Structure</span>
           <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary mt-2">Meet the Team</h2>
           <p className="text-txt-secondary text-sm max-w-xl mx-auto mt-3">
             The people behind CGS CTF — building, designing, and running it all.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
-          {teamMembers.map((member, i) => (
-            <motion.div
-              key={member.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={stagger(i, 0.06)}
-              className="card card-lift p-5 flex flex-col items-center text-center"
-            >
-              <div className="w-20 h-20 rounded-full overflow-hidden mb-4 ring-2 ring-border-c">
-                <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="tree-container mb-16 px-2"
+        >
+          {/* Level 1: Founder */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="tree-card tree-card-founder flex flex-col items-center text-center"
+          >
+            <div className="flex items-center gap-1.5 mb-2">
+              <span className="tree-crown" />
+              <span className="tree-role-badge founder">Founder</span>
+            </div>
+            <div className="flex flex-col items-center gap-2.5">
+              <img
+                src={teamMembers[0].img}
+                alt={teamMembers[0].name}
+                className="tree-avatar"
+              />
+              <div>
+                <h3 className="font-display font-bold text-txt-primary text-lg sm:text-xl">{teamMembers[0].name}</h3>
+                <p className="text-txt-muted text-xs mt-0.5">{teamMembers[0].desc}</p>
               </div>
-              <h3 className="font-body font-semibold text-txt-primary text-base">{member.name}</h3>
-              <span className={`chip mt-2 ${member.color}`}>{member.role}</span>
-              <p className="text-txt-muted text-xs mt-2">{member.desc}</p>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
+
+          {/* Spine */}
+          <div className="tree-spine" />
+
+          {/* Level 2: Deputy */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="tree-card tree-card-deputy flex flex-col items-center text-center"
+          >
+            <span className="tree-role-badge deputy mb-2">Deputy Lead</span>
+            <div className="flex flex-col items-center gap-2">
+              <img
+                src={teamMembers[1].img}
+                alt={teamMembers[1].name}
+                className="tree-avatar"
+              />
+              <div>
+                <h3 className="font-display font-bold text-txt-primary text-base sm:text-lg">{teamMembers[1].name}</h3>
+                <p className="text-txt-muted text-xs mt-0.5">{teamMembers[1].desc}</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Branch connector (visible on desktop) */}
+          <div className="tree-branch-area hidden md:block" />
+
+          {/* Level 3: Leads */}
+          <div className="tree-leads-row">
+            {teamMembers.slice(2).map((member, i) => (
+              <motion.div
+                key={member.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="tree-lead-node"
+              >
+                <div className="tree-card tree-card-lead flex flex-col items-center text-center">
+                  <span className="tree-role-badge lead mb-1.5">{member.role}</span>
+                  <img
+                    src={member.img}
+                    alt={member.name}
+                    className="tree-avatar"
+                  />
+                  <h3 className="font-display font-bold text-txt-primary text-sm mt-1.5 leading-tight">{member.name}</h3>
+                  <p className="text-txt-muted text-[11px] mt-1 leading-tight">{member.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
         <div className="gradient-divider" />
 
