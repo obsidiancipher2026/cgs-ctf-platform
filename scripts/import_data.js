@@ -19,6 +19,19 @@ async function main() {
   const prisma = new PrismaClient();
 
   try {
+    // Sync DB to match JSON: delete records not in the import
+    const deleteStaleRecords = async (label, delegate, idField, validIds) => {
+      const existing = await delegate.findMany({ select: { [idField]: true } });
+      const toDelete = existing.filter(r => !validIds.has(r[idField])).map(r => r[idField]);
+      if (toDelete.length > 0) {
+        console.log(`  Deleting ${toDelete.length} stale ${label} entries...`);
+        await delegate.deleteMany({ where: { [idField]: { in: toDelete } } });
+      }
+    };
+
+    await deleteStaleRecords('challenge', prisma.challenge, 'id', new Set(data.challenges.map(c => c.id)));
+    await deleteStaleRecords('realFlag', prisma.realFlag, 'id', new Set(data.realFlags.map(rf => rf.id)));
+
     // Teams (no dependencies)
     console.log('Importing teams...');
     for (const t of data.teams) {
