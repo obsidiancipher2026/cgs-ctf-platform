@@ -170,7 +170,7 @@
     },
     {
       "id": 9,
-      "title": "Phantom Ledger",
+      "title": "ShadowLedger",
       "description": "A product search page filters by category but is vulnerable to SQL injection. Extract the admin's email and password from the users table using a UNION-based SQL injection attack to retrieve the flag.",
       "category": "web",
       "difficulty": "medium",
@@ -290,7 +290,7 @@
     },
     {
       "id": 15,
-      "title": "Phantom Payload",
+      "title": "Specter Payload",
       "description": "A PHP application uses unserialize() on user input. Craft a malicious serialized PHP object to exploit the __destruct magic method and execute arbitrary file reads.",
       "category": "web",
       "difficulty": "hard",
@@ -530,7 +530,7 @@
     },
     {
       "id": 27,
-      "title": "XOR Gate",
+      "title": "Exclusive Breach",
       "description": "Message encrypted with XOR operation using a single byte key. Find the XOR key and decrypt the message. Brute-force with 256 attempts, look for readable ASCII text output.",
       "category": "crypto",
       "difficulty": "easy",
@@ -550,7 +550,7 @@
     },
     {
       "id": 28,
-      "title": "BaseWeave",
+      "title": "AlphaWeave",
       "description": "Message is Base64 encoded and contains the flag. Decode the Base64 string to find the flag. Use base64 command, Python, or online tools like base64decode.org.",
       "category": "crypto",
       "difficulty": "easy",
@@ -1010,7 +1010,7 @@
     },
     {
       "id": 55,
-      "title": "Sentinel Hyderabad",
+      "title": "Operation Minaret",
       "description": "Hyderabad is a historic city in Sindh with the famous Minar-e-Taban and other landmarks. Find information about the citys main historical monument and the year of a significant event to extract the flag.",
       "category": "osint",
       "difficulty": "easy",
@@ -1030,7 +1030,7 @@
     },
     {
       "id": 56,
-      "title": "Mughal Cipher",
+      "title": "Operation Garden Vault",
       "description": "Lahore is the cultural heart of Pakistan with rich Mughal history. Research the citys famous monuments, gardens, and historical significance to find the flag containing the name of the iconic garden and the year of a major landmark.",
       "category": "osint",
       "difficulty": "easy",
@@ -1112,7 +1112,7 @@
     },
     {
       "id": 8,
-      "challengeName": "Phantom Ledger",
+      "challengeName": "ShadowLedger",
       "flag": "CGS{un10n_sql_1nj3ction}",
       "category": "Web",
       "notes": "Medium",
@@ -1182,7 +1182,7 @@
     },
     {
       "id": 16,
-      "challengeName": "XOR Gate",
+      "challengeName": "Exclusive Breach",
       "flag": "CGS{x0r_15_s1mpl3}",
       "category": "Crypto",
       "notes": "Easy",
@@ -1192,7 +1192,7 @@
     },
     {
       "id": 17,
-      "challengeName": "BaseWeave",
+      "challengeName": "AlphaWeave",
       "flag": "CGS{b453_64_d3c0d3d}",
       "category": "Crypto",
       "notes": "Easy",
@@ -1472,7 +1472,7 @@
     },
     {
       "id": 51,
-      "challengeName": "Mughal Cipher",
+      "challengeName": "Operation Garden Vault",
       "flag": "CGS{lahore_bagh_1637}",
       "category": "Osint",
       "notes": "Easy",
@@ -1482,7 +1482,7 @@
     },
     {
       "id": 52,
-      "challengeName": "Sentinel Hyderabad",
+      "challengeName": "Operation Minaret",
       "flag": "CGS{hyderabad_minar_1993}",
       "category": "Osint",
       "notes": "Easy",
@@ -1512,7 +1512,7 @@
     },
     {
       "id": 67,
-      "challengeName": "Phantom Payload",
+      "challengeName": "Specter Payload",
       "flag": "CGS{deser1al1zat10n_rce}",
       "category": "misc",
       "notes": null,
@@ -1572,7 +1572,7 @@
     },
     {
       "id": 73,
-      "challengeName": "Phantom Payload",
+      "challengeName": "Specter Payload",
       "flag": "CGS{deser1al1zat10n_rce}",
       "category": "web",
       "notes": null,
@@ -1654,7 +1654,7 @@
     {
       "id": 287,
       "action": "challenge_created",
-      "details": "{\"title\":\"Sentinel Hyderabad\"}",
+      "details": "{\"title\":\"Operation Minaret\"}",
       "ipAddress": "::1",
       "userId": 1,
       "severity": "info",
@@ -1663,7 +1663,7 @@
     {
       "id": 288,
       "action": "challenge_created",
-      "details": "{\"title\":\"Mughal Cipher\"}",
+      "details": "{\"title\":\"Operation Garden Vault\"}",
       "ipAddress": "::1",
       "userId": 1,
       "severity": "info",
@@ -1672,7 +1672,7 @@
     {
       "id": 289,
       "action": "challenge_updated",
-      "details": "{\"id\":56,\"title\":\"Mughal Cipher\"}",
+      "details": "{\"id\":56,\"title\":\"Operation Garden Vault\"}",
       "ipAddress": "::1",
       "userId": 1,
       "severity": "info",
@@ -1681,7 +1681,7 @@
     {
       "id": 290,
       "action": "real_flag_created",
-      "details": "{\"challenge_name\":\"Mughal Cipher\"}",
+      "details": "{\"challenge_name\":\"Operation Garden Vault\"}",
       "ipAddress": "::1",
       "userId": 1,
       "severity": "info",
@@ -1690,7 +1690,7 @@
     {
       "id": 291,
       "action": "real_flag_created",
-      "details": "{\"challenge_name\":\"Sentinel Hyderabad\"}",
+      "details": "{\"challenge_name\":\"Operation Minaret\"}",
       "ipAddress": "::1",
       "userId": 1,
       "severity": "info",
