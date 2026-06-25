@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CGS SysMonitor v2.4</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #00FF41;
+    font-family: 'Courier New', 'Courier', monospace;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 65, 0.015) 2px,
+      rgba(0, 255, 65, 0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+    background: rgba(0, 255, 65, 0.02);
+    position: relative;
+    z-index: 5;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #00FF41;
+    box-shadow: 0 0 8px #00FF41;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px #00FF41; }
+    50% { opacity: 0.4; box-shadow: 0 0 2px #00FF41; }
+  }
+
+  .header-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .header-title span {
+    color: rgba(0, 255, 65, 0.5);
+    font-weight: normal;
+  }
+
+  .header-status {
+    font-size: 0.75rem;
+    color: rgba(0, 255, 65, 0.6);
+    letter-spacing: 0.5px;
+  }
+
+  /* Main layout */
+  .main {
+    display: flex;
+    height: calc(100vh - 42px);
+    position: relative;
+    z-index: 5;
+  }
+
+  /* Log panel */
+  .log-panel {
+    flex: 3;
+    border-right: 1px solid rgba(0, 255, 65, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .log-panel .panel-header {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(0, 255, 65, 0.5);
+    border-bottom: 1px solid rgba(0, 255, 65, 0.08);
+    background: rgba(0, 255, 65, 0.02);
+  }
+
+  .log-container {
+    flex: 1;
+    overflow: hidden;
+    padding: 12px 16px;
+    position: relative;
+  }
+
+  .log-line {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+    white-space: nowrap;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .log-line .timestamp {
+    color: rgba(0, 255, 65, 0.35);
+    margin-right: 8px;
+  }
+
+  .log-line .level-info { color: #00FF41; }
+  .log-line .level-warn { color: #EAB308; }
+  .log-line .level-error { color: #EF4444; }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #00FF41;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Status panel */
+  .status-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+  }
+
+  .status-panel .panel-header {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(0, 255, 65, 0.5);
+    border-bottom: 1px solid rgba(0, 255, 65, 0.08);
+    background: rgba(0, 255, 65, 0.02);
+  }
+
+  .status-content {
+    flex: 1;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .gauge {
+    width: 100%;
+  }
+
+  .gauge-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .gauge-header .gauge-label {
+    color: rgba(0, 255, 65, 0.7);
+  }
+
+  .gauge-header .gauge-value {
+    color: #00FF41;
+    font-weight: bold;
+  }
+
+  .gauge-track {
+    width: 100%;
+    height: 14px;
+    background: rgba(0, 255, 65, 0.08);
+    border: 1px solid rgba(0, 255, 65, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .gauge-fill {
+    height: 100%;
+    background: #00FF41;
+    transition: width 0.8s ease;
+    border-radius: 1px;
+    box-shadow: 0 0 6px rgba(0, 255, 65, 0.3);
+  }
+
+  .gauge-fill.warn { background: #EAB308; box-shadow: 0 0 6px rgba(234, 179, 8, 0.3); }
+  .gauge-fill.crit { background: #EF4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.3); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="status-dot"></div>
+    <div class="header-title">CGS SysMonitor <span>v2.4</span></div>
+  </div>
+  <div class="header-status">● LIVE</div>
+</div>
+
+<div class="main">
+  <div class="log-panel">
+    <div class="panel-header">SYSTEM LOGS</div>
+    <div class="log-container" id="logContainer">
+      <span class="cursor"></span>
+    </div>
+  </div>
+  <div class="status-panel">
+    <div class="panel-header">SYSTEM STATUS</div>
+    <div class="status-content">
+      <div class="gauge">
+        <div class="gauge-header">
+          <span class="gauge-label">CPU</span>
+          <span class="gauge-value" id="cpuVal">23%</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill" id="cpuFill" style="width: 23%"></div>
+        </div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-header">
+          <span class="gauge-label">RAM</span>
+          <span class="gauge-value" id="ramVal">3.2 GB / 8 GB</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill" id="ramFill" style="width: 40%"></div>
+        </div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-header">
+          <span class="gauge-label">DISK</span>
+          <span class="gauge-value" id="diskVal">214 GB / 512 GB</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill" id="diskFill" style="width: 42%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var logs = [
+      { level: 'INFO', text: 'CPU usage: 23% — within normal threshold' },
+      { level: 'INFO', text: 'Memory: 3.2GB / 8GB — OK' },
+      { level: 'WARN', text: 'Packet loss detected on eth0: 0.3%' },
+      { level: 'INFO', text: 'Backup job completed — /var/backup/snapshot-041' },
+      { level: 'WARN', text: 'TLS certificate expiry in 14 days — renew soon' },
+      { level: 'INFO', text: 'Auth module loaded — 3 active sessions' },
+      { level: 'INFO', text: 'Firewall rules updated — 1204 active rules' },
+      { level: 'INFO', text: 'Scheduled task ran: log-rotate @ 03:00' },
+      { level: 'ERROR', text: 'Failed to reach metrics endpoint — retrying...' },
+      { level: 'INFO', text: 'Connection from 192.168.1.44 — established' },
+      { level: 'INFO', text: 'DNS resolution cache: 1423 entries' },
+      { level: 'INFO', text: 'Disk I/O: read 47MB/s, write 12MB/s' },
+      { level: 'WARN', text: 'Swap usage at 34% — consider expanding' },
+      { level: 'INFO', text: 'NTP sync offset: +2.4ms — nominal' },
+      { level: 'INFO', text: 'SSH session closed — user: cgs-admin' },
+      { level: 'ERROR', text: 'Certificate OCSP stapling check failed' },
+      { level: 'INFO', text: 'SMTP relay queue: 0 pending messages' },
+      { level: 'INFO', text: 'Intrusion detection engine running — 0 alerts' },
+      { level: 'WARN', text: 'Interface eth1: CRC errors detected (2)' },
+      { level: 'INFO', text: 'Audit log rotated — /var/log/sysmonitor.log' },
+      { level: 'INFO', text: 'API rate limit: 1420 req/min — within bounds' },
+      { level: 'INFO', text: 'Kernel module loaded: cgs-audit v2.1.3' },
+      { level: 'ERROR', text: 'Database replication lag: 1.2s behind primary' },
+      { level: 'INFO', text: 'Health check passed — all endpoints reachable' },
+      { level: 'WARN', text: 'Filesystem /var: 78% full — threshold at 80%' },
+      { level: 'INFO', text: 'Session timeout cleanup: 12 stale entries removed' },
+      { level: 'INFO', text: 'Memory pool: 4.8GB allocated, 1.6GB cached' },
+      { level: 'INFO', text: 'Load average: 1.24, 1.08, 0.95' },
+    ];
+
+    var container = document.getElementById('logContainer');
+    var cursorEl = container.querySelector('.cursor');
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function getTs() {
+      var d = new Date();
+      return '[' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ']';
+    }
+
+    var lineCount = 0;
+    var maxLines = 18;
+
+    function addLog() {
+      var entry = logs[Math.floor(Math.random() * logs.length)];
+      var ts = getTs();
+      var levelClass = 'level-' + entry.level.toLowerCase();
+
+      var div = document.createElement('div');
+      div.className = 'log-line';
+      div.innerHTML = '<span class="timestamp">' + ts + '</span> <span class="' + levelClass + '">[' + entry.level + ']</span> ' + entry.text;
+      container.insertBefore(div, cursorEl);
+      lineCount++;
+
+      if (lineCount > maxLines) {
+        container.removeChild(container.children[0]);
+        lineCount--;
+      }
+    }
+
+    // Fill initial buffer
+    for (var i = 0; i < maxLines; i++) { addLog(); }
+
+    setInterval(addLog, 1200);
+  })();
+</script>
+
+<script>
+  (function() {
+    var cpuVal = document.getElementById('cpuVal');
+    var cpuFill = document.getElementById('cpuFill');
+    var ramVal = document.getElementById('ramVal');
+    var ramFill = document.getElementById('ramFill');
+    var diskVal = document.getElementById('diskVal');
+    var diskFill = document.getElementById('diskFill');
+
+    function randomAround(base, variance) {
+      return Math.round(base + (Math.random() - 0.5) * variance * 2);
+    }
+
+    function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+    function updateGauges() {
+      var cpu = clamp(randomAround(32, 18), 5, 95);
+      cpuVal.textContent = cpu + '%';
+      cpuFill.style.width = cpu + '%';
+      cpuFill.className = 'gauge-fill' + (cpu > 75 ? ' crit' : cpu > 55 ? ' warn' : '');
+
+      var usedGB = clamp(randomAround(4.2, 1.8), 0.5, 7.5);
+      var totalGB = 8;
+      var ramPct = clamp(Math.round((usedGB / totalGB) * 100), 5, 95);
+      ramVal.textContent = usedGB.toFixed(1) + ' GB / ' + totalGB + ' GB';
+      ramFill.style.width = ramPct + '%';
+      ramFill.className = 'gauge-fill' + (ramPct > 75 ? ' crit' : ramPct > 55 ? ' warn' : '');
+
+      var usedDisk = clamp(randomAround(276, 40), 50, 480);
+      var totalDisk = 512;
+      var diskPct = clamp(Math.round((usedDisk / totalDisk) * 100), 5, 95);
+      diskVal.textContent = usedDisk + ' GB / ' + totalDisk + ' GB';
+      diskFill.style.width = diskPct + '%';
+      diskFill.className = 'gauge-fill' + (diskPct > 75 ? ' crit' : diskPct > 55 ? ' warn' : '');
+    }
+
+    updateGauges();
+    setInterval(updateGauges, 3000);
+  })();
+</script>
+
+<script>
+  setTimeout(function() {
+    console.log(
+      '%c[DEBUG] Auth subsystem check passed. Session token: CGS{c0ns0l3_l0gs_d0nt_l13_t0_y0u}',
+      'color: #00FF41; font-weight: bold; font-size: 13px; font-family: monospace;'
+    );
+  }, 4000);
+</script>
+
+</body>
+</html>

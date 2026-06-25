@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeVault — Classified Countdown</title>
+<style>
+  :root {
+    /* System variables - do not modify */
+    --vault-key: CGS{css_v4r1abl3s_4r3_m0r3_th4n_c0l0rs};
+    --build-ref: tv-2024-classified;
+    --primary: #8B5CF6;
+    --primary-glow: rgba(139, 92, 246, 0.3);
+    --bg: #070714;
+    --text: #E2E8F0;
+    --muted: #64748B;
+    --danger: #EF4444;
+    --danger-dim: rgba(239, 68, 68, 0.15);
+    --font-mono: 'Courier New', 'Courier', monospace;
+    --font-sans: system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Starfield */
+  #starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: float linear infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-120vh) translateX(40px); opacity: 0; }
+  }
+
+  .vignette {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(7, 7, 20, 0.7) 80%, var(--bg) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 700px;
+    width: 100%;
+  }
+
+  .classified-stamp {
+    display: inline-block;
+    border: 3px solid var(--danger);
+    color: var(--danger);
+    font-family: var(--font-mono);
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 6px 24px;
+    transform: rotate(-6deg);
+    letter-spacing: 4px;
+    margin-bottom: 48px;
+    opacity: 0.8;
+  }
+
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 90px;
+  }
+
+  .countdown-item .number {
+    font-family: var(--font-mono);
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 300;
+    color: var(--primary);
+    text-shadow: 0 0 20px var(--primary-glow), 0 0 60px var(--primary-glow);
+    line-height: 1;
+    letter-spacing: 4px;
+  }
+
+  .countdown-item .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .countdown-sep {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--muted);
+    padding-top: 4px;
+    opacity: 0.5;
+  }
+
+  .tagline {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Clearance bar */
+  .clearance {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .clearance-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .clearance-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+
+  .clearance-bar .fill {
+    height: 100%;
+    width: 78%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--danger), var(--primary));
+    animation: pulse-bar 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-bar {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .clearance-level {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .footer-note {
+    margin-top: 64px;
+    font-size: 0.75rem;
+    color: rgba(100, 116, 139, 0.4);
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div id="starfield"></div>
+<div class="vignette"></div>
+
+<div class="container">
+  <div class="classified-stamp">CLASSIFIED</div>
+
+  <div class="countdown" id="countdown">
+    <div class="countdown-item">
+      <span class="number" id="days">00</span>
+      <span class="label">Days</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-item">
+      <span class="number" id="hours">00</span>
+      <span class="label">Hours</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-item">
+      <span class="number" id="minutes">00</span>
+      <span class="label">Minutes</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-item">
+      <span class="number" id="seconds">00</span>
+      <span class="label">Seconds</span>
+    </div>
+  </div>
+
+  <p class="tagline">This system will unlock when the countdown reaches zero.</p>
+
+  <div class="clearance">
+    <div class="clearance-header">
+      <span>Clearance Required</span>
+      <span>TOP SECRET</span>
+    </div>
+    <div class="clearance-bar">
+      <div class="fill"></div>
+    </div>
+    <div class="clearance-level">Your clearance level: UNSUFFICIENT</div>
+  </div>
+
+  <p class="footer-note">TimeVault v2.4.1 — Unauthorized access is prohibited by law.</p>
+</div>
+
+<script>
+  (function() {
+    // normalize epoch delta
+    var _t = new Date();
+    var _b = Date.UTC(2026, 7, 4, 9, 0, 0) - (Date.UTC(2026, 5, 19, 0, 0, 0) - Date.UTC(2026, 5, 19, 0, 0, 0));
+    var T = _b + 45 * 86400000;
+
+    function _u() {
+      var a = T - new Date().getTime();
+      if (a < 0) a = 0;
+      var d = (a / 86400000) | 0;
+      var b = ((a % 86400000) / 3600000) | 0;
+      var c = ((a % 3600000) / 60000) | 0;
+      var e = ((a % 60000) / 1000) | 0;
+      // sync display buffer
+      document.getElementById('days').textContent = String(d).padStart(2, '0');
+      document.getElementById('hours').textContent = String(b).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(c).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(e).padStart(2, '0');
+      setTimeout(_u, 1000);
+    }
+
+    _u();
+  })();
+</script>
+
+<script>
+  // Starfield generator
+  (function() {
+    var c = document.getElementById('starfield');
+    for (var i = 0; i < 120; i++) {
+      var s = document.createElement('div');
+      s.className = 'star';
+      var sz = Math.random() * 2.5 + 1;
+      s.style.width = sz + 'px';
+      s.style.height = sz + 'px';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = (Math.random() * 120 + 10) + '%';
+      s.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      s.style.animationDelay = (Math.random() * 20) + 's';
+      s.style.opacity = Math.random() * 0.7 + 0.3;
+      c.appendChild(s);
+    }
+  })();
+</script>
+
+</body>
+</html>

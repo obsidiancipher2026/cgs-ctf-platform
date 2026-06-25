@@ -1,0 +1,16 @@
+{
+  "id": "web-timevault",
+  "title": "TimeVault",
+  "category": "Web",
+  "difficulty": "Easy",
+  "points": 100,
+  "flag": "CGS{css_v4r1abl3s_4r3_m0r3_th4n_c0l0rs}",
+  "description": "TimeVault is counting down to something classified. The developers were in a rush and pushed their work straight to production. While everyone stares at the ticking clock, the real secret is hidden in how the page is dressed — not in what it does.",
+  "hints": [
+    { "cost": 50, "text": "The secret isn't in the JavaScript. Look at how the page is styled." },
+    { "cost": 100, "text": "CSS supports custom properties — variables defined at :root. Developers sometimes store things there out of habit. Check the <style> tag in the page <head>." }
+  ],
+  "tags": ["css", "source-code", "devtools", "hidden-in-plain-sight"],
+  "author": "CGS",
+  "challenge_url": ""
+}
