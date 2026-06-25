@@ -35,13 +35,13 @@ async function main() {
     // Teams (no dependencies)
     console.log('Importing teams...');
     for (const t of data.teams) {
-      await prisma.team.upsert({ where: { id: t.id }, update: {}, create: t });
+      await prisma.team.upsert({ where: { id: t.id }, update: t, create: t });
     }
 
     // Users
     console.log('Importing users...');
     for (const u of data.users) {
-      await prisma.user.upsert({ where: { id: u.id }, update: {}, create: u });
+      await prisma.user.upsert({ where: { id: u.id }, update: u, create: u });
     }
 
     // Challenges
@@ -50,7 +50,7 @@ async function main() {
       const { firstBloodUserId, ...createData } = c;
       await prisma.challenge.upsert({
         where: { id: c.id },
-        update: {},
+        update: { ...createData, firstBloodUserId: firstBloodUserId || null },
         create: { ...createData, firstBloodUserId: firstBloodUserId || null },
       });
     }
@@ -58,31 +58,31 @@ async function main() {
     // Real flags
     console.log('Importing real flags...');
     for (const rf of data.realFlags) {
-      await prisma.realFlag.upsert({ where: { id: rf.id }, update: {}, create: rf });
+      await prisma.realFlag.upsert({ where: { id: rf.id }, update: rf, create: rf });
     }
 
     // Announcements
     console.log('Importing announcements...');
     for (const a of data.announcements) {
-      await prisma.announcement.upsert({ where: { id: a.id }, update: {}, create: a });
+      await prisma.announcement.upsert({ where: { id: a.id }, update: a, create: a });
     }
 
     // Submissions
     console.log('Importing submissions...');
     for (const s of data.submissions) {
-      await prisma.submission.upsert({ where: { id: s.id }, update: {}, create: s });
+      await prisma.submission.upsert({ where: { id: s.id }, update: s, create: s });
     }
 
     // Logs
     console.log('Importing logs...');
     for (const l of data.logs) {
-      await prisma.log.upsert({ where: { id: l.id }, update: {}, create: l });
+      await prisma.log.upsert({ where: { id: l.id }, update: l, create: l });
     }
 
     // Attack logs
     console.log('Importing attack logs...');
     for (const al of data.attackLogs) {
-      await prisma.attackLog.upsert({ where: { id: al.id }, update: {}, create: al });
+      await prisma.attackLog.upsert({ where: { id: al.id }, update: al, create: al });
     }
 
     // Security configs (key-based upsert)
