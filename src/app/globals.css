@@ -1179,6 +1179,139 @@ select:-webkit-autofill {
   }
 }
 
+/* ─── Left Panel (Login / Register) ─── */
+@keyframes breathe-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(1.06); }
+}
+@keyframes grid-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-30px, -30px); }
+}
+@keyframes ring-spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes text-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes scan-vert {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(calc(100vh + 100%)); }
+}
+
+.panel-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,110,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,110,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-grid { animation: grid-drift 40s linear infinite; }
+}
+
+.panel-scan {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(26,110,255,0.07), transparent);
+  pointer-events: none;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-scan { animation: scan-vert 10s linear infinite; opacity: 1; }
+}
+
+.panel-glow {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224,32,32,0.06) 0%, rgba(26,110,255,0.04) 35%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-glow { animation: breathe-glow 5s ease-in-out infinite; }
+}
+
+.panel-ring-outer {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--red-core), var(--blue-core), rgba(26,110,255,0.15), var(--red-core));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 0.5px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 0.5px));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-ring-outer { animation: ring-spin-slow 14s linear infinite; }
+}
+
+.panel-ring-mid {
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  background: conic-gradient(from 90deg, transparent, rgba(224,32,32,0.08), transparent, rgba(26,110,255,0.08), transparent);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 0.4px), #000 calc(100% - 0.2px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 0.4px), #000 calc(100% - 0.2px));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-ring-mid { animation: ring-spin-slow 22s linear infinite reverse; }
+}
+
+.panel-gradient-text {
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--blue-glow) 45%, var(--red-core) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-gradient-text { animation: text-shift 10s ease-in-out infinite; }
+}
+
+.panel-feature {
+  background: rgba(11, 18, 32, 0.5);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(30, 45, 69, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+.panel-feature:hover {
+  transform: translateX(5px);
+  border-color: rgba(26, 110, 255, 0.25);
+  box-shadow: 0 4px 24px rgba(26, 110, 255, 0.06), 0 0 40px rgba(26, 110, 255, 0.03);
+}
+.panel-feature-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(11, 18, 32, 0.6);
+  border: 1px solid rgba(30, 45, 69, 0.25);
+  transition: all 0.3s ease;
+}
+.panel-feature:hover .panel-feature-icon {
+  border-color: rgba(26, 110, 255, 0.35);
+  box-shadow: 0 0 20px rgba(26, 110, 255, 0.08);
+}
+
 /* ─── Utility ─── */
 .pb-safe { padding-bottom: var(--safe-bottom); }
 .pt-safe { padding-top: var(--safe-top); }

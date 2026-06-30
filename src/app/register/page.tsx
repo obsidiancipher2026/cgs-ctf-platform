@@ -57,16 +57,25 @@ export default function RegisterPage() {
     <div className="min-h-[calc(100vh-4rem)] flex">
       {/* Left Brand Panel */}
       <div className="hidden lg:flex lg:w-[40%] relative bg-void items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-cyber-grid opacity-20" />
+        <div className="panel-grid" />
+        <div className="panel-scan" />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(224,32,32,0.06) 0%, transparent 40%, rgba(26,110,255,0.06) 100%)' }} />
         <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-red-core/40 via-border-c to-blue-core/40" />
 
         <div className="relative z-10 text-center px-10 max-w-sm">
-          <img src="/images/logo.png" alt="CGS Logo" className="w-20 h-20 mx-auto mb-8 object-contain" />
-          <h2 className="font-display font-bold text-3xl text-txt-primary mb-3 tracking-wide">Join the Arena</h2>
+          <div className="relative inline-flex mb-8">
+            <div className="panel-glow" />
+            <div className="relative">
+              <div className="panel-ring-mid" />
+              <div className="panel-ring-outer" />
+              <img src="/images/logo.png" alt="CGS Logo" className="relative w-20 h-20 object-contain" />
+            </div>
+          </div>
+
+          <h2 className="font-display font-bold text-4xl mb-3 tracking-tight panel-gradient-text">Join the Arena</h2>
           <p className="text-txt-secondary text-sm mb-10 leading-relaxed">Create your account and start capturing flags.</p>
 
-          <div className="space-y-4 text-left">
+          <div className="space-y-3.5 text-left">
             {[
               { icon: Swords, text: '5 challenge categories to master', color: 'text-red-glow' },
               { icon: Trophy, text: 'Live competitive leaderboard', color: 'text-blue-glow' },
@@ -78,12 +87,12 @@ export default function RegisterPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + i * 0.12 }}
-                className="flex items-center gap-3"
+                className="panel-feature flex items-center gap-3.5"
               >
-                <div className="w-8 h-8 rounded bg-surface border border-border-c flex items-center justify-center flex-shrink-0">
+                <div className="panel-feature-icon">
                   <item.icon className={`w-4 h-4 ${item.color}`} />
                 </div>
-                <span className="text-txt-secondary text-sm">{item.text}</span>
+                <span className="text-txt-secondary text-sm leading-snug">{item.text}</span>
               </motion.div>
             ))}
           </div>
