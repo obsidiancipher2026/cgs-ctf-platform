@@ -45,8 +45,11 @@ model User {
   firstName      String       @default("")
   middleName     String?
   lastName       String?
+  gender         String?
   country        String?
   college        String?
+  ageGroup       String?
+  playerType     String?
 
   firstBloodChallenges Challenge[] @relation("firstBlood")
 }

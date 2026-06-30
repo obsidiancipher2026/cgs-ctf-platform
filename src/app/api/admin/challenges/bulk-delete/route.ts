@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     const deleted: string[] = []
     for (const title of titles) {
-      const challenge = await prisma.challenge.findFirst({ where: { title: { contains: title } } })
+      const challenge = await prisma.challenge.findFirst({ where: { title: { contains: title, mode: 'insensitive' } } })
       if (challenge) {
         await prisma.submission.deleteMany({ where: { challengeId: challenge.id } })
         await prisma.challenge.delete({ where: { id: challenge.id } })
