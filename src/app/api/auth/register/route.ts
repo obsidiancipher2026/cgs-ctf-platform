@@ -10,11 +10,8 @@ const UserCreateSchema = z.object({
   email: z.string().email().max(120),
   password: z.string().min(8),
   full_name: z.string().min(1).max(100),
-  gender: z.string().max(50).optional(),
   country: z.string().max(100).optional(),
   college: z.string().max(200).optional(),
-  age_group: z.string().max(50).optional(),
-  player_type: z.string().max(50).optional(),
   agreed_tos: z.boolean(),
 })
 
@@ -37,11 +34,8 @@ export async function POST(request: Request) {
     const username = sanitizeText(data.username, 50)
     const email = sanitizeText(data.email, 120)
     const fullName = sanitizeText(data.full_name, 100)
-    const gender = sanitizeText(data.gender || '', 50)
     const country = sanitizeText(data.country || '', 100)
     const college = sanitizeText(data.college || '', 200)
-    const ageGroup = sanitizeText(data.age_group || '', 50)
-    const playerType = sanitizeText(data.player_type || '', 50)
 
     const existing = await prisma.user.findFirst({
       where: { OR: [{ username }, { email }] },
@@ -57,11 +51,8 @@ export async function POST(request: Request) {
         firstName: fullName,
         middleName: null,
         lastName: null,
-        gender: gender || null,
         country: country || null,
         college: college || null,
-        ageGroup: ageGroup || null,
-        playerType: playerType || null,
         hashedPassword: await getPasswordHash(data.password),
         status: 'active',
         lastIp: getClientIp(request) || null,

@@ -84,94 +84,97 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 navbar-glass${scrolled ? ' scrolled' : ''}`}
-      role="navigation"
-      aria-label="Main navigation"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="Home">
-            <img src="/images/logo.png" alt="CGS Logo" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
-            <span className="font-display font-bold text-lg text-txt-primary tracking-wide hidden sm:block">
-              CyberGuardiansSocietyCTF
-            </span>
-          </Link>
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 navbar-glass${scrolled ? ' scrolled' : ''}`}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="Home">
+              <img src="/images/logo.png" alt="CGS Logo" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
+              <span className="font-display font-bold text-lg text-txt-primary tracking-wide hidden sm:block">
+                CyberGuardiansSocietyCTF
+              </span>
+            </Link>
 
-          {/* Desktop Nav - Centered */}
-          <div className="hidden md:flex items-center justify-center flex-1 gap-1">
-            {publicLinks.map((link) => (
-              <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
-            ))}
-            {isAuthenticated && protectedLinks.map((link) => (
-              <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
-            ))}
-          </div>
-
-          {/* Desktop Auth Section */}
-          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-            {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/profile"
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-txt-secondary hover:text-txt-primary transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  <span>{user?.username}</span>
-                </Link>
-                <button
-                  onClick={logout}
-                  className="p-2 text-txt-muted hover:text-red-core transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
-                  aria-label="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link href="/login" className="btn-outline px-4 py-1.5 text-xs">
-                  Login
-                </Link>
-                <Link href="/register" className="btn-primary px-4 py-1.5 text-xs">
-                  Register
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Hamburger */}
-          <button
-            className="md:hidden p-2 text-txt-secondary hover:text-txt-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
-            onClick={() => setIsOpen(!isOpen)}
-            onKeyDown={handleKeyDown}
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isOpen}
-          >
-            <div className="relative w-6 h-6 flex items-center justify-center">
-              <motion.div
-                animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -4 }}
-                className="absolute w-5 h-[2px] bg-current rounded-full"
-                style={{ transformOrigin: 'center' }}
-              />
-              <motion.div
-                animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-                className="absolute w-5 h-[2px] bg-current rounded-full"
-              />
-              <motion.div
-                animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 4 }}
-                className="absolute w-5 h-[2px] bg-current rounded-full"
-                style={{ transformOrigin: 'center' }}
-              />
+            {/* Desktop Nav - Centered */}
+            <div className="hidden md:flex items-center justify-center flex-1 gap-1">
+              {publicLinks.map((link) => (
+                <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+              ))}
+              {isAuthenticated && protectedLinks.map((link) => (
+                <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
+              ))}
             </div>
-          </button>
-        </div>
-      </div>
 
-      {/* Mobile Backdrop */}
+            {/* Desktop Auth Section */}
+            <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+              {isAuthenticated ? (
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-txt-secondary hover:text-txt-primary transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>{user?.username}</span>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="p-2 text-txt-muted hover:text-red-core transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
+                    aria-label="Logout"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link href="/login" className="btn-outline px-4 py-1.5 text-xs">
+                    Login
+                  </Link>
+                  <Link href="/register" className="btn-primary px-4 py-1.5 text-xs">
+                    Register
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Hamburger */}
+            <button
+              className="md:hidden p-2 text-txt-secondary hover:text-txt-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
+              onClick={() => setIsOpen(!isOpen)}
+              onKeyDown={handleKeyDown}
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+            >
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                <motion.div
+                  animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -4 }}
+                  className="absolute w-5 h-[2px] bg-current rounded-full"
+                  style={{ transformOrigin: 'center' }}
+                />
+                <motion.div
+                  animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                  className="absolute w-5 h-[2px] bg-current rounded-full"
+                />
+                <motion.div
+                  animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 4 }}
+                  className="absolute w-5 h-[2px] bg-current rounded-full"
+                  style={{ transformOrigin: 'center' }}
+                />
+              </div>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Backdrop + Sidebar (outside nav to avoid backdrop-filter containing block issue) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            key="mobile-backdrop"
             className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -182,10 +185,10 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Mobile Sidebar */}
       <AnimatePresence>
         {isOpen && (
           <motion.aside
+            key="mobile-sidebar"
             className="fixed top-0 right-0 z-50 h-full w-72 max-w-[85vw] bg-void border-l border-border-c md:hidden overflow-y-auto"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -253,6 +256,6 @@ export default function Navbar() {
           </motion.aside>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }
