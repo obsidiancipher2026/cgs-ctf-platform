@@ -32,73 +32,104 @@ async function main() {
     await deleteStaleRecords('challenge', prisma.challenge, 'id', new Set(data.challenges.map(c => c.id)));
     await deleteStaleRecords('realFlag', prisma.realFlag, 'id', new Set(data.realFlags.map(rf => rf.id)));
 
+    // Helper: keep only known scalar fields per model (strip relations & unknown columns)
+    const MODEL_FIELDS = {
+      user: ['id','username','email','hashedPassword','passwordPlain','avatarUrl','role','status','isBanned','score','ranking','lastIp','lastLogin','createdAt','updatedAt','teamId','firstName','middleName','lastName','country','college'],
+      team: ['id','name','description','avatarUrl','isBanned','isSuspended','createdAt','updatedAt'],
+      challenge: ['id','title','description','category','difficulty','points','flagMode','flag','hint','maxAttempts','isPublished','solverCount','fileUrl','challengeType','bloodPoints','firstBloodUserId','createdAt','updatedAt'],
+      submission: ['id','challengeId','userId','teamId','flagProvided','isCorrect','ipAddress','createdAt'],
+      announcement: ['id','title','message','isBroadcast','createdAt','expiresAt'],
+      log: ['id','action','details','ipAddress','userId','severity','createdAt'],
+      attackLog: ['id','attackType','severity','ipAddress','userId','username','fingerprint','riskScore','endpoint','method','userAgent','payloadSnapshot','headersSnapshot','country','actionTaken','quarantineUntil','blocked','whitelisted','reviewed','reviewedBy','notes','chainHash','prevChainHash','createdAt'],
+      realFlag: ['id','challengeName','flag','category','notes','createdBy','createdAt','updatedAt'],
+      securityConfig: ['id','key','value'],
+      scanTransaction: ['id','submissionId','teamId','challengeId','flagHash','anomalyScore','ipAddress','userAgent','createdAt'],
+    };
+    const pickScalars = (modelName, obj) => {
+      const allowed = MODEL_FIELDS[modelName] || ['id'];
+      const result = {};
+      for (const key of allowed) {
+        if (key in obj) result[key] = obj[key];
+      }
+      return result;
+    };
+
     // Teams (no dependencies)
     console.log('Importing teams...');
     for (const t of data.teams) {
-      await prisma.team.upsert({ where: { id: t.id }, update: t, create: t });
+      const clean = pickScalars('team', t);
+      await prisma.team.upsert({ where: { id: t.id }, update: clean, create: clean });
     }
 
     // Users
     console.log('Importing users...');
     for (const u of data.users) {
-      await prisma.user.upsert({ where: { id: u.id }, update: u, create: u });
+      const clean = pickScalars('user', u);
+      await prisma.user.upsert({ where: { id: u.id }, update: clean, create: clean });
     }
 
     // Challenges
     console.log('Importing challenges...');
     for (const c of data.challenges) {
-      const { firstBloodUserId, ...createData } = c;
+      const clean = pickScalars('challenge', c);
       await prisma.challenge.upsert({
         where: { id: c.id },
-        update: { ...createData, firstBloodUserId: firstBloodUserId || null },
-        create: { ...createData, firstBloodUserId: firstBloodUserId || null },
+        update: clean,
+        create: clean,
       });
     }
 
     // Real flags
     console.log('Importing real flags...');
     for (const rf of data.realFlags) {
-      await prisma.realFlag.upsert({ where: { id: rf.id }, update: rf, create: rf });
+      const clean = pickScalars('realFlag', rf);
+      await prisma.realFlag.upsert({ where: { id: rf.id }, update: clean, create: clean });
     }
 
     // Announcements
     console.log('Importing announcements...');
     for (const a of data.announcements) {
-      await prisma.announcement.upsert({ where: { id: a.id }, update: a, create: a });
+      const clean = pickScalars('announcement', a);
+      await prisma.announcement.upsert({ where: { id: a.id }, update: clean, create: clean });
     }
 
     // Submissions
     console.log('Importing submissions...');
     for (const s of data.submissions) {
-      await prisma.submission.upsert({ where: { id: s.id }, update: s, create: s });
+      const clean = pickScalars('submission', s);
+      await prisma.submission.upsert({ where: { id: s.id }, update: clean, create: clean });
     }
 
     // Logs
     console.log('Importing logs...');
     for (const l of data.logs) {
-      await prisma.log.upsert({ where: { id: l.id }, update: l, create: l });
+      const clean = pickScalars('log', l);
+      await prisma.log.upsert({ where: { id: l.id }, update: clean, create: clean });
     }
 
     // Attack logs
     console.log('Importing attack logs...');
     for (const al of data.attackLogs) {
-      await prisma.attackLog.upsert({ where: { id: al.id }, update: al, create: al });
+      const clean = pickScalars('attackLog', al);
+      await prisma.attackLog.upsert({ where: { id: al.id }, update: clean, create: clean });
     }
 
     // Security configs (key-based upsert)
     console.log('Importing security configs...');
     for (const sc of data.securityConfigs) {
+      const clean = pickScalars('securityConfig', sc);
       await prisma.securityConfig.upsert({
         where: { key: sc.key },
-        update: { value: sc.value },
-        create: { key: sc.key, value: sc.value },
+        update: clean,
+        create: clean,
       });
     }
 
     // Scan transactions
     console.log('Importing scan transactions...');
     for (const st of data.scanTransactions) {
-      await prisma.scanTransaction.upsert({ where: { id: st.id }, update: {}, create: st });
+      const clean = pickScalars('scanTransaction', st);
+      await prisma.scanTransaction.upsert({ where: { id: st.id }, update: clean, create: clean });
     }
 
     console.log('\n=== MIGRATION COMPLETE ===');
