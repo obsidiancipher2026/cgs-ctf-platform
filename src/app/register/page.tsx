@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 export default function RegisterPage() {
   const [form, setForm] = useState({
     full_name: '', username: '', email: '', password: '', confirmPassword: '',
-    gender: '', country: '', college: '', age_group: '', player_type: '', agreed_tos: false,
+    country: '', college: '', agreed_tos: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,9 +32,8 @@ export default function RegisterPage() {
     try {
       const data = await api.register(sanitizeObject({
         full_name: form.full_name, username: form.username, email: form.email,
-        password: form.password, gender: form.gender || undefined, college: form.college || undefined,
-        age_group: form.age_group || undefined,
-        player_type: form.player_type || undefined, agreed_tos: form.agreed_tos,
+        password: form.password, country: form.country, college: form.college,
+        agreed_tos: form.agreed_tos,
       }));
       if (data.user) {
         setAuth(data.user);
@@ -53,7 +52,6 @@ export default function RegisterPage() {
 
   const inputClass = "input-field w-full px-4 py-3 text-sm pl-10";
   const labelClass = "block text-txt-secondary text-xs font-medium mb-1.5 uppercase tracking-wider";
-  const selectClass = "input-field w-full px-4 py-3 text-sm pl-10 appearance-none";
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex">
@@ -167,21 +165,8 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                {/* Gender + Country */}
+                {/* Country + College */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Gender</label>
-                    <div className="relative">
-                      <select value={form.gender} onChange={(e) => update('gender', e.target.value)} className={selectClass}>
-                        <option value="">Prefer not to say</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="non-binary">Non-binary</option>
-                        <option value="other">Other</option>
-                      </select>
-                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    </div>
-                  </div>
                   <div>
                     <label className={labelClass}>Country <span className="text-red-core">*</span></label>
                     <div className="relative">
@@ -190,45 +175,13 @@ export default function RegisterPage() {
                     </div>
                     <p className="text-txt-muted text-[10px] mt-1">Short form (PK, IND, UAE)</p>
                   </div>
-                </div>
-
-                {/* College + Age + Player Type */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="sm:col-span-1">
+                  <div>
                     <label className={labelClass}>College <span className="text-red-core">*</span></label>
                     <div className="relative">
                       <input type="text" value={form.college} onChange={(e) => update('college', e.target.value)} className={inputClass} placeholder="e.g. NUST" required />
                       <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
                     </div>
                     <p className="text-txt-muted text-[10px] mt-1">Short form</p>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Age Group</label>
-                    <div className="relative">
-                      <select value={form.age_group} onChange={(e) => update('age_group', e.target.value)} className={selectClass}>
-                        <option value="">Select</option>
-                        <option value="under_18">Under 18</option>
-                        <option value="18_24">18-24</option>
-                        <option value="25_34">25-34</option>
-                        <option value="35_44">35-44</option>
-                        <option value="45_plus">45+</option>
-                      </select>
-                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    </div>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Skill Level</label>
-                    <div className="relative">
-                      <select value={form.player_type} onChange={(e) => update('player_type', e.target.value)} className={selectClass}>
-                        <option value="">Select</option>
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                        <option value="expert">Expert</option>
-                        <option value="ctf_veteran">CTF Veteran</option>
-                      </select>
-                      <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                    </div>
                   </div>
                 </div>
 

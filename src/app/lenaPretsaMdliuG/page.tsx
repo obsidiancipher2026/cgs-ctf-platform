@@ -252,6 +252,7 @@ export default function AdminPage() {
   };
 
   const handleLogout = () => {
+    setAuthenticated(false);
     useStore.getState().logout();
     router.push('/');
   };
