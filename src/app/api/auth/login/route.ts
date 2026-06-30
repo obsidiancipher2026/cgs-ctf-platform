@@ -64,20 +64,6 @@ export async function POST(request: Request) {
       return jsonResponse({ detail: 'Invalid credentials' }, 401)
     }
 
-    if (user.status === 'pending') {
-      await prisma.log.create({
-        data: { action: 'pending_login_attempt', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ userAgent: userAgent.slice(0, 200) }) },
-      })
-      return jsonResponse({ detail: 'Your account is awaiting admin approval.' }, 403)
-    }
-
-    if (user.status === 'rejected') {
-      await prisma.log.create({
-        data: { action: 'rejected_login_attempt', userId: user.id, ipAddress: clientIp, severity: 'suspicious', details: JSON.stringify({ userAgent: userAgent.slice(0, 200) }) },
-      })
-      return jsonResponse({ detail: 'Your registration was rejected by admin.' }, 403)
-    }
-
     if (user.isBanned) {
       await prisma.log.create({
         data: { action: 'banned_user_login_attempt', userId: user.id, ipAddress: clientIp, severity: 'suspicious', details: JSON.stringify({ userAgent: userAgent.slice(0, 200) }) },

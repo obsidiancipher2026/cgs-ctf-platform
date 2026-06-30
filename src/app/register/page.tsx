@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { UserPlus, Eye, EyeOff, Loader2, CheckCircle, Shield, Swords, Trophy, Flag } from 'lucide-react';
 import { api } from '@/lib/api';
 import { sanitizeObject } from '@/lib/sanitize';
+import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
@@ -16,19 +17,9 @@ export default function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const timer = setInterval(() => {
-      setCooldown((prev) => {
-        if (prev <= 1) { clearInterval(timer); router.push('/'); return 0; }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [cooldown, router]);
+  const { setAuth, setCsrfToken } = useStore();
 
   const update = (field: string, value: any) => setForm({ ...form, [field]: value });
 
@@ -39,14 +30,22 @@ export default function RegisterPage() {
     if (!form.full_name.trim()) { toast.error('Full name is required'); return; }
     setLoading(true);
     try {
-      await api.register(sanitizeObject({
+      const data = await api.register(sanitizeObject({
         full_name: form.full_name, username: form.username, email: form.email,
-        password: form.password, gender: form.gender || undefined, country: form.country || undefined,
-        college: form.college || undefined, age_group: form.age_group || undefined,
+        password: form.password, gender: form.gender || undefined, college: form.college || undefined,
+        age_group: form.age_group || undefined,
         player_type: form.player_type || undefined, agreed_tos: form.agreed_tos,
       }));
-      toast.success('Registration successful!');
-      setCooldown(10);
+      if (data.user) {
+        setAuth(data.user);
+        try {
+          const csrfData = await api.getCsrfToken();
+          setCsrfToken(csrfData.csrf_token);
+        } catch {}
+      }
+      toast.success('Registration successful! Welcome aboard.');
+      setSuccess(true);
+      setTimeout(() => router.push('/challenges'), 800);
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || 'Registration failed');
     } finally { setLoading(false); }
@@ -96,16 +95,14 @@ export default function RegisterPage() {
       {/* Right Form Panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-10 bg-surface overflow-y-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg">
-          {cooldown > 0 ? (
+          {success ? (
             <div className="text-center py-12">
               <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
-              <h2 className="font-display font-bold text-2xl text-success mb-3">Registration Submitted!</h2>
-              <p className="text-txt-secondary text-sm mb-2">Your account is pending admin approval.</p>
-              <p className="text-txt-muted text-xs mb-6">You will be able to log in once an administrator activates your account.</p>
-              <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2.5 mb-4 overflow-hidden border border-border-c">
-                <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success transition-all duration-1000 ease-linear" style={{ width: `${((10 - cooldown) / 10) * 100}%` }} />
+              <h2 className="font-display font-bold text-2xl text-success mb-3">Welcome Guardian!</h2>
+              <p className="text-txt-secondary text-sm mb-6">Your account is active. Entering the arena...</p>
+              <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2 mb-4 overflow-hidden border border-border-c">
+                <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success animate-pulse" style={{ width: '100%' }} />
               </div>
-              <p className="text-txt-muted text-xs">Redirecting to home page...</p>
             </div>
           ) : (
             <>
@@ -242,11 +239,6 @@ export default function RegisterPage() {
                     I agree to the <Link href="/terms" className="text-blue-glow hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-blue-glow hover:underline">Privacy Policy</Link>
                   </span>
                 </label>
-
-                {/* Admin Approval Notice */}
-                <div className="p-3 rounded-lg bg-warning/5 border border-warning/20">
-                  <p className="text-warning/80 text-xs text-center">Account requires admin approval after registration.</p>
-                </div>
 
                 <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 text-sm flex items-center justify-center gap-2">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}

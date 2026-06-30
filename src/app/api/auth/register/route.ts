@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import prisma from '@/lib/prisma'
-import { jsonResponse, getClientIp } from '@/lib/auth'
+import { jsonResponse, getClientIp, setAuthCookies, createAccessToken, createRefreshToken, generateFingerprint } from '@/lib/auth'
 import { sanitizeText } from '@/lib/sanitizer'
 import { getPasswordHash } from '@/lib/auth'
 import { wafGuard } from '@/lib/security-middleware'
@@ -63,10 +63,16 @@ export async function POST(request: Request) {
         ageGroup: ageGroup || null,
         playerType: playerType || null,
         hashedPassword: await getPasswordHash(data.password),
-        status: 'pending',
+        status: 'active',
         lastIp: getClientIp(request) || null,
       },
     })
+
+    const userAgent = request.headers.get('user-agent') || ''
+    const acceptLang = request.headers.get('accept-language') || ''
+    const fingerprint = generateFingerprint(clientIp, userAgent, acceptLang)
+    const { token } = await createAccessToken({ sub: String(user.id), role: user.role, fpr: fingerprint })
+    const refreshToken = createRefreshToken({ sub: String(user.id) })
 
     await prisma.log.create({
       data: {
@@ -74,11 +80,31 @@ export async function POST(request: Request) {
         userId: user.id,
         ipAddress: getClientIp(request),
         severity: 'info',
-        details: JSON.stringify({ status: 'pending_approval' }),
+        details: JSON.stringify({ status: 'auto_activated' }),
       },
     })
 
-    return jsonResponse({ message: 'Registration successful. Your account is pending admin approval.' }, 201)
+    const response = jsonResponse({
+      message: 'Registration successful. Welcome to Cyber Guardians Society!',
+      access_token: token,
+      token_type: 'bearer',
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+        role: user.role,
+        status: user.status,
+        score: user.score,
+        ranking: user.ranking,
+        isBanned: user.isBanned,
+        teamId: user.teamId,
+        createdAt: user.createdAt,
+      },
+    }, 201)
+
+    setAuthCookies(response, token, refreshToken)
+    return response
   } catch (error) {
     if (error instanceof z.ZodError) {
       return jsonResponse({ detail: 'Validation error', errors: error.errors }, 400)

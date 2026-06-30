@@ -120,16 +120,6 @@ class ApiClient {
     return data;
   }
 
-  async approveUser(userId: number) {
-    const { data } = await this.client.post(`/api/admin/users/${userId}/approve`);
-    return data;
-  }
-
-  async rejectUser(userId: number) {
-    const { data } = await this.client.post(`/api/admin/users/${userId}/reject`);
-    return data;
-  }
-
   async adminChangeUserPassword(userId: number, newPassword: string) {
     const { data } = await this.client.post('/api/admin/users/change-password', { user_id: userId, new_password: newPassword });
     return data;
@@ -378,11 +368,6 @@ class ApiClient {
   async changeOwnPassword(data: { current_password: string; new_password: string }) {
     const { data: res } = await this.client.post('/api/auth/change-password', data);
     return res;
-  }
-
-  async approveAllUsers() {
-    const { data } = await this.client.post('/api/admin/users/approve-all');
-    return data;
   }
 
   async auditTrack(teamId: number, challengeId: number) {

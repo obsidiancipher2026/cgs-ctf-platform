@@ -7,7 +7,7 @@ import {
   Shield, Users, Activity, LogOut,
   BarChart3, Ban, CheckCircle, Trash2,
   Settings, Bell, RefreshCw,
-  Loader2, UserX, Menu, X,
+  Loader2, Menu, X,
   Swords, Flag, Plus, Eye, EyeOff, KeyRound,
   Upload, Pencil, Radio, Lock, ShieldOff, Droplet,
   Search, FileText, AlertTriangle, Flame,
@@ -249,16 +249,6 @@ export default function AdminPage() {
   const handleUnban = async (userId: number) => {
     try { await api.unbanUser(userId); toast.success('User unbanned'); loadTabData('users'); }
     catch { toast.error('Failed to unban'); }
-  };
-
-  const handleApprove = async (userId: number) => {
-    try { await api.approveUser(userId); toast.success('User approved'); loadTabData('users'); }
-    catch (err: any) { toast.error(err?.response?.data?.detail || 'Failed to approve'); }
-  };
-
-  const handleReject = async (userId: number) => {
-    try { await api.rejectUser(userId); toast.success('User rejected'); loadTabData('users'); }
-    catch (err: any) { toast.error(err?.response?.data?.detail || 'Failed to reject'); }
   };
 
   const handleLogout = () => {
@@ -808,21 +798,7 @@ export default function AdminPage() {
                   {activeTab === 'users' && (
                     <div>
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-txt-secondary font-mono text-xs">
-                          {users.filter(u => u.status === 'pending').length} pending approvals
-                        </span>
-                        <button
-                          onClick={async () => {
-                            try {
-                              const res = await api.approveAllUsers();
-                              toast.success(`Approved ${res.approved} users`);
-                              loadTabData('users');
-                            } catch { toast.error('Failed to approve all'); }
-                          }}
-                          className="px-4 py-2 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center gap-2"
-                        >
-                          <CheckCircle className="w-3.5 h-3.5" /> Approve All Pending
-                        </button>
+                        <span className="text-txt-secondary font-mono text-xs">{users.length} registered users</span>
                       </div>
                       <div className="overflow-x-auto">
                       <table className="w-full text-left admin-table">
@@ -851,28 +827,14 @@ export default function AdminPage() {
                               <td className="p-3">
                                 {u.is_banned ? (
                                   <span className="text-xs font-mono text-[var(--red-core)]">Banned</span>
-                                ) : u.status === 'pending' ? (
-                                  <span className="text-xs font-mono text-[var(--warning)]">Pending</span>
                                 ) : u.status === 'active' ? (
                                   <span className="text-xs font-mono text-[var(--success)]">Active</span>
-                                ) : u.status === 'rejected' ? (
-                                  <span className="text-xs font-mono text-[var(--red-core)]">Rejected</span>
                                 ) : (
                                   <span className="text-xs font-mono text-txt-muted">{u.status}</span>
                                 )}
                               </td>
                               <td className="p-3">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  {u.status === 'pending' && (
-                                    <div>
-                                      <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Approve">
-                                        <CheckCircle className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button onClick={() => handleReject(u.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Reject">
-                                        <UserX className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  )}
                                   {!u.is_banned ? (
                                     <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Ban">
                                       <Ban className="w-3.5 h-3.5" />
