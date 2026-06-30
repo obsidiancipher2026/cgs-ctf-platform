@@ -619,7 +619,7 @@ export default function AdminPage() {
               ${sidebarVisible ? 'shadow-[2px_0_20px_rgba(26,110,255,0.08)]' : ''}
             `}
           >
-            <div className={`w-48 lg:w-full flex flex-col gap-1 p-4 pt-16 lg:pt-3 ${sidebarVisible ? '' : 'lg:hidden'}`}>
+            <div className={`w-48 lg:w-full flex flex-col gap-1 p-3 pt-3 ${sidebarVisible ? '' : 'lg:hidden'}`}>
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (

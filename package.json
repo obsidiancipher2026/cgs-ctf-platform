@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
+    "db:cleanup-pending": "tsx prisma/cleanup-pending.ts",
     "db:studio": "prisma studio",
     "db:init": "npx prisma migrate dev --name init",
     "db:switch:sqlite": "powershell -NoProfile -File scripts/switch-db.ps1 -Target sqlite",
