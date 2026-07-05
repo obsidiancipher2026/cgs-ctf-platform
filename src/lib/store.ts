@@ -27,9 +27,17 @@ interface AppState {
   isLoading: boolean;
   setAuth: (user: User) => void;
   setCsrfToken: (token: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   setLoading: (loading: boolean) => void;
   refreshUser: () => Promise<void>;
+}
+
+function clearClientCookies() {
+  if (typeof document === 'undefined') return
+  const cookies = ['access_token', 'refresh_token', 'csrf_token']
+  for (const name of cookies) {
+    document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`
+  }
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -43,9 +51,10 @@ export const useStore = create<AppState>((set) => ({
   setCsrfToken: (token) => {
     set({ csrfToken: token });
   },
-  logout: () => {
+  logout: async () => {
+    clearClientCookies();
     set({ user: null, csrfToken: null, isAuthenticated: false, isLoading: false });
-    api.logout().catch(() => {});
+    await api.logout().catch(() => {});
   },
   setLoading: (loading) => set({ isLoading: loading }),
   refreshUser: async () => {

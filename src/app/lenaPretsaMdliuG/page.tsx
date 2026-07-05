@@ -274,10 +274,10 @@ export default function AdminPage() {
     } catch { toast.error('Failed to approve users'); }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (wsRef.current) { wsRef.current.close(); wsRef.current = null; }
     setAuthenticated(false);
-    useStore.getState().logout();
+    await useStore.getState().logout();
     router.push('/login');
   };
 
