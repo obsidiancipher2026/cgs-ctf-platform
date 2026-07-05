@@ -38,23 +38,41 @@ export interface TokenPayload {
 }
 
 let _jwtVersion: number | null = null
+let _jwtVersionDbOk = true
 
-export async function getJwtVersion(): Promise<number> {
+async function fetchJwtVersionFromDb(): Promise<number | null> {
   try {
     const row = await prisma.securityConfig.findUnique({ where: { key: 'jwt_version' } })
     if (row) {
       const v = parseInt(row.value, 10) || 1
       _jwtVersion = v
+      _jwtVersionDbOk = true
       return v
     }
     await prisma.securityConfig.create({ data: { key: 'jwt_version', value: '1' } })
     _jwtVersion = 1
+    _jwtVersionDbOk = true
     return 1
-  } catch {
-    if (_jwtVersion !== null) return _jwtVersion
-    _jwtVersion = 1
-    return 1
+  } catch (err) {
+    console.error('[JWT Version] DB query failed:', err instanceof Error ? err.message : err)
+    _jwtVersionDbOk = false
+    return null
   }
+}
+
+export async function getJwtVersion(): Promise<number> {
+  const result = await fetchJwtVersionFromDb()
+  if (result !== null) return result
+
+  // Retry once after a short delay — handles transient connection failures
+  await new Promise(r => setTimeout(r, 200))
+  const retry = await fetchJwtVersionFromDb()
+  if (retry !== null) return retry
+
+  console.error('[JWT Version] DB unreachable after retry — using cache fallback')
+  if (_jwtVersion !== null) return _jwtVersion
+  _jwtVersion = 1
+  return 1
 }
 
 export async function invalidateAllSessions(): Promise<void> {
@@ -105,7 +123,16 @@ export function decodeAccessToken(token: string): TokenPayload | null {
 export async function validateJwtVersion(payload: TokenPayload, userId?: number): Promise<boolean> {
   if (payload.jv === undefined) return false
   const currentVersion = await getJwtVersion()
-  if (payload.jv !== currentVersion) return false
+  if (payload.jv !== currentVersion) {
+    // If DB was unreachable and we used a cache fallback, don't reject the token.
+    // The JWT signature + expiry have already been validated by authenticate().
+    // This prevents mass logouts during DB connection pool exhaustion.
+    if (!_jwtVersionDbOk) {
+      console.warn(`[JWT Version] DB unavailable — allowing token with jv=${payload.jv} (cache has ${currentVersion})`)
+      return true
+    }
+    return false
+  }
   // Check per-user version if it exists
   if (userId) {
     try {
@@ -115,7 +142,7 @@ export async function validateJwtVersion(payload: TokenPayload, userId?: number)
         const userVersion = parseInt(row.value, 10)
         if (payload.jv < userVersion) return false
       }
-    } catch { /* ignore */ }
+    } catch { /* ignore — DB failure for per-user check should not reject */ }
   }
   return true
 }
