@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     }
 
     const challenge = await prisma.challenge.findFirst({
-      where: { id: challenge_id, isPublished: true },
+      where: { id: challenge_id, status: 'published' },
     })
 
     if (!challenge) {

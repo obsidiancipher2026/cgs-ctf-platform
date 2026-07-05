@@ -19,11 +19,26 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const challenge = await prisma.challenge.findUnique({ where: { id: challengeId } })
   if (!challenge) return jsonResponse({ detail: 'Challenge not found' }, 404)
 
+  if (user.role !== 'admin') {
+    return jsonResponse({ detail: 'Only admins can publish challenges' }, 403)
+  }
+
+  // toggle between published and draft
+  const newStatus = challenge.status === 'published' ? 'draft' : 'published'
   const updated = await prisma.challenge.update({
     where: { id: challengeId },
-    data: { isPublished: !challenge.isPublished },
+    data: { status: newStatus },
   })
 
-  await prisma.log.create({ data: { action: 'challenge_toggled', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ id: challengeId, published: updated.isPublished }) } })
-  return jsonResponse({ message: 'Challenge updated', id: challengeId, is_published: updated.isPublished })
+  await prisma.log.create({
+    data: {
+      action: 'challenge_toggled',
+      userId: user.id,
+      ipAddress: clientIp,
+      severity: newStatus === 'published' ? 'suspicious' : 'info',
+      details: JSON.stringify({ id: challengeId, from: challenge.status, to: newStatus }),
+    },
+  })
+
+  return jsonResponse({ message: 'Challenge updated', id: challengeId, status: updated.status })
 }

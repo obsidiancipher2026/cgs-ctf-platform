@@ -9,7 +9,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
   const id = parseInt(params.id, 10)
   const challenge = await prisma.challenge.findFirst({
-    where: { id, isPublished: true },
+    where: { id, status: 'published' },
     select: {
       id: true,
       title: true,

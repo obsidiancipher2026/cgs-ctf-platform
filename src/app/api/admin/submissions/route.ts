@@ -47,6 +47,6 @@ export async function DELETE(request: Request) {
 
   await prisma.submission.deleteMany()
   await prisma.user.updateMany({ data: { score: 0, ranking: 0 } })
-  await prisma.challenge.updateMany({ data: { solverCount: 0, firstBloodUserId: null } })
+  await prisma.challenge.updateMany({ data: { solverCount: 0, firstBloodUserId: null, status: 'draft' } })
   return jsonResponse({ message: 'All submissions cleared, scores, solver counts, and blood data reset' })
 }

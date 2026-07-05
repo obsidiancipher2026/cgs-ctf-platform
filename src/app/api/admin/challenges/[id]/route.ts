@@ -5,7 +5,7 @@ import { config } from '@/lib/config'
 import { csrfProtection } from '@/lib/csrf'
 import { sanitizeText } from '@/lib/sanitizer'
 
-const ChallengeCreateSchema = z.object({
+const ChallengeUpdateSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().min(1).max(5000),
   category: z.enum(['web', 'crypto', 'reverse', 'forensics', 'osint', 'pwn', 'misc']),
@@ -44,26 +44,40 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
   try {
     const body = await request.json()
-    const data = ChallengeCreateSchema.parse(body)
+    const data = ChallengeUpdateSchema.parse(body)
     const bloodPoints = data.bloodPoints ?? BLOOD_POINTS_BY_DIFFICULTY[data.difficulty] ?? 50
+
+    // Any edit to a published challenge forces it back to draft
+    // This prevents silent updates to live challenges
+    const updateData: any = {
+      title: sanitizeText(data.title, 200),
+      description: sanitizeText(data.description, 5000),
+      category: data.category,
+      difficulty: data.difficulty,
+      points: data.points,
+      flagMode: data.flagMode,
+      flag: data.flag || null,
+      hint: data.hint ? sanitizeText(data.hint, 1000) : null,
+      maxAttempts: data.maxAttempts,
+      bloodPoints,
+      challengeType: data.challengeType,
+    }
+
+    if (challenge.status === 'published') {
+      updateData.status = 'draft'
+    }
+
     const updated = await prisma.challenge.update({
       where: { id: challengeId },
-      data: {
-        title: sanitizeText(data.title, 200),
-        description: sanitizeText(data.description, 5000),
-        category: data.category,
-        difficulty: data.difficulty,
-        points: data.points,
-        flagMode: data.flagMode,
-        flag: data.flag || null,
-        hint: data.hint ? sanitizeText(data.hint, 1000) : null,
-        maxAttempts: data.maxAttempts,
-        bloodPoints,
-        challengeType: data.challengeType,
-      },
+      data: updateData,
     })
 
-    await prisma.log.create({ data: { action: 'challenge_updated', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ id: challengeId, title: data.title }) } })
+    const logDetails: any = { id: challengeId, title: data.title }
+    if (challenge.status === 'published') {
+      logDetails.status_change = 'published→draft'
+      logDetails.reason = 'content_edit_reverted_to_draft'
+    }
+    await prisma.log.create({ data: { action: 'challenge_updated', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify(logDetails) } })
     return jsonResponse(updated)
   } catch (error) {
     if (error instanceof z.ZodError) return jsonResponse({ detail: 'Validation error', errors: error.errors }, 400)

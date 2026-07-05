@@ -36,7 +36,7 @@ async function main() {
     const MODEL_FIELDS = {
       user: ['id','username','email','hashedPassword','avatarUrl','role','status','isBanned','score','ranking','lastIp','lastLogin','createdAt','updatedAt','teamId','firstName','middleName','lastName','country','college'],
       team: ['id','name','description','avatarUrl','isBanned','isSuspended','createdAt','updatedAt'],
-      challenge: ['id','title','description','category','difficulty','points','flagMode','flag','hint','maxAttempts','isPublished','solverCount','fileUrl','challengeType','bloodPoints','firstBloodUserId','createdAt','updatedAt'],
+      challenge: ['id','title','description','category','difficulty','points','flagMode','flag','hint','maxAttempts','status','solverCount','fileUrl','challengeType','bloodPoints','firstBloodUserId','createdAt','updatedAt'],
       submission: ['id','challengeId','userId','teamId','flagProvided','isCorrect','ipAddress','createdAt'],
       announcement: ['id','title','message','isBroadcast','createdAt','expiresAt'],
       log: ['id','action','details','ipAddress','userId','severity','createdAt'],

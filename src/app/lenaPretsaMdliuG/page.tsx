@@ -966,14 +966,14 @@ export default function AdminPage() {
                                 <td className="p-3 font-mono text-xs text-[var(--red-glow)]">{c.bloodPoints || 0}</td>
                                 <td className="p-3 font-mono text-xs text-[var(--warning)]">{c.solverCount}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.isPublished ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
-                                    {c.isPublished ? 'Published' : 'Draft'}
+                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : c.status === 'archived' ? 'bg-[rgba(224,32,32,0.1)] text-[var(--red-core)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
+                                    {c.status === 'published' ? 'Published' : c.status === 'archived' ? 'Archived' : c.status === 'in_review' ? 'In Review' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-3">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.isPublished ? 'Unpublish' : 'Publish'}>
-                                      {c.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.status === 'published' ? 'Unpublish' : 'Publish'}>
+                                      {c.status === 'published' ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     </button>
                                     <button onClick={() => handleEditChallenge(c)} className="p-1.5 rounded-lg bg-[rgba(255,184,0,0.1)] text-[var(--warning)] hover:bg-[rgba(255,184,0,0.2)] transition-all" title="Edit Challenge">
                                       <Settings className="w-3.5 h-3.5" />
@@ -1238,14 +1238,14 @@ export default function AdminPage() {
                                 <td className="p-3 font-mono text-xs text-[#A03CFF]">{c.challengeType}</td>
                                 <td className="p-3 font-mono text-xs text-[var(--warning)]">{c.solverCount}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.isPublished ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
-                                    {c.isPublished ? 'Published' : 'Draft'}
+                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : c.status === 'archived' ? 'bg-[rgba(224,32,32,0.1)] text-[var(--red-core)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
+                                    {c.status === 'published' ? 'Published' : c.status === 'archived' ? 'Archived' : c.status === 'in_review' ? 'In Review' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-3">
                                   <div className="flex items-center gap-2">
-                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.isPublished ? 'Unpublish' : 'Publish'}>
-                                      {c.isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.status === 'published' ? 'Unpublish' : 'Publish'}>
+                                      {c.status === 'published' ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     </button>
                                     {c.challengeType === 'asset' && (
                                       <label className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] cursor-pointer transition-all" title="Download Assets">
@@ -1742,7 +1742,7 @@ export default function AdminPage() {
                             return liveChallenges.filter(c => c.category === cat && c.difficulty === diff).length;
                           }
                           function publishedCount(cat: string, diff: string): number {
-                            return liveChallenges.filter(c => c.category === cat && c.difficulty === diff && c.isPublished).length;
+                            return liveChallenges.filter(c => c.category === cat && c.difficulty === diff && c.status === 'published').length;
                           }
 
                           const handleToggle = async (action: 'publish' | 'unpublish', category: string, difficulty: string) => {
@@ -1772,7 +1772,7 @@ export default function AdminPage() {
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
                                 {categories.map(cat => {
                                   const total = liveChallenges.filter(c => c.category === cat).length;
-                                  const pub = liveChallenges.filter(c => c.category === cat && c.isPublished).length;
+                                  const pub = liveChallenges.filter(c => c.category === cat && c.status === 'published').length;
                                   return (
                                     <div key={cat} className="card rounded-xl p-4 border border-[rgba(26,110,255,0.1)]">
                                       <h4 className="font-display text-txt-primary text-sm mb-2 uppercase tracking-wider">{catLabels[cat]}</h4>

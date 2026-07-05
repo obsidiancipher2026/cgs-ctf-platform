@@ -12,7 +12,7 @@ export async function GET() {
 
   const [totalUsers, totalChallenges, totalSubmissions, totalCorrect] = await Promise.all([
     prisma.user.count({ where: { isBanned: false, status: 'active' } }),
-    prisma.challenge.count({ where: { isPublished: true } }),
+    prisma.challenge.count({ where: { status: 'published' } }),
     prisma.submission.count(),
     prisma.submission.count({ where: { isCorrect: true } }),
   ])

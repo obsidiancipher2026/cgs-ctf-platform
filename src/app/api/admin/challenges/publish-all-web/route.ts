@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
       await tx.challenge.updateMany({
         where: { category: 'web' },
-        data: { isPublished: true },
+        data: { status: 'published' },
       })
 
       await tx.log.create({
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
           action: 'bulk_publish_web',
           userId: user.id,
           ipAddress: clientIp,
-          severity: 'info',
+          severity: 'suspicious',
           details: JSON.stringify({
             adminId: user.id,
             count: challenges.length,

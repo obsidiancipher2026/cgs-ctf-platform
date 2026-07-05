@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
   const challenges = await prisma.challenge.findMany({
     where: {
-      isPublished: true,
+      status: 'published',
       ...(categoryFilter ? { category: categoryFilter } : {}),
     },
     orderBy: [{ category: 'asc' }, { points: 'asc' }],

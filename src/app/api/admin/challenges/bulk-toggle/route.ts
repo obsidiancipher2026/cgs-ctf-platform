@@ -31,14 +31,14 @@ export async function POST(request: Request) {
       const count = await tx.challenge.count({ where })
       await tx.challenge.updateMany({
         where,
-        data: { isPublished: action === 'publish' },
+        data: { status: action === 'publish' ? 'published' : 'draft' },
       })
       await tx.log.create({
         data: {
           action: `bulk_${action}`,
           userId: user.id,
           ipAddress: clientIp,
-          severity: 'info',
+          severity: action === 'publish' ? 'suspicious' : 'info',
           details: JSON.stringify({ category, difficulty, count, action }),
         },
       })

@@ -69,7 +69,7 @@ model Challenge {
   flag            String?
   hint            String?
   maxAttempts     Int       @default(0)
-  isPublished     Boolean   @default(false)
+  status          String    @default("draft")
   solverCount     Int       @default(0)
   fileUrl         String?
   challengeType   String    @default("asset")

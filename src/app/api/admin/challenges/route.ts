@@ -19,7 +19,6 @@ const ChallengeCreateSchema = z.object({
   maxAttempts: z.number().int().default(0),
   bloodPoints: z.number().int().min(0).optional(),
   challengeType: z.enum(['asset', 'instance']).default('asset'),
-  isPublished: z.boolean().default(false),
 })
 
 const BLOOD_POINTS_BY_DIFFICULTY: Record<string, number> = {
@@ -28,6 +27,8 @@ const BLOOD_POINTS_BY_DIFFICULTY: Record<string, number> = {
   hard: 75,
   expert: 100,
 }
+
+const VALID_STATUSES = ['draft', 'in_review', 'published', 'archived'] as const
 
 export async function GET(request: Request) {
   const { user, error } = await authenticate(request)
@@ -73,11 +74,11 @@ export async function POST(request: Request) {
         maxAttempts: data.maxAttempts,
         bloodPoints,
         challengeType: data.challengeType,
-        isPublished: data.isPublished,
+        status: 'draft',
       },
     })
 
-    await prisma.log.create({ data: { action: 'challenge_created', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ title: data.title }) } })
+    await prisma.log.create({ data: { action: 'challenge_created', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ title: data.title, status: 'draft' }) } })
     return jsonResponse(challenge, 201)
   } catch (error) {
     if (error instanceof z.ZodError) return jsonResponse({ detail: 'Validation error', errors: error.errors }, 400)
