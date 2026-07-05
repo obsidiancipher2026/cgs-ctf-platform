@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import { config } from './config'
 
 function getCSRFSecret(): string {
-  return config.jwt.secret + ':csrf:v2'
+  return (process.env.CSRF_SECRET || config.jwt.secret) + ':csrf:v3'
 }
 
 export function generateCSRFToken(userId: number): string {

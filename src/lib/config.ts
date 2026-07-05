@@ -20,13 +20,11 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   debug: process.env.NODE_ENV === 'development',
 
-  get jwt() {
-    return {
-      secret: requireEnv('JWT_SECRET'),
-      algorithm: 'HS256',
-      accessExpireMinutes: parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '15', 10),
-      refreshExpireDays: parseInt(process.env.REFRESH_TOKEN_EXPIRE_DAYS || '7', 10),
-    }
+  jwt: {
+    secret: requireEnv('JWT_SECRET'),
+    algorithm: 'HS256' as const,
+    accessExpireMinutes: parseInt(process.env.ACCESS_TOKEN_EXPIRE_MINUTES || '15', 10),
+    refreshExpireDays: parseInt(process.env.REFRESH_TOKEN_EXPIRE_DAYS || '7', 10),
   },
 
   cookie: {

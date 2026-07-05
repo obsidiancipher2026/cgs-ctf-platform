@@ -31,7 +31,6 @@ model User {
   username       String       @unique
   email          String       @unique
   hashedPassword String
-  passwordPlain  String?
   avatarUrl      String?
   role           String       @default("player")
   status         String       @default("pending")

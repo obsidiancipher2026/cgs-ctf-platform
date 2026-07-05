@@ -1,8 +1,13 @@
 export function sanitizeText(value: string, maxLength: number = 500): string {
   if (typeof value !== 'string') return String(value || '')
   let result = value.trim().slice(0, maxLength)
+  // Strip HTML tags and dangerous patterns
   result = result.replace(/<[^>]*>/g, '')
   result = result.replace(/[<>"'\\]/g, '')
+  result = result.replace(/javascript\s*:/gi, '')
+  result = result.replace(/on\w+\s*=/gi, '')
+  result = result.replace(/vbscript\s*:/gi, '')
+  result = result.replace(/expression\s*\(/gi, '')
   return result
 }
 
@@ -92,6 +97,18 @@ export function validateFlagStrict(flag: string): FlagValidationResult {
 export function validatePasswordStrength(password: string): string | null {
   if (password.length < 8) {
     return 'Password must be at least 8 characters long'
+  }
+  if (!/[A-Z]/.test(password)) {
+    return 'Password must contain at least one uppercase letter'
+  }
+  if (!/[a-z]/.test(password)) {
+    return 'Password must contain at least one lowercase letter'
+  }
+  if (!/[0-9]/.test(password)) {
+    return 'Password must contain at least one number'
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    return 'Password must contain at least one special character'
   }
   return null
 }

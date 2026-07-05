@@ -1,3 +1,10 @@
+// Cookie helpers
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`))
+  return match ? decodeURIComponent(match[1]) : null
+}
+
 import { create } from 'zustand';
 import { api } from './api';
 
@@ -30,16 +37,12 @@ export const useStore = create<AppState>((set) => ({
   isAuthenticated: false,
   isLoading: true,
   setAuth: (user) => {
-    localStorage.setItem('user', JSON.stringify(user));
     set({ user, isAuthenticated: true, isLoading: false });
   },
   setCsrfToken: (token) => {
-    localStorage.setItem('csrf_token', token);
     set({ csrfToken: token });
   },
   logout: () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('csrf_token');
     set({ user: null, csrfToken: null, isAuthenticated: false, isLoading: false });
     api.logout().catch(() => {});
   },
@@ -47,29 +50,17 @@ export const useStore = create<AppState>((set) => ({
   refreshUser: async () => {
     try {
       const user = await api.getMe();
-      localStorage.setItem('user', JSON.stringify(user));
       set({ user, isAuthenticated: true, isLoading: false });
     } catch {
-      localStorage.removeItem('user');
-      localStorage.removeItem('csrf_token');
       set({ user: null, csrfToken: null, isAuthenticated: false, isLoading: false });
     }
   },
 }));
 
 export const initAuth = () => {
-  const userStr = localStorage.getItem('user');
-  const csrfStr = localStorage.getItem('csrf_token');
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      if (csrfStr) useStore.getState().setCsrfToken(csrfStr);
-      useStore.getState().setAuth(user);
-      useStore.getState().refreshUser();
-    } catch {
-      useStore.getState().setLoading(false);
-    }
-  } else {
+  const csrfCookie = getCookie('csrf_token');
+  if (csrfCookie) useStore.getState().setCsrfToken(csrfCookie);
+  useStore.getState().refreshUser().finally(() => {
     useStore.getState().setLoading(false);
-  }
+  });
 };

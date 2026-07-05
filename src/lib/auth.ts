@@ -15,6 +15,10 @@ export async function getPasswordHash(password: string): Promise<string> {
 
 export async function upgradePasswordHash(userId: number, plainPassword: string, currentHash: string): Promise<string> {
   if (!currentHash.startsWith('$2a$') && !currentHash.startsWith('$2b$')) {
+    // Verify password matches before upgrading
+    if (!(await verifyPassword(plainPassword, currentHash))) {
+      return currentHash
+    }
     const newHash = await getPasswordHash(plainPassword)
     await prisma.user.update({ where: { id: userId }, data: { hashedPassword: newHash } })
     return newHash
@@ -96,10 +100,22 @@ export function decodeAccessToken(token: string): TokenPayload | null {
   }
 }
 
-export async function validateJwtVersion(payload: TokenPayload): Promise<boolean> {
+export async function validateJwtVersion(payload: TokenPayload, userId?: number): Promise<boolean> {
   if (payload.jv === undefined) return false
   const currentVersion = await getJwtVersion()
-  return payload.jv === currentVersion
+  if (payload.jv !== currentVersion) return false
+  // Check per-user version if it exists
+  if (userId) {
+    try {
+      const userKey = `jwt_version_user_${userId}`
+      const row = await prisma.securityConfig.findUnique({ where: { key: userKey } })
+      if (row) {
+        const userVersion = parseInt(row.value, 10)
+        if (payload.jv < userVersion) return false
+      }
+    } catch { /* ignore */ }
+  }
+  return true
 }
 
 export function decodeRefreshToken(token: string): TokenPayload | null {
@@ -171,12 +187,12 @@ export async function authenticate(request: Request): Promise<{ user: AuthUser; 
       return { user: null as unknown as AuthUser, error: new Response(JSON.stringify({ detail: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } }) }
     }
 
-    const versionValid = await validateJwtVersion(payload)
+    const userId = parseInt(payload.sub, 10)
+
+    const versionValid = await validateJwtVersion(payload, userId)
     if (!versionValid) {
       return { user: null as unknown as AuthUser, error: new Response(JSON.stringify({ detail: 'Session expired. Please login again.' }), { status: 401, headers: { 'Content-Type': 'application/json' } }) }
     }
-
-    const userId = parseInt(payload.sub, 10)
     const user = await prisma.user.findUnique({ where: { id: userId } })
 
     if (!user || user.status !== 'active' || user.isBanned) {
@@ -200,7 +216,7 @@ export async function authenticate(request: Request): Promise<{ user: AuthUser; 
             details: JSON.stringify({ tokenFpr, userAgent: userAgent.slice(0, 200) }),
           },
         })
-        if (user.role === 'admin' && config.admin.fingerprintEnforced) {
+        if (config.admin.fingerprintEnforced) {
           return { user: null as unknown as AuthUser, error: new Response(JSON.stringify({ detail: 'Session fingerprint mismatch' }), { status: 403, headers: { 'Content-Type': 'application/json' } }) }
         }
       }
@@ -282,6 +298,17 @@ export function jsonResponse(data: unknown, status = 200): Response {
   })
 }
 
+const IP_V4_REGEX = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/
+const IP_V6_REGEX = /^[0-9a-fA-F:]+$/
+
+function isValidIp(ip: string): boolean {
+  return IP_V4_REGEX.test(ip) || IP_V6_REGEX.test(ip)
+}
+
 export function getClientIp(request: Request): string {
-  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown'
+  const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+  if (forwarded && isValidIp(forwarded)) return forwarded
+  const realIp = request.headers.get('x-real-ip')
+  if (realIp && isValidIp(realIp)) return realIp
+  return 'unknown'
 }

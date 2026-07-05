@@ -4,23 +4,29 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X, ChevronLeft, ChevronRight, Clock, Calendar, ArrowUpRight, Radio, Siren } from 'lucide-react';
 
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+}
+
 function linkify(text: string) {
   const pattern = /(https?:\/\/[^\s<]+|\/[a-zA-Z0-9_\-./?&=]+)/g;
   const parts = text.split(pattern);
   return parts.map((part, i) => {
     if (part.match(/^https?:\/\//)) {
+      const href = part.replace(/[<>"'`]/g, '');
       return (
-        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
+        <a key={i} href={href} target="_blank" rel="noopener noreferrer"
           className="text-blue-glow underline decoration-blue-core/30 hover:decoration-blue-core transition-all inline-flex items-center gap-1 font-medium break-all"
         >
-          {part} <ArrowUpRight className="w-3 h-3 flex-shrink-0" />
+          {escapeHtml(part)} <ArrowUpRight className="w-3 h-3 flex-shrink-0" />
         </a>
       );
     }
     if (part.startsWith('/')) {
-      return <a key={i} href={part} className="text-blue-glow underline decoration-blue-core/30 hover:decoration-blue-core transition-all font-medium">{part}</a>;
+      const href = part.replace(/[<>"'`]/g, '');
+      return <a key={i} href={href} className="text-blue-glow underline decoration-blue-core/30 hover:decoration-blue-core transition-all font-medium">{escapeHtml(part)}</a>;
     }
-    return part;
+    return escapeHtml(part);
   });
 }
 

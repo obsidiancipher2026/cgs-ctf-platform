@@ -6,12 +6,13 @@ import prisma from './prisma'
 import { isFeatureEnabled } from './security-features'
 
 function lookupGeoIP(ip: string): string {
+  // Best-effort geo lookup using private IP ranges.
+  // For accurate geo IP, integrate a service like ip-api.com or maxmind.
+  if (ip === 'unknown' || ip === '127.0.0.1' || ip === '::1') return 'local'
+  if (ip.startsWith('10.') || ip.startsWith('192.168.') || ip.startsWith('172.')) return 'private'
   const firstOctet = parseInt(ip.split('.')[0], 10)
   if (isNaN(firstOctet)) return 'unknown'
-  if (firstOctet < 100) return 'US'
-  if (firstOctet < 128) return 'EU'
-  if (firstOctet < 192) return 'AP'
-  return 'unknown'
+  return 'external'
 }
 
 async function logAttackToDB(data: {
@@ -114,9 +115,8 @@ export async function runSecurityCheck(
   if (['POST', 'PUT', 'PATCH'].includes(method)) {
     const bodySizeLimitEnabled = await isFeatureEnabled('body_size_limit')
     if (bodySizeLimitEnabled) {
-      const contentLength = parseInt(headers.get('content-length') || '0', 10)
       const maxSize = path.includes('/upload') ? config.limits.maxUploadSize : config.limits.maxRequestBodySize
-      if (contentLength > maxSize) {
+      if (bodyBytes && bodyBytes.length > maxSize) {
         return { blocked: true, statusCode: 413, detail: 'Request body too large' }
       }
     }

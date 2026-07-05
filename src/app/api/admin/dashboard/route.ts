@@ -13,10 +13,6 @@ export async function GET(request: Request) {
   const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
   if (adminErr) return adminErr
 
-  const csrfToken = request.headers.get('x-csrf-token')
-  const csrfResult = csrfProtection('/api/admin/dashboard', 'GET', csrfToken, user.id)
-  if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
-
   const totalUsers = await prisma.user.count()
   const totalChallenges = await prisma.challenge.count()
   const suspiciousLogs = await prisma.log.count({ where: { severity: 'suspicious' } })

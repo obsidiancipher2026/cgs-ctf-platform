@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import prisma from '@/lib/prisma'
 import { config } from '@/lib/config'
 import { jsonResponse, getClientIp, setAuthCookies, createAccessToken, createRefreshToken, verifyPassword, getPasswordHash, generateFingerprint } from '@/lib/auth'
@@ -43,7 +44,10 @@ export async function POST(request: Request) {
     // Apply tarpit BEFORE credential checks to slow brute-force attacks
     await tarpitDelay(clientIp)
 
-    if (access_key !== config.admin.accessKey) {
+    const keyBuf = Buffer.from(access_key)
+    const expectedBuf = Buffer.from(config.admin.accessKey)
+    const keysMatch = keyBuf.length === expectedBuf.length && crypto.timingSafeEqual(keyBuf, expectedBuf)
+    if (!keysMatch) {
       await prisma.log.create({
         data: {
           action: 'admin_login_failed',

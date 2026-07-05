@@ -26,7 +26,6 @@ export default function ScoreboardPage() {
   const [tab, setTab] = useState<'individual' | 'team'>('individual');
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { if (mounted && (!isAuthenticated || !user)) router.push('/login'); }, [mounted, isAuthenticated, user, router]);
@@ -35,21 +34,24 @@ export default function ScoreboardPage() {
     setRefreshing(true);
     try {
       const [indiv, tm] = await Promise.all([api.getScoreboard(100, 0), api.getTeamScoreboard(100, 0)]);
-      setEntries(indiv.entries); setTotalCount(indiv.total_count);
-      setTeamEntries(tm.entries); setTeamTotalCount(tm.total_count);
-    } catch { console.error('Failed to load scoreboard'); }
+      if (indiv) { setEntries(indiv.entries || []); setTotalCount(indiv.total_count || 0); }
+      if (tm) { setTeamEntries(tm.entries || []); setTeamTotalCount(tm.total_count || 0); }
+    } catch (e) { console.error('Failed to load scoreboard', e); }
     finally { setLoading(false); setRefreshing(false); }
-  }, [refreshKey]);
+  }, []);
 
   useEffect(() => {
     if (!mounted || !isAuthenticated || !user) return;
     loadScoreboard();
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL || `${wsProtocol}//${window.location.host}`;
-    const ws = new WebSocket(`${wsUrl}/ws/scoreboard`);
-    ws.onmessage = () => loadScoreboard();
+    let ws: WebSocket | null = null;
+    try {
+      ws = new WebSocket(`${wsUrl}/ws/scoreboard`);
+      ws.onmessage = () => loadScoreboard();
+    } catch (e) { console.warn('WebSocket connection failed', e); }
     const interval = setInterval(loadScoreboard, 30000);
-    return () => { ws.close(); clearInterval(interval); };
+    return () => { if (ws) ws.close(); clearInterval(interval); };
   }, [loadScoreboard, mounted, isAuthenticated, user]);
 
   const filteredEntries = useMemo(() => {
@@ -88,7 +90,7 @@ export default function ScoreboardPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-txt-secondary text-xs"><Users className="w-3 h-3 inline mr-1" />{tab === 'individual' ? totalCount : teamTotalCount}</span>
-              <button onClick={() => setRefreshKey(k => k + 1)} className="p-1.5 text-txt-muted hover:text-blue-core transition-colors" aria-label="Refresh">
+              <button onClick={() => loadScoreboard()} className="p-1.5 text-txt-muted hover:text-blue-core transition-colors" aria-label="Refresh">
                 <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               </button>
             </div>

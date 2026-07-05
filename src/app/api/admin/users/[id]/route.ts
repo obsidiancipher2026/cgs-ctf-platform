@@ -20,6 +20,10 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   if (!target) return jsonResponse({ detail: 'User not found' }, 404)
 
   await prisma.log.create({ data: { action: 'user_deleted', userId, ipAddress: clientIp, severity: 'suspicious', details: JSON.stringify({ deletedBy: user.id }) } })
+  // Delete submissions first to avoid foreign key constraint issues
+  await prisma.submission.deleteMany({ where: { userId } })
+  // Clear first blood references if this user was first blood
+  await prisma.challenge.updateMany({ where: { firstBloodUserId: userId }, data: { firstBloodUserId: null } })
   await prisma.user.delete({ where: { id: userId } })
   return jsonResponse({ message: 'User deleted', user_id: userId })
 }

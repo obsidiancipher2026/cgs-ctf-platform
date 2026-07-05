@@ -15,7 +15,7 @@ class ApiClient {
     this.client.interceptors.request.use((config) => {
       if (typeof window !== 'undefined') {
         if (config.url?.startsWith('/api/admin/') || config.url?.startsWith('/api/auth/csrf-token')) {
-          const csrf = localStorage.getItem('csrf_token');
+          const csrf = document.cookie.split('; ').find(row => row.startsWith('csrf_token='))?.split('=')[1];
           if (csrf) {
             config.headers['X-CSRF-Token'] = csrf;
           }
@@ -34,8 +34,6 @@ class ApiClient {
             return this.client(error.config);
           } catch {
             if (typeof window !== 'undefined') {
-              localStorage.removeItem('user');
-              localStorage.removeItem('csrf_token');
               window.location.href = '/login';
             }
           }
@@ -137,7 +135,7 @@ class ApiClient {
   }
 
   async createAnnouncement(title: string, message: string) {
-    const { data } = await this.client.post(`/api/admin/announcements?title=${encodeURIComponent(title)}&message=${encodeURIComponent(message)}`);
+    const { data } = await this.client.post('/api/admin/announcements', { title, message });
     return data;
   }
 
@@ -147,7 +145,7 @@ class ApiClient {
   }
 
   async adminUpdateAnnouncement(id: number, title: string, message: string) {
-    const { data } = await this.client.put(`/api/admin/announcements/${id}?title=${encodeURIComponent(title)}&message=${encodeURIComponent(message)}`);
+    const { data } = await this.client.put(`/api/admin/announcements/${id}`, { title, message });
     return data;
   }
 

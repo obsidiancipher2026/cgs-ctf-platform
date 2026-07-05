@@ -48,6 +48,18 @@ export async function DELETE(request: Request) {
   const csrfResult = csrfProtection('/api/admin/logs', 'DELETE', csrfToken, user.id)
   if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
+  // Backup logs to a snapshot before clearing
+  const count = await prisma.log.count()
+  const lastLogs = await prisma.log.findMany({ orderBy: { createdAt: 'desc' }, take: 1000 })
+  await prisma.log.create({
+    data: {
+      action: 'logs_cleared',
+      userId: user.id,
+      ipAddress: clientIp,
+      severity: 'suspicious',
+      details: JSON.stringify({ clearedCount: count, backupSample: lastLogs.length }),
+    },
+  })
   await prisma.log.deleteMany()
-  return jsonResponse({ message: 'All logs cleared' })
+  return jsonResponse({ message: `All logs cleared (${count} entries removed)` })
 }

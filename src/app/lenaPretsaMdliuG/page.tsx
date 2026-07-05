@@ -1451,7 +1451,7 @@ export default function AdminPage() {
                           </div>
                           <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
                             <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Immutable Audit Log</div>
-                            <div className="text-txt-muted leading-relaxed">SHA256 chain-hash linking every log entry. Integrity verification via "Check Chain" below.</div>
+                             <div className="text-txt-muted leading-relaxed">SHA256 chain-hash linking every log entry. Integrity verification via &quot;Check Chain&quot; below.</div>
                           </div>
                           <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
                             <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Fingerprinting &amp; Anti-Sharing</div>

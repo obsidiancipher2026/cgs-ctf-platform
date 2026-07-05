@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma'
-import { authenticate, jsonResponse, getClientIp, verifyPassword, getPasswordHash, invalidateAllSessions } from '@/lib/auth'
+import { authenticate, jsonResponse, getClientIp, verifyPassword, getPasswordHash, getJwtVersion } from '@/lib/auth'
 import { validatePasswordStrength } from '@/lib/sanitizer'
 import { wafGuard } from '@/lib/security-middleware'
 
@@ -41,8 +41,14 @@ export async function POST(request: Request) {
     },
   })
 
-  // Invalidate all sessions so user must re-login (Item 32)
-  await invalidateAllSessions()
+  // Bump user's jwt version so their old tokens are invalidated
+  const currentVersion = await getJwtVersion()
+  const userKey = `jwt_version_user_${user.id}`
+  await prisma.securityConfig.upsert({
+    where: { key: userKey },
+    create: { key: userKey, value: String(currentVersion + 1) },
+    update: { value: String(currentVersion + 1) },
+  })
 
   await prisma.log.create({
     data: {

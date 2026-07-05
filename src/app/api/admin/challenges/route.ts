@@ -19,6 +19,7 @@ const ChallengeCreateSchema = z.object({
   maxAttempts: z.number().int().default(0),
   bloodPoints: z.number().int().min(0).optional(),
   challengeType: z.enum(['asset', 'instance']).default('asset'),
+  isPublished: z.boolean().default(false),
 })
 
 const BLOOD_POINTS_BY_DIFFICULTY: Record<string, number> = {
@@ -37,7 +38,10 @@ export async function GET(request: Request) {
   if (adminErr) return adminErr
 
   const challenges = await prisma.challenge.findMany({ orderBy: { id: 'asc' } })
-  return jsonResponse(challenges)
+  return jsonResponse(challenges.map(c => ({
+    ...c,
+    flag: c.flag ? c.flag.slice(0, 8) + '...' : null,
+  })))
 }
 
 export async function POST(request: Request) {
@@ -69,7 +73,7 @@ export async function POST(request: Request) {
         maxAttempts: data.maxAttempts,
         bloodPoints,
         challengeType: data.challengeType,
-        isPublished: true,
+        isPublished: data.isPublished,
       },
     })
 

@@ -6,14 +6,14 @@ export async function middleware(request: NextRequest) {
 
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
-  response.headers.set('X-XSS-Protection', '1; mode=block')
   response.headers.set('Referrer-Policy', 'no-referrer')
   response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
 
+  const isDev = process.env.NODE_ENV === 'development'
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+    isDev ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'" : "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self' https://fonts.gstatic.com",
@@ -24,6 +24,18 @@ export async function middleware(request: NextRequest) {
   ].join('; ')
 
   response.headers.set('Content-Security-Policy', csp)
+
+  // CORS headers
+  const origin = request.headers.get('origin')
+  if (origin) {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : []
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin)
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token')
+      response.headers.set('Access-Control-Allow-Credentials', 'true')
+    }
+  }
 
   return response
 }

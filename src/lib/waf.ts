@@ -19,9 +19,9 @@ const SQL_INJECTION_PATTERNS = [
   /(\bOR\b.{1,5}\d{1,2}\s*=\s*\d{1,2})/i,
   /(\bAND\b.{1,5}\d{1,2}\s*=\s*\d{1,2})/i,
   /(%27|')%20\w+%20(=|like)/i,
-  /admin'?\s*--/i,
-  /1' OR '1' = '1/,
-  /1 OR 1=1 --/,
+  /admin'\s*--/i,
+  /1' OR '1' = '1/i,
+  /1 OR 1=1 --/i,
 ]
 
 const XSS_PATTERNS = [
@@ -68,9 +68,9 @@ const KNOWN_ATTACK_TOOLS_PATTERNS = [
 ]
 
 const SUSPICIOUS_PATHS = [
-  /\.env/i, /\.git\//i, /wp-admin/i, /phpmyadmin/i,
-  /\.htaccess/i, /config\b/i, /backup/i, /\.sql/i, /\.dump/i,
-  /xmlrpc/i, /\.svn/i, /\.DS_Store/i, /admin\b/i,
+  /\.env$/i, /\.git\//i, /wp-admin/i, /phpmyadmin/i,
+  /\.htaccess/i, /config\./i, /backup/i, /\.sql$/i, /\.dump$/i,
+  /xmlrpc/i, /\.svn/i, /\.DS_Store/i,
 ]
 
 const ENCODED_PAYLOAD_PATTERNS = [
@@ -149,7 +149,7 @@ export class WAFEngine {
   detectScanning(path: string): string | null {
     const SCANNER_PROBE_PATHS = [
       /^\/\.env/i, /^\/\.git\//i, /^\/wp-admin/i, /^\/phpmyadmin/i,
-      /^\/\.htaccess/i, /^\/admin\//i, /^\/config\b/i, /^\/backup/i,
+      /^\/\.htaccess/i, /^\/config\./i, /^\/backup/i,
       /^\/\.sql/i, /^\/xmlrpc/i, /^\/\.svn/i, /^\/\.DS_Store/i,
     ]
     for (const pattern of SCANNER_PROBE_PATHS) {
@@ -262,13 +262,12 @@ export class WAFEngine {
 
 export class BotDetector {
   private readonly botPatterns = [
-    /bot/i, /crawler/i, /spider/i, /scraper/i, /curl/i, /wget/i, /sqlmap/i,
+    /curl/i, /wget/i, /sqlmap/i,
     /ahrefs/i, /semrush/i, /python-requests/i, /go-http-client/i,
     /java\//i, /libwww/i, /perl/i, /ruby/i,
     /headless/i, /phantom/i, /puppeteer/i, /playwright/i,
-    /selenium/i, /chrome-lighthouse/i, /googlebot/i,
-    /bingbot/i, /yandex/i, /baiduspider/i, /duckduckbot/i,
-    /slurp/i, /facebookexternalhit/i, /twitterbot/i,
+    /selenium/i, /chrome-lighthouse/i,
+    /slurp/i,
   ]
 
   private readonly botSignals = [
