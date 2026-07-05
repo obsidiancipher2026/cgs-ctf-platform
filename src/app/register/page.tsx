@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { UserPlus, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 
-import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
@@ -19,7 +18,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
-  const { setAuth, setCsrfToken } = useStore();
   const redirectTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => { return () => { if (redirectTimer.current) clearTimeout(redirectTimer.current); }; }, []);
@@ -35,21 +33,14 @@ export default function RegisterPage() {
     if (form.full_name.trim().length < 2) { toast.error('Full name must be at least 2 characters'); return; }
     setLoading(true);
     try {
-      const data = await api.register({
+      await api.register({
         full_name: form.full_name, username: form.username, email: form.email,
         password: form.password, country: form.country, college: form.college,
         agreed_tos: form.agreed_tos,
       });
-      if (data.user) {
-        setAuth(data.user);
-        try {
-          const csrfData = await api.getCsrfToken();
-          setCsrfToken(csrfData.csrf_token);
-        } catch {}
-      }
-      toast.success('Registration successful! Welcome aboard.');
+      toast.success('Registration successful! Your account is pending admin approval.', { duration: 5000 });
       setSuccess(true);
-      redirectTimer.current = setTimeout(() => router.push('/challenges'), 800);
+      redirectTimer.current = setTimeout(() => router.push('/login'), 2000);
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || 'Registration failed');
     } finally { setLoading(false); }
@@ -89,12 +80,15 @@ export default function RegisterPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg">
           {success ? (
             <div className="text-center py-12">
-              <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
-              <h2 className="font-display font-bold text-2xl text-success mb-3">Registration Submitted!</h2>
-              <p className="text-txt-secondary text-sm mb-6">Your account is pending admin approval. You will be able to access the platform once an administrator approves your account.</p>
+              <CheckCircle className="w-16 h-16 text-yellow-400 mx-auto mb-6" />
+              <h2 className="font-display font-bold text-2xl text-yellow-400 mb-3">Account Pending Approval</h2>
+              <p className="text-txt-secondary text-sm mb-6">Your account has been created and is awaiting admin approval. You will be redirected to the login page shortly.</p>
               <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2 mb-4 overflow-hidden border border-border-c">
-                <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success animate-pulse" style={{ width: '100%' }} />
+                <div className="h-full rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 animate-pulse" style={{ width: '100%' }} />
               </div>
+              <button onClick={() => router.push('/login')} className="btn-outline px-6 py-2.5 text-sm mt-2">
+                Go to Login
+              </button>
             </div>
           ) : (
             <>
