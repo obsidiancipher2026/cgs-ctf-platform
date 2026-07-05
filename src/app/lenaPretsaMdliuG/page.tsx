@@ -97,6 +97,7 @@ export default function AdminPage() {
     try {
       const me = await api.getMe();
       if (me.role === 'admin') {
+        useStore.getState().setAuth(me);
         setAuthenticated(true);
         setAuthChecking(false);
         try {
@@ -104,6 +105,7 @@ export default function AdminPage() {
           useStore.getState().setCsrfToken(csrfData.csrf_token);
         } catch { console.warn('[Admin] Failed to fetch CSRF token — admin actions may fail'); }
         loadTabData('dashboard');
+        connectAdminWs();
         return;
       }
     } catch { /* not authed, show login */ }

@@ -33,9 +33,8 @@ class ApiClient {
             await this.client.post('/api/auth/refresh');
             return this.client(error.config);
           } catch {
-            if (typeof window !== 'undefined') {
-              window.location.href = '/login';
-            }
+            const { useStore } = await import('@/lib/store');
+            useStore.getState().logout();
           }
         }
         return Promise.reject(error);

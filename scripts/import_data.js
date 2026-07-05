@@ -73,9 +73,6 @@ async function main() {
     for (const c of data.challenges) {
       const clean = pickScalars('challenge', c);
       // Handle legacy isPublished → status migration
-      if (clean.isPublished !== undefined && clean.status === undefined) {
-        clean.status = clean.isPublished ? 'published' : 'draft';
-      }
       if (clean.status === undefined) clean.status = 'draft';
       delete clean.isPublished;
       await prisma.challenge.upsert({

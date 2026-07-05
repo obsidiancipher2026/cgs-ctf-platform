@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npx prisma db push --accept-data-loss && npx prisma generate && node scripts/import_data.js && npm run build",
+  "buildCommand": "npx prisma db push --accept-data-loss && npx prisma generate && npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "rewrites": [
