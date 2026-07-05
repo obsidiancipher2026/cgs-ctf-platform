@@ -171,8 +171,8 @@ body.sidebar-open {
 }
 .input-field:focus {
   border-color: var(--blue-core);
-  box-shadow: 0 0 0 3px rgba(26, 110, 255, 0.15);
-  outline: none;
+  outline: 1px solid rgba(26, 110, 255, 0.25);
+  outline-offset: 0;
 }
 .input-field::placeholder {
   color: var(--text-muted);
@@ -193,7 +193,6 @@ body.sidebar-open {
 }
 .btn-primary:hover {
   background: var(--red-glow);
-  box-shadow: 0 0 20px rgba(224, 32, 32, 0.3);
 }
 .btn-primary:disabled {
   opacity: 0.5;

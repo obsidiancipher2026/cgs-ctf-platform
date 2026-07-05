@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { UserPlus, Eye, EyeOff, Loader2, CheckCircle, Shield, Swords, Trophy, Flag } from 'lucide-react';
+import { UserPlus, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { sanitizeObject } from '@/lib/sanitize';
 import { useStore } from '@/lib/store';
@@ -55,52 +55,32 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex">
-      {/* Left Brand Panel */}
-      <div className="hidden lg:flex lg:w-[40%] relative bg-void items-center justify-center overflow-hidden">
+      {/* Left Brand Panel — quiet, minimal, identical to Login page */}
+      <div className="hidden lg:flex lg:w-[35%] relative bg-void items-center justify-center overflow-hidden">
         <div className="panel-grid" />
         <div className="panel-scan" />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(224,32,32,0.06) 0%, transparent 40%, rgba(26,110,255,0.06) 100%)' }} />
-        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-red-core/40 via-border-c to-blue-core/40" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(224,32,32,0.04) 0%, transparent 50%, rgba(26,110,255,0.04) 100%)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-red-core/30 via-border-c to-blue-core/30" />
 
-        <div className="relative z-10 text-center px-10 max-w-sm">
-          <div className="relative inline-flex mb-8">
-            <div className="panel-glow" />
-            <div className="relative">
-              <div className="panel-ring-mid" />
-              <div className="panel-ring-outer" />
-              <img src="/images/logo.png" alt="CGS Logo" className="relative w-20 h-20 object-contain" />
-            </div>
+        <div className="relative z-10 text-center px-10 max-w-xs">
+          <img src="/images/logo.png" alt="CGS Logo" className="w-12 h-12 mx-auto mb-6 object-contain" />
+          <h2 className="font-display font-bold text-2xl text-txt-primary mb-2">Cyber Guardians Society</h2>
+          <p className="text-txt-secondary text-sm mb-8">Capture. Exploit. Defend.</p>
+
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-border-c" />
+            <span className="text-txt-muted text-[10px] font-mono uppercase tracking-widest">Platform</span>
+            <div className="flex-1 h-px bg-border-c" />
           </div>
 
-          <h2 className="font-display font-bold text-4xl mb-3 tracking-tight panel-gradient-text">Join the Arena</h2>
-          <p className="text-txt-secondary text-sm mb-10 leading-relaxed">Create your account and start capturing flags.</p>
-
-          <div className="space-y-3.5 text-left">
-            {[
-              { icon: Swords, text: '5 challenge categories to master', color: 'text-red-glow' },
-              { icon: Trophy, text: 'Live competitive leaderboard', color: 'text-blue-glow' },
-              { icon: Flag, text: 'Hidden flags in every challenge', color: 'text-warning' },
-              { icon: Shield, text: 'Secure platform, fair play', color: 'text-success' },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + i * 0.12 }}
-                className="panel-feature flex items-center gap-3.5"
-              >
-                <div className="panel-feature-icon">
-                  <item.icon className={`w-4 h-4 ${item.color}`} />
-                </div>
-                <span className="text-txt-secondary text-sm leading-snug">{item.text}</span>
-              </motion.div>
-            ))}
-          </div>
+          <p className="text-txt-muted text-xs leading-relaxed">
+            Competitive CTF challenges for cybersecurity enthusiasts.
+          </p>
         </div>
       </div>
 
       {/* Right Form Panel */}
-      <div className="flex-1 flex items-center justify-center px-6 py-10 bg-surface overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center px-6 bg-surface overflow-y-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg">
           {success ? (
             <div className="text-center py-12">
@@ -115,7 +95,7 @@ export default function RegisterPage() {
             <>
               {/* Mobile Logo */}
               <div className="lg:hidden text-center mb-6">
-                <img src="/images/logo.png" alt="CGS Logo" className="w-12 h-12 mx-auto mb-3 object-contain" />
+                <img src="/images/logo.png" alt="CGS Logo" className="w-10 h-10 mx-auto mb-3 object-contain" />
                 <h2 className="font-display font-bold text-xl text-txt-primary">CGS CTF</h2>
               </div>
 
