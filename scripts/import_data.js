@@ -36,7 +36,7 @@ async function main() {
     const MODEL_FIELDS = {
       user: ['id','username','email','hashedPassword','avatarUrl','role','status','isBanned','score','ranking','lastIp','lastLogin','createdAt','updatedAt','teamId','firstName','middleName','lastName','country','college'],
       team: ['id','name','description','avatarUrl','isBanned','isSuspended','createdAt','updatedAt'],
-      challenge: ['id','title','description','category','difficulty','points','flagMode','flag','hint','maxAttempts','status','solverCount','fileUrl','challengeType','bloodPoints','firstBloodUserId','createdAt','updatedAt'],
+      challenge: ['id','title','description','category','difficulty','points','flagMode','flag','hint','maxAttempts','status','isPublished','solverCount','fileUrl','challengeType','bloodPoints','firstBloodUserId','createdAt','updatedAt'],
       submission: ['id','challengeId','userId','teamId','flagProvided','isCorrect','ipAddress','createdAt'],
       announcement: ['id','title','message','isBroadcast','createdAt','expiresAt'],
       log: ['id','action','details','ipAddress','userId','severity','createdAt'],
@@ -72,6 +72,12 @@ async function main() {
     console.log('Importing challenges...');
     for (const c of data.challenges) {
       const clean = pickScalars('challenge', c);
+      // Handle legacy isPublished → status migration
+      if (clean.isPublished !== undefined && clean.status === undefined) {
+        clean.status = clean.isPublished ? 'published' : 'draft';
+      }
+      if (clean.status === undefined) clean.status = 'draft';
+      delete clean.isPublished;
       await prisma.challenge.upsert({
         where: { id: c.id },
         update: clean,
