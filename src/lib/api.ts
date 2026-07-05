@@ -29,7 +29,7 @@ class ApiClient {
       (response) => response,
       async (error) => {
         const url = error.config?.url || '';
-        if (url === '/api/auth/logout' || url === '/api/auth/refresh' || url === '/api/auth/me') {
+        if (url === '/api/auth/logout' || url === '/api/auth/refresh') {
           return Promise.reject(error);
         }
         if (error.response?.status === 401 && !error.config?._retry && !this.isRefreshing) {
@@ -41,7 +41,6 @@ class ApiClient {
             return this.client(error.config);
           } catch {
             this.isRefreshing = false;
-            return Promise.reject(error);
           }
         }
         return Promise.reject(error);
