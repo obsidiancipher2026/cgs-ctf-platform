@@ -15,7 +15,7 @@ import {
 import { api } from '@/lib/api';
 import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
-import '@/app/cgs-auth.css';
+
 type AdminTab =
   | 'dashboard' | 'users' | 'challenges'
   | 'submissions' | 'announcements' | 'logs' | 'warmup' | 'security' | 'realflags' | 'settings' | 'live';
@@ -493,92 +493,94 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="cgs-auth cgs-auth-admin min-h-screen flex bg-[#0A0A0C]" style={{ backgroundColor: '#0A0A0C' }}>
-        {/* ── LEFT 60%: Command Room ── */}
-        <div className="hidden lg:flex lg:w-[60%] relative flex-col items-center justify-center overflow-hidden" style={{ background: '#0A0A0C' }}>
-          <div className="cgs-auth-circuit" />
-          {/* Status readout top-left */}
-          <div style={{ position: 'absolute', top: '24px', left: '28px', zIndex: 2 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--cgs-red)', boxShadow: '0 0 6px rgba(255,23,68,0.6)', animation: 'cgsAdminPulse 2s ease-in-out infinite' }} />
-              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: 'var(--cgs-text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>LIVE</span>
+      <div className="min-h-screen flex bg-[var(--void)]">
+        <div className="hidden lg:flex lg:w-[45%] relative flex-col items-center justify-center p-12 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)] via-[var(--void)] to-[var(--surface-2)]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--red-core)] to-transparent opacity-40" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--blue-core)] to-transparent opacity-40" />
+          <div className="relative z-10 text-center max-w-sm">
+            <img src="/images/logo.png" alt="CGS" className="w-20 h-20 mx-auto mb-6 object-contain" />
+            <h2 className="font-display text-3xl font-bold text-txt-primary mb-3 tracking-tight">CGS CTF Platform</h2>
+            <p className="text-txt-muted font-mono text-sm mb-8 leading-relaxed">Command & Control Center — Restricted Access</p>
+            <div className="space-y-3 text-left">
+              {[
+                { icon: Shield, text: 'Real-time threat monitoring & WAF' },
+                { icon: Users, text: 'User management & access control' },
+                { icon: Swords, text: 'Challenge lifecycle management' },
+                { icon: Radio, text: 'Live competition control' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                  <item.icon className="w-4 h-4 text-[var(--blue-core)] flex-shrink-0" />
+                  <span className="text-txt-secondary font-mono text-xs">{item.text}</span>
+                </div>
+              ))}
             </div>
-            <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: 'var(--cgs-text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.7 }}>
-              ADMIN ACCESS &middot; RESTRICTED
-            </span>
-          </div>
-          <style>{`@keyframes cgsAdminPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,23,68,0.6); } 70% { box-shadow: 0 0 10px 4px rgba(255,23,68,0); } }`}</style>
-          {/* Shield mark off-center */}
-          <div style={{ position: 'relative', zIndex: 1, marginLeft: '-10%' }}>
-            <img src="/images/logo.png" alt="CGS Shield" style={{ width: '88px', height: '88px', objectFit: 'contain', opacity: 0.6 }} />
-          </div>
-          {/* Bottom-right tagline */}
-          <div style={{ position: 'absolute', bottom: '28px', right: '32px', zIndex: 2, textAlign: 'right' }}>
-            <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: 'var(--cgs-text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.5 }}>
-              Cyber Guardians Society
-            </p>
           </div>
         </div>
 
-        {/* ── RIGHT 40%: Docked login panel ── */}
-        <div className="w-full lg:w-[40%] flex items-center justify-center p-6 relative">
-          {/* Red hairline divider */}
-          <div style={{ position: 'absolute', left: 0, top: 0, width: '1px', height: '100%', background: 'linear-gradient(to bottom, transparent, var(--cgs-red), transparent)', opacity: 0.6 }} />
-          <div style={{ width: '100%', maxWidth: '400px' }} ref={(el) => { if (el) { const gsap = (window as any).gsap; if (gsap) gsap.fromTo(el, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }); } }}>
-            {/* Mobile header */}
-            <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <img src="/images/logo.png" alt="CGS" style={{ width: '40px', height: '40px', objectFit: 'contain', margin: '0 auto 12px' }} />
-              <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: 'var(--cgs-text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>ADMIN ACCESS &middot; RESTRICTED</p>
+        <div className="w-full lg:w-[55%] flex items-center justify-center px-6 py-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-md">
+            <div className="lg:hidden flex items-center gap-3 mb-8">
+              <img src="/images/logo.png" alt="CGS" className="w-10 h-10 object-contain" />
+              <div>
+                <h1 className="font-display text-lg font-bold text-txt-primary">CGS CTF Platform</h1>
+                <p className="text-txt-muted font-mono text-xs">Command & Control Center</p>
+              </div>
             </div>
 
-            {/* Header */}
-            <div style={{ marginBottom: '32px' }}>
-              <h1 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '22px', color: 'var(--cgs-text-primary)', margin: '0 0 4px', letterSpacing: '-0.01em' }}>Command Console</h1>
-              <p style={{ fontFamily: '"Inter", sans-serif', fontSize: '13px', color: 'var(--cgs-text-secondary)' }}>Authenticate to access the control center.</p>
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-5 h-5 text-[var(--red-core)]" />
+                <h1 className="font-display text-xl font-bold text-txt-primary">Admin Access</h1>
+              </div>
+              <p className="text-txt-muted font-mono text-sm">Authenticate to access the control center</p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={(e) => { handleLogin(e); }}>
-              {/* Secret Key */}
-              <div className="cgs-auth-field cgs-auth-field-red" style={{ marginBottom: '18px' }}>
-                <input type="password" value={loginForm.accessKey} onChange={(e) => setLoginForm({ ...loginForm, accessKey: e.target.value })} placeholder=" " required id="admin-key" />
-                <svg className="cgs-auth-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>
-                <label htmlFor="admin-key">Secret Key</label>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-txt-secondary font-mono text-xs mb-2 uppercase tracking-wider">Secret Key</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" />
+                  <input
+                    type="password"
+                    value={loginForm.accessKey}
+                    onChange={(e) => setLoginForm({ ...loginForm, accessKey: e.target.value })}
+                    className="input-field w-full pl-10 pr-4 py-3 rounded-lg font-mono text-sm"
+                    placeholder="Enter secret key"
+                    required
+                  />
+                </div>
               </div>
-
-              {/* Password */}
-              <div className="cgs-auth-field cgs-auth-field-red" style={{ marginBottom: '24px' }}>
-                <input type="password" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} placeholder=" " required id="admin-password" />
-                <svg className="cgs-auth-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-                <label htmlFor="admin-password">Password</label>
+              <div>
+                <label className="block text-txt-secondary font-mono text-xs mb-2 uppercase tracking-wider">Password</label>
+                <div className="relative">
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" />
+                  <input
+                    type="password"
+                    value={loginForm.password}
+                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                    className="input-field w-full pl-10 pr-4 py-3 rounded-lg font-mono text-sm"
+                    placeholder="Enter password"
+                    required
+                  />
+                </div>
               </div>
-
-              {/* Submit */}
-              <button type="submit" disabled={authChecking} className="cgs-auth-btn cgs-auth-btn-red" style={{ marginBottom: '20px' }}>
-                {authChecking ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ animation: 'cgsAdminSpin 0.8s linear infinite' }}>
-                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                  </svg>
-                ) : <Shield size={18} />}
-                {authChecking ? 'Authenticating...' : 'Access Console'}
-              </button>
-              <style>{`@keyframes cgsAdminSpin { to { transform: rotate(360deg); } }`}</style>
-
-              {/* Blue divider + audit notice */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                <div style={{ flex: 1, height: '1px', background: 'var(--cgs-blue-dim)', opacity: 0.5 }} />
-                <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: 'var(--cgs-text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap', opacity: 0.7 }}>
-                  All access attempts are logged
-                </span>
-                <div style={{ flex: 1, height: '1px', background: 'var(--cgs-blue-dim)', opacity: 0.5 }} />
-              </div>
-
-              {/* Back to user login */}
-              <button type="button" onClick={() => router.push('/login')} className="cgs-auth-btn cgs-auth-btn-ghost" style={{ fontSize: '12px', padding: '10px 16px' }}>
-                Back to User Login
+              <button
+                type="submit"
+                disabled={authChecking}
+                className="w-full py-3 rounded-lg bg-[var(--red-core)] text-white font-display font-semibold text-sm uppercase tracking-widest hover:bg-[var(--red-glow)] hover:shadow-[0_0_20px_rgba(224,32,32,0.3)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              >
+                {authChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                {authChecking ? 'Authenticating...' : 'Authenticate'}
               </button>
             </form>
-          </div>
+
+            <div className="mt-6 pt-6 border-t border-[var(--border)]">
+              <button onClick={() => router.push('/login')} className="w-full py-2.5 rounded-lg bg-transparent border border-[var(--blue-core)] text-[var(--blue-core)] font-display font-semibold text-sm uppercase tracking-wider hover:bg-[rgba(26,110,255,0.1)] transition-all flex items-center justify-center gap-2">
+                Back to User Login
+              </button>
+            </div>
+          </motion.div>
         </div>
       </div>
     );
