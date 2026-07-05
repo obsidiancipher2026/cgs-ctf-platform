@@ -1,8 +1,98 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Lock, Eye, AlertTriangle, FileCheck, Network, Key, Database, Search, Fingerprint } from 'lucide-react';
+
+type Particle = { x: number; y: number; vx: number; vy: number };
+
+const NUM_PARTICLES = 120;
+const MAX_DISTANCE = 100;
+
+function NetworkParticles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = canvas.clientWidth;
+    let height = canvas.clientHeight;
+    let animId: number;
+    const dpr = window.devicePixelRatio || 1;
+
+    const resize = () => {
+      width = canvas!.clientWidth;
+      height = canvas!.clientHeight;
+      canvas!.width = width * dpr;
+      canvas!.height = height * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const particles: Particle[] = Array.from({ length: NUM_PARTICLES }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 3,
+      vy: (Math.random() - 0.5) * 3,
+    }));
+
+    const draw = () => {
+      ctx!.fillStyle = 'rgb(5, 5, 15)';
+      ctx!.fillRect(0, 0, width, height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x <= 0 || p.x >= width) p.vx *= -1;
+        if (p.y <= 0 || p.y >= height) p.vy *= -1;
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const d = Math.hypot(b.x - a.x, b.y - a.y);
+          if (d < MAX_DISTANCE) {
+            const alpha = Math.max(40, 255 - d * 2) / 255;
+            ctx!.strokeStyle = `rgba(0, 200, 255, ${alpha})`;
+            ctx!.lineWidth = 1;
+            ctx!.beginPath();
+            ctx!.moveTo(a.x, a.y);
+            ctx!.lineTo(b.x, b.y);
+            ctx!.stroke();
+          }
+        }
+      }
+
+      for (const p of particles) {
+        ctx!.fillStyle = 'rgb(0, 255, 255)';
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full"
+      style={{ display: 'block' }}
+    />
+  );
+}
 
 const features = [
   { icon: Shield, title: 'WAF Protection', desc: 'Advanced Web Application Firewall detecting SQLi, XSS, command injection, and encoded payloads', side: 'red' as const },
@@ -25,6 +115,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
         <div className="absolute inset-0 bg-cyber-grid opacity-30" />
+        <div className="absolute inset-0 opacity-15 pointer-events-none"><NetworkParticles /></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-core/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-core/5 rounded-full blur-3xl" />
 
