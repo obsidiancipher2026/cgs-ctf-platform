@@ -408,6 +408,16 @@ class ApiClient {
     return data;
   }
 
+  async approveUser(userId: number) {
+    const { data } = await this.client.post('/api/admin/users/approve', { user_id: userId });
+    return data;
+  }
+
+  async approveAllUsers() {
+    const { data } = await this.client.post('/api/admin/users/approve-all');
+    return data;
+  }
+
   async invalidateAllSessions() {
     const { data } = await this.client.post('/api/auth/invalidate-all');
     return data;

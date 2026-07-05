@@ -71,6 +71,10 @@ export async function POST(request: Request) {
       return jsonResponse({ detail: 'Account is banned' }, 403)
     }
 
+    if (user.status === 'pending') {
+      return jsonResponse({ detail: 'Your account is pending admin approval. Please wait for an administrator to approve your account before logging in.' }, 403)
+    }
+
     await upgradePasswordHash(user.id, data.password, user.hashedPassword)
 
     if (user.lastIp && user.lastIp !== clientIp) {

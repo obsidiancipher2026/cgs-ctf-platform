@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         country: country || null,
         college: college || null,
         hashedPassword: await getPasswordHash(data.password),
-        status: 'active',
+        status: 'pending',
         lastIp: getClientIp(request) || null,
       },
     })
@@ -71,12 +71,12 @@ export async function POST(request: Request) {
         userId: user.id,
         ipAddress: getClientIp(request),
         severity: 'info',
-        details: JSON.stringify({ status: 'auto_activated' }),
+        details: JSON.stringify({ status: 'pending_approval' }),
       },
     })
 
     const response = jsonResponse({
-      message: 'Registration successful. Welcome to Cyber Guardians Society!',
+      message: 'Registration successful! Your account is pending admin approval.',
       access_token: token,
       token_type: 'bearer',
       user: {

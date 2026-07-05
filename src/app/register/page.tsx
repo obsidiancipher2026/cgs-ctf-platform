@@ -88,8 +88,8 @@ export default function RegisterPage() {
           {success ? (
             <div className="text-center py-12">
               <CheckCircle className="w-16 h-16 text-success mx-auto mb-6" />
-              <h2 className="font-display font-bold text-2xl text-success mb-3">Welcome Guardian!</h2>
-              <p className="text-txt-secondary text-sm mb-6">Your account is active. Entering the arena...</p>
+              <h2 className="font-display font-bold text-2xl text-success mb-3">Registration Submitted!</h2>
+              <p className="text-txt-secondary text-sm mb-6">Your account is pending admin approval. You will be able to access the platform once an administrator approves your account.</p>
               <div className="w-full max-w-sm mx-auto bg-surface-2 rounded-full h-2 mb-4 overflow-hidden border border-border-c">
                 <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success animate-pulse" style={{ width: '100%' }} />
               </div>
@@ -175,6 +175,10 @@ export default function RegisterPage() {
                     </div>
                     <p className="text-txt-muted text-[10px] mt-1">Short form</p>
                   </div>
+                </div>
+
+                <div className="bg-blue-core/10 border border-blue-core/20 rounded-lg px-4 py-3 text-xs text-txt-secondary">
+                  <p><strong>Note:</strong> After registration, your account will be reviewed by an administrator. You will not be able to access the platform until your account is approved.</p>
                 </div>
 
                 {/* Terms */}

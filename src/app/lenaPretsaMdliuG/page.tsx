@@ -104,7 +104,6 @@ export default function AdminPage() {
           const csrfData = await api.getCsrfToken();
           useStore.getState().setCsrfToken(csrfData.csrf_token);
         } catch { console.warn('[Admin] Failed to fetch CSRF token — admin actions may fail'); }
-        loadTabData('dashboard');
         connectAdminWs();
         return;
       }
@@ -156,6 +155,12 @@ export default function AdminPage() {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
+  useEffect(() => {
+    if (authenticated && activeTab === 'dashboard' && !dashboard) {
+      loadTabData('dashboard');
+    }
+  }, [authenticated]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthChecking(true);
@@ -166,10 +171,11 @@ export default function AdminPage() {
       useStore.getState().setAuth(data.user);
       setAuthenticated(true);
       setAuthChecking(false);
-      const csrfData = await api.getCsrfToken();
-      useStore.getState().setCsrfToken(csrfData.csrf_token);
+      try {
+        const csrfData = await api.getCsrfToken();
+        useStore.getState().setCsrfToken(csrfData.csrf_token);
+      } catch {}
       toast.success('Welcome, GuildMaster!');
-      loadTabData('dashboard');
       connectAdminWs();
     } catch (err: any) {
       const msg = err?.response?.data?.detail || err?.response?.data?.message || err?.message || 'Connection failed — is the backend running?';
@@ -253,6 +259,19 @@ export default function AdminPage() {
   const handleUnban = async (userId: number) => {
     try { await api.unbanUser(userId); toast.success('User unbanned'); loadTabData('users'); }
     catch { toast.error('Failed to unban'); }
+  };
+
+  const handleApprove = async (userId: number) => {
+    try { await api.approveUser(userId); toast.success('User approved'); loadTabData('users'); }
+    catch { toast.error('Failed to approve user'); }
+  };
+
+  const handleApproveAll = async () => {
+    try {
+      const result = await api.approveAllUsers();
+      toast.success(result.detail || 'All pending users approved');
+      loadTabData('users');
+    } catch { toast.error('Failed to approve users'); }
   };
 
   const handleLogout = () => {
@@ -805,6 +824,11 @@ export default function AdminPage() {
                     <div>
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-txt-secondary font-mono text-xs">{users.length} registered users</span>
+                        {users.some((u: any) => u.status === 'pending') && (
+                          <button onClick={handleApproveAll} className="px-3 py-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> Approve All ({users.filter((u: any) => u.status === 'pending').length} pending)
+                          </button>
+                        )}
                       </div>
                       <div className="overflow-x-auto">
                       <table className="w-full text-left admin-table">
@@ -841,6 +865,11 @@ export default function AdminPage() {
                               </td>
                               <td className="p-3">
                                 <div className="flex items-center gap-2 flex-wrap">
+                                  {u.status === 'pending' && (
+                                    <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Approve User">
+                                      <CheckCircle className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
                                   {!u.is_banned ? (
                                     <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Ban">
                                       <Ban className="w-3.5 h-3.5" />

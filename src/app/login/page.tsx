@@ -119,6 +119,10 @@ export default function LoginPage() {
               </div>
             </div>
 
+            <div className="bg-blue-core/10 border border-blue-core/20 rounded-lg px-4 py-3 text-xs text-txt-secondary">
+              <p><strong>Note:</strong> New accounts require admin approval before you can access the platform. You will be notified once your account is approved.</p>
+            </div>
+
             <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 text-sm flex items-center justify-center gap-2">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
               {loading ? 'Authenticating...' : 'Sign In'}
