@@ -193,7 +193,7 @@ export async function GET(request: Request) {
     challenge_id: s.challengeId,
     challenge_title: s.challenge.title,
     challenge_points: s.challenge.points,
-    flag_provided: s.isCorrect ? '***CORRECT***' : s.flagProvided.slice(0, 10) + '...',
+    flag_provided: s.isCorrect ? '***CORRECT***' : '***INCORRECT***',
     is_correct: s.isCorrect,
     is_first_blood: s.isCorrect && s.challenge.firstBloodUserId === user.id,
     created_at: s.createdAt,

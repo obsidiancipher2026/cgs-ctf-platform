@@ -1,7 +1,8 @@
 // Cookie helpers
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null
-  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`))
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${escaped}=([^;]*)`))
   return match ? decodeURIComponent(match[1]) : null
 }
 
@@ -52,7 +53,7 @@ export const useStore = create<AppState>((set) => ({
       const user = await api.getMe();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch {
-      set({ user: null, csrfToken: null, isAuthenticated: false, isLoading: false });
+      set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },
 }));

@@ -11,6 +11,8 @@ export function getCached<T>(key: string): T | null {
     if (idx >= 0) accessOrder.splice(idx, 1)
     return null
   }
+  const idx = accessOrder.indexOf(key)
+  if (idx >= 0) { accessOrder.splice(idx, 1); accessOrder.push(key) }
   return entry.data as T
 }
 
@@ -19,7 +21,9 @@ export function setCache(key: string, data: unknown, ttlMs: number): void {
     const oldest = accessOrder.shift()
     if (oldest) cache.delete(oldest)
   }
-  if (!cache.has(key)) accessOrder.push(key)
+  const idx = accessOrder.indexOf(key)
+  if (idx >= 0) accessOrder.splice(idx, 1)
+  accessOrder.push(key)
   cache.set(key, { data, expires: Date.now() + ttlMs })
 }
 

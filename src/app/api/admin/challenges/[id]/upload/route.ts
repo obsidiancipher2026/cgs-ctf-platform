@@ -33,7 +33,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
   for (const file of files) {
     const buffer = Buffer.from(await file.arrayBuffer())
-    const filename = file.name
+    if (buffer.length > 50 * 1024 * 1024) return jsonResponse({ detail: `File ${file.name} exceeds 50MB limit` }, 400)
+    const filename = path.basename(file.name).replace(/[^a-zA-Z0-9._-]/g, '_')
+    if (filename.startsWith('..') || filename.startsWith('.')) return jsonResponse({ detail: 'Invalid filename' }, 400)
     const filepath = path.join(uploadDir, filename)
     await writeFile(filepath, buffer)
 

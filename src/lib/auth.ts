@@ -5,12 +5,12 @@ import { config } from './config'
 import prisma from './prisma'
 
 export async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
-  return bcrypt.compareSync(plainPassword, hashedPassword)
+  return bcrypt.compare(plainPassword, hashedPassword)
 }
 
 export async function getPasswordHash(password: string): Promise<string> {
-  const salt = bcrypt.genSaltSync(10)
-  return bcrypt.hashSync(password, salt)
+  const salt = await bcrypt.genSalt(10)
+  return bcrypt.hash(password, salt)
 }
 
 export async function upgradePasswordHash(userId: number, plainPassword: string, currentHash: string): Promise<string> {

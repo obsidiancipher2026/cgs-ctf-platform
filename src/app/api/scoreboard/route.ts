@@ -7,9 +7,10 @@ export const dynamic = 'force-dynamic'
 const CACHE_TTL = 8000
 
 export async function GET(request: Request) {
+  try {
   const url = new URL(request.url)
-  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 200)
-  const offset = parseInt(url.searchParams.get('offset') || '0', 10)
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10) || 50, 200)
+  const offset = parseInt(url.searchParams.get('offset') || '0', 10) || 0
 
   const cacheKey = `scoreboard:${limit}:${offset}`
   const cached = getCached<ReturnType<typeof jsonResponse>>(cacheKey)
@@ -64,8 +65,8 @@ export async function GET(request: Request) {
   const lastTimeMap = new Map(lastTimes.map(l => [l.userId, l._max.createdAt]))
   const teamMap = new Map(teams.map(t => [t.id, t]))
 
-  const entries = users.map(u => ({
-    rank: offset + users.indexOf(u) + 1,
+  const entries = users.map((u, idx) => ({
+    rank: offset + idx + 1,
     username: u.username,
     score: u.score,
     avatar_url: u.avatarUrl,
@@ -84,4 +85,7 @@ export async function GET(request: Request) {
   const response = jsonResponse({ entries, total_count: totalCount })
   setCache(cacheKey, response, CACHE_TTL)
   return response
+  } catch (e) {
+    return jsonResponse({ detail: 'Failed to load scoreboard' }, 500)
+  }
 }

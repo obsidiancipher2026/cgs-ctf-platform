@@ -5,6 +5,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 class ApiClient {
   private client: AxiosInstance;
   private isRefreshing = false;
+  private refreshQueue: Array<{ resolve: (value?: any) => void; reject: (reason?: any) => void }> = [];
 
   constructor() {
     this.client = axios.create({
@@ -32,14 +33,23 @@ class ApiClient {
         if (url === '/api/auth/logout' || url === '/api/auth/refresh') {
           return Promise.reject(error);
         }
-        if (error.response?.status === 401 && !error.config?._retry && !this.isRefreshing) {
+        if (error.response?.status === 401 && !error.config?._retry) {
+          if (this.isRefreshing) {
+            return new Promise((resolve, reject) => {
+              this.refreshQueue.push({ resolve, reject });
+            }).then(() => this.client(error.config));
+          }
           this.isRefreshing = true;
           error.config._retry = true;
           try {
             await this.client.post('/api/auth/refresh');
+            this.refreshQueue.forEach(p => p.resolve());
+            this.refreshQueue = [];
             this.isRefreshing = false;
             return this.client(error.config);
           } catch {
+            this.refreshQueue.forEach(p => p.reject(error));
+            this.refreshQueue = [];
             this.isRefreshing = false;
           }
         }

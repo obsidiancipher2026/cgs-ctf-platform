@@ -6,6 +6,7 @@ import { csrfProtection } from '@/lib/csrf'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
+  try {
   const { user, error } = await authenticate(request)
   if (error) return error
 
@@ -18,4 +19,7 @@ export async function GET(request: Request) {
   const suspiciousLogs = await prisma.log.count({ where: { severity: 'suspicious' } })
 
   return jsonResponse({ total_users: totalUsers, total_challenges: totalChallenges, suspicious_logs: suspiciousLogs })
+  } catch (e) {
+    return jsonResponse({ detail: 'Failed to load dashboard' }, 500)
+  }
 }

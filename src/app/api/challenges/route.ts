@@ -4,6 +4,7 @@ import { authenticate, jsonResponse } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
+  try {
   const { user, error } = await authenticate(request)
   if (error) return error
 
@@ -60,4 +61,7 @@ export async function GET(request: Request) {
   }))
 
   return jsonResponse(result)
+  } catch (e) {
+    return jsonResponse({ detail: 'Failed to load challenges' }, 500)
+  }
 }

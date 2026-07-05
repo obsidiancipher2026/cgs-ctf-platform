@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic'
 const CACHE_TTL = 10000
 
 export async function GET() {
+  try {
   const cached = getCached<ReturnType<typeof jsonResponse>>('scoreboard:stats')
   if (cached) return cached
 
@@ -26,4 +27,7 @@ export async function GET() {
 
   setCache('scoreboard:stats', response, CACHE_TTL)
   return response
+  } catch (e) {
+    return jsonResponse({ detail: 'Failed to load stats' }, 500)
+  }
 }

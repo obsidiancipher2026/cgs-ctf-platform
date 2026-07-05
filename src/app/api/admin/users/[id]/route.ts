@@ -16,6 +16,8 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
   const userId = parseInt(params.id, 10)
+  if (isNaN(userId)) return jsonResponse({ detail: 'Invalid user ID' }, 400)
+  if (userId === user.id) return jsonResponse({ detail: 'Cannot delete yourself' }, 400)
   const target = await prisma.user.findUnique({ where: { id: userId } })
   if (!target) return jsonResponse({ detail: 'User not found' }, 404)
 

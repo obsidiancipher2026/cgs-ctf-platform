@@ -255,6 +255,7 @@ export default function AdminPage() {
   };
 
   const handleLogout = () => {
+    if (wsRef.current) { wsRef.current.close(); wsRef.current = null; }
     setAuthenticated(false);
     useStore.getState().logout();
     router.push('/');
@@ -446,7 +447,7 @@ export default function AdminPage() {
         credForm.new_password || undefined
       );
       if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
+        document.cookie = `access_token=${data.access_token}; path=/; max-age=999999; SameSite=Strict${window.location.protocol === 'https:' ? '; Secure' : ''}`;
       }
       const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
       storedUser.username = data.username;
@@ -1901,7 +1902,7 @@ export default function AdminPage() {
             <h3 className="font-display text-txt-primary text-lg mb-2">Change Password</h3>
             <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--blue-core)]">{passwordModal.username}</span></p>
             <input
-              type="text"
+              type="password"
               value={passwordModalValue}
               onChange={(e) => setPasswordModalValue(e.target.value)}
               placeholder="New password (min 8 chars)"

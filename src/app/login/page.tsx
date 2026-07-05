@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LogIn, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { sanitizeInput } from '@/lib/sanitize';
+
 import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
@@ -22,7 +22,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await api.login(sanitizeInput(email), password);
+      const data = await api.login(email, password);
       setAuth(data.user);
       try {
         const csrfData = await api.getCsrfToken();

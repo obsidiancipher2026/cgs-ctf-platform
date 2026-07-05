@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import fs from 'fs'
+import fs from 'fs/promises'
 import path from 'path'
 
 export const dynamic = 'force-dynamic'
@@ -21,7 +21,11 @@ export async function GET(
 ) {
   const { id, path: segments = [] } = params
 
-  const basePath = path.join(process.cwd(), 'challenge-sites', id, ...segments)
+  const basePath = path.resolve(process.cwd(), 'challenge-sites', id, ...segments)
+  const challengeRoot = path.resolve(process.cwd(), 'challenge-sites')
+  if (!basePath.startsWith(challengeRoot + path.sep) && basePath !== challengeRoot) {
+    return new Response('Forbidden', { status: 403 })
+  }
 
   const tryPaths = [basePath]
   if (!path.extname(basePath)) {
@@ -31,7 +35,7 @@ export async function GET(
   let resolvedPath = ''
   for (const p of tryPaths) {
     try {
-      const stat = fs.statSync(p)
+      const stat = await fs.stat(p)
       if (stat.isDirectory()) {
         resolvedPath = path.join(p, 'index.html')
         break
@@ -44,11 +48,16 @@ export async function GET(
     }
   }
 
-  if (!resolvedPath || !fs.existsSync(resolvedPath)) {
-    return new Response('Not Found', { status: 404 })
+  if (!resolvedPath) {
+    try { await fs.access(resolvedPath) } catch { return new Response('Not Found', { status: 404 }) }
   }
 
-  const content = fs.readFileSync(resolvedPath, 'utf-8')
+  let content: string
+  try {
+    content = await fs.readFile(resolvedPath, 'utf-8')
+  } catch {
+    return new Response('Not Found', { status: 404 })
+  }
   const ext = path.extname(resolvedPath).toLowerCase()
   const contentType = MIME_TYPES[ext] || 'application/octet-stream'
 

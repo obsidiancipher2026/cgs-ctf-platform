@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { UserPlus, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
 import { api } from '@/lib/api';
-import { sanitizeObject } from '@/lib/sanitize';
+
 import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
@@ -20,6 +20,9 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { setAuth, setCsrfToken } = useStore();
+  const redirectTimer = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => { return () => { if (redirectTimer.current) clearTimeout(redirectTimer.current); }; }, []);
 
   const update = (field: string, value: any) => setForm({ ...form, [field]: value });
 
@@ -30,11 +33,11 @@ export default function RegisterPage() {
     if (!form.full_name.trim()) { toast.error('Full name is required'); return; }
     setLoading(true);
     try {
-      const data = await api.register(sanitizeObject({
+      const data = await api.register({
         full_name: form.full_name, username: form.username, email: form.email,
         password: form.password, country: form.country, college: form.college,
         agreed_tos: form.agreed_tos,
-      }));
+      });
       if (data.user) {
         setAuth(data.user);
         try {
@@ -44,7 +47,7 @@ export default function RegisterPage() {
       }
       toast.success('Registration successful! Welcome aboard.');
       setSuccess(true);
-      setTimeout(() => router.push('/challenges'), 800);
+      redirectTimer.current = setTimeout(() => router.push('/challenges'), 800);
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || 'Registration failed');
     } finally { setLoading(false); }

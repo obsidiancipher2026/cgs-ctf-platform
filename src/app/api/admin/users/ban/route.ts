@@ -19,6 +19,8 @@ export async function POST(request: Request) {
   if (!body) return jsonResponse({ detail: 'Request body required' }, 400)
 
   const { user_id } = body
+  if (!user_id || typeof user_id !== 'number') return jsonResponse({ detail: 'Valid user_id required' }, 400)
+  if (user_id === user.id) return jsonResponse({ detail: 'Cannot ban yourself' }, 400)
   if (user_id) {
     const target = await prisma.user.findUnique({ where: { id: user_id } })
     if (target) {

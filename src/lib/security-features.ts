@@ -22,7 +22,7 @@ export async function getSecurityFeatures(): Promise<Record<string, boolean>> {
   const features: Record<string, boolean> = {}
   for (const key of ALL_FEATURES) {
     const row = rows.find(r => r.key === key)
-    features[key] = row ? row.value === 'true' : true
+    features[key] = row ? row.value === 'true' : false
   }
   cachedFeatures = features
   lastFetch = now
@@ -31,5 +31,5 @@ export async function getSecurityFeatures(): Promise<Record<string, boolean>> {
 
 export async function isFeatureEnabled(key: string): Promise<boolean> {
   const features = await getSecurityFeatures()
-  return features[key] !== false
+  return features[key] === true
 }
