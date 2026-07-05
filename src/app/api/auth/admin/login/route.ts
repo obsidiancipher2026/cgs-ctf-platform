@@ -102,6 +102,9 @@ export async function POST(request: Request) {
     const tokenResult = await createAccessToken({ sub: String(admin.id), role: 'admin', fpr: fingerprint })
     const refreshToken = createRefreshToken({ sub: String(admin.id) })
 
+    // Clear per-user JWT version so a previous logout doesn't block this new session
+    await prisma.securityConfig.delete({ where: { key: `jwt_version_user_${admin.id}` } }).catch(() => {})
+
     await prisma.user.update({
       where: { id: admin.id },
       data: { lastIp: clientIp, lastLogin: new Date() },
