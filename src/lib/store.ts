@@ -32,14 +32,6 @@ interface AppState {
   refreshUser: () => Promise<void>;
 }
 
-function clearClientCookies() {
-  if (typeof document === 'undefined') return
-  const cookies = ['access_token', 'refresh_token', 'csrf_token']
-  for (const name of cookies) {
-    document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`
-  }
-}
-
 export const useStore = create<AppState>((set) => ({
   user: null,
   csrfToken: null,
@@ -52,7 +44,6 @@ export const useStore = create<AppState>((set) => ({
     set({ csrfToken: token });
   },
   logout: async () => {
-    clearClientCookies();
     set({ user: null, csrfToken: null, isAuthenticated: false, isLoading: false });
     await api.logout().catch(() => {});
   },
