@@ -142,6 +142,7 @@ export default function AdminPage() {
         const u = JSON.parse(storedUser);
         if (u.role === 'admin') { tryAutoLogin(); return; }
       } catch {}
+      localStorage.removeItem('user');
     }
     setAuthChecking(false);
     return () => { if (wsRef.current) wsRef.current.close(); };

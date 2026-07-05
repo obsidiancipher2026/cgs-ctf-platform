@@ -4,6 +4,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 class ApiClient {
   private client: AxiosInstance;
+  private isRefreshing = false;
 
   constructor() {
     this.client = axios.create({
@@ -27,14 +28,20 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401 && !error.config?._retry) {
+        const url = error.config?.url || '';
+        if (url === '/api/auth/logout' || url === '/api/auth/refresh' || url === '/api/auth/me') {
+          return Promise.reject(error);
+        }
+        if (error.response?.status === 401 && !error.config?._retry && !this.isRefreshing) {
+          this.isRefreshing = true;
           error.config._retry = true;
           try {
             await this.client.post('/api/auth/refresh');
+            this.isRefreshing = false;
             return this.client(error.config);
           } catch {
-            const { useStore } = await import('@/lib/store');
-            useStore.getState().logout();
+            this.isRefreshing = false;
+            return Promise.reject(error);
           }
         }
         return Promise.reject(error);
