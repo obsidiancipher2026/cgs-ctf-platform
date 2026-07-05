@@ -275,7 +275,7 @@ export const REFRESH_TOKEN_COOKIE = 'refresh_token'
 export const ACCESS_TOKEN_COOKIE = 'access_token'
 
 export function setAuthCookies(response: Response, accessToken: string, refreshToken: string): Response {
-  const baseOptions = 'HttpOnly; SameSite=Strict; Path=/'
+  const baseOptions = 'HttpOnly; SameSite=Lax; Path=/'
   const secureFlag = config.cookie.secure ? '; Secure' : ''
   const accessMaxAge = config.jwt.accessExpireMinutes * 60
   const refreshMaxAge = config.jwt.refreshExpireDays * 86400
@@ -286,7 +286,7 @@ export function setAuthCookies(response: Response, accessToken: string, refreshT
 }
 
 export function clearAuthCookies(response: Response): Response {
-  const baseOptions = 'HttpOnly; SameSite=Strict; Path=/'
+  const baseOptions = 'HttpOnly; SameSite=Lax; Path=/'
   const secureFlag = config.cookie.secure ? '; Secure' : ''
   response.headers.append('Set-Cookie', `${ACCESS_TOKEN_COOKIE}=; Max-Age=0; ${baseOptions}${secureFlag}`)
   response.headers.append('Set-Cookie', `${REFRESH_TOKEN_COOKIE}=; Max-Age=0; ${baseOptions}${secureFlag}`)
