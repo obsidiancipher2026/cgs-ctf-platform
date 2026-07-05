@@ -225,6 +225,7 @@ export default function AdminPage() {
         }
       } else if (err?.response?.status === 401) {
         toast.error('Session expired. Please login again.');
+        localStorage.removeItem('user');
         setAuthenticated(false);
       } else if (err?.response?.status === 403) {
         toast.error(`Access denied: ${detail || 'Forbidden'}`);

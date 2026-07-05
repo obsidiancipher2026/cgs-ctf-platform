@@ -40,24 +40,26 @@ export interface TokenPayload {
 let _jwtVersion: number | null = null
 
 export async function getJwtVersion(): Promise<number> {
-  if (_jwtVersion !== null) return _jwtVersion
   try {
     const row = await prisma.securityConfig.findUnique({ where: { key: 'jwt_version' } })
     if (row) {
-      _jwtVersion = parseInt(row.value, 10) || 1
-    } else {
-      await prisma.securityConfig.create({ data: { key: 'jwt_version', value: '1' } })
-      _jwtVersion = 1
+      const v = parseInt(row.value, 10) || 1
+      _jwtVersion = v
+      return v
     }
-  } catch {
+    await prisma.securityConfig.create({ data: { key: 'jwt_version', value: '1' } })
     _jwtVersion = 1
+    return 1
+  } catch {
+    if (_jwtVersion !== null) return _jwtVersion
+    _jwtVersion = 1
+    return 1
   }
-  return _jwtVersion!
 }
 
 export async function invalidateAllSessions(): Promise<void> {
-  const row = await prisma.securityConfig.findUnique({ where: { key: 'jwt_version' } })
-  const nextVersion = (parseInt(row?.value || '0', 10) + 1) % 1000000
+  const current = await getJwtVersion()
+  const nextVersion = (current + 1) % 1000000
   await prisma.securityConfig.upsert({
     where: { key: 'jwt_version' },
     create: { key: 'jwt_version', value: String(nextVersion) },
