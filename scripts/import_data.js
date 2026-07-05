@@ -34,7 +34,7 @@ async function main() {
 
     // Helper: keep only known scalar fields per model (strip relations & unknown columns)
     const MODEL_FIELDS = {
-      user: ['id','username','email','hashedPassword','passwordPlain','avatarUrl','role','status','isBanned','score','ranking','lastIp','lastLogin','createdAt','updatedAt','teamId','firstName','middleName','lastName','country','college'],
+      user: ['id','username','email','hashedPassword','avatarUrl','role','status','isBanned','score','ranking','lastIp','lastLogin','createdAt','updatedAt','teamId','firstName','middleName','lastName','country','college'],
       team: ['id','name','description','avatarUrl','isBanned','isSuspended','createdAt','updatedAt'],
       challenge: ['id','title','description','category','difficulty','points','flagMode','flag','hint','maxAttempts','isPublished','solverCount','fileUrl','challengeType','bloodPoints','firstBloodUserId','createdAt','updatedAt'],
       submission: ['id','challengeId','userId','teamId','flagProvided','isCorrect','ipAddress','createdAt'],
