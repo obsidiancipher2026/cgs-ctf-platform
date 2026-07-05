@@ -31,6 +31,13 @@ export async function POST(request: Request) {
       return jsonResponse({ detail: 'You must agree to the Terms of Service and Privacy Policy' }, 400)
     }
 
+    if (data.full_name.includes('@')) {
+      return jsonResponse({ detail: 'Full name cannot be an email address' }, 400)
+    }
+    if (data.full_name.trim().length < 2) {
+      return jsonResponse({ detail: 'Full name must be at least 2 characters' }, 400)
+    }
+
     const username = sanitizeText(data.username, 50)
     const email = sanitizeText(data.email, 120)
     const fullName = sanitizeText(data.full_name, 100)

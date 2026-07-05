@@ -31,6 +31,8 @@ export default function RegisterPage() {
     if (!form.agreed_tos) { toast.error('You must agree to the Terms of Service'); return; }
     if (form.password !== form.confirmPassword) { toast.error('Passwords do not match'); return; }
     if (!form.full_name.trim()) { toast.error('Full name is required'); return; }
+    if (form.full_name.includes('@')) { toast.error('Full name cannot be an email address'); return; }
+    if (form.full_name.trim().length < 2) { toast.error('Full name must be at least 2 characters'); return; }
     setLoading(true);
     try {
       const data = await api.register({
@@ -177,8 +179,9 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                <div className="bg-blue-core/10 border border-blue-core/20 rounded-lg px-4 py-3 text-xs text-txt-secondary">
-                  <p><strong>Note:</strong> After registration, your account will be reviewed by an administrator. You will not be able to access the platform until your account is approved.</p>
+                <div className="bg-yellow-500/10 border border-yellow-500/40 rounded-lg px-4 py-3 text-xs text-yellow-200 flex items-start gap-2.5">
+                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                  <p><strong>Admin Approval Required:</strong> After registration, your account will be reviewed by an administrator. You will not be able to access the platform until your account is approved.</p>
                 </div>
 
                 {/* Terms */}

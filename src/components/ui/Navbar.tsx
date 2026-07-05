@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, LogOut, User } from 'lucide-react';
 import { useStore } from '@/lib/store';
@@ -60,7 +60,13 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { user, isAuthenticated, logout } = useStore();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -121,7 +127,7 @@ export default function Navbar() {
                   <span>{user?.username}</span>
                 </Link>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="p-2 text-txt-muted hover:text-red-core transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
                   aria-label="Logout"
                 >
@@ -232,7 +238,7 @@ export default function Navbar() {
                     <div className="text-txt-muted text-xs mt-0.5">{user?.score} pts</div>
                   </Link>
                   <button
-                    onClick={() => { logout(); setIsOpen(false); }}
+                    onClick={() => { handleLogout(); setIsOpen(false); }}
                     className="flex items-center gap-3 px-4 py-3 text-red-core hover:bg-red-dim/20 rounded-lg w-full text-sm font-medium transition-all"
                   >
                     <LogOut className="w-4 h-4" />

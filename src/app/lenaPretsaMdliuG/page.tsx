@@ -278,7 +278,7 @@ export default function AdminPage() {
     if (wsRef.current) { wsRef.current.close(); wsRef.current = null; }
     setAuthenticated(false);
     useStore.getState().logout();
-    router.push('/');
+    router.push('/login');
   };
 
   const handleAdminChangePassword = async () => {

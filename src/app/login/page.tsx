@@ -119,8 +119,9 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="bg-blue-core/10 border border-blue-core/20 rounded-lg px-4 py-3 text-xs text-txt-secondary">
-              <p><strong>Note:</strong> New accounts require admin approval before you can access the platform. You will be notified once your account is approved.</p>
+            <div className="bg-yellow-500/10 border border-yellow-500/40 rounded-lg px-4 py-3 text-xs text-yellow-200 flex items-start gap-2.5">
+              <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+              <p><strong>Admin Approval Required:</strong> New accounts must be approved by an administrator before you can access the platform. You will be notified once your account is approved.</p>
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 text-sm flex items-center justify-center gap-2">
