@@ -16,7 +16,7 @@ function linkify(text: string) {
       const href = part.replace(/[<>"'`]/g, '');
       return (
         <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-          className="text-blue-glow underline decoration-blue-core/30 hover:decoration-blue-core transition-all inline-flex items-center gap-1 font-medium break-all"
+          className="text-aurora-cyan underline decoration-aurora-cyan/30 hover:decoration-aurora-cyan transition-all inline-flex items-center gap-1 font-medium break-all"
         >
           {escapeHtml(part)} <ArrowUpRight className="w-3 h-3 flex-shrink-0" />
         </a>
@@ -24,7 +24,7 @@ function linkify(text: string) {
     }
     if (part.startsWith('/')) {
       const href = part.replace(/[<>"'`]/g, '');
-      return <a key={i} href={href} className="text-blue-glow underline decoration-blue-core/30 hover:decoration-blue-core transition-all font-medium">{escapeHtml(part)}</a>;
+      return <a key={i} href={href} className="text-aurora-cyan underline decoration-aurora-cyan/30 hover:decoration-aurora-cyan transition-all font-medium">{escapeHtml(part)}</a>;
     }
     return escapeHtml(part);
   });
@@ -96,7 +96,7 @@ export default function AnnouncementsPage() {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="w-8 h-8 text-blue-core animate-spin" />
+            <Loader2 className="w-8 h-8 text-aurora-cyan animate-spin" />
           </div>
         ) : announcements.length === 0 ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
@@ -116,11 +116,11 @@ export default function AnnouncementsPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
                   onClick={() => setSelected(a)}
-                  className="w-full text-left card card-lift px-5 py-4 group cursor-pointer gradient-border-left hover:border-[var(--border-accent)] hover:shadow-[0_0_24px_rgba(26,110,255,0.1)] transition-all duration-300"
+                  className="w-full text-left card card-lift px-5 py-4 group cursor-pointer gradient-border-left hover:border-[var(--border-hover)] hover:shadow-[0_0_24px_rgba(124,92,255,0.1)] transition-all duration-300"
                 >
                   <div className="pl-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h2 className="font-body font-semibold text-txt-primary text-sm sm:text-base truncate group-hover:text-blue-glow transition-colors">{a.title}</h2>
+                      <h2 className="font-body font-semibold text-txt-primary text-sm sm:text-base truncate group-hover:text-aurora-cyan transition-colors">{a.title}</h2>
                       <span className="text-[10px] font-mono text-txt-muted whitespace-nowrap">{formatDate(a.created_at)}</span>
                     </div>
                     <p className="text-txt-muted text-xs leading-relaxed line-clamp-2">{extractPreview(a.message)}</p>
@@ -128,7 +128,7 @@ export default function AnnouncementsPage() {
                       <span className="flex items-center gap-1 text-[10px] font-mono text-txt-muted">
                         <Clock className="w-3 h-3" /> {formatTime(a.created_at)}
                       </span>
-                      <span className="text-[10px] font-mono text-blue-core/60 group-hover:text-blue-core transition-colors ml-auto">Read full &rarr;</span>
+                      <span className="text-[10px] font-mono text-aurora-cyan/60 group-hover:text-aurora-cyan transition-colors ml-auto">Read full &rarr;</span>
                     </div>
                   </div>
                 </motion.button>
@@ -137,11 +137,11 @@ export default function AnnouncementsPage() {
 
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-4 mt-8">
-                <button onClick={() => setPage(Math.max(0, clampedPage - 1))} disabled={clampedPage === 0} className="p-2 text-txt-muted hover:text-blue-core disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <button onClick={() => setPage(Math.max(0, clampedPage - 1))} disabled={clampedPage === 0} className="p-2 text-txt-muted hover:text-aurora-cyan disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <span className="font-mono text-xs text-txt-muted">{clampedPage + 1} / {totalPages}</span>
-                <button onClick={() => setPage(Math.min(totalPages - 1, clampedPage + 1))} disabled={clampedPage >= totalPages - 1} className="p-2 text-txt-muted hover:text-blue-core disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <button onClick={() => setPage(Math.min(totalPages - 1, clampedPage + 1))} disabled={clampedPage >= totalPages - 1} className="p-2 text-txt-muted hover:text-aurora-cyan disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>

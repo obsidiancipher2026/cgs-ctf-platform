@@ -40,11 +40,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex">
       {/* Left Brand Panel — quiet supporting context */}
-      <div className="hidden lg:flex lg:w-[35%] relative bg-void items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex lg:w-[35%] relative bg-base items-center justify-center overflow-hidden">
         <div className="panel-grid" />
         <div className="panel-scan" />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(224,32,32,0.04) 0%, transparent 50%, rgba(26,110,255,0.04) 100%)' }} />
-        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-red-core/30 via-border-c to-blue-core/30" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(124,92,255,0.04) 0%, transparent 50%, rgba(34,211,238,0.04) 100%)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-aurora-violet/30 via-border-c to-aurora-cyan/30" />
 
         <div className="relative z-10 text-center px-10 max-w-xs">
           <img src="/images/logo.png" alt="CGS Logo" className="w-12 h-12 mx-auto mb-6 object-contain" />
@@ -113,7 +113,7 @@ export default function LoginPage() {
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-blue-core transition-colors p-1">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-aurora-cyan transition-colors p-1">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -147,7 +147,7 @@ export default function LoginPage() {
 
           <p className="text-center mt-6 text-txt-muted text-xs">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-blue-glow hover:underline">Register here</Link>
+            <Link href="/register" className="text-aurora-cyan hover:underline">Register here</Link>
           </p>
         </motion.div>
       </div>

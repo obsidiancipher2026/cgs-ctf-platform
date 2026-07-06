@@ -32,8 +32,8 @@ function NavLink({ href, label, isActive, onClick }: { href: string; label: stri
       <span
         className={`absolute bottom-0 left-2 right-2 h-[2px] rounded-full transition-all duration-300 ${
           isActive
-            ? 'bg-gradient-to-r from-red-core to-blue-core opacity-100'
-            : 'bg-transparent group-hover:bg-blue-core/40 opacity-0 group-hover:opacity-100'
+            ? 'bg-gradient-to-r from-aurora-violet to-aurora-cyan opacity-100'
+            : 'bg-transparent group-hover:bg-aurora-cyan/40 opacity-0 group-hover:opacity-100'
         }`}
       />
     </Link>
@@ -47,7 +47,7 @@ function MobileNavLink({ href, label, isActive, onClick }: { href: string; label
       onClick={onClick}
       className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
         isActive
-          ? 'text-txt-primary bg-blue-dim/30 gradient-border-left'
+          ? 'text-txt-primary bg-aurora-cyan/20 gradient-border-left'
           : 'text-txt-secondary hover:text-txt-primary hover:bg-surface hover:pl-6'
       }`}
     >
@@ -127,7 +127,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-txt-muted hover:text-red-core transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
+                  className="p-2 text-txt-muted hover:text-aurora-violet transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-cyan rounded"
                   aria-label="Logout"
                 >
                   <LogOut className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function Navbar() {
 
           {/* Mobile Hamburger */}
           <button
-            className="md:hidden p-2 text-txt-secondary hover:text-txt-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow rounded"
+            className="md:hidden p-2 text-txt-secondary hover:text-txt-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-cyan rounded"
             onClick={() => setIsOpen(!isOpen)}
             onKeyDown={handleKeyDown}
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
@@ -191,7 +191,7 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.aside
-            className="fixed top-0 right-0 z-50 max-h-screen w-72 max-w-[85vw] bg-void border-l border-border-c md:hidden flex flex-col"
+            className="fixed top-0 right-0 z-50 max-h-screen w-72 max-w-[85vw] bg-base border-l border-border-c md:hidden flex flex-col"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -207,7 +207,7 @@ export default function Navbar() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 text-txt-muted hover:text-txt-primary rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow"
+                className="p-1.5 text-txt-muted hover:text-txt-primary rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-cyan"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
@@ -238,7 +238,7 @@ export default function Navbar() {
                   </Link>
                   <button
                     onClick={() => { handleLogout(); setIsOpen(false); }}
-                    className="flex items-center gap-3 px-4 py-3 text-red-core hover:bg-red-dim/20 rounded-lg w-full text-sm font-medium transition-all"
+                    className="flex items-center gap-3 px-4 py-3 text-aurora-violet hover:bg-aurora-violet/20 rounded-lg w-full text-sm font-medium transition-all"
                   >
                     <LogOut className="w-4 h-4" />
                     Logout

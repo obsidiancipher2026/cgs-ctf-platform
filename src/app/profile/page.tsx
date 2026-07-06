@@ -62,7 +62,7 @@ export default function ProfilePage() {
   };
 
   if (!mounted || !isAuthenticated || !user) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-blue-core animate-spin" /></div>;
+    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-aurora-cyan animate-spin" /></div>;
   }
 
   return (
@@ -74,7 +74,7 @@ export default function ProfilePage() {
             <div className="absolute inset-0 bg-cyber-grid opacity-20" />
             <div className="relative z-10">
               <div className="flex items-center gap-3 sm:gap-4 mb-4">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-blue-core to-red-core flex items-center justify-center flex-shrink-0">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-aurora-cyan to-aurora-violet flex items-center justify-center flex-shrink-0">
                   <User className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
                 <div className="min-w-0">
@@ -83,20 +83,20 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                <div className="p-3 rounded bg-blue-dim/20 border border-blue-core/10">
-                  <div className="text-blue-glow font-display text-lg font-bold">{user.score}</div>
+                <div className="p-3 rounded bg-aurora-cyan/20 border border-aurora-cyan/10">
+                  <div className="text-aurora-cyan font-display text-lg font-bold">{user.score}</div>
                   <div className="text-txt-muted text-[10px] font-mono">Points</div>
                 </div>
-                <div className="p-3 rounded bg-warning/5 border border-warning/10">
-                  <div className="text-warning font-display text-lg font-bold">#{user.ranking}</div>
+                <div className="p-3 rounded bg-signal-amber/5 border border-signal-amber/10">
+                  <div className="text-signal-amber font-display text-lg font-bold">#{user.ranking}</div>
                   <div className="text-txt-muted text-[10px] font-mono">Rank</div>
                 </div>
-                <div className="p-3 rounded bg-success/5 border border-success/10">
-                  <div className="text-success font-display text-lg font-bold">{solvedCount}</div>
+                <div className="p-3 rounded bg-aurora-emerald/5 border border-aurora-emerald/10">
+                  <div className="text-aurora-emerald font-display text-lg font-bold">{solvedCount}</div>
                   <div className="text-txt-muted text-[10px] font-mono">Solved</div>
                 </div>
-                <div className="p-3 rounded bg-red-dim/20 border border-red-core/10">
-                  <div className="text-red-glow font-display text-lg font-bold">{totalBlood}</div>
+                <div className="p-3 rounded bg-aurora-violet/20 border border-aurora-violet/10">
+                  <div className="text-aurora-violet font-display text-lg font-bold">{totalBlood}</div>
                   <div className="text-txt-muted text-[10px] font-mono">Blood</div>
                 </div>
               </div>
@@ -105,10 +105,10 @@ export default function ProfilePage() {
 
           {/* Tabs */}
           <div className="flex gap-1 mb-6 bg-surface rounded-lg p-0.5 border border-border-c w-fit">
-            <button onClick={() => setActiveTab('progress')} className={`flex items-center gap-1.5 px-4 py-2 rounded text-xs sm:text-sm font-medium transition-all ${activeTab === 'progress' ? 'bg-blue-dim/30 text-blue-glow border border-blue-core/30' : 'text-txt-muted hover:text-txt-secondary'}`}>
+            <button onClick={() => setActiveTab('progress')} className={`flex items-center gap-1.5 px-4 py-2 rounded text-xs sm:text-sm font-medium transition-all ${activeTab === 'progress' ? 'bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30' : 'text-txt-muted hover:text-txt-secondary'}`}>
               <BookOpen className="w-4 h-4" /> Progress
             </button>
-            <button onClick={() => setActiveTab('settings')} className={`flex items-center gap-1.5 px-4 py-2 rounded text-xs sm:text-sm font-medium transition-all ${activeTab === 'settings' ? 'bg-blue-dim/30 text-blue-glow border border-blue-core/30' : 'text-txt-muted hover:text-txt-secondary'}`}>
+            <button onClick={() => setActiveTab('settings')} className={`flex items-center gap-1.5 px-4 py-2 rounded text-xs sm:text-sm font-medium transition-all ${activeTab === 'settings' ? 'bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30' : 'text-txt-muted hover:text-txt-secondary'}`}>
               <Settings className="w-4 h-4" /> Settings
             </button>
           </div>
@@ -117,24 +117,24 @@ export default function ProfilePage() {
             {activeTab === 'progress' ? (
               <motion.div key="progress" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
                 <div className="bg-surface border border-border-c rounded-lg p-5 sm:p-6">
-                  <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><Swords className="w-5 h-5 text-blue-core" /> My Challenge Progress</h2>
+                  <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><Swords className="w-5 h-5 text-aurora-cyan" /> My Challenge Progress</h2>
                   {challenges.length > 0 && (
                     <div className="mb-5">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-txt-secondary text-xs">Overall Progress</span>
-                        <span className="text-blue-glow font-display text-sm font-bold">{Math.round((solvedCount / challenges.length) * 100)}%</span>
+                        <span className="text-aurora-cyan font-display text-sm font-bold">{Math.round((solvedCount / challenges.length) * 100)}%</span>
                       </div>
-                      <div className="h-3 rounded-full bg-surface-2 overflow-hidden border border-border-c">
-                        <div className="h-full rounded-full bg-gradient-to-r from-blue-core to-success transition-all duration-500" style={{ width: `${(solvedCount / challenges.length) * 100}%` }} />
+                      <div className="h-3 rounded-full bg-surface-raised overflow-hidden border border-border-c">
+                        <div className="h-full rounded-full bg-gradient-to-r from-aurora-cyan to-aurora-emerald transition-all duration-500" style={{ width: `${(solvedCount / challenges.length) * 100}%` }} />
                       </div>
                       <div className="flex justify-between mt-1">
-                        <span className="text-success text-[10px] font-mono">{solvedCount} solved</span>
+                        <span className="text-aurora-emerald text-[10px] font-mono">{solvedCount} solved</span>
                         <span className="text-txt-muted text-[10px] font-mono">{challenges.length - solvedCount} remaining</span>
                       </div>
                     </div>
                   )}
                   {loading ? (
-                    <div className="space-y-2">{[1, 2, 3].map(i => <div key={i} className="h-10 bg-surface-2 rounded animate-pulse" />)}</div>
+                    <div className="space-y-2">{[1, 2, 3].map(i => <div key={i} className="h-10 bg-surface-raised rounded animate-pulse" />)}</div>
                   ) : challenges.length === 0 ? (
                     <div className="text-center py-8 text-txt-secondary text-sm">No challenges available</div>
                   ) : (
@@ -142,17 +142,17 @@ export default function ProfilePage() {
                       {challenges.map((c: any) => {
                         const solved = mySubmissions.some((s: any) => s.challenge_id === c.id && s.is_correct);
                         return (
-                          <div key={c.id} className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-all ${solved ? 'bg-success/5 border-success/20' : 'bg-surface-2 border-border-c/30'}`}>
+                          <div key={c.id} className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-all ${solved ? 'bg-aurora-emerald/5 border-success/20' : 'bg-surface-raised border-border-c/30'}`}>
                             <div className="flex items-center gap-3 min-w-0">
-                              {solved ? <CheckCircle className="w-4 h-4 text-success flex-shrink-0" /> : <Circle className="w-4 h-4 text-txt-muted flex-shrink-0" />}
+                              {solved ? <CheckCircle className="w-4 h-4 text-aurora-emerald flex-shrink-0" /> : <Circle className="w-4 h-4 text-txt-muted flex-shrink-0" />}
                               <div className="min-w-0">
                                 <span className={`text-sm truncate block ${solved ? 'text-txt-primary' : 'text-txt-secondary'}`}>{c.title}</span>
                                 <span className="text-[10px] font-mono text-txt-muted">{c.category} · {c.difficulty}</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
-                              {c.blood_points > 0 && solved && <Droplet className="w-3 h-3 text-red-glow" />}
-                              <span className={`font-display text-xs ${solved ? 'text-success' : 'text-txt-muted'}`}>{c.points}pts</span>
+                              {c.blood_points > 0 && solved && <Droplet className="w-3 h-3 text-aurora-violet" />}
+                              <span className={`font-display text-xs ${solved ? 'text-aurora-emerald' : 'text-txt-muted'}`}>{c.points}pts</span>
                             </div>
                           </div>
                         );
@@ -164,7 +164,7 @@ export default function ProfilePage() {
             ) : (
               <motion.div key="settings" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
                 <div className="bg-surface border border-border-c rounded-lg p-5 sm:p-6">
-                  <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><Settings className="w-5 h-5 text-blue-core" /> Profile Settings</h2>
+                  <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><Settings className="w-5 h-5 text-aurora-cyan" /> Profile Settings</h2>
                   <form onSubmit={handleUpdateProfile} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div><label className="block text-txt-secondary text-xs mb-2">Username</label><input type="text" value={settingsForm.username} onChange={(e) => setSettingsForm({ ...settingsForm, username: e.target.value })} className="input-field w-full px-4 py-3 text-sm" required minLength={3} /></div>
@@ -179,8 +179,8 @@ export default function ProfilePage() {
                   </form>
                 </div>
 
-                <div className="bg-surface border border-warning/20 rounded-lg p-5 sm:p-6">
-                  <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><KeyRound className="w-5 h-5 text-warning" /> Change Password</h2>
+                <div className="bg-surface border border-signal-amber/20 rounded-lg p-5 sm:p-6">
+                  <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><KeyRound className="w-5 h-5 text-signal-amber" /> Change Password</h2>
                   <p className="text-txt-muted text-xs mb-4">Password changes require admin approval.</p>
                   <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
                     <div><label className="block text-txt-secondary text-xs mb-2">Current Password</label><input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })} className="input-field w-full px-4 py-3 text-sm" required /></div>
@@ -188,11 +188,11 @@ export default function ProfilePage() {
                       <label className="block text-txt-secondary text-xs mb-2">New Password</label>
                       <div className="relative">
                         <input type={showNewPassword ? 'text' : 'password'} value={passwordForm.newPassword} onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} className="input-field w-full px-4 py-3 text-sm pr-12" required minLength={6} />
-                        <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-blue-core">{showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button>
+                        <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-aurora-cyan">{showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button>
                       </div>
                     </div>
                     <div><label className="block text-txt-secondary text-xs mb-2">Confirm New Password</label><input type={showNewPassword ? 'text' : 'password'} value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} className="input-field w-full px-4 py-3 text-sm" required minLength={6} /></div>
-                    <button type="submit" disabled={passwordLoading} className="px-6 py-3 rounded bg-warning/10 border border-warning/30 text-warning text-sm font-medium hover:bg-warning/20 transition-all flex items-center gap-2 disabled:opacity-50">
+                    <button type="submit" disabled={passwordLoading} className="px-6 py-3 rounded bg-signal-amber/10 border border-signal-amber/30 text-signal-amber text-sm font-medium hover:bg-signal-amber/20 transition-all flex items-center gap-2 disabled:opacity-50">
                       {passwordLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                       {passwordLoading ? 'Submitting...' : 'Request Password Change'}
                     </button>

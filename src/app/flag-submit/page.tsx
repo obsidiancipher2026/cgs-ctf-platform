@@ -89,7 +89,7 @@ export default function FlagSubmitPage() {
   if (!mounted || !isAuthenticated || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-core animate-spin" />
+        <Loader2 className="w-8 h-8 text-aurora-cyan animate-spin" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function FlagSubmitPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="font-display text-2xl sm:text-3xl text-txt-primary flex items-center gap-3 font-bold">
-              <Flag className="w-6 h-6 sm:w-8 sm:h-8 text-red-core" />
+              <Flag className="w-6 h-6 sm:w-8 sm:h-8 text-aurora-violet" />
               Flag Submit
             </h1>
             <p className="text-txt-muted font-mono text-xs sm:text-sm mt-1">
@@ -195,7 +195,7 @@ export default function FlagSubmitPage() {
                         className={`relative w-full max-w-sm rounded-xl p-8 border ${
                           result.correct
                             ? 'bg-surface border-green-500/30'
-                            : 'bg-surface border-red-core/30'
+                            : 'bg-surface border-aurora-violet/30'
                         }`}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -212,19 +212,19 @@ export default function FlagSubmitPage() {
                               <CheckCircle className="w-10 h-10 text-green-400" />
                             </div>
                           ) : (
-                            <div className="w-16 h-16 rounded-full bg-red-core/10 flex items-center justify-center mb-4">
-                              <XCircle className="w-10 h-10 text-red-core" />
+                            <div className="w-16 h-16 rounded-full bg-aurora-violet/10 flex items-center justify-center mb-4">
+                              <XCircle className="w-10 h-10 text-aurora-violet" />
                             </div>
                           )}
 
                           <h3 className={`font-display text-xl mb-2 ${
-                            result.correct ? 'text-green-400' : 'text-red-core'
+                            result.correct ? 'text-green-400' : 'text-aurora-violet'
                           }`}>
                             {result.correct ? 'CORRECT FLAG' : 'INCORRECT FLAG'}
                           </h3>
 
                           <p className={`font-mono text-sm mb-4 ${
-                            result.correct ? 'text-green-400/80' : 'text-red-core/80'
+                            result.correct ? 'text-green-400/80' : 'text-aurora-violet/80'
                           }`}>
                             {result.message}
                           </p>
@@ -247,7 +247,7 @@ export default function FlagSubmitPage() {
                             className={`mt-2 px-6 py-2 rounded-lg font-display text-xs border transition-colors ${
                               result.correct
                                 ? 'border-green-500/30 text-green-400 hover:bg-green-500/10'
-                                : 'border-red-core/30 text-red-core hover:bg-red-core/10'
+                                : 'border-aurora-violet/30 text-aurora-violet hover:bg-aurora-violet/10'
                             }`}
                           >
                             CLOSE
@@ -288,7 +288,7 @@ export default function FlagSubmitPage() {
                         <div className="flex items-center gap-3 min-w-0">
                           {sub.is_correct
                             ? <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-                            : <XCircle className="w-4 h-4 text-red-core flex-shrink-0" />
+                            : <XCircle className="w-4 h-4 text-aurora-violet flex-shrink-0" />
                           }
                           <span className="font-mono text-sm text-txt-secondary truncate">
                             {sub.challenge_title || `Challenge #${sub.challenge_id}`}

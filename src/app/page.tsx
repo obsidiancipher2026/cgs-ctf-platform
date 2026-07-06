@@ -116,8 +116,8 @@ export default function Home() {
       <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
         <div className="absolute inset-0 bg-cyber-grid opacity-30" />
         <div className="absolute inset-0 opacity-15 pointer-events-none"><NetworkParticles /></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-core/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-core/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-aurora-violet/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-aurora-cyan/5 rounded-full blur-3xl" />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
@@ -127,7 +127,7 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-border-c bg-surface mb-8"
             >
-              <span className="w-2 h-2 rounded-full bg-red-core animate-blink" />
+              <span className="w-2 h-2 rounded-full bg-aurora-violet animate-blink" />
               <span className="text-txt-secondary text-xs font-mono uppercase tracking-widest">Season 2026 &middot; Registration Open</span>
             </motion.div>
 
@@ -137,7 +137,7 @@ export default function Home() {
             </h1>
 
             {/* Sub-headline */}
-            <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl mb-6" style={{ background: 'linear-gradient(90deg, #E02020, #1A6EFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl mb-6" style={{ background: 'linear-gradient(90deg, #7C5CFF, #22D3EE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Capture. Exploit. Defend.
             </h2>
 
@@ -165,14 +165,14 @@ export default function Home() {
             className="absolute bottom-8 left-1/2 -translate-x-1/2"
           >
             <div className="w-5 h-8 border-2 border-border-c rounded-full flex justify-center pt-1.5">
-              <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-1 h-1 bg-blue-core rounded-full" />
+              <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-1 h-1 bg-aurora-cyan rounded-full" />
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Dual-beam divider */}
-      <div className="dual-beam" />
+      <div className="aurora-divider" />
 
       {/* Security Features */}
       <section className="py-16 sm:py-20 px-4 bg-surface">
@@ -191,10 +191,10 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className={`card card-lift p-6 border-l-2 ${feat.side === 'red' ? 'border-l-red-core' : 'border-l-blue-core'}`}
+                  className={`card card-lift p-6 border-l-2 ${feat.side === 'red' ? 'border-l-aurora-violet' : 'border-l-aurora-cyan'}`}
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${feat.side === 'red' ? 'bg-red-dim/30' : 'bg-blue-dim/30'}`}>
-                    <Icon className={`w-5 h-5 ${feat.side === 'red' ? 'text-red-glow' : 'text-blue-glow'}`} />
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${feat.side === 'red' ? 'bg-aurora-violet/20' : 'bg-aurora-cyan/20'}`}>
+                    <Icon className={`w-5 h-5 ${feat.side === 'red' ? 'text-aurora-violet' : 'text-aurora-cyan'}`} />
                   </div>
                   <h3 className="font-body font-semibold text-txt-primary text-sm mb-1">{feat.title}</h3>
                   <p className="text-txt-secondary text-xs leading-relaxed">{feat.desc}</p>
@@ -225,7 +225,7 @@ export default function Home() {
                   className="card card-lift glitch-hover block p-6 text-center group"
                 >
                   <div className="text-3xl mb-3">{cat.icon}</div>
-                  <h3 className="font-body font-semibold text-txt-primary text-sm mb-1 group-hover:text-red-glow transition-colors">{cat.name}</h3>
+                  <h3 className="font-body font-semibold text-txt-primary text-sm mb-1 group-hover:text-aurora-violet transition-colors">{cat.name}</h3>
                   <p className="text-txt-muted text-xs">{cat.desc}</p>
                 </Link>
               </motion.div>

@@ -13,11 +13,11 @@ const pillars = [
 ];
 
 const rules = [
-  { icon: Flag, title: 'Flag Format', desc: 'All flags follow the format CGS{...}. Submit the exact flag to earn points for a challenge.', color: 'text-red-core' },
+  { icon: Flag, title: 'Flag Format', desc: 'All flags follow the format CGS{...}. Submit the exact flag to earn points for a challenge.', color: 'text-aurora-violet' },
   { icon: Trophy, title: 'Scoring', desc: 'Points are awarded per challenge based on difficulty. Easy=25, Medium=50, Hard=75, Expert=100 bonus blood points.', color: 'text-green-400' },
   { icon: Eye, title: 'No Sharing', desc: 'Do not share flags, solutions, or hints with other players. Collusion will result in disqualification.', color: 'text-yellow-400' },
   { icon: Lock, title: 'Fair Play', desc: 'Only use the provided platform. Do not attack the infrastructure, other users\' accounts, or attempt to bypass security.', color: 'text-purple-400' },
-  { icon: CheckCircle, title: 'Account Rules', desc: 'One account per person. Multiple accounts will be banned. Keep your credentials secure and do not share access.', color: 'text-blue-core' },
+  { icon: CheckCircle, title: 'Account Rules', desc: 'One account per person. Multiple accounts will be banned. Keep your credentials secure and do not share access.', color: 'text-aurora-cyan' },
   { icon: AlertTriangle, title: 'Respect', desc: 'Be respectful to all community members. Harassment, hate speech, or toxic behavior results in immediate removal.', color: 'text-orange-400' },
 ];
 
@@ -94,7 +94,7 @@ function NetworkParticles() {
         if (p.y > h) p.y = 0;
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx!.fillStyle = 'rgba(26, 110, 255, 0.15)';
+        ctx!.fillStyle = 'rgba(124,92,255, 0.15)';
         ctx!.fill();
       }
       for (let i = 0; i < particles.length; i++) {
@@ -106,7 +106,7 @@ function NetworkParticles() {
             ctx!.beginPath();
             ctx!.moveTo(particles[i].x, particles[i].y);
             ctx!.lineTo(particles[j].x, particles[j].y);
-            ctx!.strokeStyle = `rgba(26, 110, 255, ${0.06 * (1 - dist / 140)})`;
+            ctx!.strokeStyle = `rgba(124,92,255, ${0.06 * (1 - dist / 140)})`;
             ctx!.lineWidth = 0.5;
             ctx!.stroke();
           }
@@ -167,8 +167,8 @@ export default function About() {
             Cyber Guardians Society is a community-driven cybersecurity platform built for students, by students. We believe the best way to learn security is through hands-on practice — solving real challenges, finding hidden flags, and growing together.
           </p>
           <div className="flex items-center justify-center gap-3 mt-6">
-            <span className="chip chip-red">Founded 2024</span>
-            <span className="chip chip-blue">Community First</span>
+            <span className="chip chip-violet">Founded 2024</span>
+            <span className="chip chip-cyan">Community First</span>
           </div>
         </motion.div>
 
@@ -190,8 +190,8 @@ export default function About() {
               className={`card card-lift p-5 gradient-border-left`}
             >
               <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg ${p.accent === 'red' ? 'bg-red-core/10' : 'bg-blue-core/10'}`}>
-                  <p.icon className={`w-5 h-5 ${p.accent === 'red' ? 'text-red-core' : 'text-blue-core'}`} />
+                <div className={`p-2 rounded-lg ${p.accent === 'red' ? 'bg-aurora-violet/10' : 'bg-aurora-cyan/10'}`}>
+                  <p.icon className={`w-5 h-5 ${p.accent === 'red' ? 'text-aurora-violet' : 'text-aurora-cyan'}`} />
                 </div>
                 <div>
                   <h2 className="font-display font-bold text-txt-primary text-lg mb-1">{p.title}</h2>
@@ -289,8 +289,8 @@ export default function About() {
                 {/* Bio overlay on hover */}
                 <div className="founder-bio-overlay hidden sm:block">
                   <div className="flex flex-wrap gap-2 justify-center text-[11px]">
-                    <span className="chip chip-red">Dept: {founderData.department}</span>
-                    <span className="chip chip-blue">Exp: {founderData.experience}</span>
+                    <span className="chip chip-violet">Dept: {founderData.department}</span>
+                    <span className="chip chip-cyan">Exp: {founderData.experience}</span>
                   </div>
                 </div>
               </div>

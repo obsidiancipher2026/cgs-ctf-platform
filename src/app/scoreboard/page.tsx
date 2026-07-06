@@ -9,7 +9,7 @@ import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 const rankMeta = [
-  { color: 'text-warning', glow: 'rgba(255,184,0,0.15)', label: '1st' },
+  { color: 'text-signal-amber', glow: 'rgba(255,184,0,0.15)', label: '1st' },
   { color: 'text-txt-secondary', glow: 'rgba(122,156,192,0.12)', label: '2nd' },
   { color: 'text-orange-500', glow: 'rgba(249,115,22,0.12)', label: '3rd' },
 ];
@@ -72,7 +72,7 @@ export default function ScoreboardPage() {
   }, [filteredEntries, filteredTeams, tab]);
 
   if (!mounted || !isAuthenticated || !user) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-blue-core animate-spin" /></div>;
+    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-aurora-cyan animate-spin" /></div>;
   }
 
   return (
@@ -82,15 +82,15 @@ export default function ScoreboardPage() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
             <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-warning" />
+              <Trophy className="w-5 h-5 text-signal-amber" />
               <h1 className="font-display font-bold text-xl sm:text-2xl text-txt-primary">Leaderboard</h1>
               <span className="flex items-center gap-1 text-txt-muted text-xs ml-2">
-                <Zap className="w-3 h-3 text-success" /> LIVE
+                <Zap className="w-3 h-3 text-aurora-emerald" /> LIVE
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-txt-secondary text-xs"><Users className="w-3 h-3 inline mr-1" />{tab === 'individual' ? totalCount : teamTotalCount}</span>
-              <button onClick={() => loadScoreboard()} className="p-1.5 text-txt-muted hover:text-blue-core transition-colors" aria-label="Refresh">
+              <button onClick={() => loadScoreboard()} className="p-1.5 text-txt-muted hover:text-aurora-cyan transition-colors" aria-label="Refresh">
                 <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               </button>
             </div>
@@ -103,7 +103,7 @@ export default function ScoreboardPage() {
                 <button key={t} onClick={() => {
                   if (t === 'team') { toast('Team scoring coming soon!', { icon: '🏆', duration: 3000 }); return; }
                   setTab(t);
-                }} className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${tab === t ? 'bg-blue-dim/30 text-blue-glow border border-blue-core/30' : 'text-txt-muted hover:text-txt-secondary'}`}>
+                }} className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${tab === t ? 'bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30' : 'text-txt-muted hover:text-txt-secondary'}`}>
                   {t === 'individual' ? <User className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />}
                   {t === 'individual' ? 'Individual' : 'Team'}
                 </button>
@@ -118,7 +118,7 @@ export default function ScoreboardPage() {
 
         {loading ? (
           <div className="space-y-2">
-            {[1, 2, 3, 4, 5].map((i) => <div key={i} className="bg-surface border border-border-c rounded-lg p-3 sm:p-4 animate-pulse"><div className="h-4 bg-surface-2 rounded w-1/3" /></div>)}
+            {[1, 2, 3, 4, 5].map((i) => <div key={i} className="bg-surface border border-border-c rounded-lg p-3 sm:p-4 animate-pulse"><div className="h-4 bg-surface-raised rounded w-1/3" /></div>)}
           </div>
         ) : (tab === 'individual' ? filteredEntries : filteredTeams).length === 0 ? (
           <div className="text-center py-12 text-txt-secondary text-sm">{search ? 'No results match your search' : 'No scores yet. Be the first!'}</div>
@@ -152,7 +152,7 @@ export default function ScoreboardPage() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.02 }}
                       className={`relative rounded-lg transition-all duration-200 ${
-                        isCurrentUser ? 'bg-blue-dim/20 border border-blue-core/30' : isTop3 ? 'bg-surface border border-border-c' : 'bg-surface border border-border-c/50 hover:border-border-c'
+                        isCurrentUser ? 'bg-aurora-cyan/20 border border-aurora-cyan/30' : isTop3 ? 'bg-surface border border-border-c' : 'bg-surface border border-border-c/50 hover:border-border-c'
                       }`}
                       style={isTop3 ? { boxShadow: `0 0 15px ${top!.glow}` } : {}}
                     >
@@ -168,9 +168,9 @@ export default function ScoreboardPage() {
                         <div className="min-w-0 truncate">
                           {tab === 'individual' ? (
                             <div>
-                              <span className={`text-[11px] sm:text-sm font-mono truncate block ${isCurrentUser ? 'text-blue-glow' : 'text-txt-primary'}`}>
+                              <span className={`text-[11px] sm:text-sm font-mono truncate block ${isCurrentUser ? 'text-aurora-cyan' : 'text-txt-primary'}`}>
                                 {entry.username}
-                                {isCurrentUser && <span className="text-[10px] text-blue-core ml-0.5">(you)</span>}
+                                {isCurrentUser && <span className="text-[10px] text-aurora-cyan ml-0.5">(you)</span>}
                                 {entry.team_name && <span className="text-[10px] text-txt-muted ml-1 hidden sm:inline">[{entry.team_name}]</span>}
                               </span>
                               <span className="text-[8px] text-txt-muted font-mono truncate block sm:hidden">{entry.country || '-'}{entry.country && entry.college ? ' · ' : ''}{entry.college || ''}</span>
@@ -180,10 +180,10 @@ export default function ScoreboardPage() {
                           )}
                         </div>
                         {tab === 'individual' && <span className="text-txt-muted font-mono text-[11px] sm:text-xs text-center w-10 sm:w-12">{entry.solved_count ?? 0}</span>}
-                        {tab === 'individual' && <span className="text-red-glow font-mono text-[11px] sm:text-xs text-center w-12 sm:w-14"><Droplet className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline -mt-0.5 mr-px sm:mr-0.5" />{entry.blood_points ?? 0}</span>}
+                        {tab === 'individual' && <span className="text-aurora-violet font-mono text-[11px] sm:text-xs text-center w-12 sm:w-14"><Droplet className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline -mt-0.5 mr-px sm:mr-0.5" />{entry.blood_points ?? 0}</span>}
                         {tab === 'individual' && <span className="text-txt-secondary font-mono text-[11px] sm:text-xs text-center w-20 truncate hidden sm:block">{entry.country || '-'}</span>}
                         {tab === 'individual' && <span className="text-txt-secondary font-mono text-[11px] sm:text-xs text-center w-28 truncate hidden sm:block">{entry.college || '-'}</span>}
-                        <span className="font-display font-bold text-blue-glow text-[11px] sm:text-sm whitespace-nowrap text-right w-16 sm:w-20">{score}<span className="text-[9px] sm:text-[10px] font-mono text-txt-muted font-normal ml-px sm:ml-0.5">pts</span></span>
+                        <span className="font-display font-bold text-aurora-cyan text-[11px] sm:text-sm whitespace-nowrap text-right w-16 sm:w-20">{score}<span className="text-[9px] sm:text-[10px] font-mono text-txt-muted font-normal ml-px sm:ml-0.5">pts</span></span>
                       </div>
                     </motion.div>
                   );

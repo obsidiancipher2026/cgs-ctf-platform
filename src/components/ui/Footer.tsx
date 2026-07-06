@@ -12,9 +12,9 @@ const quickLinks = [
 ];
 
 const socialLinks = [
-  { href: 'https://www.linkedin.com/in/shayanahmedmughal', icon: Linkedin, label: 'LinkedIn', hoverColor: 'hover:text-blue-glow' },
-  { href: 'https://chat.whatsapp.com/DUvTs6TiEEj2CwTfG7eG9n', icon: MessageCircle, label: 'WhatsApp', hoverColor: 'hover:text-success' },
-  { href: 'mailto:cyberguardianssociety@gmail.com', icon: Mail, label: 'Email', hoverColor: 'hover:text-blue-glow' },
+  { href: 'https://www.linkedin.com/in/shayanahmedmughal', icon: Linkedin, label: 'LinkedIn', hoverColor: 'hover:text-aurora-cyan' },
+  { href: 'https://chat.whatsapp.com/DUvTs6TiEEj2CwTfG7eG9n', icon: MessageCircle, label: 'WhatsApp', hoverColor: 'hover:text-aurora-emerald' },
+  { href: 'mailto:cyberguardianssociety@gmail.com', icon: Mail, label: 'Email', hoverColor: 'hover:text-aurora-cyan' },
 ];
 
 export default function Footer() {
@@ -26,7 +26,7 @@ export default function Footer() {
           {/* Brand + Social */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Shield className="w-5 h-5 text-red-core" />
+              <Shield className="w-5 h-5 text-aurora-violet" />
               <span className="font-display font-bold text-sm text-txt-primary tracking-wide">CGS CTF</span>
             </div>
             <p className="text-txt-muted text-xs leading-relaxed mb-5">
@@ -39,7 +39,7 @@ export default function Footer() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-lg bg-surface border border-border-c text-txt-muted ${s.hoverColor} transition-all duration-200 hover:border-[var(--border-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-glow`}
+                  className={`p-2.5 rounded-lg bg-surface border border-border-c text-txt-muted ${s.hoverColor} transition-all duration-200 hover:border-[var(--border-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-cyan`}
                   aria-label={s.label}
                 >
                   <s.icon className="w-4 h-4" />
@@ -56,7 +56,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-txt-muted text-xs hover:text-blue-glow transition-colors w-fit"
+                  className="text-txt-muted text-xs hover:text-aurora-cyan transition-colors w-fit"
                 >
                   {link.label}
                 </Link>

@@ -485,19 +485,19 @@ export default function AdminPage() {
 
   if (authChecking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--void)]">
-        <Loader2 className="w-8 h-8 text-[var(--blue-core)] animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-base)]">
+        <Loader2 className="w-8 h-8 text-[var(--aurora-cyan)] animate-spin" />
       </div>
     );
   }
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex bg-[var(--void)]">
+      <div className="min-h-screen flex bg-[var(--bg-base)]">
         <div className="hidden lg:flex lg:w-[45%] relative flex-col items-center justify-center p-12 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)] via-[var(--void)] to-[var(--surface-2)]" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--red-core)] to-transparent opacity-40" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--blue-core)] to-transparent opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--bg-surface)] via-[var(--bg-base)] to-[var(--bg-elevated)]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--aurora-violet)] to-transparent opacity-40" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-[var(--aurora-cyan)] to-transparent opacity-40" />
           <div className="relative z-10 text-center max-w-sm">
             <img src="/images/logo.png" alt="CGS" className="w-20 h-20 mx-auto mb-6 object-contain" />
             <h2 className="font-display text-3xl font-bold text-txt-primary mb-3 tracking-tight">CGS CTF Platform</h2>
@@ -509,8 +509,8 @@ export default function AdminPage() {
                 { icon: Swords, text: 'Challenge lifecycle management' },
                 { icon: Radio, text: 'Live competition control' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
-                  <item.icon className="w-4 h-4 text-[var(--blue-core)] flex-shrink-0" />
+                <div key={i} className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border)]">
+                  <item.icon className="w-4 h-4 text-[var(--aurora-cyan)] flex-shrink-0" />
                   <span className="text-txt-secondary font-mono text-xs">{item.text}</span>
                 </div>
               ))}
@@ -530,7 +530,7 @@ export default function AdminPage() {
 
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-5 h-5 text-[var(--red-core)]" />
+                <Shield className="w-5 h-5 text-[var(--aurora-violet)]" />
                 <h1 className="font-display text-xl font-bold text-txt-primary">Admin Access</h1>
               </div>
               <p className="text-txt-muted font-mono text-sm">Authenticate to access the control center</p>
@@ -568,7 +568,7 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={authChecking}
-                className="w-full py-3 rounded-lg bg-[var(--red-core)] text-white font-display font-semibold text-sm uppercase tracking-widest hover:bg-[var(--red-glow)] hover:shadow-[0_0_20px_rgba(224,32,32,0.3)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg bg-[var(--aurora-violet)] text-white font-display font-semibold text-sm uppercase tracking-widest hover:bg-[var(--aurora-violet)] hover:shadow-[0_0_20px_rgba(124,92,255,0.3)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
               >
                 {authChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
                 {authChecking ? 'Authenticating...' : 'Authenticate'}
@@ -576,7 +576,7 @@ export default function AdminPage() {
             </form>
 
             <div className="mt-6 pt-6 border-t border-[var(--border)]">
-              <button onClick={() => router.push('/login')} className="w-full py-2.5 rounded-lg bg-transparent border border-[var(--blue-core)] text-[var(--blue-core)] font-display font-semibold text-sm uppercase tracking-wider hover:bg-[rgba(26,110,255,0.1)] transition-all flex items-center justify-center gap-2">
+              <button onClick={() => router.push('/login')} className="w-full py-2.5 rounded-lg bg-transparent border border-[var(--aurora-cyan)] text-[var(--aurora-cyan)] font-display font-semibold text-sm uppercase tracking-wider hover:bg-[rgba(34,211,238,0.1)] transition-all flex items-center justify-center gap-2">
                 Back to User Login
               </button>
             </div>
@@ -586,13 +586,13 @@ export default function AdminPage() {
     );
   }
 
-  return (<div className="bg-[var(--void)] min-h-screen">
+  return (<div className="bg-[var(--bg-base)] min-h-screen">
     <div className="py-4 sm:py-6 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <button
-            className="relative p-2 text-txt-secondary hover:text-[var(--blue-core)] transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(26,110,255,0.5)] rounded-lg group"
+            className="relative p-2 text-txt-secondary hover:text-[var(--aurora-cyan)] transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(34,211,238,0.5)] rounded-lg group"
             onClick={() => setSidebarVisible(prev => !prev)}
             title={sidebarVisible ? 'Close sidebar' : 'Open sidebar'}
           >
@@ -610,7 +610,7 @@ export default function AdminPage() {
           <h1 className="font-display font-bold text-xl sm:text-2xl text-txt-primary flex-1 min-w-0 truncate">
             Command & Control Center
           </h1>
-          <button onClick={handleLogout} className="p-2 text-txt-secondary hover:text-[var(--red-core)] transition-colors rounded-lg hover:bg-[rgba(224,32,32,0.05)]" title="Logout">
+          <button onClick={handleLogout} className="p-2 text-txt-secondary hover:text-[var(--aurora-violet)] transition-colors rounded-lg hover:bg-[rgba(124,92,255,0.05)]" title="Logout">
             <LogOut className="w-5 h-5" />
           </button>
         </div>
@@ -637,11 +637,11 @@ export default function AdminPage() {
               lg:relative lg:flex-shrink-0 lg:transition-[width] lg:duration-300 lg:ease-in-out
               lg:bg-transparent lg:border-0
               fixed lg:static inset-y-0 left-0 z-50
-              bg-[var(--surface)] border-r border-[rgba(26,110,255,0.1)]
+              bg-[var(--bg-surface)] border-r border-[rgba(34,211,238,0.1)]
               overflow-y-auto overflow-x-hidden
               transition-all duration-300 ease-in-out
               ${sidebarVisible ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-              ${sidebarVisible ? 'shadow-[2px_0_20px_rgba(26,110,255,0.08)]' : ''}
+              ${sidebarVisible ? 'shadow-[2px_0_20px_rgba(34,211,238,0.08)]' : ''}
             `}
           >
             <div className={`w-48 lg:w-full flex flex-col gap-1 p-3 pt-3 ${sidebarVisible ? '' : 'lg:hidden'}`}>
@@ -653,8 +653,8 @@ export default function AdminPage() {
                     onClick={() => { handleTabChange(tab.id); if (window.innerWidth < 1024) setSidebarVisible(false); }}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-mono text-xs sm:text-sm transition-all duration-200 text-left whitespace-nowrap ${
                       activeTab === tab.id
-                        ? 'bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] border border-[rgba(26,110,255,0.2)] shadow-[0_0_15px_rgba(26,110,255,0.1)]'
-                        : 'text-txt-secondary hover:text-txt-primary hover:bg-[rgba(26,110,255,0.05)] border border-transparent'
+                        ? 'bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] border border-[rgba(34,211,238,0.2)] shadow-[0_0_15px_rgba(34,211,238,0.1)]'
+                        : 'text-txt-secondary hover:text-txt-primary hover:bg-[rgba(34,211,238,0.05)] border border-transparent'
                     }`}
                   >
                     <Icon className="w-4 h-4 flex-shrink-0" />
@@ -669,7 +669,7 @@ export default function AdminPage() {
           <div className="flex-1 min-w-0 transition-all duration-300">
             {tabLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 text-[var(--blue-core)] animate-spin" />
+                <Loader2 className="w-8 h-8 text-[var(--aurora-cyan)] animate-spin" />
               </div>
             ) : (
               <AnimatePresence mode="wait">
@@ -685,9 +685,9 @@ export default function AdminPage() {
                       {dashboard && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                           {[
-                            { label: 'Users', value: dashboard.total_users, icon: Users, color: 'var(--blue-core)' },
+                            { label: 'Users', value: dashboard.total_users, icon: Users, color: 'var(--aurora-cyan)' },
                             { label: 'Challenges', value: dashboard.total_challenges || 0, icon: Swords, color: '#A03CFF' },
-                            { label: 'Suspicious Logs', value: dashboard.suspicious_logs, icon: Activity, color: 'var(--red-glow)' },
+                            { label: 'Suspicious Logs', value: dashboard.suspicious_logs, icon: Activity, color: 'var(--aurora-violet)' },
                           ].map((item, i) => {
                             const Icon = item.icon;
                             return (
@@ -702,9 +702,9 @@ export default function AdminPage() {
                           })}
                         </div>
                       )}
-                      <div className="card rounded-xl p-6 border border-[rgba(224,32,32,0.2)]">
+                      <div className="card rounded-xl p-6 border border-[rgba(124,92,255,0.2)]">
                         <div className="flex items-center gap-2 mb-5">
-                          <AlertTriangle className="w-5 h-5 text-[var(--red-core)]" />
+                          <AlertTriangle className="w-5 h-5 text-[var(--aurora-violet)]" />
                           <h3 className="font-display text-txt-primary text-lg">Danger Zone</h3>
                         </div>
 
@@ -714,7 +714,7 @@ export default function AdminPage() {
                             <RefreshCw className="w-3 h-3" /> Competition Actions
                           </h4>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button onClick={handleReset} className="px-4 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-core)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
+                            <button onClick={handleReset} className="px-4 py-3 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center justify-center gap-2">
                               <RefreshCw className="w-4 h-4" /> Reset Competition
                             </button>
                             <button onClick={async () => {
@@ -737,7 +737,7 @@ export default function AdminPage() {
                               if (!confirm('Reset ALL blood points across all challenges? This cannot be undone.')) return;
                               try { await api.resetAllBlood(); toast.success('All blood points reset'); loadTabData('dashboard'); }
                               catch { toast.error('Failed to reset blood points'); }
-                            }} className="px-4 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center justify-center gap-2">
                               <Droplet className="w-4 h-4" /> Reset All Blood Points
                             </button>
                             <button onClick={async () => {
@@ -749,7 +749,7 @@ export default function AdminPage() {
                                 toast.success(data.message || 'Blood points backfilled');
                                 loadTabData('dashboard');
                               } catch { toast.error('Failed to backfill blood points'); }
-                            }} className="px-4 py-3 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center justify-center gap-2">
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center justify-center gap-2">
                               <Droplet className="w-4 h-4" /> Backfill Blood Points
                             </button>
                           </div>
@@ -782,7 +782,7 @@ export default function AdminPage() {
                                 }
                                 loadTabData('dashboard');
                               } catch { toast.error('Failed to delete challenges'); }
-                            }} className="px-4 py-3 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center justify-center gap-2">
+                            }} className="px-4 py-3 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center justify-center gap-2">
                               <Trash2 className="w-4 h-4" /> Remove Challenges by Title
                             </button>
                           </div>
@@ -796,7 +796,7 @@ export default function AdminPage() {
                           <div className="flex flex-wrap gap-2">
                             <button onClick={async () => {
                               try { const r = await api.auditScan(); toast.success(`Audit scan complete: ${r.anomalies?.length || 0} anomalies found`); } catch { toast.error('Audit scan failed'); }
-                            }} className="px-4 py-2 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-xs hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1">
                               <Search className="w-3 h-3" /> Audit Scan
                             </button>
                             <button onClick={async () => {
@@ -806,12 +806,12 @@ export default function AdminPage() {
                             </button>
                             <button onClick={async () => {
                               try { const r = await api.qaRun(); toast.success(`QA check: ${r.checklist?.length || 0} items`); } catch { toast.error('QA mode not enabled'); }
-                            }} className="px-4 py-2 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center gap-1">
                               <FileText className="w-3 h-3" /> QA Checklist
                             </button>
                             <button onClick={async () => {
                               try { const r = await api.qaChmod(); toast.success(`Chmod check: ${r.writable_dirs || 0} writable dirs`); } catch { toast.error('Chmod check failed'); }
-                            }} className="px-4 py-2 rounded-lg bg-[rgba(255,184,0,0.1)] border border-[rgba(255,184,0,0.3)] text-[var(--warning)] font-mono text-xs hover:bg-[rgba(255,184,0,0.2)] transition-all flex items-center gap-1">
+                            }} className="px-4 py-2 rounded-lg bg-[rgba(255,176,32,0.1)] border border-[rgba(255,176,32,0.3)] text-[var(--signal-amber)] font-mono text-xs hover:bg-[rgba(255,176,32,0.2)] transition-all flex items-center gap-1">
                               <Lock className="w-3 h-3" /> Chmod Check
                             </button>
                           </div>
@@ -825,7 +825,7 @@ export default function AdminPage() {
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-txt-secondary font-mono text-xs">{users.length} registered users</span>
                         {users.some((u: any) => u.status === 'pending') && (
-                          <button onClick={handleApproveAll} className="px-3 py-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center gap-1">
+                          <button onClick={handleApproveAll} className="px-3 py-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center gap-1">
                             <CheckCircle className="w-3 h-3" /> Approve All ({users.filter((u: any) => u.status === 'pending').length} pending)
                           </button>
                         )}
@@ -833,7 +833,7 @@ export default function AdminPage() {
                       <div className="overflow-x-auto">
                       <table className="w-full text-left admin-table">
                         <thead>
-                          <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
+                          <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
                             <th className="p-3">Username</th>
                             <th className="p-3">Email</th>
                             <th className="p-3">Solves</th>
@@ -844,7 +844,7 @@ export default function AdminPage() {
                         </thead>
                         <tbody>
                           {users.map((u: any) => (
-                            <tr key={u.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                            <tr key={u.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
                               <td className="p-3 font-mono text-sm text-txt-primary flex items-center gap-2">
                                 {u.avatar_url && (
                                   <img src={u.avatar_url} alt="" className="w-6 h-6 rounded-full" />
@@ -852,13 +852,13 @@ export default function AdminPage() {
                                 {u.username}
                               </td>
                               <td className="p-3 font-mono text-xs text-txt-secondary">{u.email}</td>
-                              <td className="p-3 font-mono text-sm text-[var(--warning)]">{u.solves}</td>
-                              <td className="p-3 font-mono text-sm text-[var(--success)]">{u.score}</td>
+                              <td className="p-3 font-mono text-sm text-[var(--signal-amber)]">{u.solves}</td>
+                              <td className="p-3 font-mono text-sm text-[var(--aurora-emerald)]">{u.score}</td>
                               <td className="p-3">
                                 {u.is_banned ? (
-                                  <span className="text-xs font-mono text-[var(--red-core)]">Banned</span>
+                                  <span className="text-xs font-mono text-[var(--aurora-violet)]">Banned</span>
                                 ) : u.status === 'active' ? (
-                                  <span className="text-xs font-mono text-[var(--success)]">Active</span>
+                                  <span className="text-xs font-mono text-[var(--aurora-emerald)]">Active</span>
                                 ) : (
                                   <span className="text-xs font-mono text-txt-muted">{u.status}</span>
                                 )}
@@ -866,35 +866,35 @@ export default function AdminPage() {
                               <td className="p-3">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   {u.status === 'pending' && (
-                                    <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Approve User">
+                                    <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Approve User">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
                                   )}
                                   {!u.is_banned ? (
-                                    <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Ban">
+                                    <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Ban">
                                       <Ban className="w-3.5 h-3.5" />
                                     </button>
                                   ) : (
-                                    <button onClick={() => handleUnban(u.id)} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Unban">
+                                    <button onClick={() => handleUnban(u.id)} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Unban">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
                                   )}
-                                  <button onClick={() => { setUsernameModal({ userId: u.id, username: u.username }); setUsernameModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-glow)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title="Edit Username">
+                                  <button onClick={() => { setUsernameModal({ userId: u.id, username: u.username }); setUsernameModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Edit Username">
                                     <Pencil className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => { setPasswordModal({ userId: u.id, username: u.username }); setPasswordModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title="Change Password">
+                                  <button onClick={() => { setPasswordModal({ userId: u.id, username: u.username }); setPasswordModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Change Password">
                                     <KeyRound className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleResetScore(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(255,184,0,0.1)] text-[var(--warning)] hover:bg-[rgba(255,184,0,0.2)] transition-all" title="Reset Score">
+                                  <button onClick={() => handleResetScore(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Score">
                                     <RefreshCw className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleResetBlood(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Reset Blood Points">
+                                  <button onClick={() => handleResetBlood(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Reset Blood Points">
                                     <Droplet className="w-3.5 h-3.5" />
                                   </button>
                                   <button onClick={() => handleResetUserSolves(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(160,60,255,0.1)] text-[#A03CFF] hover:bg-[rgba(160,60,255,0.2)] transition-all" title="Reset Solves">
                                     <Flag className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleDeleteUser(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Delete">
+                                  <button onClick={() => handleDeleteUser(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Delete">
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
                                 </div>
@@ -912,7 +912,7 @@ export default function AdminPage() {
                       {/* Create Challenge */}
                       <div className="card rounded-xl p-4 sm:p-6">
                         <h3 className="font-display text-txt-primary text-sm mb-4 flex items-center gap-2">
-                          <Plus className="w-4 h-4 text-[var(--success)]" /> Create Challenge
+                          <Plus className="w-4 h-4 text-[var(--aurora-emerald)]" /> Create Challenge
                         </h3>
                         <form onSubmit={handleCreateChallenge} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                           <div className="sm:col-span-2 lg:col-span-3">
@@ -965,7 +965,7 @@ export default function AdminPage() {
                             <label className="block text-txt-muted font-mono text-[10px] mb-1 uppercase tracking-wider">Hint</label>
                             <textarea value={newChallenge.hint} onChange={(e) => setNewChallenge({ ...newChallenge, hint: e.target.value })} placeholder="Hint (optional)" rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
-                          <button type="submit" className="sm:col-span-2 lg:col-span-3 px-6 py-3 rounded-xl bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-sm hover:bg-[rgba(0,214,143,0.2)] transition-all flex items-center justify-center gap-2">
+                          <button type="submit" className="sm:col-span-2 lg:col-span-3 px-6 py-3 rounded-xl bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-sm hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center justify-center gap-2">
                             <Plus className="w-4 h-4" /> Create Challenge
                           </button>
                         </form>
@@ -975,7 +975,7 @@ export default function AdminPage() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Title</th>
                               <th className="p-3">Category</th>
@@ -990,36 +990,36 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {challenges.map((c: any) => (
-                              <tr key={c.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                              <tr key={c.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
                                 <td className="p-3 font-mono text-xs text-txt-muted">{c.id}</td>
                                 <td className="p-3 font-mono text-sm text-txt-primary">{c.title}</td>
-                                <td className="p-3 font-mono text-xs text-[var(--blue-core)]">{c.category}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--aurora-cyan)]">{c.category}</td>
                                 <td className="p-3 font-mono text-xs">{c.difficulty}</td>
-                                <td className="p-3 font-mono text-sm text-[var(--success)]">{c.points}</td>
+                                <td className="p-3 font-mono text-sm text-[var(--aurora-emerald)]">{c.points}</td>
                                 <td className="p-3 font-mono text-xs text-[#A03CFF]">{c.flagMode}</td>
-                                <td className="p-3 font-mono text-xs text-[var(--red-glow)]">{c.bloodPoints || 0}</td>
-                                <td className="p-3 font-mono text-xs text-[var(--warning)]">{c.solverCount}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--aurora-violet)]">{c.bloodPoints || 0}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--signal-amber)]">{c.solverCount}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : c.status === 'archived' ? 'bg-[rgba(224,32,32,0.1)] text-[var(--red-core)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
+                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)]' : c.status === 'archived' ? 'bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)]' : 'bg-[rgba(155,164,178,0.1)] text-txt-secondary'}`}>
                                     {c.status === 'published' ? 'Published' : c.status === 'archived' ? 'Archived' : c.status === 'in_review' ? 'In Review' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-3">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.status === 'published' ? 'Unpublish' : 'Publish'}>
+                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title={c.status === 'published' ? 'Unpublish' : 'Publish'}>
                                       {c.status === 'published' ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     </button>
-                                    <button onClick={() => handleEditChallenge(c)} className="p-1.5 rounded-lg bg-[rgba(255,184,0,0.1)] text-[var(--warning)] hover:bg-[rgba(255,184,0,0.2)] transition-all" title="Edit Challenge">
+                                    <button onClick={() => handleEditChallenge(c)} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Edit Challenge">
                                       <Settings className="w-3.5 h-3.5" />
                                     </button>
-                                    <label className={`p-1.5 rounded-lg cursor-pointer transition-all ${uploadingId === c.id ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)] animate-pulse' : 'bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)]'}`} title="Upload Asset">
+                                    <label className={`p-1.5 rounded-lg cursor-pointer transition-all ${uploadingId === c.id ? 'bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] animate-pulse' : 'bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)]'}`} title="Upload Asset">
                                       <input type="file" className="hidden" onChange={(e) => handleFileSelect(c.id, e)} />
                                       {uploadingId === c.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                                     </label>
                                     <button onClick={() => handleResetChallengeSolves(c.id, c.title)} className="p-1.5 rounded-lg bg-[rgba(160,60,255,0.1)] text-[#A03CFF] hover:bg-[rgba(160,60,255,0.2)] transition-all" title="Reset Solves">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
-                                    <button onClick={() => handleDeleteChallenge(c.id)} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.3)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.5)] transition-all" title="Delete Challenge">
+                                    <button onClick={() => handleDeleteChallenge(c.id)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.5)] transition-all" title="Delete Challenge">
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </button>
                                   </div>
@@ -1036,20 +1036,20 @@ export default function AdminPage() {
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
-                          <Flag className="w-5 h-5 text-[var(--blue-core)]" /> Submissions
+                          <Flag className="w-5 h-5 text-[var(--aurora-cyan)]" /> Submissions
                         </h3>
                         <button onClick={async () => {
                           if (!confirm('Clear ALL submissions? This will also reset all scores and solver counts.')) return;
                           try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); await api.clearSubmissions(); toast.success('All submissions cleared, scores reset'); loadTabData('submissions'); }
                           catch { toast.error('Failed to clear submissions'); }
-                        }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center gap-1">
+                        }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] text-xs font-mono hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center gap-1">
                           <Trash2 className="w-3 h-3" /> Clear Submissions
                         </button>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Player</th>
                               <th className="p-3">Challenge</th>
@@ -1060,12 +1060,12 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {submissions.map((s: any) => (
-                              <tr key={s.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                              <tr key={s.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
                                 <td className="p-3 font-mono text-xs text-txt-muted">{s.id}</td>
                                 <td className="p-3 font-mono text-xs text-txt-primary font-semibold">{s.username || '-'}</td>
                                 <td className="p-3 font-mono text-xs text-txt-primary">{s.challenge_title}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono ${s.is_correct ? 'text-[var(--success)]' : 'text-[var(--red-core)]'}`}>
+                                  <span className={`text-xs font-mono ${s.is_correct ? 'text-[var(--aurora-emerald)]' : 'text-[var(--aurora-violet)]'}`}>
                                     {s.is_correct ? 'CORRECT' : 'WRONG'}
                                   </span>
                                 </td>
@@ -1088,7 +1088,7 @@ export default function AdminPage() {
                     <div className="space-y-6">
                       <div className="card rounded-xl p-6">
                         <h3 className="font-display text-txt-primary mb-4 flex items-center gap-2">
-                          <Bell className="w-4 h-4 text-[var(--warning)]" />
+                          <Bell className="w-4 h-4 text-[var(--signal-amber)]" />
                           New Announcement
                         </h3>
                         <form onSubmit={handleAnnouncement} className="space-y-4">
@@ -1100,7 +1100,7 @@ export default function AdminPage() {
                             <label className="block text-txt-secondary font-mono text-xs mb-2">Message</label>
                             <textarea value={announcementMsg} onChange={(e) => setAnnouncementMsg(e.target.value)} rows={4} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" required />
                           </div>
-                          <button type="submit" className="admin-action-btn px-6 py-3 rounded-xl bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center gap-2">
+                          <button type="submit" className="admin-action-btn px-6 py-3 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-2">
                             <Bell className="w-4 h-4" /> Send Announcement
                           </button>
                         </form>
@@ -1135,10 +1135,10 @@ export default function AdminPage() {
                                       className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm"
                                     />
                                     <div className="flex gap-2">
-                                      <button onClick={handleSaveEditAnnouncement} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all">
+                                      <button onClick={handleSaveEditAnnouncement} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all">
                                         Save
                                       </button>
-                                      <button onClick={() => setEditingAnnouncement(null)} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-xs hover:bg-[rgba(122,156,192,0.2)] transition-all">
+                                      <button onClick={() => setEditingAnnouncement(null)} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(155,164,178,0.1)] border border-[rgba(155,164,178,0.3)] text-txt-secondary font-mono text-xs hover:bg-[rgba(155,164,178,0.2)] transition-all">
                                         Cancel
                                       </button>
                                     </div>
@@ -1155,14 +1155,14 @@ export default function AdminPage() {
                                 <div className="flex gap-2 flex-shrink-0">
                                   <button
                                     onClick={() => { setEditingAnnouncement(a); setEditAnnouncementTitle(a.title); setEditAnnouncementMsg(a.message); }}
-                                    className="p-2 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all"
+                                    className="p-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all"
                                     title="Edit"
                                   >
                                     <Pencil className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => handleDeleteAnnouncement(a.id)}
-                                    className="p-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-core)] hover:bg-[rgba(224,32,32,0.2)] transition-all"
+                                    className="p-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all"
                                     title="Delete"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -1180,20 +1180,20 @@ export default function AdminPage() {
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-[var(--blue-core)]" /> System Logs
+                          <Activity className="w-5 h-5 text-[var(--aurora-cyan)]" /> System Logs
                         </h3>
                         <button onClick={async () => {
                           if (!confirm('Clear all system logs? This cannot be undone.')) return;
                           try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); await api.clearLogs(); toast.success('All logs cleared'); loadTabData('logs'); }
                           catch { toast.error('Failed to clear logs'); }
-                        }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center gap-1">
+                        }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] text-xs font-mono hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center gap-1">
                           <Trash2 className="w-3 h-3" /> Clear Logs
                         </button>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Action</th>
                               <th className="p-3">Severity</th>
@@ -1203,14 +1203,14 @@ export default function AdminPage() {
                           </thead>
                           <tbody>
                             {logs.map((log: any) => (
-                              <tr key={log.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                              <tr key={log.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
                                 <td className="p-3 font-mono text-xs text-txt-muted">{log.id}</td>
                                 <td className="p-3 font-mono text-xs text-txt-primary">{log.action}</td>
                                 <td className="p-3">
                                   <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${
-                                    log.severity === 'suspicious' ? 'bg-[rgba(224,32,32,0.1)] text-[var(--red-core)]' :
-                                    log.severity === 'info' ? 'bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)]' :
-                                    'bg-[rgba(122,156,192,0.1)] text-txt-secondary'
+                                    log.severity === 'suspicious' ? 'bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)]' :
+                                    log.severity === 'info' ? 'bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)]' :
+                                    'bg-[rgba(155,164,178,0.1)] text-txt-secondary'
                                   }`}>{log.severity}</span>
                                 </td>
                                 <td className="p-3 font-mono text-xs text-txt-muted">{log.ip_address || '-'}</td>
@@ -1241,7 +1241,7 @@ export default function AdminPage() {
                               loadTabData('challenges');
                             } catch { toast.error('Failed to publish all Web challenges'); }
                           }}
-                          className="px-5 py-2.5 rounded-xl bg-[rgba(26,110,255,0.15)] border border-[rgba(26,110,255,0.4)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.25)] transition-all flex items-center gap-2"
+                          className="px-5 py-2.5 rounded-xl bg-[rgba(34,211,238,0.15)] border border-[rgba(34,211,238,0.4)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.25)] transition-all flex items-center gap-2"
                         >
                           <CheckCircle className="w-4 h-4" /> Publish All Web Challenges
                         </button>
@@ -1249,7 +1249,7 @@ export default function AdminPage() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-left admin-table">
                           <thead>
-                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)]">
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
                               <th className="p-3">ID</th>
                               <th className="p-3">Title</th>
                               <th className="p-3">Difficulty</th>
@@ -1264,30 +1264,30 @@ export default function AdminPage() {
                             {warmupChallenges.length === 0 ? (
                               <tr><td colSpan={8} className="p-6 text-center text-txt-muted font-mono text-sm">No warmup challenges found</td></tr>
                             ) : warmupChallenges.map((c: any) => (
-                              <tr key={c.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                              <tr key={c.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
                                 <td className="p-3 font-mono text-xs text-txt-muted">{c.id}</td>
                                 <td className="p-3 font-mono text-sm text-txt-primary">{c.title}</td>
                                 <td className="p-3 font-mono text-xs capitalize">{c.difficulty}</td>
-                                <td className="p-3 font-mono text-sm text-[var(--success)]">{c.points}</td>
+                                <td className="p-3 font-mono text-sm text-[var(--aurora-emerald)]">{c.points}</td>
                                 <td className="p-3 font-mono text-xs text-[#A03CFF]">{c.challengeType}</td>
-                                <td className="p-3 font-mono text-xs text-[var(--warning)]">{c.solverCount}</td>
+                                <td className="p-3 font-mono text-xs text-[var(--signal-amber)]">{c.solverCount}</td>
                                 <td className="p-3">
-                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-[rgba(0,214,143,0.1)] text-[var(--success)]' : c.status === 'archived' ? 'bg-[rgba(224,32,32,0.1)] text-[var(--red-core)]' : 'bg-[rgba(122,156,192,0.1)] text-txt-secondary'}`}>
+                                  <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)]' : c.status === 'archived' ? 'bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)]' : 'bg-[rgba(155,164,178,0.1)] text-txt-secondary'}`}>
                                     {c.status === 'published' ? 'Published' : c.status === 'archived' ? 'Archived' : c.status === 'in_review' ? 'In Review' : 'Draft'}
                                   </span>
                                 </td>
                                 <td className="p-3">
                                   <div className="flex items-center gap-2">
-                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title={c.status === 'published' ? 'Unpublish' : 'Publish'}>
+                                    <button onClick={() => handleTogglePublish(c.id)} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title={c.status === 'published' ? 'Unpublish' : 'Publish'}>
                                       {c.status === 'published' ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                     </button>
                                     {c.challengeType === 'asset' && (
-                                      <label className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] cursor-pointer transition-all" title="Download Assets">
+                                      <label className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] cursor-pointer transition-all" title="Download Assets">
                                         <Upload className="w-3.5 h-3.5" />
                                       </label>
                                     )}
                                     {c.challengeType === 'instance' && (
-                                      <span className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] text-[10px] font-mono">Open Instance</span>
+                                      <span className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] text-[10px] font-mono">Open Instance</span>
                                     )}
                                   </div>
                                 </td>
@@ -1302,9 +1302,9 @@ export default function AdminPage() {
                   {activeTab === 'security' && (
                     <div className="space-y-6">
                       {liveAlerts.length > 0 && (
-                        <div className="card rounded-xl p-3 border-[rgba(224,32,32,0.5)] bg-[rgba(224,32,32,0.1)]">
+                        <div className="card rounded-xl p-3 border-[rgba(124,92,255,0.5)] bg-[rgba(124,92,255,0.1)]">
                           <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-display text-xs text-[var(--red-glow)] flex items-center gap-1">
+                            <h4 className="font-display text-xs text-[var(--aurora-violet)] flex items-center gap-1">
                               <Radio className="w-3 h-3 animate-pulse" /> LIVE ATTACKS {wsConnected ? '(Connected)' : '(Reconnecting...)'}
                             </h4>
                             <button onClick={() => setLiveAlerts([])} className="text-txt-muted hover:text-txt-primary text-xs">Dismiss alerts</button>
@@ -1313,10 +1313,10 @@ export default function AdminPage() {
                             <AnimatePresence>
                               {liveAlerts.slice(0, 5).map((alert: any) => (
                                 <motion.div key={alert.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-xs font-mono">
-                                  <span className="text-[var(--red-glow)]">▶</span>
+                                  <span className="text-[var(--aurora-violet)]">▶</span>
                                   <span className="text-[#FF8C00] w-20 truncate">{alert.attack_type}</span>
                                   <span className="text-txt-secondary">{alert.ip}</span>
-                                  <span className="text-[var(--warning)]">{alert.risk_score}</span>
+                                  <span className="text-[var(--signal-amber)]">{alert.risk_score}</span>
                                   <span className="text-txt-muted w-32 truncate">{alert.endpoint}</span>
                                 </motion.div>
                               ))}
@@ -1327,17 +1327,17 @@ export default function AdminPage() {
 
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
-                          <Shield className="w-5 h-5 text-[var(--red-core)]" /> Security Dashboard
+                          <Shield className="w-5 h-5 text-[var(--aurora-violet)]" /> Security Dashboard
                         </h3>
                         <button onClick={() => { loadTabData('security'); }}
-                          className="admin-action-btn px-3 py-1.5 rounded-lg border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] text-xs hover:bg-[rgba(26,110,255,0.1)] transition-all flex items-center gap-1">
+                          className="admin-action-btn px-3 py-1.5 rounded-lg border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] text-xs hover:bg-[rgba(34,211,238,0.1)] transition-all flex items-center gap-1">
                           <RefreshCw className="w-3 h-3" /> Refresh
                         </button>
                       </div>
 
                       <div className="card rounded-xl p-4 mb-4">
                         <h4 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-[var(--red-core)]" /> Security Features
+                          <Shield className="w-4 h-4 text-[var(--aurora-violet)]" /> Security Features
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                           {Object.entries({
@@ -1358,8 +1358,8 @@ export default function AdminPage() {
                           }).map(([key, label]) => {
                             const enabled = securityFeatures[key] ?? true;
                             return (
-                              <div key={key} className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${enabled ? 'bg-[rgba(0,214,143,0.05)] border-[rgba(0,214,143,0.25)]' : 'bg-[rgba(224,32,32,0.05)] border-[rgba(224,32,32,0.25)]'}`}>
-                                <span className={`text-xs font-mono ${enabled ? 'text-[var(--success)]' : 'text-[var(--red-glow)]'}`}>{label}</span>
+                              <div key={key} className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${enabled ? 'bg-[rgba(52,232,158,0.05)] border-[rgba(52,232,158,0.25)]' : 'bg-[rgba(124,92,255,0.05)] border-[rgba(124,92,255,0.25)]'}`}>
+                                <span className={`text-xs font-mono ${enabled ? 'text-[var(--aurora-emerald)]' : 'text-[var(--aurora-violet)]'}`}>{label}</span>
                                 <button
                                   onClick={async () => {
                                     setFeatureToggling(key);
@@ -1376,7 +1376,7 @@ export default function AdminPage() {
                                     setFeatureToggling(null);
                                   }}
                                   disabled={featureToggling === key}
-                                  className={`ml-2 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all ${enabled ? 'bg-[rgba(224,32,32,0.2)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.3)]' : 'bg-[rgba(0,214,143,0.2)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.3)]'} ${featureToggling === key ? 'opacity-50 cursor-wait' : ''}`}
+                                  className={`ml-2 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all ${enabled ? 'bg-[rgba(124,92,255,0.2)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.3)]' : 'bg-[rgba(52,232,158,0.2)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.3)]'} ${featureToggling === key ? 'opacity-50 cursor-wait' : ''}`}
                                 >
                                   {featureToggling === key ? <Loader2 className="w-3 h-3 animate-spin inline" /> : enabled ? 'Disable' : 'Enable'}
                                 </button>
@@ -1388,20 +1388,20 @@ export default function AdminPage() {
 
                       {securityStatsData && (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          <div className="card rounded-xl p-4 text-center border-[rgba(224,32,32,0.3)]">
-                            <div className="text-2xl font-display font-bold text-[var(--red-glow)]">{securityStatsData.total_attacks}</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(124,92,255,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[var(--aurora-violet)]">{securityStatsData.total_attacks}</div>
                             <div className="text-txt-muted text-xs mt-1">Total Attacks</div>
                           </div>
-                          <div className="card rounded-xl p-4 text-center border-[rgba(224,32,32,0.3)]">
+                          <div className="card rounded-xl p-4 text-center border-[rgba(124,92,255,0.3)]">
                             <div className="text-2xl font-display font-bold text-[#FF8C00]">{securityStatsData.high_count + securityStatsData.critical_count}</div>
                             <div className="text-txt-muted text-xs mt-1">Critical/High</div>
                           </div>
-                          <div className="card rounded-xl p-4 text-center border-[rgba(26,110,255,0.3)]">
-                            <div className="text-2xl font-display font-bold text-[var(--blue-core)]">{securityStatsData.blocked_count}</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(34,211,238,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[var(--aurora-cyan)]">{securityStatsData.blocked_count}</div>
                             <div className="text-txt-muted text-xs mt-1">Blocked</div>
                           </div>
-                          <div className="card rounded-xl p-4 text-center border-[rgba(255,184,0,0.3)]">
-                            <div className="text-2xl font-display font-bold text-[var(--warning)]">{securityStatsData.unique_ips}</div>
+                          <div className="card rounded-xl p-4 text-center border-[rgba(255,176,32,0.3)]">
+                            <div className="text-2xl font-display font-bold text-[var(--signal-amber)]">{securityStatsData.unique_ips}</div>
                             <div className="text-txt-muted text-xs mt-1">Unique IPs</div>
                           </div>
                         </div>
@@ -1413,9 +1413,9 @@ export default function AdminPage() {
                           <div className="space-y-2">
                             {securityStatsData.top_attack_types.map((t: any, i: number) => (
                               <div key={i} className="flex items-center gap-2">
-                                <span className="text-[var(--red-glow)] text-xs font-mono w-32 truncate">{t.type || 'unknown'}</span>
+                                <span className="text-[var(--aurora-violet)] text-xs font-mono w-32 truncate">{t.type || 'unknown'}</span>
                                 <div className="flex-1 bg-[#0a0f18]/50 rounded-full h-2">
-                                  <div className="bg-[rgba(224,32,32,0.6)] h-2 rounded-full" style={{ width: `${Math.min(100, (t.count / (securityStatsData.total_attacks || 1)) * 100)}%` }} />
+                                  <div className="bg-[rgba(124,92,255,0.6)] h-2 rounded-full" style={{ width: `${Math.min(100, (t.count / (securityStatsData.total_attacks || 1)) * 100)}%` }} />
                                 </div>
                                 <span className="text-txt-secondary text-xs font-mono w-12 text-right">{t.count}</span>
                               </div>
@@ -1430,11 +1430,11 @@ export default function AdminPage() {
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                             <div>
                               <span className="text-txt-muted">Blacklisted IPs</span>
-                              <div className="text-[var(--red-glow)] font-mono">{securitySettingsData.blacklisted_ips?.length || 0}</div>
+                              <div className="text-[var(--aurora-violet)] font-mono">{securitySettingsData.blacklisted_ips?.length || 0}</div>
                             </div>
                             <div>
                               <span className="text-txt-muted">Whitelisted IPs</span>
-                              <div className="text-[var(--success)] font-mono">{securitySettingsData.whitelisted_ips?.length || 0}</div>
+                              <div className="text-[var(--aurora-emerald)] font-mono">{securitySettingsData.whitelisted_ips?.length || 0}</div>
                             </div>
                             <div>
                               <span className="text-txt-muted">Active Quarantines</span>
@@ -1442,7 +1442,7 @@ export default function AdminPage() {
                             </div>
                             <div>
                               <span className="text-txt-muted">Chain Integrity</span>
-                              <div className="text-[var(--blue-core)] font-mono">Active</div>
+                              <div className="text-[var(--aurora-cyan)] font-mono">Active</div>
                             </div>
                           </div>
                         )}
@@ -1451,52 +1451,52 @@ export default function AdminPage() {
                       <div className="card rounded-xl p-4">
                         <h4 className="font-display text-sm text-txt-primary mb-3">Security Features Overview</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">WAF Engine</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">WAF Engine</div>
                             <div className="text-txt-muted leading-relaxed">Detects SQLi, XSS, command injection, path traversal, encoded payloads. Blocks at risk_score &ge; 3.0.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Rate Limiting</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Rate Limiting</div>
                             <div className="text-txt-muted leading-relaxed">Per-endpoint limits (auth: 5/15s, admin: 30/60s, submissions: 10/60s). Escalating penalties x1→x32.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Anomaly Detection</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Anomaly Detection</div>
                             <div className="text-txt-muted leading-relaxed">JSON structure abuse, method enumeration, path probing, parameter pollution, endpoint hammering.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Bot Detection</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Bot Detection</div>
                             <div className="text-txt-muted leading-relaxed">Rate analysis, path scraping, regular intervals, scanner UA detection (acunetix, sqlmap, nessus…).</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">IP Quarantine &amp; Blacklist</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">IP Quarantine &amp; Blacklist</div>
                             <div className="text-txt-muted leading-relaxed">Auto-quarantine high-risk IPs (5 min). Manual block/unblock/whitelist via buttons below.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">CSRF Protection</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">CSRF Protection</div>
                             <div className="text-txt-muted leading-relaxed">HMAC-based tokens on all admin mutating endpoints (POST/PUT/DELETE). Validated server-side.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Input Sanitization</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Input Sanitization</div>
                             <div className="text-txt-muted leading-relaxed">Strips HTML tags, encodes special chars on POST/PUT/PATCH body and query params.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Account Lockout</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Account Lockout</div>
                             <div className="text-txt-muted leading-relaxed">Progressive delays (0→1200s). CAPTCHA at 3 failures. Lockout at 5 IP or 15 IP-level failures.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Immutable Audit Log</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Immutable Audit Log</div>
                              <div className="text-txt-muted leading-relaxed">SHA256 chain-hash linking every log entry. Integrity verification via &quot;Check Chain&quot; below.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Fingerprinting &amp; Anti-Sharing</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Fingerprinting &amp; Anti-Sharing</div>
                             <div className="text-txt-muted leading-relaxed">SHA256(ip|ua|accept-lang) per user. Detects multiple fingerprints per account, rapid submissions.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">Request Body Size Limit</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">Request Body Size Limit</div>
                             <div className="text-txt-muted leading-relaxed">100 KB for regular requests, 50 MB for file uploads. Returns 413 if exceeded.</div>
                           </div>
-                          <div className="p-3 rounded-lg bg-[rgba(11,18,32,0.8)] border border-[rgba(122,156,192,0.3)]">
-                            <div className="text-[var(--blue-core)] font-mono text-[11px] font-bold mb-1">CORS Origin Validation</div>
+                          <div className="p-3 rounded-lg bg-[rgba(11,15,23,0.8)] border border-[rgba(155,164,178,0.3)]">
+                            <div className="text-[var(--aurora-cyan)] font-mono text-[11px] font-bold mb-1">CORS Origin Validation</div>
                             <div className="text-txt-muted leading-relaxed">Validates Origin/Referer against allowed origins. Blocks cross-origin mutating requests.</div>
                           </div>
                         </div>
@@ -1514,7 +1514,7 @@ export default function AdminPage() {
                             toast.success(`Blocked ${securityBlockIp}`);
                             setSecurityBlockIp('');
                             loadTabData('security');
-                          }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all">
+                          }} className="admin-action-btn px-4 py-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] text-xs font-mono hover:bg-[rgba(124,92,255,0.2)] transition-all">
                             Block
                           </button>
                         </div>
@@ -1540,14 +1540,14 @@ export default function AdminPage() {
                           <option value="rate">Rate Limit</option>
                         </select>
                         <button onClick={() => loadTabData('security')}
-                          className="admin-action-btn px-3 py-1.5 rounded-lg border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] text-xs hover:bg-[rgba(26,110,255,0.1)] transition-all">
+                          className="admin-action-btn px-3 py-1.5 rounded-lg border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] text-xs hover:bg-[rgba(34,211,238,0.1)] transition-all">
                           <RefreshCw className="w-3 h-3 inline mr-1" /> Filter
                         </button>
                         <button onClick={async () => {
                           if (!confirm('Clear ALL attack detection results? This cannot be undone.')) return;
                           try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); await api.clearSecurityLogs(); toast.success('All detection results cleared'); loadTabData('security'); }
                           catch { toast.error('Failed to clear detection results'); }
-                        }} className="admin-action-btn px-3 py-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] text-xs font-mono hover:bg-[rgba(224,32,32,0.2)] transition-all flex items-center gap-1">
+                        }} className="admin-action-btn px-3 py-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] text-xs font-mono hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center gap-1">
                           <Trash2 className="w-3 h-3" /> Clear All Detection Results
                         </button>
                       </div>
@@ -1556,7 +1556,7 @@ export default function AdminPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full text-xs">
                             <thead>
-                              <tr className="border-b border-[rgba(26,110,255,0.1)]">
+                              <tr className="border-b border-[rgba(34,211,238,0.1)]">
                                 <th className="text-left p-3 text-txt-muted font-mono">Time</th>
                                 <th className="text-left p-3 text-txt-muted font-mono">Type</th>
                                 <th className="text-left p-3 text-txt-muted font-mono">Severity</th>
@@ -1571,25 +1571,25 @@ export default function AdminPage() {
                                 <tr><td colSpan={7} className="p-6 text-center text-txt-muted font-mono">No attack logs recorded</td></tr>
                               )}
                               {securityLogsData.map((log: any) => (
-                                <tr key={log.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.05)] transition-colors">
+                                <tr key={log.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
                                   <td className="p-3 text-txt-secondary font-mono whitespace-nowrap">{new Date(log.created_at).toLocaleString()}</td>
                                   <td className="p-3">
-                                    <span className="font-mono text-[var(--blue-core)]">{log.attack_type}</span>
+                                    <span className="font-mono text-[var(--aurora-cyan)]">{log.attack_type}</span>
                                   </td>
                                   <td className="p-3">
                                     <span className={`px-2 py-0.5 rounded text-xs font-mono ${
-                                      log.severity === 'critical' ? 'bg-[rgba(224,32,32,0.2)] text-[var(--red-glow)]' :
+                                      log.severity === 'critical' ? 'bg-[rgba(124,92,255,0.2)] text-[var(--aurora-violet)]' :
                                       log.severity === 'high' ? 'bg-[rgba(255,140,0,0.2)] text-[#FF8C00]' :
-                                      log.severity === 'medium' ? 'bg-[rgba(255,184,0,0.2)] text-[var(--warning)]' :
-                                      'bg-[rgba(122,156,192,0.2)] text-txt-secondary'
+                                      log.severity === 'medium' ? 'bg-[rgba(255,176,32,0.2)] text-[var(--signal-amber)]' :
+                                      'bg-[rgba(155,164,178,0.2)] text-txt-secondary'
                                     }`}>{log.severity}</span>
                                   </td>
                                   <td className="p-3 font-mono text-txt-secondary">{log.ip_address}</td>
                                   <td className="p-3">
                                     <span className={`font-mono ${
-                                      log.risk_score >= 9 ? 'text-[var(--red-glow)]' :
+                                      log.risk_score >= 9 ? 'text-[var(--aurora-violet)]' :
                                       log.risk_score >= 7 ? 'text-[#FF8C00]' :
-                                      log.risk_score >= 5 ? 'text-[var(--warning)]' : 'text-txt-secondary'
+                                      log.risk_score >= 5 ? 'text-[var(--signal-amber)]' : 'text-txt-secondary'
                                     }`}>{log.risk_score.toFixed(1)}</span>
                                   </td>
                                   <td className="p-3 font-mono text-txt-secondary">{log.action_taken}</td>
@@ -1600,22 +1600,22 @@ export default function AdminPage() {
                                           await api.reviewAttackLog(log.id);
                                           toast.success('Reviewed');
                                           loadTabData('security');
-                                        }} className="px-2 py-0.5 rounded text-xs border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.1)] transition-all">Review</button>
+                                        }} className="px-2 py-0.5 rounded text-xs border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.1)] transition-all">Review</button>
                                       ) : (
-                                        <span className="text-[var(--success)] text-xs font-mono">✓ Reviewed</span>
+                                        <span className="text-[var(--aurora-emerald)] text-xs font-mono">✓ Reviewed</span>
                                       )}
                                       {log.blocked ? (
                                         <button onClick={async () => {
                                           await api.unblockIp(log.ip_address);
                                           toast.success(`Unblocked ${log.ip_address}`);
                                           loadTabData('security');
-                                        }} className="px-2 py-0.5 rounded text-xs border border-[rgba(0,214,143,0.3)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.1)] transition-all">Unblock</button>
+                                        }} className="px-2 py-0.5 rounded text-xs border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.1)] transition-all">Unblock</button>
                                       ) : null}
                                       <button onClick={async () => {
                                         await api.blockIp(log.ip_address, 'Attack log action');
                                         toast.success(`Blocked ${log.ip_address}`);
                                         loadTabData('security');
-                                      }} className="px-2 py-0.5 rounded text-xs border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.1)] transition-all">Block</button>
+                                      }} className="px-2 py-0.5 rounded text-xs border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.1)] transition-all">Block</button>
                                     </div>
                                   </td>
                                 </tr>
@@ -1630,8 +1630,8 @@ export default function AdminPage() {
                   {activeTab === 'realflags' && (
                     <div className="space-y-6">
                       <div className="card rounded-xl p-5 sm:p-6">
-                        <h3 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(26,110,255,0.1)] pb-3">
-                          <Lock className="w-4 h-4 text-[var(--blue-core)]" /> Store Secret Flag
+                        <h3 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(34,211,238,0.1)] pb-3">
+                          <Lock className="w-4 h-4 text-[var(--aurora-cyan)]" /> Store Secret Flag
                         </h3>
                         <form onSubmit={async (e) => {
                           e.preventDefault();
@@ -1664,7 +1664,7 @@ export default function AdminPage() {
                             <input type="text" value={realFlagForm.notes} onChange={(e) => setRealFlagForm({ ...realFlagForm, notes: e.target.value })}
                               placeholder="Additional notes" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
                           </div>
-                          <button type="submit" className="sm:col-span-2 mt-1 px-6 py-2.5 rounded-xl bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center justify-center gap-2">
+                          <button type="submit" className="sm:col-span-2 mt-1 px-6 py-2.5 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center justify-center gap-2">
                             <Lock className="w-4 h-4" /> Store Flag
                           </button>
                         </form>
@@ -1674,7 +1674,7 @@ export default function AdminPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full text-left">
                             <thead>
-                              <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)] bg-black/20">
+                              <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
                                 <th className="p-3 pl-5 font-medium">ID</th>
                                 <th className="p-3 font-medium">Challenge</th>
                                 <th className="p-3 font-medium">Flag</th>
@@ -1687,7 +1687,7 @@ export default function AdminPage() {
                               {realFlags.length === 0 ? (
                                 <tr><td colSpan={6} className="p-10 text-center text-txt-muted font-mono text-sm">No secret flags stored yet</td></tr>
                               ) : realFlags.map((f: any) => (
-                                <tr key={f.id} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.03)] transition-colors">
+                                <tr key={f.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
                                   {editRealFlag?.id === f.id ? (
                                     <>
                                       <td className="p-3 pl-5 font-mono text-xs text-txt-muted align-top pt-4">{f.id}</td>
@@ -1716,10 +1716,10 @@ export default function AdminPage() {
                                               setEditRealFlag(null);
                                               loadTabData('realflags');
                                             } catch { toast.error('Failed'); }
-                                          }} className="p-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] text-[var(--success)] hover:bg-[rgba(0,214,143,0.2)] transition-all" title="Save">
+                                          }} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Save">
                                             <CheckCircle className="w-3.5 h-3.5" />
                                           </button>
-                                          <button onClick={() => setEditRealFlag(null)} className="p-1.5 rounded-lg bg-[rgba(122,156,192,0.1)] text-txt-secondary hover:bg-[rgba(122,156,192,0.2)] transition-all" title="Cancel">
+                                          <button onClick={() => setEditRealFlag(null)} className="p-1.5 rounded-lg bg-[rgba(155,164,178,0.1)] text-txt-secondary hover:bg-[rgba(155,164,178,0.2)] transition-all" title="Cancel">
                                             <X className="w-3.5 h-3.5" />
                                           </button>
                                         </div>
@@ -1735,14 +1735,14 @@ export default function AdminPage() {
                                       <td className="p-3 pr-5">
                                         <div className="flex gap-1.5 justify-end">
                                           <button onClick={() => { setEditRealFlag(f); setEditRealFlagForm({ challenge_name: f.challenge_name, flag: f.flag, category: f.category || '', notes: f.notes || '' }); }}
-                                            className="p-1.5 rounded-lg bg-[rgba(26,110,255,0.1)] text-[var(--blue-core)] hover:bg-[rgba(26,110,255,0.2)] transition-all" title="Edit">
+                                            className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Edit">
                                             <Pencil className="w-3.5 h-3.5" />
                                           </button>
                                           <button onClick={async () => {
                                             if (!confirm(`Delete flag for "${f.challenge_name}"?`)) return;
                                             try { await api.deleteRealFlag(f.id); toast.success('Deleted'); loadTabData('realflags'); }
                                             catch { toast.error('Failed'); }
-                                          }} className="p-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] text-[var(--red-glow)] hover:bg-[rgba(224,32,32,0.2)] transition-all" title="Delete">
+                                          }} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Delete">
                                             <Trash2 className="w-3.5 h-3.5" />
                                           </button>
                                         </div>
@@ -1761,8 +1761,8 @@ export default function AdminPage() {
                   {activeTab === 'live' && (
                     <div className="space-y-6">
                       <div className="card rounded-xl p-5 sm:p-6">
-                        <h3 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(26,110,255,0.1)] pb-3">
-                          <Radio className="w-4 h-4 text-[var(--blue-core)]" /> Live Challenge Control
+                        <h3 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(34,211,238,0.1)] pb-3">
+                          <Radio className="w-4 h-4 text-[var(--aurora-cyan)]" /> Live Challenge Control
                         </h3>
                         <p className="text-txt-muted font-mono text-xs mb-5">Publish or unpublish challenges by category and difficulty. Current counts shown for each group.</p>
 
@@ -1808,14 +1808,14 @@ export default function AdminPage() {
                                   const total = liveChallenges.filter(c => c.category === cat).length;
                                   const pub = liveChallenges.filter(c => c.category === cat && c.status === 'published').length;
                                   return (
-                                    <div key={cat} className="card rounded-xl p-4 border border-[rgba(26,110,255,0.1)]">
+                                    <div key={cat} className="card rounded-xl p-4 border border-[rgba(34,211,238,0.1)]">
                                       <h4 className="font-display text-txt-primary text-sm mb-2 uppercase tracking-wider">{catLabels[cat]}</h4>
                                       <p className="text-txt-muted font-mono text-xs mb-3">{pub}/{total} published</p>
                                       <div className="flex gap-2">
-                                        <button onClick={() => handleToggleCategory('publish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-xs hover:bg-[rgba(0,214,143,0.2)] transition-all">
+                                        <button onClick={() => handleToggleCategory('publish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all">
                                           Publish All
                                         </button>
-                                        <button onClick={() => handleToggleCategory('unpublish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-xs hover:bg-[rgba(224,32,32,0.2)] transition-all">
+                                        <button onClick={() => handleToggleCategory('unpublish', cat)} className="flex-1 px-2 py-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] transition-all">
                                           Unpublish All
                                         </button>
                                       </div>
@@ -1828,7 +1828,7 @@ export default function AdminPage() {
                               <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                   <thead>
-                                    <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(26,110,255,0.1)] bg-black/20">
+                                    <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
                                       <th className="p-3 pl-5 font-medium">Category</th>
                                       {difficulties.map(d => (
                                         <th key={d} className="p-3 font-medium text-center">{diffLabels[d]}</th>
@@ -1837,7 +1837,7 @@ export default function AdminPage() {
                                   </thead>
                                   <tbody>
                                     {categories.map(cat => (
-                                      <tr key={cat} className="border-b border-[rgba(26,110,255,0.05)] hover:bg-[rgba(26,110,255,0.03)] transition-colors">
+                                      <tr key={cat} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
                                         <td className="p-3 pl-5 font-mono text-sm text-txt-primary font-medium">{catLabels[cat]}</td>
                                         {difficulties.map(diff => {
                                           const total = countFor(cat, diff);
@@ -1850,12 +1850,12 @@ export default function AdminPage() {
                                                   <div className="flex gap-1">
                                                     <button onClick={() => handleToggle('publish', cat, diff)}
                                                       disabled={pub === total}
-                                                      className="px-2 py-1 rounded bg-[rgba(0,214,143,0.1)] border border-[rgba(0,214,143,0.3)] text-[var(--success)] font-mono text-[10px] hover:bg-[rgba(0,214,143,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                                      className="px-2 py-1 rounded bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-[10px] hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                                                       Live
                                                     </button>
                                                     <button onClick={() => handleToggle('unpublish', cat, diff)}
                                                       disabled={pub === 0}
-                                                      className="px-2 py-1 rounded bg-[rgba(224,32,32,0.1)] border border-[rgba(224,32,32,0.3)] text-[var(--red-glow)] font-mono text-[10px] hover:bg-[rgba(224,32,32,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                                                      className="px-2 py-1 rounded bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-[10px] hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all">
                                                       Draft
                                                     </button>
                                                   </div>
@@ -1898,7 +1898,7 @@ export default function AdminPage() {
                           <label className="block text-txt-secondary font-mono text-xs mb-2">New Password (optional)</label>
                           <input type="password" value={credForm.new_password} onChange={(e) => setCredForm({ ...credForm, new_password: e.target.value })} className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm" />
                         </div>
-                        <button type="submit" className="admin-action-btn px-6 py-3 rounded-xl bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] transition-all flex items-center gap-2">
+                        <button type="submit" className="admin-action-btn px-6 py-3 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-2">
                           <Settings className="w-4 h-4" /> Update Credentials
                         </button>
                       </form>
@@ -1926,11 +1926,11 @@ export default function AdminPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="card rounded-2xl p-6 w-full max-w-md border-[rgba(26,110,255,0.3)]"
+            className="card rounded-2xl p-6 w-full max-w-md border-[rgba(34,211,238,0.3)]"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="font-display text-txt-primary text-lg mb-2">Change Password</h3>
-            <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--blue-core)]">{passwordModal.username}</span></p>
+            <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--aurora-cyan)]">{passwordModal.username}</span></p>
             <input
               type="password"
               value={passwordModalValue}
@@ -1944,14 +1944,14 @@ export default function AdminPage() {
               <button
                 onClick={handleAdminChangePassword}
                 disabled={passwordModalLoading || passwordModalValue.length < 8}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-core)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] disabled:opacity-50 transition-all"
               >
                 {passwordModalLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Save'}
               </button>
               <button
                 onClick={() => { setPasswordModal(null); setPasswordModalValue(''); }}
                 disabled={passwordModalLoading}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(122,156,192,0.2)] disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(155,164,178,0.1)] border border-[rgba(155,164,178,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(155,164,178,0.2)] disabled:opacity-50 transition-all"
               >
                 Cancel
               </button>
@@ -1975,11 +1975,11 @@ export default function AdminPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="card rounded-2xl p-6 w-full max-w-md border-[rgba(26,110,255,0.3)]"
+            className="card rounded-2xl p-6 w-full max-w-md border-[rgba(34,211,238,0.3)]"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="font-display text-txt-primary text-lg mb-2">Edit Username</h3>
-            <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--blue-glow)]">{usernameModal.username}</span></p>
+            <p className="text-txt-secondary font-mono text-xs mb-4">User: <span className="text-[var(--aurora-cyan)]">{usernameModal.username}</span></p>
             <input
               type="text"
               value={usernameModalValue}
@@ -1993,14 +1993,14 @@ export default function AdminPage() {
               <button
                 onClick={handleAdminChangeUsername}
                 disabled={usernameModalLoading || usernameModalValue.trim().length < 3}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(26,110,255,0.1)] border border-[rgba(26,110,255,0.3)] text-[var(--blue-glow)] font-mono text-sm hover:bg-[rgba(26,110,255,0.2)] disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] disabled:opacity-50 transition-all"
               >
                 {usernameModalLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Save'}
               </button>
               <button
                 onClick={() => { setUsernameModal(null); setUsernameModalValue(''); }}
                 disabled={usernameModalLoading}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(122,156,192,0.2)] disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(155,164,178,0.1)] border border-[rgba(155,164,178,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(155,164,178,0.2)] disabled:opacity-50 transition-all"
               >
                 Cancel
               </button>
@@ -2024,13 +2024,13 @@ export default function AdminPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="card rounded-2xl p-4 sm:p-6 w-[95vw] sm:w-[90vw] md:max-w-2xl border-[rgba(255,184,0,0.3)] my-auto"
+            className="card rounded-2xl p-4 sm:p-6 w-[95vw] sm:w-[90vw] md:max-w-2xl border-[rgba(255,176,32,0.3)] my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="font-display text-txt-primary text-lg mb-2 flex items-center gap-2">
-              <Settings className="w-5 h-5 text-[var(--warning)]" /> Edit Challenge
+              <Settings className="w-5 h-5 text-[var(--signal-amber)]" /> Edit Challenge
             </h3>
-            <p className="text-txt-secondary font-mono text-xs mb-4">ID: <span className="text-[var(--warning)]">{editingChallenge.id}</span></p>
+            <p className="text-txt-secondary font-mono text-xs mb-4">ID: <span className="text-[var(--signal-amber)]">{editingChallenge.id}</span></p>
             <form onSubmit={handleUpdateChallenge} className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div className="md:col-span-2">
                 <input type="text" value={editChallengeForm.title} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, title: e.target.value })} placeholder="Title" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
@@ -2086,7 +2086,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={editChallengeLoading}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(255,184,0,0.1)] border border-[rgba(255,184,0,0.3)] text-[var(--warning)] font-mono text-sm hover:bg-[rgba(255,184,0,0.2)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(255,176,32,0.1)] border border-[rgba(255,176,32,0.3)] text-[var(--signal-amber)] font-mono text-sm hover:bg-[rgba(255,176,32,0.2)] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                 >
                   {editChallengeLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
                   {editChallengeLoading ? 'Saving...' : 'Save Changes'}
@@ -2095,7 +2095,7 @@ export default function AdminPage() {
                   type="button"
                   onClick={() => setEditingChallenge(null)}
                   disabled={editChallengeLoading}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(122,156,192,0.1)] border border-[rgba(122,156,192,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(122,156,192,0.2)] disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(155,164,178,0.1)] border border-[rgba(155,164,178,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(155,164,178,0.2)] disabled:opacity-50 transition-all"
                 >
                   Cancel
                 </button>

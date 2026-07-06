@@ -88,7 +88,7 @@ export default function ChallengeDetailPage() {
   if (!mounted || !isAuthenticated || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-core animate-spin" />
+        <Loader2 className="w-8 h-8 text-aurora-cyan animate-spin" />
       </div>
     );
   }
@@ -172,9 +172,9 @@ export default function ChallengeDetailPage() {
                 </div>
               )}
               {challenge.blood_points > 0 && (
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-red-core/10 border border-red-core/30">
-                  <Droplet className="w-4 h-4 text-red-core" />
-                  <span className="text-red-core font-mono text-xs font-bold">First Blood +{challenge.blood_points}pts</span>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-aurora-violet/10 border border-aurora-violet/30">
+                  <Droplet className="w-4 h-4 text-aurora-violet" />
+                  <span className="text-aurora-violet font-mono text-xs font-bold">First Blood +{challenge.blood_points}pts</span>
                 </div>
               )}
             </div>
@@ -183,7 +183,7 @@ export default function ChallengeDetailPage() {
           {/* Description */}
           <div className="card rounded-xl p-5 sm:p-7 mb-4">
             <h2 className="text-txt-primary font-display text-lg mb-3 flex items-center gap-2 font-semibold">
-              <BookOpen className="w-5 h-5 text-blue-core" /> Description
+              <BookOpen className="w-5 h-5 text-aurora-cyan" /> Description
             </h2>
             <p className="text-txt-secondary font-mono text-sm leading-relaxed whitespace-pre-wrap">{challenge.description}</p>
           </div>
@@ -200,7 +200,7 @@ export default function ChallengeDetailPage() {
           {challenge.challenge_type === 'instance' && (
             <div className="card rounded-xl p-5 sm:p-7 mb-4">
               <h2 className="text-txt-primary font-display text-lg mb-4 flex items-center gap-2 font-semibold">
-                <ExternalLink className="w-5 h-5 text-blue-core" /> Instance Challenge
+                <ExternalLink className="w-5 h-5 text-aurora-cyan" /> Instance Challenge
               </h2>
               <p className="text-txt-secondary font-mono text-sm leading-relaxed mb-4">
                 This challenge requires you to interact with a live instance. Click below to open it.
@@ -221,10 +221,10 @@ export default function ChallengeDetailPage() {
           {challenge.challenge_type === 'asset' && challenge.file_url && (
             <div className="card rounded-xl p-5 sm:p-7 mb-4">
               <h2 className="text-txt-primary font-display text-lg mb-4 flex items-center gap-2 font-semibold">
-                <Download className="w-5 h-5 text-blue-core" /> Assets
+                <Download className="w-5 h-5 text-aurora-cyan" /> Assets
               </h2>
               <div className="flex items-center gap-3">
-                <code className="flex-1 px-4 py-3 rounded-lg bg-void border border-border-c text-blue-core font-mono text-xs sm:text-sm break-all">
+                <code className="flex-1 px-4 py-3 rounded-lg bg-base border border-border-c text-aurora-cyan font-mono text-xs sm:text-sm break-all">
                   {challenge.file_url.split('/').pop()}
                 </code>
                 <a
@@ -255,7 +255,7 @@ export default function ChallengeDetailPage() {
           {/* Flag Submission Form */}
           <div className="card rounded-xl p-5 sm:p-7">
             <h2 className="text-txt-primary font-display text-lg mb-4 flex items-center gap-2 font-semibold">
-              <Flag className="w-5 h-5 text-red-core" /> Submit Flag
+              <Flag className="w-5 h-5 text-aurora-violet" /> Submit Flag
             </h2>
 
             {challenge.is_solved ? (
@@ -299,19 +299,19 @@ export default function ChallengeDetailPage() {
                     className={`flex items-start gap-3 p-4 rounded-lg border ${
                       result.correct
                         ? 'bg-green-500/10 border-green-500/30'
-                        : 'bg-red-core/10 border-red-core/30'
+                        : 'bg-aurora-violet/10 border-aurora-violet/30'
                     }`}
                   >
                     {result.correct ? (
                       <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                     ) : (
-                      <XCircle className="w-5 h-5 text-red-core mt-0.5 flex-shrink-0" />
+                      <XCircle className="w-5 h-5 text-aurora-violet mt-0.5 flex-shrink-0" />
                     )}
                     <div>
-                      <p className={`font-mono text-sm font-semibold ${result.correct ? 'text-green-400' : 'text-red-core'}`}>
+                      <p className={`font-mono text-sm font-semibold ${result.correct ? 'text-green-400' : 'text-aurora-violet'}`}>
                         {result.correct ? 'CORRECT FLAG' : 'INCORRECT FLAG'}
                       </p>
-                      <p className={`font-mono text-xs mt-1 ${result.correct ? 'text-green-400/80' : 'text-red-core/80'}`}>
+                      <p className={`font-mono text-xs mt-1 ${result.correct ? 'text-green-400/80' : 'text-aurora-violet/80'}`}>
                         {result.message}
                       </p>
                       {result.correct && result.points_awarded !== undefined && (

@@ -65,7 +65,7 @@ export default function ChallengesPage() {
   const toggleFilter = (key: string) => setFilterOpen({ ...filterOpen, [key]: !filterOpen[key] });
 
   if (!mounted || !isAuthenticated || !user) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-blue-core animate-spin" /></div>;
+    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 text-aurora-cyan animate-spin" /></div>;
   }
 
   return (
@@ -87,7 +87,7 @@ export default function ChallengesPage() {
                 {filterOpen.visibility && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-0.5 overflow-hidden">
                     {(['all', 'solved', 'unsolved'] as const).map((v) => (
-                      <button key={v} onClick={() => setVisibility(v)} className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded text-xs transition-all ${visibility === v ? 'bg-blue-dim/30 text-blue-glow border border-blue-core/30' : 'text-txt-muted hover:text-txt-secondary hover:bg-surface-2'}`}>
+                      <button key={v} onClick={() => setVisibility(v)} className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded text-xs transition-all ${visibility === v ? 'bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/30' : 'text-txt-muted hover:text-txt-secondary hover:bg-surface-raised'}`}>
                         {v === 'all' ? <Circle className="w-3 h-3" /> : v === 'solved' ? <CheckCircle className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
                         {v === 'all' ? 'All' : v === 'solved' ? 'Solved' : 'Unsolved'}
                       </button>
@@ -108,7 +108,7 @@ export default function ChallengesPage() {
                     {difficulties.map((d) => {
                       const meta = difficultyMeta[d];
                       return (
-                        <button key={d} onClick={() => setSelectedDifficulty(selectedDifficulty === d ? null : d)} className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded text-xs transition-all ${selectedDifficulty === d ? `${meta.badgeClass} border` : 'text-txt-muted hover:text-txt-secondary hover:bg-surface-2'}`}>
+                        <button key={d} onClick={() => setSelectedDifficulty(selectedDifficulty === d ? null : d)} className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded text-xs transition-all ${selectedDifficulty === d ? `${meta.badgeClass} border` : 'text-txt-muted hover:text-txt-secondary hover:bg-surface-raised'}`}>
                           {meta.label}
                         </button>
                       );
@@ -130,7 +130,7 @@ export default function ChallengesPage() {
                       const cfg = categoryConfig[cat];
                       const isActive = selectedCategory === cat;
                       return (
-                        <button key={cat} onClick={() => setSelectedCategory(isActive ? null : cat)} className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded text-xs transition-all ${isActive ? `${cfg.badgeClass} border` : 'text-txt-muted hover:text-txt-secondary hover:bg-surface-2'}`}>
+                        <button key={cat} onClick={() => setSelectedCategory(isActive ? null : cat)} className={`flex items-center gap-2 w-full px-2.5 py-1.5 rounded text-xs transition-all ${isActive ? `${cfg.badgeClass} border` : 'text-txt-muted hover:text-txt-secondary hover:bg-surface-raised'}`}>
                           <span className="text-sm">{cfg.icon}</span> {cfg.label}
                         </button>
                       );
@@ -141,7 +141,7 @@ export default function ChallengesPage() {
             </div>
 
             {(selectedDifficulty || visibility !== 'all' || selectedCategory) && (
-              <button onClick={() => { setSelectedDifficulty(null); setVisibility('all'); setSelectedCategory(null); }} className="text-blue-glow text-xs hover:underline mt-3">Clear all filters</button>
+              <button onClick={() => { setSelectedDifficulty(null); setVisibility('all'); setSelectedCategory(null); }} className="text-aurora-cyan text-xs hover:underline mt-3">Clear all filters</button>
             )}
           </div>
         </motion.aside>
@@ -152,18 +152,18 @@ export default function ChallengesPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-5">
               <div>
                 <h1 className="font-display font-bold text-xl sm:text-2xl text-txt-primary flex items-center gap-2">
-                  <Swords className="w-5 h-5 sm:w-6 sm:h-6 text-blue-core" /> Challenge Arena
+                  <Swords className="w-5 h-5 sm:w-6 sm:h-6 text-aurora-cyan" /> Challenge Arena
                 </h1>
                 <p className="text-txt-muted text-xs mt-0.5">{filtered.length} of {challenges.length} challenge{challenges.length !== 1 ? 's' : ''} visible</p>
               </div>
-              <Link href="/flag-submit" className="px-3.5 py-1.5 rounded bg-blue-dim/30 border border-blue-core/30 text-blue-glow text-xs hover:bg-blue-dim/50 transition-all flex items-center gap-1.5 w-fit">
+              <Link href="/flag-submit" className="px-3.5 py-1.5 rounded bg-aurora-cyan/20 border border-aurora-cyan/30 text-aurora-cyan text-xs hover:bg-aurora-cyan/50 transition-all flex items-center gap-1.5 w-fit">
                 <Flag className="w-3.5 h-3.5" /> Submit Flag
               </Link>
             </div>
 
             {/* Mobile category filter */}
             <div className="flex flex-wrap gap-1.5 mb-4 lg:hidden">
-              <button onClick={() => setSelectedCategory(null)} className={`px-2.5 py-1 rounded text-xs transition-all ${!selectedCategory ? 'bg-blue-dim/30 border border-blue-core/50 text-blue-glow' : 'bg-surface border border-border-c text-txt-muted hover:border-border-c'}`}>All</button>
+              <button onClick={() => setSelectedCategory(null)} className={`px-2.5 py-1 rounded text-xs transition-all ${!selectedCategory ? 'bg-aurora-cyan/20 border border-aurora-cyan/50 text-aurora-cyan' : 'bg-surface border border-border-c text-txt-muted hover:border-border-c'}`}>All</button>
               {categories.map((cat) => {
                 const cfg = categoryConfig[cat];
                 return (
@@ -178,9 +178,9 @@ export default function ChallengesPage() {
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="bg-surface border border-border-c rounded-lg p-4 animate-pulse">
-                    <div className="h-3 bg-surface-2 rounded w-1/3 mb-2" />
-                    <div className="h-4 bg-surface-2 rounded w-2/3 mb-2" />
-                    <div className="h-2 bg-surface-2 rounded w-full" />
+                    <div className="h-3 bg-surface-raised rounded w-1/3 mb-2" />
+                    <div className="h-4 bg-surface-raised rounded w-2/3 mb-2" />
+                    <div className="h-2 bg-surface-raised rounded w-full" />
                   </div>
                 ))}
               </div>
@@ -202,16 +202,16 @@ export default function ChallengesPage() {
                           <span className={`badge ${cat.badgeClass}`}>{cat.icon} {cat.label}</span>
                           <span className={`badge ${diff.badgeClass} ml-auto`}>{diff.label}</span>
                         </div>
-                        <h3 className="text-txt-primary font-body font-semibold text-sm mb-1.5 group-hover:text-blue-glow transition-colors leading-tight">{challenge.title}</h3>
+                        <h3 className="text-txt-primary font-body font-semibold text-sm mb-1.5 group-hover:text-aurora-cyan transition-colors leading-tight">{challenge.title}</h3>
                         <p className="text-txt-muted text-xs leading-relaxed line-clamp-2 mb-2 flex-1">{challenge.description}</p>
 
                         <div className="mb-2">
-                          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleHint(challenge.id); }} className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-all text-txt-muted hover:text-warning">
+                          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleHint(challenge.id); }} className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider px-2 py-1 rounded transition-all text-txt-muted hover:text-signal-amber">
                             <Lightbulb className="w-3 h-3" /> {hintsVisible.has(challenge.id) ? 'Hide Hint' : 'Show Hint'}
                           </button>
                           <div className={`mt-1.5 overflow-hidden transition-all duration-300 ${hintsVisible.has(challenge.id) ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                            <div className="px-3 py-2 rounded bg-warning/5 border border-warning/20">
-                              <p className="text-warning/80 text-[11px] leading-relaxed">{challenge.hint || 'No hint available.'}</p>
+                            <div className="px-3 py-2 rounded bg-signal-amber/5 border border-signal-amber/20">
+                              <p className="text-signal-amber/80 text-[11px] leading-relaxed">{challenge.hint || 'No hint available.'}</p>
                             </div>
                           </div>
                         </div>
@@ -219,13 +219,13 @@ export default function ChallengesPage() {
                         <div className="flex items-center justify-between mt-auto pt-2.5 border-t border-border-c/50">
                           <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1">
-                              <Trophy className="w-3.5 h-3.5 text-blue-glow" />
-                              <span className="text-blue-glow font-display text-xs font-bold">{challenge.points}pts</span>
+                              <Trophy className="w-3.5 h-3.5 text-aurora-cyan" />
+                              <span className="text-aurora-cyan font-display text-xs font-bold">{challenge.points}pts</span>
                             </div>
                             {challenge.blood_points > 0 ? (
-                              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-dim/20 border border-red-core/20" title={`Blood: +${challenge.blood_points}pts`}>
-                                <Droplet className="w-3 h-3 text-red-glow" />
-                                <span className="text-red-glow text-[10px] font-bold">+{challenge.blood_points}</span>
+                              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-aurora-violet/20 border border-aurora-violet/20" title={`Blood: +${challenge.blood_points}pts`}>
+                                <Droplet className="w-3 h-3 text-aurora-violet" />
+                                <span className="text-aurora-violet text-[10px] font-bold">+{challenge.blood_points}</span>
                               </div>
                             ) : (
                               <div className="flex items-center gap-1 px-1.5 py-0.5 rounded opacity-40"><Droplet className="w-3 h-3 text-txt-muted" /><span className="text-txt-muted text-[10px]">+0</span></div>
@@ -235,13 +235,13 @@ export default function ChallengesPage() {
                             )}
                           </div>
                           <div className="flex items-center gap-1.5">
-                            {challenge.is_solved && <span className="flex items-center gap-1 text-[10px] text-success"><CheckCircle className="w-3 h-3" /></span>}
+                            {challenge.is_solved && <span className="flex items-center gap-1 text-[10px] text-aurora-emerald"><CheckCircle className="w-3 h-3" /></span>}
                             {challenge.challenge_type === 'instance' ? (
-                              <span className="px-3 py-1 rounded bg-blue-dim/30 border border-blue-core/30 text-blue-glow text-xs flex items-center gap-1 pointer-events-none"><Radio className="w-3 h-3" /> Instance</span>
+                              <span className="px-3 py-1 rounded bg-aurora-cyan/20 border border-aurora-cyan/30 text-aurora-cyan text-xs flex items-center gap-1 pointer-events-none"><Radio className="w-3 h-3" /> Instance</span>
                             ) : challenge.file_url ? (
-                              <span className="px-3 py-1 rounded bg-warning/10 border border-warning/30 text-warning text-xs flex items-center gap-1 pointer-events-none"><Download className="w-3 h-3" /> Assets</span>
+                              <span className="px-3 py-1 rounded bg-signal-amber/10 border border-signal-amber/30 text-signal-amber text-xs flex items-center gap-1 pointer-events-none"><Download className="w-3 h-3" /> Assets</span>
                             ) : (
-                              <span className="px-3 py-1 rounded bg-blue-dim/30 border border-blue-core/30 text-blue-glow text-xs flex items-center gap-1 pointer-events-none"><Unlock className="w-3 h-3" /> Solve</span>
+                              <span className="px-3 py-1 rounded bg-aurora-cyan/20 border border-aurora-cyan/30 text-aurora-cyan text-xs flex items-center gap-1 pointer-events-none"><Unlock className="w-3 h-3" /> Solve</span>
                             )}
                           </div>
                         </div>
