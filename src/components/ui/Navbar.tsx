@@ -25,9 +25,9 @@ function NavLink({ href, label, isActive, onClick }: { href: string; label: stri
     <Link
       href={href}
       onClick={onClick}
-      className={`relative px-4 py-2 text-sm font-medium transition-all duration-200 group ${
-        isActive ? 'text-txt-primary' : 'text-txt-secondary hover:text-txt-primary'
-      }`}
+      className={`relative px-2 py-2 text-sm font-medium transition-all duration-200 group ${
+          isActive ? 'text-txt-primary' : 'text-txt-secondary hover:text-txt-primary'
+        }`}
     >
       {label}
       <span
@@ -101,12 +101,12 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="Home">
             <img src="/images/logo.png" alt="CGS Logo" className="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
             <span className="font-display font-bold text-lg text-txt-primary tracking-wide hidden sm:block">
-              CyberGuardiansSocietyCTF
+              CGS CTF 2026
             </span>
           </Link>
 
           {/* Desktop Nav - Centered */}
-          <div className="hidden md:flex items-center justify-center flex-1 gap-1">
+          <div className="hidden md:flex items-center justify-center flex-1 gap-0">
             {publicLinks.map((link) => (
               <NavLink key={link.href} href={link.href} label={link.label} isActive={pathname === link.href} />
             ))}
