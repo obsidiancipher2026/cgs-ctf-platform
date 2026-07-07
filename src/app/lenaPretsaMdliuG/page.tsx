@@ -196,15 +196,13 @@ export default function AdminPage() {
           setRealFlags(await api.getRealFlags());
           break;
         case 'warmups':
-          setWarmupChallenges(await api.getChallenges('warmup'));
+          setWarmupChallenges(await api.getChallenges());
           break;
         case 'challenges':
-          setAllChallenges(await api.getChallenges('web'));
+          setAllChallenges(await api.getChallenges());
           break;
         case 'live': {
-          const webOnly = await api.getChallenges('web');
-          const warmups = await api.getChallenges('warmup');
-          const all = [...webOnly, ...warmups];
+          const all = await api.getChallenges();
           const cats = new Map<string, { total: number; published: number; unpublished: number }>();
           for (const c of all) {
             if (!cats.has(c.category)) cats.set(c.category, { total: 0, published: 0, unpublished: 0 });
@@ -214,6 +212,7 @@ export default function AdminPage() {
             else entry.unpublished++;
           }
           setLiveCategories(Array.from(cats.entries()).map(([category, counts]) => ({ category, ...counts })));
+          setAllChallenges(all);
           break;
         }
       }
@@ -503,35 +502,58 @@ export default function AdminPage() {
 
           <nav
             className={`
-              ${sidebarVisible ? 'lg:w-48' : 'lg:w-0 lg:overflow-hidden'}
+              ${sidebarVisible ? 'lg:w-56' : 'lg:w-0 lg:overflow-hidden'}
               lg:relative lg:flex-shrink-0 lg:transition-[width] lg:duration-300 lg:ease-in-out
               lg:bg-transparent lg:border-0
               fixed lg:static inset-y-0 left-0 z-50
-              bg-[var(--bg-surface)] border-r border-[rgba(34,211,238,0.1)]
+              bg-[#0A0C14] border-r border-[rgba(34,211,238,0.08)]
               overflow-y-auto overflow-x-hidden
               transition-all duration-300 ease-in-out
               ${sidebarVisible ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-              ${sidebarVisible ? 'shadow-[2px_0_20px_rgba(34,211,238,0.08)]' : ''}
+              ${sidebarVisible ? 'shadow-[2px_0_30px_rgba(0,0,0,0.5)]' : ''}
             `}
           >
-            <div className={`w-48 lg:w-full flex flex-col gap-1 p-3 pt-3 ${sidebarVisible ? '' : 'lg:hidden'}`}>
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => { handleTabChange(tab.id); if (window.innerWidth < 1024) setSidebarVisible(false); }}
-                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-mono text-xs sm:text-sm transition-all duration-200 text-left whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? 'bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] border border-[rgba(34,211,238,0.2)] shadow-[0_0_15px_rgba(34,211,238,0.1)]'
-                        : 'text-txt-secondary hover:text-txt-primary hover:bg-[rgba(34,211,238,0.05)] border border-transparent'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
-                    {tab.label}
-                  </button>
-                );
-              })}
+            <div className={`w-56 lg:w-full flex flex-col h-full ${sidebarVisible ? '' : 'lg:hidden'}`}>
+              <div className="p-4 border-b border-[rgba(34,211,238,0.06)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--aurora-cyan)]/20 to-[var(--aurora-violet)]/20 border border-[var(--aurora-cyan)]/20 flex items-center justify-center">
+                    <Shield className="w-3.5 h-3.5 text-[var(--aurora-cyan)]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-display text-txt-primary truncate">GuildMaster</p>
+                    <p className="text-[10px] font-mono text-txt-muted truncate">Admin Panel</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3 space-y-0.5">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => { handleTabChange(tab.id); if (window.innerWidth < 1024) setSidebarVisible(false); }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-mono text-xs transition-all duration-200 text-left ${
+                        activeTab === tab.id
+                          ? 'bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] border border-[rgba(34,211,238,0.2)] shadow-[0_0_12px_rgba(34,211,238,0.08)]'
+                          : 'text-txt-muted hover:text-txt-secondary hover:bg-[rgba(34,211,238,0.04)] border border-transparent'
+                      }`}
+                      title={tab.label}
+                    >
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="p-3 border-t border-[rgba(34,211,238,0.06)]">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-mono text-xs text-txt-muted hover:text-[#FF5C72] hover:bg-[rgba(255,92,114,0.06)] border border-transparent transition-all duration-200 text-left"
+                >
+                  <LogOut className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Sign Out</span>
+                </button>
+              </div>
             </div>
           </nav>
 
@@ -1248,37 +1270,47 @@ export default function AdminPage() {
                     <div className="space-y-6">
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
-                          <Flame className="w-5 h-5 text-[var(--aurora-emerald)]" /> Warmup Challenges
+                          <Flame className="w-5 h-5 text-[var(--aurora-emerald)]" /> Web Challenges
                         </h3>
                         <div className="flex gap-2">
                           <button onClick={async () => {
                             try {
-                              const r = await api.publishCategory('web');
-                              toast.success(r.message);
+                              const webChallenges = warmupChallenges.filter((c: any) => c.category === 'web');
+                              for (const c of webChallenges) {
+                                if (!c.published) await api.updateChallenge(c.id, { published: true });
+                              }
+                              toast.success(`Published all ${webChallenges.length} web challenges`);
                               loadTabData('warmups');
                             } catch { toast.error('Failed to publish web challenges'); }
                           }} className="px-4 py-2 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center gap-1.5">
                             <Eye className="w-3.5 h-3.5" /> Publish All Web
                           </button>
-                          <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'warmup', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
+                          <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'web', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
                             className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
-                            <Plus className="w-3.5 h-3.5" /> New Warmup
+                            <Plus className="w-3.5 h-3.5" /> New Web Challenge
                           </button>
                         </div>
+                      </div>
+
+                      <div className="flex items-center gap-4 flex-wrap text-xs font-mono text-txt-muted px-1">
+                        <span>Total: <strong className="text-txt-primary">{warmupChallenges.length}</strong></span>
+                        <span>Web: <strong className="text-[var(--aurora-cyan)]">{warmupChallenges.filter((c: any) => c.category === 'web').length}</strong></span>
+                        <span>Live: <strong className="text-[var(--aurora-emerald)]">{warmupChallenges.filter((c: any) => c.published).length}</strong></span>
+                        <span>Draft: <strong className="text-[#FF4500]">{warmupChallenges.filter((c: any) => !c.published).length}</strong></span>
                       </div>
 
                       {editChallenge?._new && (
                         <div className="card rounded-xl p-5 sm:p-6">
                           <h4 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(34,211,238,0.1)] pb-3">
-                            <Plus className="w-4 h-4 text-[var(--aurora-emerald)]" /> Create Warmup Challenge
+                            <Plus className="w-4 h-4 text-[var(--aurora-emerald)]" /> Create Web Challenge
                           </h4>
                           <form onSubmit={async (e) => {
                             e.preventDefault();
                             try {
                               await api.createChallenge(challengeForm);
-                              toast.success('Warmup challenge created!');
+                              toast.success('Challenge created!');
                               setEditChallenge(null);
-                              setChallengeForm({ title: '', description: '', category: 'warmup', points: '100', flag: '', hint: '', files: '', difficulty: '' });
+                              setChallengeForm({ title: '', description: '', category: 'web', points: '100', flag: '', hint: '', files: '', difficulty: '' });
                               loadTabData('warmups');
                             } catch { toast.error('Failed to create'); }
                           }} className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
@@ -1332,6 +1364,7 @@ export default function AdminPage() {
                               <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
                                 <th className="p-3 pl-5 font-medium">ID</th>
                                 <th className="p-3 font-medium">Title</th>
+                                <th className="p-3 font-medium">Category</th>
                                 <th className="p-3 font-medium">Points</th>
                                 <th className="p-3 font-medium">Difficulty</th>
                                 <th className="p-3 font-medium">Status</th>
@@ -1340,13 +1373,14 @@ export default function AdminPage() {
                             </thead>
                             <tbody>
                               {warmupChallenges.length === 0 ? (
-                                <tr><td colSpan={6} className="p-10 text-center text-txt-muted font-mono text-sm">No warmup challenges yet</td></tr>
+                                <tr><td colSpan={7} className="p-10 text-center text-txt-muted font-mono text-sm">No challenges yet</td></tr>
                               ) : warmupChallenges.map((c: any) => (
                                 <tr key={c.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
                                   {editChallenge?.id === c.id ? (
                                     <>
                                       <td className="p-3 pl-5 font-mono text-xs text-txt-muted align-top pt-4">{c.id}</td>
                                       <td className="p-3"><input type="text" value={editChallengeForm.title} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, title: e.target.value })} className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" /></td>
+                                      <td className="p-3"><input type="text" value={editChallengeForm.category} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, category: e.target.value })} className="input-field w-24 px-2.5 py-1.5 rounded font-mono text-xs" /></td>
                                       <td className="p-3"><input type="number" value={editChallengeForm.points} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, points: e.target.value })} className="input-field w-20 px-2.5 py-1.5 rounded font-mono text-xs" /></td>
                                       <td className="p-3">
                                         <select value={editChallengeForm.difficulty} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, difficulty: e.target.value })} className="input-field px-2.5 py-1.5 rounded font-mono text-xs">
@@ -1379,7 +1413,13 @@ export default function AdminPage() {
                                   ) : (
                                     <>
                                       <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{c.id}</td>
-                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium max-w-[260px] truncate" title={c.title}>{c.title}</td>
+                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium max-w-[220px] truncate" title={c.title}>{c.title}</td>
+                                      <td className="p-3"><span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider ${
+                                        c.category === 'web' ? 'bg-[rgba(34,211,238,0.12)] text-[var(--aurora-cyan)]' :
+                                        c.category === 'crypto' ? 'bg-[rgba(52,232,158,0.12)] text-[var(--aurora-emerald)]' :
+                                        c.category === 'pwn' ? 'bg-[rgba(255,92,114,0.12)] text-[#FF5C72]' :
+                                        'bg-[rgba(124,92,255,0.12)] text-[var(--aurora-violet)]'
+                                      }`}>{c.category}</span></td>
                                       <td className="p-3 font-mono text-xs text-txt-secondary">{c.points}</td>
                                       <td className="p-3 font-mono text-xs text-txt-secondary">{c.difficulty || '-'}</td>
                                       <td className="p-3">
@@ -1418,12 +1458,22 @@ export default function AdminPage() {
                     <div className="space-y-6">
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
-                          <Target className="w-5 h-5 text-[var(--aurora-cyan)]" /> Web Challenges
+                          <Target className="w-5 h-5 text-[var(--aurora-cyan)]" /> All Challenges
+                          <span className="text-xs font-mono text-txt-muted font-normal">({allChallenges.length} total)</span>
                         </h3>
                         <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'web', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
                           className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
-                          <Plus className="w-3.5 h-3.5" /> New Web Challenge
+                          <Plus className="w-3.5 h-3.5" /> New Challenge
                         </button>
+                      </div>
+
+                      <div className="flex items-center gap-4 flex-wrap text-xs font-mono text-txt-muted px-1">
+                        <span>Total: <strong className="text-txt-primary">{allChallenges.length}</strong></span>
+                        <span>Live: <strong className="text-[var(--aurora-emerald)]">{allChallenges.filter((c: any) => c.published).length}</strong></span>
+                        <span>Draft: <strong className="text-[#FF4500]">{allChallenges.filter((c: any) => !c.published).length}</strong></span>
+                        {Array.from(new Set(allChallenges.map((c: any) => c.category))).map(cat => (
+                          <span key={cat} className="text-txt-muted">{cat}: <strong className="text-txt-primary">{allChallenges.filter((c: any) => c.category === cat).length}</strong></span>
+                        ))}
                       </div>
 
                       {editChallenge?._new && (
@@ -1545,7 +1595,12 @@ export default function AdminPage() {
                                     <>
                                       <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{c.id}</td>
                                       <td className="p-3 font-mono text-sm text-txt-primary font-medium max-w-[220px] truncate" title={c.title}>{c.title}</td>
-                                      <td className="p-3"><span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-[rgba(124,92,255,0.12)] text-[var(--aurora-violet)] uppercase tracking-wider">{c.category}</span></td>
+                                      <td className="p-3"><span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider ${
+                                        c.category === 'web' ? 'bg-[rgba(34,211,238,0.12)] text-[var(--aurora-cyan)]' :
+                                        c.category === 'crypto' ? 'bg-[rgba(52,232,158,0.12)] text-[var(--aurora-emerald)]' :
+                                        c.category === 'pwn' ? 'bg-[rgba(255,92,114,0.12)] text-[#FF5C72]' :
+                                        'bg-[rgba(124,92,255,0.12)] text-[var(--aurora-violet)]'
+                                      }`}>{c.category}</span></td>
                                       <td className="p-3 font-mono text-xs text-txt-secondary">{c.points}</td>
                                       <td className="p-3 font-mono text-xs text-txt-secondary">{c.difficulty || '-'}</td>
                                       <td className="p-3">
@@ -1599,65 +1654,118 @@ export default function AdminPage() {
                           <p className="text-txt-muted font-mono text-xs mt-1">Create challenges in the Warmup or Challenges tabs first</p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {liveCategories.map((cat) => (
-                            <div key={cat.category} className="card rounded-xl p-5 border-l-4 border-l-[var(--aurora-cyan)]">
-                              <div className="flex items-center justify-between mb-4">
-                                <h4 className="font-display text-txt-primary text-base capitalize">{cat.category}</h4>
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono ${cat.published === cat.total ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' : 'bg-[rgba(155,164,178,0.15)] text-txt-muted'}`}>
-                                  {cat.published === cat.total ? 'All Live' : `${cat.published}/${cat.total} Live`}
-                                </span>
-                              </div>
-                              <div className="grid grid-cols-3 gap-3 mb-4">
-                                <div className="text-center p-2 rounded-lg bg-black/20">
-                                  <div className="text-txt-primary font-display text-lg">{cat.total}</div>
-                                  <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Total</div>
+                        <div className="space-y-4">
+                          {liveCategories.map((cat) => {
+                            const catChallenges = allChallenges.filter((c: any) => c.category === cat.category);
+                            return (
+                              <div key={cat.category} className="card rounded-xl overflow-hidden border-l-4 border-l-[var(--aurora-cyan)]">
+                                <div className="p-5 pb-3">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <div>
+                                      <h4 className="font-display text-txt-primary text-base capitalize">{cat.category}</h4>
+                                      <p className="text-[10px] font-mono text-txt-muted mt-0.5">{cat.total} challenges</p>
+                                    </div>
+                                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono ${cat.published === cat.total ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' : 'bg-[rgba(155,164,178,0.15)] text-txt-muted'}`}>
+                                      {cat.published === cat.total ? 'All Live' : `${cat.published}/${cat.total} Live`}
+                                    </span>
+                                  </div>
+                                  <div className="flex gap-2 mb-3">
+                                    <button
+                                      onClick={async () => {
+                                        setPublishingCat(cat.category);
+                                        try {
+                                          const r = await api.publishCategory(cat.category);
+                                          toast.success(r.message);
+                                          loadTabData('live');
+                                        } catch { toast.error('Failed to publish'); }
+                                        finally { setPublishingCat(null); }
+                                      }}
+                                      disabled={publishingCat === cat.category || cat.published === cat.total}
+                                      className="px-3 py-1.5 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-[10px] hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-40 transition-all flex items-center gap-1.5"
+                                    >
+                                      {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
+                                      Publish All
+                                    </button>
+                                    <button
+                                      onClick={async () => {
+                                        setPublishingCat(cat.category);
+                                        try {
+                                          const r = await api.unpublishCategory(cat.category);
+                                          toast.success(r.message);
+                                          loadTabData('live');
+                                        } catch { toast.error('Failed to unpublish'); }
+                                        finally { setPublishingCat(null); }
+                                      }}
+                                      disabled={publishingCat === cat.category || cat.published === 0}
+                                      className="px-3 py-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-[10px] hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-40 transition-all flex items-center gap-1.5"
+                                    >
+                                      {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <EyeOff className="w-3 h-3" />}
+                                      Unpublish All
+                                    </button>
+                                  </div>
                                 </div>
-                                <div className="text-center p-2 rounded-lg bg-[rgba(52,232,158,0.08)]">
-                                  <div className="text-[var(--aurora-emerald)] font-display text-lg">{cat.published}</div>
-                                  <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Live</div>
-                                </div>
-                                <div className="text-center p-2 rounded-lg bg-[rgba(255,69,0,0.08)]">
-                                  <div className="text-[#FF4500] font-display text-lg">{cat.unpublished}</div>
-                                  <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Draft</div>
+                                <div className="border-t border-[rgba(34,211,238,0.06)]">
+                                  <table className="w-full text-left">
+                                    <thead>
+                                      <tr className="text-txt-muted font-mono text-[10px] uppercase tracking-wider bg-black/20">
+                                        <th className="p-2 pl-5 font-medium">ID</th>
+                                        <th className="p-2 font-medium">Title</th>
+                                        <th className="p-2 font-medium">Difficulty</th>
+                                        <th className="p-2 font-medium">Status</th>
+                                        <th className="p-2 pr-5 font-medium text-right">Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {catChallenges.map((c: any) => (
+                                        <tr key={c.id} className="border-t border-[rgba(34,211,238,0.03)] hover:bg-[rgba(34,211,238,0.02)] transition-colors">
+                                          <td className="p-2 pl-5 font-mono text-[10px] text-txt-muted">{c.id}</td>
+                                          <td className="p-2 font-mono text-xs text-txt-primary max-w-[200px] truncate" title={c.title}>{c.title}</td>
+                                          <td className="p-2 font-mono text-[10px] text-txt-secondary">{c.difficulty || '-'}</td>
+                                          <td className="p-2">
+                                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono ${c.published ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' : 'bg-[rgba(155,164,178,0.15)] text-txt-muted'}`}>
+                                              {c.published ? 'Live' : 'Draft'}
+                                            </span>
+                                          </td>
+                                          <td className="p-2 pr-5">
+                                            <div className="flex gap-1 justify-end">
+                                              <button
+                                                onClick={async () => {
+                                                  try {
+                                                    await api.updateChallenge(c.id, { published: true });
+                                                    toast.success(`"${c.title}" published`);
+                                                    loadTabData('live');
+                                                  } catch { toast.error('Failed to publish'); }
+                                                }}
+                                                disabled={c.published}
+                                                className="p-1 rounded bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-30 transition-all"
+                                                title="Publish"
+                                              >
+                                                <Eye className="w-3 h-3" />
+                                              </button>
+                                              <button
+                                                onClick={async () => {
+                                                  try {
+                                                    await api.updateChallenge(c.id, { published: false });
+                                                    toast.success(`"${c.title}" unpublished`);
+                                                    loadTabData('live');
+                                                  } catch { toast.error('Failed to unpublish'); }
+                                                }}
+                                                disabled={!c.published}
+                                                className="p-1 rounded bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-30 transition-all"
+                                                title="Unpublish"
+                                              >
+                                                <EyeOff className="w-3 h-3" />
+                                              </button>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={async () => {
-                                    setPublishingCat(cat.category);
-                                    try {
-                                      const r = await api.publishCategory(cat.category);
-                                      toast.success(r.message);
-                                      loadTabData('live');
-                                    } catch { toast.error('Failed to publish'); }
-                                    finally { setPublishingCat(null); }
-                                  }}
-                                  disabled={publishingCat === cat.category || cat.published === cat.total}
-                                  className="flex-1 px-3 py-2 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
-                                >
-                                  {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
-                                  Publish All
-                                </button>
-                                <button
-                                  onClick={async () => {
-                                    setPublishingCat(cat.category);
-                                    try {
-                                      const r = await api.unpublishCategory(cat.category);
-                                      toast.success(r.message);
-                                      loadTabData('live');
-                                    } catch { toast.error('Failed to unpublish'); }
-                                    finally { setPublishingCat(null); }
-                                  }}
-                                  disabled={publishingCat === cat.category || cat.published === 0}
-                                  className="flex-1 px-3 py-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
-                                >
-                                  {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <EyeOff className="w-3 h-3" />}
-                                  Unpublish All
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       )}
 
