@@ -16,7 +16,6 @@ const publicLinks = [
 
 const protectedLinks = [
   { href: '/challenges', label: 'Challenges' },
-  { href: '/scoreboard', label: 'Scoreboard' },
   { href: '/challenges/submit', label: 'Submit Flag' },
 ];
 

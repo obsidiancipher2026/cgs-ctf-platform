@@ -11,6 +11,7 @@ export async function GET() {
         id: true,
         username: true,
         score: true,
+        bloodPoints: true,
         country: true,
         college: true,
         createdAt: true,

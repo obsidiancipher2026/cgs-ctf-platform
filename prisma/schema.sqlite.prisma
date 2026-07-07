@@ -36,6 +36,7 @@ model User {
   isBanned       Boolean  @default(false)
   score          Int      @default(0)
   ranking        Int      @default(0)
+  bloodPoints    Int      @default(0)
   lastIp         String?
   lastLogin      DateTime?
   createdAt      DateTime @default(now())

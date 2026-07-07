@@ -96,7 +96,10 @@ export async function POST(request: Request, { params }: { params: { slug: strin
 
     await prisma.user.update({
       where: { id: user.id },
-      data: { score: { increment: totalPoints } },
+      data: {
+        score: { increment: totalPoints },
+        bloodPoints: isFirstBlood ? { increment: bloodBonus } : undefined,
+      },
     })
 
     await prisma.log.create({

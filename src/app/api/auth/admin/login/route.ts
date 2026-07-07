@@ -132,6 +132,7 @@ export async function POST(request: Request) {
         status: admin.status,
         score: admin.score,
         ranking: admin.ranking,
+        bloodPoints: admin.bloodPoints,
         team_id: admin.teamId,
       },
     })
