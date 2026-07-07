@@ -33,6 +33,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         files: body.files !== undefined ? (body.files || null) : existing.files,
         difficulty: body.difficulty !== undefined ? (body.difficulty || null) : existing.difficulty,
         published: body.published !== undefined ? body.published : existing.published,
+        instanceUrl: body.instanceUrl !== undefined ? (body.instanceUrl || null) : existing.instanceUrl,
       },
     })
     return jsonResponse(challenge)

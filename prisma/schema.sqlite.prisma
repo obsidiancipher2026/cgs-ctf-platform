@@ -113,6 +113,7 @@ model Challenge {
   files       String?
   difficulty  String?
   published   Boolean      @default(false)
+  instanceUrl String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   solves      Submission[]

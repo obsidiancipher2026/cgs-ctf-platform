@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, CheckCircle, XCircle, Flag, Lock, Unlock, Search } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -8,6 +9,7 @@ import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function ChallengesPage() {
+  const router = useRouter();
   const { user, isAuthenticated } = useStore();
   const [challenges, setChallenges] = useState<any[]>([]);
   const [solvedIds, setSolvedIds] = useState<Set<number>>(new Set());
@@ -96,11 +98,12 @@ export default function ChallengesPage() {
           <div className="text-center py-20 text-txt-muted font-mono">No challenges found</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((challenge, i) => {
+              {filtered.map((challenge, i) => {
               const solved = solvedIds.has(challenge.id);
               return (
                 <motion.div key={challenge.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  className={`card rounded-xl p-5 border-l-4 ${solved ? 'border-l-[var(--aurora-emerald)]' : 'border-l-[var(--aurora-cyan)]'} relative overflow-hidden`}>
+                  onClick={() => router.push(`/challenges/${challenge.id}`)}
+                  className={`card rounded-xl p-5 border-l-4 cursor-pointer ${solved ? 'border-l-[var(--aurora-emerald)]' : 'border-l-[var(--aurora-cyan)]'} relative overflow-hidden hover:bg-[rgba(34,211,238,0.02)] transition-colors`}>
 
                   {solved && (
                     <div className="absolute top-3 right-3">
@@ -125,7 +128,7 @@ export default function ChallengesPage() {
                   <p className="text-txt-secondary font-mono text-xs leading-relaxed mb-4 line-clamp-3">{challenge.description}</p>
 
                   {challenge.hint && (
-                    <details className="mb-4">
+                    <details className="mb-4" onClick={e => e.stopPropagation()}>
                       <summary className="text-txt-muted font-mono text-[10px] uppercase tracking-wider cursor-pointer hover:text-[var(--aurora-cyan)] transition-colors">Hint</summary>
                       <p className="text-txt-muted font-mono text-xs mt-2 italic">{challenge.hint}</p>
                     </details>
@@ -139,15 +142,15 @@ export default function ChallengesPage() {
 
                   <div className="border-t border-[rgba(34,211,238,0.08)] pt-3 mt-3">
                     {solved ? (
-                      <div className="flex items-center gap-2 text-[var(--aurora-emerald)] font-mono text-xs">
+                      <div className="flex items-center gap-2 text-[var(--aurora-emerald)] font-mono text-xs" onClick={e => e.stopPropagation()}>
                         <CheckCircle className="w-4 h-4" /> Solved
                       </div>
                     ) : !isAuthenticated ? (
-                      <div className="flex items-center gap-2 text-txt-muted font-mono text-xs">
-                        <Lock className="w-4 h-4" /> Login to submit flags
+                      <div className="flex items-center gap-2 text-txt-muted font-mono text-xs" onClick={e => e.stopPropagation()}>
+                        <Lock className="w-4 h-4" /> <a href="/login" className="text-[var(--aurora-cyan)] hover:underline" onClick={e => e.stopPropagation()}>Login</a> to submit flags
                       </div>
                     ) : submitId === challenge.id ? (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                         <input type="text" value={flagInput} onChange={e => setFlagInput(e.target.value)}
                           placeholder="CGS{...}" autoFocus
                           className="input-field flex-1 px-3 py-1.5 rounded-lg font-mono text-xs"
@@ -162,7 +165,7 @@ export default function ChallengesPage() {
                         </button>
                       </div>
                     ) : (
-                      <button onClick={() => setSubmitId(challenge.id)}
+                      <button onClick={e => { e.stopPropagation(); setSubmitId(challenge.id); }}
                         className="w-full py-2 rounded-lg bg-[rgba(34,211,238,0.08)] border border-[rgba(34,211,238,0.15)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.15)] transition-all flex items-center justify-center gap-1.5">
                         <Flag className="w-3.5 h-3.5" /> Submit Flag
                       </button>

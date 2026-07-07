@@ -37,3 +37,6 @@ node_modules/
 Thumbs.db
 .vercel
 .env*
+
+# Nested prisma dir
+prisma/prisma/

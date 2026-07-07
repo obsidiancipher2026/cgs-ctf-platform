@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { title, description, category, points, flag, hint, files, difficulty } = body
+    const { title, description, category, points, flag, hint, files, difficulty, instanceUrl } = body
     if (!title || !description || !category || !flag) {
       return jsonResponse({ detail: 'title, description, category, and flag are required' }, 400)
     }
@@ -49,6 +49,7 @@ export async function POST(request: Request) {
         hint: hint || null,
         files: files || null,
         difficulty: difficulty || null,
+        instanceUrl: instanceUrl || null,
       },
     })
     await prisma.log.create({ data: { action: 'challenge_created', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ title, category }) } })
