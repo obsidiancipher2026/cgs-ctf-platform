@@ -10,7 +10,7 @@ import {
   Loader2, Menu, X,
   Lock, Plus, Pencil, KeyRound,
   Search, FileText, AlertTriangle, Flag,
-  Flame, Target, Radio, Eye, EyeOff, RotateCcw,
+  Flame, Target, Radio, Eye, EyeOff, RotateCcw, Upload,
 
 } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 
 type AdminTab =
   | 'dashboard' | 'users' | 'announcements' | 'logs' | 'security' | 'settings' | 'realflags'
-  | 'warmups' | 'challenges' | 'live';
+  | 'warmups' | 'challenges' | 'live' | 'submissions';
 
 const tabs: { id: AdminTab; label: string; icon: any }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -29,6 +29,7 @@ const tabs: { id: AdminTab; label: string; icon: any }[] = [
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'realflags', label: 'Secret Flags', icon: Flag },
   { id: 'warmups', label: 'Warmup Challenges', icon: Flame },
+  { id: 'submissions', label: 'Submissions', icon: Upload },
   { id: 'challenges', label: 'Challenges', icon: Target },
   { id: 'live', label: 'Live Control', icon: Radio },
   { id: 'settings', label: 'Settings', icon: Settings },
@@ -47,6 +48,7 @@ export default function AdminPage() {
   const [dashboard, setDashboard] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const [submissions, setSubmissions] = useState<any[]>([]);
   const [announcementTitle, setAnnouncementTitle] = useState('');
   const [announcementMsg, setAnnouncementMsg] = useState('');
   const [announcementsList, setAnnouncementsList] = useState<any[]>([]);
@@ -184,6 +186,7 @@ export default function AdminPage() {
           break;
         case 'users': setUsers(await api.getAdminUsers()); break;
         case 'announcements': setAnnouncementsList(await api.getAdminAnnouncements()); break;
+        case 'submissions': setSubmissions(await api.getSubmissions()); break;
         case 'logs': setLogs(await api.getAdminLogs()); break;
         case 'security':
           setSecurityStatsData(await api.getSecurityStats());
@@ -1492,6 +1495,51 @@ export default function AdminPage() {
                     </div>
                     );
                   })()}
+
+                  {activeTab === 'submissions' && (
+                    <div>
+                      <div className="mb-3">
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Upload className="w-5 h-5 text-[var(--aurora-cyan)]" /> Flag Submissions
+                        </h3>
+                        <p className="text-txt-secondary font-mono text-xs mt-1">{submissions.length} total submissions</p>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left admin-table">
+                          <thead>
+                            <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
+                              <th className="p-3">Player Name</th>
+                              <th className="p-3">IP Address</th>
+                              <th className="p-3">Status</th>
+                              <th className="p-3">Submit Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {submissions.length === 0 ? (
+                              <tr><td colSpan={4} className="p-10 text-center text-txt-muted font-mono text-sm">No submissions yet</td></tr>
+                            ) : submissions.map((s: any) => (
+                              <tr key={s.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
+                                <td className="p-3 font-mono text-sm text-txt-primary">{s.username}</td>
+                                <td className="p-3 font-mono text-xs text-txt-secondary font-mono">{s.ipAddress || '—'}</td>
+                                <td className="p-3">
+                                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono ${
+                                    s.status === 'correct'
+                                      ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]'
+                                      : 'bg-[rgba(255,92,114,0.15)] text-[var(--alert-coral)]'
+                                  }`}>
+                                    {s.status === 'correct' ? 'Correct' : 'Wrong'}
+                                  </span>
+                                </td>
+                                <td className="p-3 font-mono text-xs text-txt-secondary">
+                                  {new Date(s.createdAt).toLocaleString()}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
 
                   {activeTab === 'challenges' && (
                     <div className="space-y-6">

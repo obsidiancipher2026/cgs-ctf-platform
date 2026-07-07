@@ -57,6 +57,15 @@ export async function POST(request: Request) {
     const match = validHashes.some(h => constantTimeEqual(flagHash, h))
 
     if (!match) {
+      await prisma.log.create({
+        data: {
+          action: 'flag_submit_wrong',
+          userId: user.id,
+          ipAddress: getClientIp(request),
+          severity: 'info',
+          details: JSON.stringify({ challenge_id: challenge.id, title: challenge.title, flag_preview: trimmed.slice(0, 20) }),
+        },
+      }).catch(() => {})
       return jsonResponse({ detail: 'Incorrect flag' }, 400)
     }
 
@@ -86,7 +95,7 @@ export async function POST(request: Request) {
 
     await prisma.log.create({
       data: {
-        action: isFirstBlood ? 'challenge_first_blood' : 'challenge_solved',
+        action: 'flag_submit_correct',
         userId: user.id,
         ipAddress: getClientIp(request),
         severity: 'info',

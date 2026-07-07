@@ -265,6 +265,11 @@ class ApiClient {
     return res;
   }
 
+  async getSubmissions() {
+    const { data } = await this.client.get('/api/admin/submissions');
+    return data;
+  }
+
   async approveUser(userId: number) {
     const { data } = await this.client.post('/api/admin/users/approve', { user_id: userId });
     return data;
