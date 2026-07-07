@@ -11,7 +11,7 @@ import {
   Lock, Plus, Pencil, KeyRound,
   Search, FileText, AlertTriangle, Flag,
   Flame, Target, Radio, Eye, EyeOff,
-  Download,
+
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useStore } from '@/lib/store';
@@ -82,7 +82,7 @@ export default function AdminPage() {
   const [challengeForm, setChallengeForm] = useState({ title: '', description: '', category: '', points: '100', flag: '', hint: '', files: '', difficulty: '' });
   const [editChallenge, setEditChallenge] = useState<any>(null);
   const [editChallengeForm, setEditChallengeForm] = useState({ title: '', description: '', category: '', points: '100', flag: '', hint: '', files: '', difficulty: '', published: false });
-  const [challengeCategoryFilter, setChallengeCategoryFilter] = useState('');
+
   const [liveCategories, setLiveCategories] = useState<{ category: string; total: number; published: number; unpublished: number }[]>([]);
   const [publishingCat, setPublishingCat] = useState<string | null>(null);
 
@@ -199,12 +199,14 @@ export default function AdminPage() {
           setWarmupChallenges(await api.getChallenges('warmup'));
           break;
         case 'challenges':
-          setAllChallenges(await api.getChallenges());
+          setAllChallenges(await api.getChallenges('web'));
           break;
         case 'live': {
-          const challenges = await api.getChallenges();
+          const webOnly = await api.getChallenges('web');
+          const warmups = await api.getChallenges('warmup');
+          const all = [...webOnly, ...warmups];
           const cats = new Map<string, { total: number; published: number; unpublished: number }>();
-          for (const c of challenges) {
+          for (const c of all) {
             if (!cats.has(c.category)) cats.set(c.category, { total: 0, published: 0, unpublished: 0 });
             const entry = cats.get(c.category)!;
             entry.total++;
@@ -1248,10 +1250,21 @@ export default function AdminPage() {
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
                           <Flame className="w-5 h-5 text-[var(--aurora-emerald)]" /> Warmup Challenges
                         </h3>
-                        <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'warmup', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
-                          className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
-                          <Plus className="w-3.5 h-3.5" /> New Warmup
-                        </button>
+                        <div className="flex gap-2">
+                          <button onClick={async () => {
+                            try {
+                              const r = await api.publishCategory('web');
+                              toast.success(r.message);
+                              loadTabData('warmups');
+                            } catch { toast.error('Failed to publish web challenges'); }
+                          }} className="px-4 py-2 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5" /> Publish All Web
+                          </button>
+                          <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'warmup', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
+                            className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
+                            <Plus className="w-3.5 h-3.5" /> New Warmup
+                          </button>
+                        </div>
                       </div>
 
                       {editChallenge?._new && (
@@ -1405,21 +1418,12 @@ export default function AdminPage() {
                     <div className="space-y-6">
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
-                          <Target className="w-5 h-5 text-[var(--aurora-cyan)]" /> Challenges
+                          <Target className="w-5 h-5 text-[var(--aurora-cyan)]" /> Web Challenges
                         </h3>
-                        <div className="flex gap-2 items-center">
-                          <select value={challengeCategoryFilter} onChange={(e) => setChallengeCategoryFilter(e.target.value)}
-                            className="input-field px-3 py-1.5 rounded-lg font-mono text-xs bg-[#0a0f18] border border-[rgba(34,211,238,0.15)]">
-                            <option value="">All Categories</option>
-                            {Array.from(new Set(allChallenges.map((c: any) => c.category))).map(cat => (
-                              <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                          </select>
-                          <button onClick={() => { setChallengeForm({ title: '', description: '', category: challengeCategoryFilter || '', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
-                            className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
-                            <Plus className="w-3.5 h-3.5" /> New Challenge
-                          </button>
-                        </div>
+                        <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'web', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
+                          className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
+                          <Plus className="w-3.5 h-3.5" /> New Web Challenge
+                        </button>
                       </div>
 
                       {editChallenge?._new && (
@@ -1433,7 +1437,7 @@ export default function AdminPage() {
                               await api.createChallenge(challengeForm);
                               toast.success('Challenge created!');
                               setEditChallenge(null);
-                              setChallengeForm({ title: '', description: '', category: challengeCategoryFilter || '', points: '100', flag: '', hint: '', files: '', difficulty: '' });
+                              setChallengeForm({ title: '', description: '', category: 'web', points: '100', flag: '', hint: '', files: '', difficulty: '' });
                               loadTabData('challenges');
                             } catch { toast.error('Failed to create'); }
                           }} className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
