@@ -17,7 +17,7 @@ export async function POST(request: Request, { params }: { params: { slug: strin
       where: { slug, published: true },
       select: {
         id: true, slug: true, title: true, instanceType: true,
-        dockerImage: true, instanceTTL: true, internalPort: true,
+        instanceUrl: true, dockerImage: true, instanceTTL: true, internalPort: true,
         cpuLimit: true, memoryLimit: true, envVariables: true,
         healthCheckType: true, healthCheckPath: true, healthCheckInterval: true,
         launchable: true,
@@ -25,6 +25,20 @@ export async function POST(request: Request, { params }: { params: { slug: strin
     })
 
     if (!challenge) return jsonResponse({ detail: 'Challenge not found' }, 404)
+
+    // Static URL challenges don't need the orchestrator
+    if (challenge.instanceType === 'web' && !challenge.dockerImage && challenge.instanceUrl) {
+      return jsonResponse({
+        instance: {
+          id: crypto.randomUUID(),
+          status: 'running',
+          url: challenge.instanceUrl,
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+          token: crypto.randomBytes(16).toString('hex'),
+          ttl: 86400,
+        },
+      })
+    }
 
     const existing = await prisma.challengeInstance.findFirst({
       where: { userId: user.id, challengeId: challenge.id, status: 'running' },
