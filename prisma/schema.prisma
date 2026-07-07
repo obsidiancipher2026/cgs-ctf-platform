@@ -1,14 +1,14 @@
-// SQLite schema for local development.
-// Usage: copy this over schema.prisma when running locally with SQLite:
+// PostgreSQL schema for production (Vercel).
+// For local SQLite development, switch to the SQLite schema:
 //   Copy-Item prisma/schema.sqlite.prisma prisma/schema.prisma
-// Then: npx prisma generate && npx prisma db push
+// Or use: npm run db:switch:sqlite
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
