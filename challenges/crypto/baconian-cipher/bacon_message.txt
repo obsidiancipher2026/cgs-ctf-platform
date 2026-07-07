@@ -1,0 +1,3 @@
+# bacon_message.txt
+
+This is a challenge file for the CGS CTF platform.
