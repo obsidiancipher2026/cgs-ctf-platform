@@ -10,11 +10,13 @@ import { useStore } from '@/lib/store';
 const publicLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
+  { href: '/scoreboard', label: 'Scoreboard' },
   { href: '/announcements', label: 'Announcements' },
 ];
 
 const protectedLinks = [
   { href: '/challenges', label: 'Challenges' },
+  { href: '/scoreboard', label: 'Scoreboard' },
   { href: '/challenges/submit', label: 'Submit Flag' },
 ];
 
