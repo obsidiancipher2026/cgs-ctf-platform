@@ -105,7 +105,7 @@ model AttackLog {
 model Challenge {
   id            Int      @id @default(autoincrement())
   title         String
-  slug          String?  @unique
+  slug          String   @unique @default("")
   description   String
   markdown      String?
   story         String?
