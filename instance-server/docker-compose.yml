@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  instance-server:
+    build: .
+    container_name: cgs-instance-server
+    ports:
+      - "3100:3100"
+    environment:
+      - PORT=3100
+      - DOCKER_SOCKET=/var/run/docker.sock
+      - CTF_NETWORK=ctf_instances
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-changeme}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3000}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - ctf_instances
+
+networks:
+  ctf_instances:
+    name: ctf_instances
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

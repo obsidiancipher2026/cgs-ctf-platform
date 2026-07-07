@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: cgs-traefik
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=ctf_instances
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL:-admin@ctf.local}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --log.level=INFO
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt_data:/letsencrypt
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=Host(`traefik.${BASE_DOMAIN}`)
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=auth
+      - traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_USERS:-admin:$$apr1$$xxx}
+    networks:
+      - ctf_instances
+    restart: unless-stopped
+
+  instance-server:
+    build: ./instance-server
+    container_name: cgs-instance-server
+    expose:
+      - "3100"
+    environment:
+      - PORT=3100
+      - DOCKER_SOCKET=/var/run/docker.sock
+      - CTF_NETWORK=ctf_instances
+      - BASE_DOMAIN=${BASE_DOMAIN}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - CORS_ORIGIN=${APP_URL:-https://ctf.local}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.api.rule=Host(`api.${BASE_DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.api.entrypoints=websecure
+      - traefik.http.routers.api.tls=true
+      - traefik.http.routers.api.tls.certresolver=letsencrypt
+      - traefik.http.services.api.loadbalancer.server.port=3100
+    networks:
+      - ctf_instances
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+volumes:
+  letsencrypt_data:
+
+networks:
+  ctf_instances:
+    external: true
+    name: ctf_instances

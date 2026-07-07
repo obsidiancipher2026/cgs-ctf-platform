@@ -54,7 +54,7 @@ model User {
   playerType String?
 
   submissions Submission[]
-  instances   Instance[]
+  instances   ChallengeInstance[]
 }
 
 model Announcement {
@@ -130,10 +130,19 @@ model Challenge {
   estimatedTime Int?
   solveCount    Int      @default(0)
   solveRate     Float    @default(0.0)
+  launchable    Boolean  @default(false)
+  dockerComposePath String?
+  internalPort  Int      @default(80)
+  cpuLimit      String   @default("0.5")
+  memoryLimit   String   @default("128m")
+  envVariables  Json?
+  healthCheckType   String?
+  healthCheckPath   String?
+  healthCheckInterval Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  solves      Submission[]
-  instances   Instance[]
+  solves        Submission[]
+  instances     ChallengeInstance[]
 }
 
 model Submission {
@@ -147,20 +156,54 @@ model Submission {
   @@unique([userId, challengeId])
 }
 
-model Instance {
-  id          String   @id @default(uuid())
-  userId      Int
-  challengeId Int
-  containerId String?
-  port        Int?
-  status      String   @default("starting")
-  url         String?
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id])
-  challenge   Challenge @relation(fields: [challengeId], references: [id])
+model ChallengeInstance {
+  id             String   @id @default(uuid())
+  userId         Int
+  challengeId    Int
+  containerId    String?
+  token          String   @unique
+  internalPort   Int      @default(80)
+  status         String   @default("creating")
+  url            String?
+  flag           String
+  launchTime     DateTime @default(now())
+  expirationTime DateTime
+  extendedCount  Int      @default(0)
+  errorMessage   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user      User           @relation(fields: [userId], references: [id])
+  challenge Challenge      @relation(fields: [challengeId], references: [id])
+  logs      InstanceLog[]
+  events    InstanceEvent[]
+
+  @@index([userId, status])
+  @@index([expirationTime])
+  @@index([challengeId])
   @@unique([userId, challengeId])
+}
+
+model InstanceLog {
+  id         String           @id @default(uuid())
+  instanceId String
+  level      String           @default("info")
+  message    String
+  timestamp  DateTime         @default(now())
+  instance   ChallengeInstance @relation(fields: [instanceId], references: [id])
+
+  @@index([instanceId, timestamp])
+}
+
+model InstanceEvent {
+  id          String           @id @default(uuid())
+  instanceId  String
+  eventType   String
+  timestamp   DateTime         @default(now())
+  details     Json?
+  instance    ChallengeInstance @relation(fields: [instanceId], references: [id])
+
+  @@index([instanceId, timestamp])
 }
 
 model RealFlag {

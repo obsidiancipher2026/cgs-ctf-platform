@@ -18,7 +18,7 @@ export async function GET(request: Request, { params }: { params: { slug: string
     const { user, error } = await authenticate(request)
     if (error) return error
 
-    const instance = await prisma.instance.findFirst({
+    const instance = await prisma.challengeInstance.findFirst({
       where: { userId: user.id, challengeId: challenge.id, status: 'running' },
       orderBy: { createdAt: 'desc' },
     })
@@ -27,12 +27,13 @@ export async function GET(request: Request, { params }: { params: { slug: string
       return jsonResponse({ instance: null })
     }
 
-    if (instance.expiresAt <= new Date()) {
-      await prisma.instance.update({
+    const now = new Date()
+    if (instance.expirationTime <= now) {
+      await prisma.challengeInstance.update({
         where: { id: instance.id },
         data: { status: 'expired' },
       })
-      return jsonResponse({ instance: { ...instance, status: 'expired' } })
+      return jsonResponse({ instance: { id: instance.id, status: 'expired', url: instance.url, expiresAt: instance.expirationTime } })
     }
 
     return jsonResponse({
@@ -40,7 +41,8 @@ export async function GET(request: Request, { params }: { params: { slug: string
         id: instance.id,
         status: instance.status,
         url: instance.url,
-        expiresAt: instance.expiresAt,
+        expiresAt: instance.expirationTime,
+        token: instance.token,
       },
     })
   } catch {
@@ -63,7 +65,7 @@ export async function POST(request: Request, { params }: { params: { slug: strin
     })
     if (!challenge) return jsonResponse({ detail: 'Challenge not found' }, 404)
 
-    const instance = await prisma.instance.findFirst({
+    const instance = await prisma.challengeInstance.findFirst({
       where: { userId: user.id, challengeId: challenge.id, status: 'running' },
       orderBy: { createdAt: 'desc' },
     })
@@ -74,12 +76,12 @@ export async function POST(request: Request, { params }: { params: { slug: strin
 
     if (action === 'destroy') {
       try {
-        await fetch(`${INSTANCE_SERVER_URL}/api/instances/${instance.id}/destroy`, {
-          method: 'POST',
+        await fetch(`${INSTANCE_SERVER_URL}/api/instances/${instance.id}`, {
+          method: 'DELETE',
         })
       } catch {}
 
-      await prisma.instance.update({
+      await prisma.challengeInstance.update({
         where: { id: instance.id },
         data: { status: 'expired' },
       })
@@ -88,7 +90,7 @@ export async function POST(request: Request, { params }: { params: { slug: strin
     }
 
     if (action === 'restart') {
-      await prisma.instance.update({
+      await prisma.challengeInstance.update({
         where: { id: instance.id },
         data: { status: 'expired' },
       })
@@ -107,6 +109,48 @@ export async function POST(request: Request, { params }: { params: { slug: strin
       }
 
       return jsonResponse({ detail: 'Failed to restart instance' }, 500)
+    }
+
+    if (action === 'extend') {
+      const seconds = body.seconds || 300
+      try {
+        const res = await fetch(`${INSTANCE_SERVER_URL}/api/instances/${instance.id}/extend`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ seconds, maxMinutes: body.maxMinutes || 120 }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data.expiresAt) {
+            await prisma.challengeInstance.update({
+              where: { id: instance.id },
+              data: {
+                expirationTime: new Date(data.expiresAt),
+                extendedCount: { increment: 1 },
+              },
+            })
+          }
+          return jsonResponse(data)
+        }
+      } catch {}
+
+      await prisma.challengeInstance.update({
+        where: { id: instance.id },
+        data: {
+          expirationTime: new Date(instance.expirationTime.getTime() + seconds * 1000),
+          extendedCount: { increment: 1 },
+        },
+      })
+
+      return jsonResponse({
+        instance: {
+          id: instance.id,
+          status: 'running',
+          url: instance.url,
+          expiresAt: new Date(instance.expirationTime.getTime() + seconds * 1000),
+        },
+      })
     }
 
     return jsonResponse({ detail: 'Invalid action' }, 400)
