@@ -197,7 +197,7 @@ export default function ChallengeWorkspacePage() {
                 />
                 {challenge.instanceUrl?.startsWith('/playground/') && (
                   <div className="mt-2 text-[10px] font-mono text-txt-muted text-center">
-                    Interact with the challenge directly in your browser. Use the request builder to send custom requests.
+                    Opens the interactive playground in a new tab. Use the request builder to send custom requests.
                   </div>
                 )}
               </motion.div>
