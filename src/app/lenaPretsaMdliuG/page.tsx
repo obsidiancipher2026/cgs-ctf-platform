@@ -1287,6 +1287,18 @@ export default function AdminPage() {
                           }} className="px-4 py-2 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] transition-all flex items-center gap-1.5">
                             <Eye className="w-3.5 h-3.5" /> Publish All Web
                           </button>
+                          <button onClick={async () => {
+                            try {
+                              const webChallenges = warmupChallenges.filter((c: any) => c.category === 'web');
+                              for (const c of webChallenges) {
+                                if (c.published) await api.updateChallenge(c.id, { published: false });
+                              }
+                              toast.success(`Unpublished all ${webChallenges.length} web challenges`);
+                              loadTabData('warmups');
+                            } catch { toast.error('Failed to unpublish web challenges'); }
+                          }} className="px-4 py-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] transition-all flex items-center gap-1.5">
+                            <EyeOff className="w-3.5 h-3.5" /> Unpublish All Web
+                          </button>
                           <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'web', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
                             className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
                             <Plus className="w-3.5 h-3.5" /> New Web Challenge
@@ -1657,12 +1669,15 @@ export default function AdminPage() {
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          {liveCategories.map((cat) => {
+                          {liveCategories
+                            .sort((a, b) => a.category === 'web' ? -1 : b.category === 'web' ? 1 : 0)
+                            .map((cat) => {
                             const catChallenges = allChallenges.filter((c: any) => c.category === cat.category);
+                            const difficulties = ['easy', 'medium', 'hard'];
                             return (
                               <div key={cat.category} className="card rounded-xl overflow-hidden border-l-4 border-l-[var(--aurora-cyan)]">
                                 <div className="p-5 pb-3">
-                                  <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center justify-between mb-4">
                                     <div>
                                       <h4 className="font-display text-txt-primary text-base capitalize">{cat.category}</h4>
                                       <p className="text-[10px] font-mono text-txt-muted mt-0.5">{cat.total} challenges</p>
@@ -1671,7 +1686,72 @@ export default function AdminPage() {
                                       {cat.published === cat.total ? 'All Live' : `${cat.published}/${cat.total} Live`}
                                     </span>
                                   </div>
-                                  <div className="flex gap-2 mb-3">
+
+                                  {/* Per-difficulty rows */}
+                                  <div className="space-y-2 mb-4">
+                                    {difficulties.map(diff => {
+                                      const diffChallenges = catChallenges.filter((c: any) => c.difficulty === diff);
+                                      if (diffChallenges.length === 0) return null;
+                                      const publishedCount = diffChallenges.filter((c: any) => c.published).length;
+                                      const allPublished = publishedCount === diffChallenges.length;
+                                      return (
+                                        <div key={diff} className="flex items-center justify-between px-4 py-2.5 rounded-lg bg-white/[0.02] border border-border-c">
+                                          <div className="flex items-center gap-3">
+                                            <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider font-semibold ${
+                                              diff === 'easy' ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' :
+                                              diff === 'medium' ? 'bg-[rgba(255,176,32,0.15)] text-[var(--signal-amber)]' :
+                                              'bg-[rgba(255,92,114,0.15)] text-[var(--alert-coral)]'
+                                            }`}>{diff}</span>
+                                            <span className="font-mono text-xs text-txt-secondary">{diffChallenges.length} challenges</span>
+                                            <span className={`font-mono text-[10px] ${allPublished ? 'text-[var(--aurora-emerald)]' : 'text-txt-muted'}`}>
+                                              ({publishedCount}/{diffChallenges.length} live)
+                                            </span>
+                                          </div>
+                                          <div className="flex gap-1.5">
+                                            <button
+                                              onClick={async () => {
+                                                setPublishingCat(`${cat.category}-${diff}`);
+                                                try {
+                                                  for (const c of diffChallenges) {
+                                                    if (!c.published) await api.updateChallenge(c.id, { published: true });
+                                                  }
+                                                  toast.success(`Published all ${diff} ${cat.category} challenges`);
+                                                  loadTabData('live');
+                                                } catch { toast.error('Failed to publish'); }
+                                                finally { setPublishingCat(null); }
+                                              }}
+                                              disabled={publishingCat === `${cat.category}-${diff}` || allPublished}
+                                              className="px-2.5 py-1 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-[10px] hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-40 transition-all flex items-center gap-1"
+                                            >
+                                              {publishingCat === `${cat.category}-${diff}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
+                                              Publish
+                                            </button>
+                                            <button
+                                              onClick={async () => {
+                                                setPublishingCat(`${cat.category}-${diff}`);
+                                                try {
+                                                  for (const c of diffChallenges) {
+                                                    if (c.published) await api.updateChallenge(c.id, { published: false });
+                                                  }
+                                                  toast.success(`Unpublished all ${diff} ${cat.category} challenges`);
+                                                  loadTabData('live');
+                                                } catch { toast.error('Failed to unpublish'); }
+                                                finally { setPublishingCat(null); }
+                                              }}
+                                              disabled={publishingCat === `${cat.category}-${diff}` || publishedCount === 0}
+                                              className="px-2.5 py-1 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-[10px] hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-40 transition-all flex items-center gap-1"
+                                            >
+                                              {publishingCat === `${cat.category}-${diff}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <EyeOff className="w-3 h-3" />}
+                                              Unpublish
+                                            </button>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {/* Category-level publish/unpublish */}
+                                  <div className="flex gap-2">
                                     <button
                                       onClick={async () => {
                                         setPublishingCat(cat.category);
@@ -1686,7 +1766,7 @@ export default function AdminPage() {
                                       className="px-3 py-1.5 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-[10px] hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-40 transition-all flex items-center gap-1.5"
                                     >
                                       {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
-                                      Publish All
+                                      Publish All {cat.category}
                                     </button>
                                     <button
                                       onClick={async () => {
@@ -1702,7 +1782,7 @@ export default function AdminPage() {
                                       className="px-3 py-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-[10px] hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-40 transition-all flex items-center gap-1.5"
                                     >
                                       {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <EyeOff className="w-3 h-3" />}
-                                      Unpublish All
+                                      Unpublish All {cat.category}
                                     </button>
                                   </div>
                                 </div>
