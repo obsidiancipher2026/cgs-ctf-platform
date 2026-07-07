@@ -29,8 +29,6 @@ export async function GET(request: Request, { params }: { params: { slug: string
         tags: true,
         instanceUrl: true,
         instanceType: true,
-        instanceStatus: true,
-        dockerImage: true,
         estimatedTime: true,
         solveCount: true,
         solveRate: true,

@@ -24,7 +24,6 @@ export async function GET(request: Request) {
         difficulty: true,
         instanceUrl: true,
         instanceType: true,
-        dockerImage: true,
         createdAt: true,
       },
       orderBy: { id: 'asc' },
