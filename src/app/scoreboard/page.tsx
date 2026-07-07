@@ -19,7 +19,7 @@ export default function ScoreboardPage() {
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--bg-base)' }}>
-      <div className="pt-20 pb-16">
+      <div className="pt-16 pb-12">
         <Scoreboard players={players} loading={loading} />
       </div>
     </main>

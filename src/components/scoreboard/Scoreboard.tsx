@@ -68,7 +68,7 @@ export default function Scoreboard({ players, loading = false }: ScoreboardProps
   if (!mounted) return null
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-txt-primary">Scoreboard</h1>
