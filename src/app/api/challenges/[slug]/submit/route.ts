@@ -69,8 +69,7 @@ export async function POST(request: Request, { params }: { params: { slug: strin
       select: { flag: true },
     })
 
-    const validFlags = [challenge.flag, ...storedFlags.map(f => f.flag)]
-    const validHashes = validFlags.map(f => crypto.createHash('sha256').update(f).digest('hex'))
+    const validHashes = [challenge.flag, ...storedFlags.map(f => crypto.createHash('sha256').update(f.flag).digest('hex'))]
 
     const flagHash = crypto.createHash('sha256').update(trimmed).digest('hex')
     const match = validHashes.some(h => constantTimeEqual(flagHash, h))
