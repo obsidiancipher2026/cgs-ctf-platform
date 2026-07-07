@@ -264,6 +264,67 @@ class ApiClient {
     const { data } = await this.client.post('/api/auth/invalidate-all');
     return data;
   }
+
+  async getRealFlags() {
+    const { data } = await this.client.get('/api/admin/real-flags');
+    return data;
+  }
+
+  async createRealFlag(challengeName: string, flag: string, category?: string, notes?: string) {
+    const { data } = await this.client.post('/api/admin/real-flags', {
+      challenge_name: challengeName, flag, category: category || null, notes: notes || null,
+    });
+    return data;
+  }
+
+  async updateRealFlag(id: number, updates: { challenge_name?: string; flag?: string; category?: string; notes?: string }) {
+    const { data } = await this.client.put(`/api/admin/real-flags/${id}`, updates);
+    return data;
+  }
+
+  async deleteRealFlag(id: number) {
+    const { data } = await this.client.delete(`/api/admin/real-flags/${id}`);
+    return data;
+  }
+
+  async deleteAllRealFlags() {
+    const { data } = await this.client.delete('/api/admin/real-flags/all');
+    return data;
+  }
+
+  async getChallenges(category?: string) {
+    const params = category ? `?category=${encodeURIComponent(category)}` : '';
+    const { data } = await this.client.get(`/api/admin/challenges${params}`);
+    return data;
+  }
+
+  async createChallenge(data: {
+    title: string; description: string; category: string;
+    points?: number | string; flag: string; hint?: string; files?: string; difficulty?: string;
+  }) {
+    const { data: res } = await this.client.post('/api/admin/challenges', { ...data, points: data.points ? Number(data.points) : 100 });
+    return res;
+  }
+
+  async updateChallenge(id: number, updates: any) {
+    const { data } = await this.client.put(`/api/admin/challenges/${id}`, updates);
+    return data;
+  }
+
+  async deleteChallenge(id: number) {
+    const { data } = await this.client.delete(`/api/admin/challenges/${id}`);
+    return data;
+  }
+
+  async publishCategory(category: string) {
+    const { data } = await this.client.post('/api/admin/challenges/publish-category', { category });
+    return data;
+  }
+
+  async unpublishCategory(category: string) {
+    const { data } = await this.client.post('/api/admin/challenges/unpublish-category', { category });
+    return data;
+  }
 }
 
 export const api = new ApiClient();

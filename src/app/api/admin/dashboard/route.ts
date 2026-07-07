@@ -16,8 +16,10 @@ export async function GET(request: Request) {
 
   const totalUsers = await prisma.user.count()
   const suspiciousLogs = await prisma.log.count({ where: { severity: 'suspicious' } })
+  const totalChallenges = await prisma.challenge.count()
+  const liveChallenges = await prisma.challenge.count({ where: { published: true } })
 
-  return jsonResponse({ total_users: totalUsers, suspicious_logs: suspiciousLogs })
+  return jsonResponse({ total_users: totalUsers, suspicious_logs: suspiciousLogs, total_challenges: totalChallenges, live_challenges: liveChallenges })
   } catch (e) {
     return jsonResponse({ detail: 'Failed to load dashboard' }, 500)
   }

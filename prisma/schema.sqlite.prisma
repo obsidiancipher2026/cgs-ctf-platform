@@ -100,6 +100,32 @@ model AttackLog {
   createdAt       DateTime  @default(now())
 }
 
+model Challenge {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+  points      Int       @default(100)
+  flag        String
+  hint        String?
+  files       String?
+  difficulty  String?
+  published   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model RealFlag {
+  id            Int       @id @default(autoincrement())
+  challengeName String
+  flag          String
+  category      String?
+  notes         String?
+  createdBy     Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
 model SecurityConfig {
   id    Int    @id @default(autoincrement())
   key   String @unique

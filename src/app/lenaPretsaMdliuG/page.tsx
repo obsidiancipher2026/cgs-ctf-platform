@@ -9,14 +9,17 @@ import {
   Settings, Bell, RefreshCw,
   Loader2, Menu, X,
   Lock, Plus, Pencil, KeyRound,
-  Search, FileText, AlertTriangle,
+  Search, FileText, AlertTriangle, Flag,
+  Flame, Target, Radio, Eye, EyeOff,
+  Download,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 type AdminTab =
-  | 'dashboard' | 'users' | 'announcements' | 'logs' | 'security' | 'settings';
+  | 'dashboard' | 'users' | 'announcements' | 'logs' | 'security' | 'settings' | 'realflags'
+  | 'warmups' | 'challenges' | 'live';
 
 const tabs: { id: AdminTab; label: string; icon: any }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -24,6 +27,10 @@ const tabs: { id: AdminTab; label: string; icon: any }[] = [
   { id: 'announcements', label: 'Announcements', icon: Bell },
   { id: 'logs', label: 'Logs', icon: Activity },
   { id: 'security', label: 'Security', icon: Shield },
+  { id: 'realflags', label: 'Secret Flags', icon: Flag },
+  { id: 'warmups', label: 'Warmup Challenges', icon: Flame },
+  { id: 'challenges', label: 'Challenges', icon: Target },
+  { id: 'live', label: 'Live Control', icon: Radio },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
@@ -65,6 +72,19 @@ export default function AdminPage() {
   const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
   const [wsConnected, setWsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
+  const [realFlags, setRealFlags] = useState<any[]>([]);
+  const [realFlagForm, setRealFlagForm] = useState({ challenge_name: '', flag: '', category: '', notes: '' });
+  const [editRealFlag, setEditRealFlag] = useState<any>(null);
+  const [editRealFlagForm, setEditRealFlagForm] = useState({ challenge_name: '', flag: '', category: '', notes: '' });
+
+  const [warmupChallenges, setWarmupChallenges] = useState<any[]>([]);
+  const [allChallenges, setAllChallenges] = useState<any[]>([]);
+  const [challengeForm, setChallengeForm] = useState({ title: '', description: '', category: '', points: '100', flag: '', hint: '', files: '', difficulty: '' });
+  const [editChallenge, setEditChallenge] = useState<any>(null);
+  const [editChallengeForm, setEditChallengeForm] = useState({ title: '', description: '', category: '', points: '100', flag: '', hint: '', files: '', difficulty: '', published: false });
+  const [challengeCategoryFilter, setChallengeCategoryFilter] = useState('');
+  const [liveCategories, setLiveCategories] = useState<{ category: string; total: number; published: number; unpublished: number }[]>([]);
+  const [publishingCat, setPublishingCat] = useState<string | null>(null);
 
   const tryAutoLogin = async () => {
     try {
@@ -172,6 +192,28 @@ export default function AdminPage() {
           setSecuritySettingsData(await api.getSecuritySettings());
           setSecurityFeatures(await api.getSecurityFeatures());
           break;
+        case 'realflags':
+          setRealFlags(await api.getRealFlags());
+          break;
+        case 'warmups':
+          setWarmupChallenges(await api.getChallenges('warmup'));
+          break;
+        case 'challenges':
+          setAllChallenges(await api.getChallenges());
+          break;
+        case 'live': {
+          const challenges = await api.getChallenges();
+          const cats = new Map<string, { total: number; published: number; unpublished: number }>();
+          for (const c of challenges) {
+            if (!cats.has(c.category)) cats.set(c.category, { total: 0, published: 0, unpublished: 0 });
+            const entry = cats.get(c.category)!;
+            entry.total++;
+            if (c.published) entry.published++;
+            else entry.unpublished++;
+          }
+          setLiveCategories(Array.from(cats.entries()).map(([category, counts]) => ({ category, ...counts })));
+          break;
+        }
       }
     } catch (err: any) {
       toast.error(`Failed to load ${tab} data`);
@@ -1046,6 +1088,596 @@ export default function AdminPage() {
                               ))}
                             </tbody>
                           </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'realflags' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Flag className="w-5 h-5 text-[var(--aurora-cyan)]" /> Secret Flag Management
+                        </h3>
+                        {realFlags.length > 0 && (
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Delete ALL ${realFlags.length} secret flags? This cannot be undone.`)) return;
+                              try { const t = await api.getCsrfToken(); useStore.getState().setCsrfToken(t.csrf_token); const r = await api.deleteAllRealFlags(); toast.success(r.message); loadTabData('realflags'); }
+                              catch { toast.error('Failed to delete all flags'); }
+                            }}
+                            className="px-4 py-2 rounded-lg bg-[rgba(124,92,255,0.15)] border border-[rgba(124,92,255,0.4)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.25)] transition-all flex items-center gap-1.5"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete All ({realFlags.length})
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="card rounded-xl p-5 sm:p-6">
+                        <h4 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(34,211,238,0.1)] pb-3">
+                          <Plus className="w-4 h-4 text-[var(--aurora-emerald)]" /> Store Secret Flag
+                        </h4>
+                        <form onSubmit={async (e) => {
+                          e.preventDefault();
+                          try {
+                            await api.createRealFlag(realFlagForm.challenge_name, realFlagForm.flag, realFlagForm.category || undefined, realFlagForm.notes || undefined);
+                            toast.success('Secret flag stored!');
+                            setRealFlagForm({ challenge_name: '', flag: '', category: '', notes: '' });
+                            loadTabData('realflags');
+                          } catch (err: any) {
+                            toast.error(err?.response?.data?.detail || 'Failed to store flag');
+                          }
+                        }} className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
+                          <div className="sm:col-span-2">
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Name / Identifier</label>
+                            <input type="text" value={realFlagForm.challenge_name} onChange={(e) => setRealFlagForm({ ...realFlagForm, challenge_name: e.target.value })}
+                              placeholder="Enter challenge name or identifier" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Secret Flag</label>
+                            <textarea value={realFlagForm.flag} onChange={(e) => setRealFlagForm({ ...realFlagForm, flag: e.target.value })}
+                              placeholder="Paste secret flag here" rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                          </div>
+                          <div>
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Category</label>
+                            <input type="text" value={realFlagForm.category} onChange={(e) => setRealFlagForm({ ...realFlagForm, category: e.target.value })}
+                              placeholder="e.g. Web, Crypto" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                          </div>
+                          <div>
+                            <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Notes</label>
+                            <input type="text" value={realFlagForm.notes} onChange={(e) => setRealFlagForm({ ...realFlagForm, notes: e.target.value })}
+                              placeholder="Additional notes" className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                          </div>
+                          <button type="submit" className="sm:col-span-2 mt-1 px-6 py-2.5 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center justify-center gap-2">
+                            <Lock className="w-4 h-4" /> Store Flag
+                          </button>
+                        </form>
+                      </div>
+
+                      <div className="card rounded-xl overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left">
+                            <thead>
+                              <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
+                                <th className="p-3 pl-5 font-medium">ID</th>
+                                <th className="p-3 font-medium">Name</th>
+                                <th className="p-3 font-medium">Flag</th>
+                                <th className="p-3 font-medium">Category</th>
+                                <th className="p-3 font-medium">Notes</th>
+                                <th className="p-3 pr-5 font-medium text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {realFlags.length === 0 ? (
+                                <tr><td colSpan={6} className="p-10 text-center text-txt-muted font-mono text-sm">No secret flags stored yet</td></tr>
+                              ) : realFlags.map((f: any) => (
+                                <tr key={f.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
+                                  {editRealFlag?.id === f.id ? (
+                                    <>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted align-top pt-4">{f.id}</td>
+                                      <td className="p-3">
+                                        <input type="text" value={editRealFlagForm.challenge_name} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, challenge_name: e.target.value })}
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
+                                      </td>
+                                      <td className="p-3">
+                                        <textarea value={editRealFlagForm.flag} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, flag: e.target.value })}
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" rows={1} />
+                                      </td>
+                                      <td className="p-3">
+                                        <input type="text" value={editRealFlagForm.category} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, category: e.target.value })}
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
+                                      </td>
+                                      <td className="p-3">
+                                        <input type="text" value={editRealFlagForm.notes} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, notes: e.target.value })}
+                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
+                                      </td>
+                                      <td className="p-3 pr-5 align-top pt-4">
+                                        <div className="flex gap-1.5 justify-end">
+                                          <button onClick={async () => {
+                                            try {
+                                              await api.updateRealFlag(f.id, editRealFlagForm);
+                                              toast.success('Updated');
+                                              setEditRealFlag(null);
+                                              loadTabData('realflags');
+                                            } catch { toast.error('Failed'); }
+                                          }} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Save">
+                                            <CheckCircle className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={() => setEditRealFlag(null)} className="p-1.5 rounded-lg bg-[rgba(155,164,178,0.1)] text-txt-secondary hover:bg-[rgba(155,164,178,0.2)] transition-all" title="Cancel">
+                                            <X className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{f.id}</td>
+                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium">{f.challenge_name}</td>
+                                      <td className="p-3 font-mono text-xs max-w-[220px] truncate" title={f.flag} style={{color: '#ff4500'}}>{f.flag}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{f.category || <span className="text-txt-muted">-</span>}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary max-w-[180px] truncate" title={f.notes || ''}>{f.notes || <span className="text-txt-muted">-</span>}</td>
+                                      <td className="p-3 pr-5">
+                                        <div className="flex gap-1.5 justify-end">
+                                          <button onClick={() => { setEditRealFlag(f); setEditRealFlagForm({ challenge_name: f.challenge_name, flag: f.flag, category: f.category || '', notes: f.notes || '' }); }}
+                                            className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Edit">
+                                            <Pencil className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={async () => {
+                                            if (!confirm(`Delete flag for "${f.challenge_name}"?`)) return;
+                                            try { await api.deleteRealFlag(f.id); toast.success('Deleted'); loadTabData('realflags'); }
+                                            catch { toast.error('Failed'); }
+                                          }} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Delete">
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </>
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'warmups' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Flame className="w-5 h-5 text-[var(--aurora-emerald)]" /> Warmup Challenges
+                        </h3>
+                        <button onClick={() => { setChallengeForm({ title: '', description: '', category: 'warmup', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
+                          className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
+                          <Plus className="w-3.5 h-3.5" /> New Warmup
+                        </button>
+                      </div>
+
+                      {editChallenge?._new && (
+                        <div className="card rounded-xl p-5 sm:p-6">
+                          <h4 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(34,211,238,0.1)] pb-3">
+                            <Plus className="w-4 h-4 text-[var(--aurora-emerald)]" /> Create Warmup Challenge
+                          </h4>
+                          <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            try {
+                              await api.createChallenge(challengeForm);
+                              toast.success('Warmup challenge created!');
+                              setEditChallenge(null);
+                              setChallengeForm({ title: '', description: '', category: 'warmup', points: '100', flag: '', hint: '', files: '', difficulty: '' });
+                              loadTabData('warmups');
+                            } catch { toast.error('Failed to create'); }
+                          }} className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Title</label>
+                              <input type="text" value={challengeForm.title} onChange={(e) => setChallengeForm({ ...challengeForm, title: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Points</label>
+                              <input type="number" value={challengeForm.points} onChange={(e) => setChallengeForm({ ...challengeForm, points: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Description</label>
+                              <textarea value={challengeForm.description} onChange={(e) => setChallengeForm({ ...challengeForm, description: e.target.value })} rows={3} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Flag</label>
+                              <textarea value={challengeForm.flag} onChange={(e) => setChallengeForm({ ...challengeForm, flag: e.target.value })} rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Hint</label>
+                              <input type="text" value={challengeForm.hint} onChange={(e) => setChallengeForm({ ...challengeForm, hint: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Difficulty</label>
+                              <select value={challengeForm.difficulty} onChange={(e) => setChallengeForm({ ...challengeForm, difficulty: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm">
+                                <option value="">Any</option>
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                              </select>
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Files (JSON array of URLs)</label>
+                              <input type="text" value={challengeForm.files} onChange={(e) => setChallengeForm({ ...challengeForm, files: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            </div>
+                            <div className="sm:col-span-2 flex gap-3">
+                              <button type="submit" className="px-6 py-2.5 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-2">
+                                <Plus className="w-4 h-4" /> Create Challenge
+                              </button>
+                              <button type="button" onClick={() => setEditChallenge(null)} className="px-6 py-2.5 rounded-xl bg-[rgba(155,164,178,0.1)] border border-[rgba(155,164,178,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(155,164,178,0.2)] transition-all">Cancel</button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+
+                      <div className="card rounded-xl overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left">
+                            <thead>
+                              <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
+                                <th className="p-3 pl-5 font-medium">ID</th>
+                                <th className="p-3 font-medium">Title</th>
+                                <th className="p-3 font-medium">Points</th>
+                                <th className="p-3 font-medium">Difficulty</th>
+                                <th className="p-3 font-medium">Status</th>
+                                <th className="p-3 pr-5 font-medium text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {warmupChallenges.length === 0 ? (
+                                <tr><td colSpan={6} className="p-10 text-center text-txt-muted font-mono text-sm">No warmup challenges yet</td></tr>
+                              ) : warmupChallenges.map((c: any) => (
+                                <tr key={c.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
+                                  {editChallenge?.id === c.id ? (
+                                    <>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted align-top pt-4">{c.id}</td>
+                                      <td className="p-3"><input type="text" value={editChallengeForm.title} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, title: e.target.value })} className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" /></td>
+                                      <td className="p-3"><input type="number" value={editChallengeForm.points} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, points: e.target.value })} className="input-field w-20 px-2.5 py-1.5 rounded font-mono text-xs" /></td>
+                                      <td className="p-3">
+                                        <select value={editChallengeForm.difficulty} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, difficulty: e.target.value })} className="input-field px-2.5 py-1.5 rounded font-mono text-xs">
+                                          <option value="">Any</option>
+                                          <option value="easy">Easy</option>
+                                          <option value="medium">Medium</option>
+                                          <option value="hard">Hard</option>
+                                        </select>
+                                      </td>
+                                      <td className="p-3">
+                                        <label className="flex items-center gap-2 text-xs font-mono cursor-pointer">
+                                          <input type="checkbox" checked={editChallengeForm.published} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, published: e.target.checked })} className="rounded border-[rgba(34,211,238,0.3)]" />
+                                          <span className={editChallengeForm.published ? 'text-[var(--aurora-emerald)]' : 'text-txt-muted'}>{editChallengeForm.published ? 'Published' : 'Draft'}</span>
+                                        </label>
+                                      </td>
+                                      <td className="p-3 pr-5 align-top pt-4">
+                                        <div className="flex gap-1.5 justify-end">
+                                          <button onClick={async () => {
+                                            try { await api.updateChallenge(c.id, editChallengeForm); toast.success('Updated'); setEditChallenge(null); loadTabData('warmups'); }
+                                            catch { toast.error('Failed'); }
+                                          }} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Save">
+                                            <CheckCircle className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={() => setEditChallenge(null)} className="p-1.5 rounded-lg bg-[rgba(155,164,178,0.1)] text-txt-secondary hover:bg-[rgba(155,164,178,0.2)] transition-all" title="Cancel">
+                                            <X className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{c.id}</td>
+                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium max-w-[260px] truncate" title={c.title}>{c.title}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{c.points}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{c.difficulty || '-'}</td>
+                                      <td className="p-3">
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono ${c.published ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' : 'bg-[rgba(155,164,178,0.15)] text-txt-muted'}`}>
+                                          {c.published ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                          {c.published ? 'Live' : 'Draft'}
+                                        </span>
+                                      </td>
+                                      <td className="p-3 pr-5">
+                                        <div className="flex gap-1.5 justify-end">
+                                          <button onClick={() => { setEditChallenge(c); setEditChallengeForm({ title: c.title, description: c.description, category: c.category, points: String(c.points), flag: c.flag, hint: c.hint || '', files: c.files || '', difficulty: c.difficulty || '', published: c.published }); }}
+                                            className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Edit">
+                                            <Pencil className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={async () => {
+                                            if (!confirm(`Delete challenge "${c.title}"?`)) return;
+                                            try { await api.deleteChallenge(c.id); toast.success('Deleted'); loadTabData('warmups'); }
+                                            catch { toast.error('Failed'); }
+                                          }} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Delete">
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </>
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'challenges' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Target className="w-5 h-5 text-[var(--aurora-cyan)]" /> Challenges
+                        </h3>
+                        <div className="flex gap-2 items-center">
+                          <select value={challengeCategoryFilter} onChange={(e) => setChallengeCategoryFilter(e.target.value)}
+                            className="input-field px-3 py-1.5 rounded-lg font-mono text-xs bg-[#0a0f18] border border-[rgba(34,211,238,0.15)]">
+                            <option value="">All Categories</option>
+                            {Array.from(new Set(allChallenges.map((c: any) => c.category))).map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                          <button onClick={() => { setChallengeForm({ title: '', description: '', category: challengeCategoryFilter || '', points: '100', flag: '', hint: '', files: '', difficulty: '' }); setEditChallenge({ _new: true } as any); }}
+                            className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-1.5">
+                            <Plus className="w-3.5 h-3.5" /> New Challenge
+                          </button>
+                        </div>
+                      </div>
+
+                      {editChallenge?._new && (
+                        <div className="card rounded-xl p-5 sm:p-6">
+                          <h4 className="font-display text-txt-primary text-sm mb-5 flex items-center gap-2 border-b border-[rgba(34,211,238,0.1)] pb-3">
+                            <Plus className="w-4 h-4 text-[var(--aurora-emerald)]" /> Create Challenge
+                          </h4>
+                          <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            try {
+                              await api.createChallenge(challengeForm);
+                              toast.success('Challenge created!');
+                              setEditChallenge(null);
+                              setChallengeForm({ title: '', description: '', category: challengeCategoryFilter || '', points: '100', flag: '', hint: '', files: '', difficulty: '' });
+                              loadTabData('challenges');
+                            } catch { toast.error('Failed to create'); }
+                          }} className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Title</label>
+                              <input type="text" value={challengeForm.title} onChange={(e) => setChallengeForm({ ...challengeForm, title: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Points</label>
+                              <input type="number" value={challengeForm.points} onChange={(e) => setChallengeForm({ ...challengeForm, points: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Category</label>
+                              <input type="text" value={challengeForm.category} onChange={(e) => setChallengeForm({ ...challengeForm, category: e.target.value })} placeholder="e.g. web, crypto, pwn..." className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Difficulty</label>
+                              <select value={challengeForm.difficulty} onChange={(e) => setChallengeForm({ ...challengeForm, difficulty: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm">
+                                <option value="">Any</option>
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                              </select>
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Description</label>
+                              <textarea value={challengeForm.description} onChange={(e) => setChallengeForm({ ...challengeForm, description: e.target.value })} rows={3} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Flag</label>
+                              <textarea value={challengeForm.flag} onChange={(e) => setChallengeForm({ ...challengeForm, flag: e.target.value })} rows={2} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" required />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Hint</label>
+                              <input type="text" value={challengeForm.hint} onChange={(e) => setChallengeForm({ ...challengeForm, hint: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            </div>
+                            <div>
+                              <label className="block text-txt-muted font-mono text-[10px] mb-1.5 uppercase tracking-wider">Files (JSON)</label>
+                              <input type="text" value={challengeForm.files} onChange={(e) => setChallengeForm({ ...challengeForm, files: e.target.value })} className="input-field w-full px-4 py-2.5 rounded-lg font-mono text-sm" />
+                            </div>
+                            <div className="sm:col-span-2 flex gap-3">
+                              <button type="submit" className="px-6 py-2.5 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-2">
+                                <Plus className="w-4 h-4" /> Create Challenge
+                              </button>
+                              <button type="button" onClick={() => setEditChallenge(null)} className="px-6 py-2.5 rounded-xl bg-[rgba(155,164,178,0.1)] border border-[rgba(155,164,178,0.3)] text-txt-secondary font-mono text-sm hover:bg-[rgba(155,164,178,0.2)] transition-all">Cancel</button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+
+                      <div className="card rounded-xl overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left">
+                            <thead>
+                              <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
+                                <th className="p-3 pl-5 font-medium">ID</th>
+                                <th className="p-3 font-medium">Title</th>
+                                <th className="p-3 font-medium">Category</th>
+                                <th className="p-3 font-medium">Points</th>
+                                <th className="p-3 font-medium">Difficulty</th>
+                                <th className="p-3 font-medium">Status</th>
+                                <th className="p-3 pr-5 font-medium text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {allChallenges.length === 0 ? (
+                                <tr><td colSpan={7} className="p-10 text-center text-txt-muted font-mono text-sm">No challenges yet</td></tr>
+                              ) : allChallenges.map((c: any) => (
+                                <tr key={c.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
+                                  {editChallenge?.id === c.id ? (
+                                    <>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted align-top pt-4">{c.id}</td>
+                                      <td className="p-3"><input type="text" value={editChallengeForm.title} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, title: e.target.value })} className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" /></td>
+                                      <td className="p-3"><input type="text" value={editChallengeForm.category} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, category: e.target.value })} className="input-field w-24 px-2.5 py-1.5 rounded font-mono text-xs" /></td>
+                                      <td className="p-3"><input type="number" value={editChallengeForm.points} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, points: e.target.value })} className="input-field w-20 px-2.5 py-1.5 rounded font-mono text-xs" /></td>
+                                      <td className="p-3">
+                                        <select value={editChallengeForm.difficulty} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, difficulty: e.target.value })} className="input-field px-2.5 py-1.5 rounded font-mono text-xs">
+                                          <option value="">Any</option>
+                                          <option value="easy">Easy</option>
+                                          <option value="medium">Medium</option>
+                                          <option value="hard">Hard</option>
+                                        </select>
+                                      </td>
+                                      <td className="p-3">
+                                        <label className="flex items-center gap-2 text-xs font-mono cursor-pointer">
+                                          <input type="checkbox" checked={editChallengeForm.published} onChange={(e) => setEditChallengeForm({ ...editChallengeForm, published: e.target.checked })} className="rounded border-[rgba(34,211,238,0.3)]" />
+                                          <span className={editChallengeForm.published ? 'text-[var(--aurora-emerald)]' : 'text-txt-muted'}>{editChallengeForm.published ? 'Published' : 'Draft'}</span>
+                                        </label>
+                                      </td>
+                                      <td className="p-3 pr-5 align-top pt-4">
+                                        <div className="flex gap-1.5 justify-end">
+                                          <button onClick={async () => {
+                                            try { await api.updateChallenge(c.id, editChallengeForm); toast.success('Updated'); setEditChallenge(null); loadTabData('challenges'); }
+                                            catch { toast.error('Failed'); }
+                                          }} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Save">
+                                            <CheckCircle className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={() => setEditChallenge(null)} className="p-1.5 rounded-lg bg-[rgba(155,164,178,0.1)] text-txt-secondary hover:bg-[rgba(155,164,178,0.2)] transition-all" title="Cancel">
+                                            <X className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{c.id}</td>
+                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium max-w-[220px] truncate" title={c.title}>{c.title}</td>
+                                      <td className="p-3"><span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-[rgba(124,92,255,0.12)] text-[var(--aurora-violet)] uppercase tracking-wider">{c.category}</span></td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{c.points}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{c.difficulty || '-'}</td>
+                                      <td className="p-3">
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono ${c.published ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' : 'bg-[rgba(155,164,178,0.15)] text-txt-muted'}`}>
+                                          {c.published ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                          {c.published ? 'Live' : 'Draft'}
+                                        </span>
+                                      </td>
+                                      <td className="p-3 pr-5">
+                                        <div className="flex gap-1.5 justify-end">
+                                          <button onClick={() => { setEditChallenge(c); setEditChallengeForm({ title: c.title, description: c.description, category: c.category, points: String(c.points), flag: c.flag, hint: c.hint || '', files: c.files || '', difficulty: c.difficulty || '', published: c.published }); }}
+                                            className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Edit">
+                                            <Pencil className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={async () => {
+                                            if (!confirm(`Delete challenge "${c.title}"?`)) return;
+                                            try { await api.deleteChallenge(c.id); toast.success('Deleted'); loadTabData('challenges'); }
+                                            catch { toast.error('Failed'); }
+                                          }} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Delete">
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </>
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'live' && (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between flex-wrap gap-3">
+                        <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
+                          <Radio className="w-5 h-5 text-[var(--aurora-emerald)]" /> Live Control
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs font-mono text-txt-muted">
+                          <span className="inline-block w-2 h-2 rounded-full bg-[var(--aurora-emerald)] animate-pulse" />
+                          {liveCategories.reduce((s, c) => s + c.published, 0)} challenges live
+                        </div>
+                      </div>
+
+                      {liveCategories.length === 0 ? (
+                        <div className="card rounded-xl p-10 text-center">
+                          <Radio className="w-10 h-10 mx-auto text-txt-muted mb-3" />
+                          <p className="text-txt-muted font-mono text-sm">No challenge categories found</p>
+                          <p className="text-txt-muted font-mono text-xs mt-1">Create challenges in the Warmup or Challenges tabs first</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {liveCategories.map((cat) => (
+                            <div key={cat.category} className="card rounded-xl p-5 border-l-4 border-l-[var(--aurora-cyan)]">
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="font-display text-txt-primary text-base capitalize">{cat.category}</h4>
+                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono ${cat.published === cat.total ? 'bg-[rgba(52,232,158,0.15)] text-[var(--aurora-emerald)]' : 'bg-[rgba(155,164,178,0.15)] text-txt-muted'}`}>
+                                  {cat.published === cat.total ? 'All Live' : `${cat.published}/${cat.total} Live`}
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-3 gap-3 mb-4">
+                                <div className="text-center p-2 rounded-lg bg-black/20">
+                                  <div className="text-txt-primary font-display text-lg">{cat.total}</div>
+                                  <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Total</div>
+                                </div>
+                                <div className="text-center p-2 rounded-lg bg-[rgba(52,232,158,0.08)]">
+                                  <div className="text-[var(--aurora-emerald)] font-display text-lg">{cat.published}</div>
+                                  <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Live</div>
+                                </div>
+                                <div className="text-center p-2 rounded-lg bg-[rgba(255,69,0,0.08)]">
+                                  <div className="text-[#FF4500] font-display text-lg">{cat.unpublished}</div>
+                                  <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Draft</div>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={async () => {
+                                    setPublishingCat(cat.category);
+                                    try {
+                                      const r = await api.publishCategory(cat.category);
+                                      toast.success(r.message);
+                                      loadTabData('live');
+                                    } catch { toast.error('Failed to publish'); }
+                                    finally { setPublishingCat(null); }
+                                  }}
+                                  disabled={publishingCat === cat.category || cat.published === cat.total}
+                                  className="flex-1 px-3 py-2 rounded-lg bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.3)] text-[var(--aurora-emerald)] font-mono text-xs hover:bg-[rgba(52,232,158,0.2)] disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
+                                >
+                                  {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
+                                  Publish All
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    setPublishingCat(cat.category);
+                                    try {
+                                      const r = await api.unpublishCategory(cat.category);
+                                      toast.success(r.message);
+                                      loadTabData('live');
+                                    } catch { toast.error('Failed to unpublish'); }
+                                    finally { setPublishingCat(null); }
+                                  }}
+                                  disabled={publishingCat === cat.category || cat.published === 0}
+                                  className="flex-1 px-3 py-2 rounded-lg bg-[rgba(124,92,255,0.1)] border border-[rgba(124,92,255,0.3)] text-[var(--aurora-violet)] font-mono text-xs hover:bg-[rgba(124,92,255,0.2)] disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
+                                >
+                                  {publishingCat === cat.category ? <Loader2 className="w-3 h-3 animate-spin" /> : <EyeOff className="w-3 h-3" />}
+                                  Unpublish All
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="card rounded-xl p-5">
+                        <h4 className="font-display text-txt-primary text-sm mb-3 flex items-center gap-2">
+                          <Activity className="w-4 h-4 text-[var(--aurora-cyan)]" /> Quick Stats
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <div className="p-3 rounded-lg bg-black/20 text-center">
+                            <div className="text-txt-primary font-display text-xl">{liveCategories.reduce((s, c) => s + c.total, 0)}</div>
+                            <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Total Challenges</div>
+                          </div>
+                          <div className="p-3 rounded-lg bg-[rgba(52,232,158,0.08)] text-center">
+                            <div className="text-[var(--aurora-emerald)] font-display text-xl">{liveCategories.reduce((s, c) => s + c.published, 0)}</div>
+                            <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Live</div>
+                          </div>
+                          <div className="p-3 rounded-lg bg-[rgba(255,69,0,0.08)] text-center">
+                            <div className="text-[#FF4500] font-display text-xl">{liveCategories.reduce((s, c) => s + c.unpublished, 0)}</div>
+                            <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Draft</div>
+                          </div>
+                          <div className="p-3 rounded-lg bg-[rgba(124,92,255,0.08)] text-center">
+                            <div className="text-[var(--aurora-violet)] font-display text-xl">{liveCategories.length}</div>
+                            <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Categories</div>
+                          </div>
                         </div>
                       </div>
                     </div>
