@@ -16,7 +16,7 @@
     "db:init": "npx prisma migrate dev --name init",
     "db:switch:sqlite": "powershell -NoProfile -File scripts/switch-db.ps1 -Target sqlite",
     "db:switch:postgres": "powershell -NoProfile -File scripts/switch-db.ps1 -Target postgres",
-    "vercel-build": "npx prisma db push --accept-data-loss && npx prisma generate && next build",
+    "vercel-build": "npx prisma db push --accept-data-loss && npx prisma generate && npx prisma db seed && next build",
     "postinstall": "prisma generate"
   },
   "prisma": {
