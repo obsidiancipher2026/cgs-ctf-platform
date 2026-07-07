@@ -171,7 +171,7 @@ export default function ChallengeDetailPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => router.push(`/challenges/submit?id=${id}`)}
+                  onClick={() => router.push(`/challenges/${id}/solve`)}
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--aurora-violet)]/20 to-[var(--aurora-cyan)]/10 border border-[var(--aurora-violet)]/25 text-sm font-mono text-txt-primary hover:from-[var(--aurora-violet)]/30 hover:to-[var(--aurora-cyan)]/20 hover:border-[var(--aurora-violet)]/40 transition-all flex items-center gap-2 w-fit"
                 >
                   <Flag className="w-4 h-4 text-[var(--aurora-cyan)]" />
