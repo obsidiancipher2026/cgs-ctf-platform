@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Globe, Lock, Search, Terminal, Puzzle, CheckCircle, Sword, Eye } from 'lucide-react'
+import { Globe, Lock, Search, Terminal, Puzzle, CheckCircle, Sword, Eye, ExternalLink, Download } from 'lucide-react'
 
 const categoryMeta: Record<string, { icon: React.ElementType; label: string; color: string }> = {
   web: { icon: Globe, label: 'Web', color: 'text-[var(--aurora-cyan)]' },
@@ -27,6 +27,7 @@ interface Challenge {
   points: number
   hint?: string | null
   files?: string | null
+  instanceUrl?: string | null
   createdAt?: string
 }
 
@@ -43,10 +44,26 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
   const diff = difficultyMeta[challenge.difficulty] || { label: 'Unknown', color: 'text-txt-muted', bars: 0, barColor: 'bg-txt-muted' }
   const Icon = cat.icon
 
+  const hasInstance = !!challenge.instanceUrl
+  const hasFiles = !!challenge.files
+
   const handleView = (e: React.MouseEvent) => {
     e.stopPropagation()
     router.push(`/challenges/${challenge.id}`)
   }
+
+  const handleOpenInstance = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (challenge.instanceUrl) {
+      window.open(challenge.instanceUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  const primaryAction = hasInstance
+    ? { label: 'Open Instance', icon: ExternalLink, onClick: handleOpenInstance }
+    : hasFiles
+    ? { label: 'Download Assets', icon: Download, onClick: handleView }
+    : { label: 'View Challenge', icon: null, onClick: handleView }
 
   return (
     <motion.div
@@ -55,10 +72,9 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
       transition={{ delay: index * 0.04, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={handleView}
+      onClick={hasInstance ? undefined : handleView}
       className="relative group cursor-pointer"
     >
-      {/* Glow effect on hover */}
       <motion.div
         animate={{ opacity: hovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
@@ -71,7 +87,6 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
           : 'border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01]'
       } group-hover:border-white/[0.15] group-hover:bg-white/[0.06] group-hover:shadow-xl group-hover:shadow-black/20`}>
         
-        {/* Solved ribbon */}
         {solved && (
           <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden">
             <div className="absolute top-0 right-0 w-28 h-7 bg-[var(--aurora-emerald)]/20 rotate-45 translate-x-8 -translate-y-2 border border-[var(--aurora-emerald)]/30" />
@@ -79,7 +94,7 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
         )}
 
         <div className="p-5">
-          {/* Top row: Category + Difficulty + Status */}
+          {/* Top row */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <motion.div
@@ -98,7 +113,6 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              {/* Difficulty bars */}
               <div className="flex gap-[2px]">
                 {[1, 2, 3].map(i => (
                   <div key={i} className={`w-3 h-1 rounded-full ${i <= diff.bars ? diff.barColor : 'bg-white/[0.06]'}`} />
@@ -132,14 +146,19 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
 
           {/* Metadata row */}
           <div className="flex items-center gap-3 text-[10px] font-mono text-txt-muted mb-4">
-            {challenge.files && (
+            {hasInstance && (
+              <span className="flex items-center gap-1">
+                <ExternalLink className="w-3 h-3" /> Live Instance
+              </span>
+            )}
+            {hasFiles && (
               <span className="flex items-center gap-1">
                 <Sword className="w-3 h-3" /> Files
               </span>
             )}
             {challenge.hint && (
               <span className="flex items-center gap-1">
-                <Eye className="w-3 h-3" /> Hint Available
+                <Eye className="w-3 h-3" /> Hint
               </span>
             )}
           </div>
@@ -149,11 +168,22 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handleView}
-              className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--aurora-violet)]/20 to-[var(--aurora-cyan)]/10 border border-[var(--aurora-violet)]/20 text-[11px] font-mono text-txt-primary hover:from-[var(--aurora-violet)]/30 hover:to-[var(--aurora-cyan)]/20 hover:border-[var(--aurora-violet)]/40 transition-all"
+              onClick={(e) => { e.stopPropagation(); primaryAction.onClick(e) }}
+              className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--aurora-violet)]/20 to-[var(--aurora-cyan)]/10 border border-[var(--aurora-violet)]/20 text-[11px] font-mono text-txt-primary hover:from-[var(--aurora-violet)]/30 hover:to-[var(--aurora-cyan)]/20 hover:border-[var(--aurora-violet)]/40 transition-all flex items-center justify-center gap-1.5"
             >
-              {solved ? 'View Solution' : 'View Challenge'}
+              {primaryAction.icon && <primaryAction.icon className="w-3 h-3" />}
+              {solved ? 'View Solution' : primaryAction.label}
             </motion.button>
+            {hasInstance && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleView}
+                className="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono text-txt-secondary hover:bg-white/[0.08] hover:text-txt-primary transition-all flex items-center gap-1.5"
+              >
+                Details
+              </motion.button>
+            )}
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ export async function GET(request: Request) {
         hint: true,
         files: true,
         difficulty: true,
+        instanceUrl: true,
         createdAt: true,
       },
       orderBy: { id: 'asc' },
