@@ -29,6 +29,8 @@ interface Challenge {
   hint?: string | null
   files?: string | null
   instanceUrl?: string | null
+  instanceType?: string | null
+  dockerImage?: string | null
   createdAt?: string
 }
 
@@ -45,7 +47,7 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
   const diff = difficultyMeta[challenge.difficulty] || { label: 'Unknown', color: 'text-txt-muted', bars: 0, barColor: 'bg-txt-muted' }
   const Icon = cat.icon
 
-  const hasInstance = !!challenge.instanceUrl
+  const hasInstance = challenge.instanceType === 'web' || !!challenge.dockerImage || !!challenge.instanceUrl
   const hasFiles = !!challenge.files
 
   const handleView = (e: React.MouseEvent) => {
@@ -55,9 +57,7 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
 
   const handleOpenInstance = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (challenge.instanceUrl) {
-      window.open(challenge.instanceUrl, '_blank', 'noopener,noreferrer')
-    }
+    router.push(`/challenges/${challenge.slug || challenge.id}`)
   }
 
   const primaryAction = hasInstance

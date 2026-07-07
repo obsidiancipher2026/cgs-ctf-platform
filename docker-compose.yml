@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  instance-server:
+    build:
+      context: ./instance-server
+      dockerfile: Dockerfile
+    ports:
+      - "3100:3100"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./challenge-sites:/app/challenge-sites:ro
+    environment:
+      - NODE_ENV=production
+      - INSTANCE_PORT=3100
+      - BASE_DOMAIN=localhost
+      - INSTANCE_PREFIX=ctf
+      - INSTANCE_TTL=1800
+      - MAX_INSTANCES=3
+      - DOCKER_SOCKET=/var/run/docker.sock
+      - CHALLENGE_SITES_DIR=/app/challenge-sites
+    restart: unless-stopped
+    networks:
+      - ctf-network
+
+  ctf-proxy:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./instance-server/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - instance-server
+    restart: unless-stopped
+    networks:
+      - ctf-network
+
+networks:
+  ctf-network:
+    driver: bridge

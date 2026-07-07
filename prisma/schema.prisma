@@ -54,6 +54,7 @@ model User {
   playerType String?
 
   submissions Submission[]
+  instances   Instance[]
 }
 
 model Announcement {
@@ -131,7 +132,8 @@ model Challenge {
   solveRate     Float    @default(0.0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  solves        Submission[]
+  solves      Submission[]
+  instances   Instance[]
 }
 
 model Submission {
@@ -141,6 +143,22 @@ model Submission {
   solved      Boolean   @default(true)
   createdAt   DateTime  @default(now())
   user        User      @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  @@unique([userId, challengeId])
+}
+
+model Instance {
+  id          String   @id @default(uuid())
+  userId      Int
+  challengeId Int
+  containerId String?
+  port        Int?
+  status      String   @default("starting")
+  url         String?
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
   challenge   Challenge @relation(fields: [challengeId], references: [id])
   @@unique([userId, challengeId])
 }

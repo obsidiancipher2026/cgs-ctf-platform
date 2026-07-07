@@ -23,6 +23,8 @@ export async function GET(request: Request) {
         files: true,
         difficulty: true,
         instanceUrl: true,
+        instanceType: true,
+        dockerImage: true,
         createdAt: true,
       },
       orderBy: { id: 'asc' },

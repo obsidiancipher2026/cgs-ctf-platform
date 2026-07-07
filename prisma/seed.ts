@@ -933,8 +933,8 @@ const getEstimatedTime = (difficulty: string): number => {
   }
 }
 
-const getInstanceType = (category: string, instanceUrl?: string | null): string | null => {
-  if (category === 'web' && instanceUrl) return 'web'
+const getInstanceType = (category: string): string | null => {
+  if (category === 'web') return 'web'
   return null
 }
 
@@ -996,7 +996,7 @@ async function seedChallenges() {
         estimatedTime: getEstimatedTime(c.difficulty),
         solveCount: 0,
         solveRate: 0.0,
-        instanceType: getInstanceType(c.category, c.instanceUrl),
+        instanceType: getInstanceType(c.category),
         hintPenalty: 0,
         hints: getHints(c.hint),
       },
@@ -1020,7 +1020,7 @@ async function seedChallenges() {
         estimatedTime: getEstimatedTime(c.difficulty),
         solveCount: 0,
         solveRate: 0.0,
-        instanceType: getInstanceType(c.category, c.instanceUrl),
+        instanceType: getInstanceType(c.category),
         hintPenalty: 0,
         hints: getHints(c.hint),
       },
