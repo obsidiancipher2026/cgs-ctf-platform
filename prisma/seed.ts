@@ -5,6 +5,12 @@ const prisma = new PrismaClient()
 
 const hashFlag = (flag: string) => crypto.createHash('sha256').update(flag).digest('hex')
 
+const generateSlug = (title: string): string =>
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
 interface ChallengeData {
   title: string; description: string; category: string; difficulty: string;
   points: number; flag: string; hint: string | null; files?: string | null; instanceUrl?: string | null;
@@ -913,6 +919,30 @@ const challenges: ChallengeData[] = [
   },
 ]
 
+const getTags = (category: string, difficulty: string): string => {
+  const tags: string[] = [category, difficulty]
+  return JSON.stringify(tags)
+}
+
+const getEstimatedTime = (difficulty: string): number => {
+  switch (difficulty) {
+    case 'easy': return 15
+    case 'medium': return 30
+    case 'hard': return 60
+    default: return 15
+  }
+}
+
+const getInstanceType = (category: string, instanceUrl?: string | null): string | null => {
+  if (category === 'web' && instanceUrl) return 'web'
+  return null
+}
+
+const getHints = (hint: string | null): string | null => {
+  if (!hint) return null
+  return JSON.stringify([{ text: hint, penalty: 0 }])
+}
+
 async function seedAdmin() {
   const adminPassword = process.env.ADMIN_PASSWORD
   if (!adminPassword) {
@@ -943,43 +973,64 @@ async function seedChallenges() {
   let created = 0
   let updated = 0
   for (const c of challenges) {
-    const existing = await prisma.challenge.findFirst({ where: { title: c.title } })
-    if (!existing) {
-      await prisma.challenge.create({
-        data: {
-          title: c.title,
-          description: c.description,
-          category: c.category,
-          difficulty: c.difficulty,
-          points: c.points,
-          flag: hashFlag(c.flag),
-          hint: c.hint ? c.hint : null,
-          files: c.files ? c.files : null,
-          instanceUrl: c.instanceUrl ? c.instanceUrl : null,
-          published: true,
-        },
-      })
-      created++
-    } else {
-      const updates: Record<string, any> = {}
-      if (existing.points !== c.points) updates.points = c.points
-      if (existing.description !== c.description) updates.description = c.description
-      if (existing.hint !== c.hint) updates.hint = c.hint
-      if (existing.files !== c.files) updates.files = c.files
-      if (existing.difficulty !== c.difficulty) updates.difficulty = c.difficulty
-      if (existing.category !== c.category) updates.category = c.category
-      if (existing.flag !== hashFlag(c.flag)) updates.flag = hashFlag(c.flag)
-      if (!existing.published) updates.published = true
+    const slug = generateSlug(c.title)
 
-      if (Object.keys(updates).length > 0) {
-        await prisma.challenge.update({ where: { id: existing.id }, data: updates })
-        updated++
-      }
-    }
+    await prisma.challenge.upsert({
+      where: { slug },
+      update: {
+        title: c.title,
+        description: c.description,
+        category: c.category,
+        difficulty: c.difficulty,
+        points: c.points,
+        flag: hashFlag(c.flag),
+        hint: c.hint ? c.hint : null,
+        files: c.files ? c.files : null,
+        instanceUrl: c.instanceUrl ? c.instanceUrl : null,
+        published: true,
+        markdown: c.description,
+        story: null,
+        downloads: c.files ? c.files : null,
+        author: 'CGS Team',
+        tags: getTags(c.category, c.difficulty),
+        estimatedTime: getEstimatedTime(c.difficulty),
+        solveCount: 0,
+        solveRate: 0.0,
+        instanceType: getInstanceType(c.category, c.instanceUrl),
+        hintPenalty: 0,
+        hints: getHints(c.hint),
+      },
+      create: {
+        slug,
+        title: c.title,
+        description: c.description,
+        category: c.category,
+        difficulty: c.difficulty,
+        points: c.points,
+        flag: hashFlag(c.flag),
+        hint: c.hint ? c.hint : null,
+        files: c.files ? c.files : null,
+        instanceUrl: c.instanceUrl ? c.instanceUrl : null,
+        published: true,
+        markdown: c.description,
+        story: null,
+        downloads: c.files ? c.files : null,
+        author: 'CGS Team',
+        tags: getTags(c.category, c.difficulty),
+        estimatedTime: getEstimatedTime(c.difficulty),
+        solveCount: 0,
+        solveRate: 0.0,
+        instanceType: getInstanceType(c.category, c.instanceUrl),
+        hintPenalty: 0,
+        hints: getHints(c.hint),
+      },
+    })
+
+    created++
   }
 
   const total = await prisma.challenge.count()
-  console.log(`[OK] ${created} new challenges created, ${updated} updated (${total} total in database)`)
+  console.log(`[OK] ${created} challenges seeded (${total} total in database)`)
 }
 
 async function main() {

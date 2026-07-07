@@ -15,12 +15,14 @@ import EmptyState from './_components/EmptyState'
 interface Challenge {
   id: number
   title: string
+  slug?: string
   description: string
   category: string
   difficulty: string
   points: number
   hint?: string | null
   files?: string | null
+  instanceUrl?: string | null
   createdAt?: string
 }
 

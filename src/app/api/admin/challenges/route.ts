@@ -39,9 +39,11 @@ export async function POST(request: Request) {
     if (!title || !description || !category || !flag) {
       return jsonResponse({ detail: 'title, description, category, and flag are required' }, 400)
     }
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
     const challenge = await prisma.challenge.create({
       data: {
         title,
+        slug,
         description,
         category,
         points: parseInt(points) || 100,

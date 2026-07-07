@@ -1,23 +1,39 @@
 import prisma from '@/lib/prisma'
 import { jsonResponse } from '@/lib/auth'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: Request, { params }: { params: { slug: string } }) {
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) return jsonResponse({ detail: 'Invalid challenge ID' }, 400)
+    const { slug } = params
 
     const challenge = await prisma.challenge.findUnique({
-      where: { id, published: true },
+      where: { slug, published: true },
       select: {
         id: true,
         title: true,
+        slug: true,
         description: true,
+        markdown: true,
+        story: true,
         category: true,
         points: true,
+        flag: false,
         hint: true,
+        hints: true,
+        hintPenalty: true,
         files: true,
+        downloads: true,
         difficulty: true,
+        author: true,
+        tags: true,
         instanceUrl: true,
+        instanceType: true,
+        instanceStatus: true,
+        dockerImage: true,
+        estimatedTime: true,
+        solveCount: true,
+        solveRate: true,
         createdAt: true,
       },
     })

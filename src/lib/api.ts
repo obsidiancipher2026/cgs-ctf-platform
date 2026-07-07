@@ -337,8 +337,18 @@ class ApiClient {
     return data;
   }
 
+  async getChallengeBySlug(slug: string) {
+    const { data } = await this.client.get(`/api/challenges/${slug}`);
+    return data;
+  }
+
   async submitFlag(challengeId: number, flag: string) {
     const { data } = await this.client.post('/api/submissions', { challenge_id: challengeId, flag });
+    return data;
+  }
+
+  async submitFlagBySlug(slug: string, flag: string) {
+    const { data } = await this.client.post(`/api/challenges/${slug}/submit`, { flag });
     return data;
   }
 

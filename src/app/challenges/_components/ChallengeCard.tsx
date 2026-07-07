@@ -21,6 +21,7 @@ const difficultyMeta: Record<string, { label: string; color: string; bars: numbe
 interface Challenge {
   id: number
   title: string
+  slug?: string
   description: string
   category: string
   difficulty: string
@@ -49,7 +50,7 @@ export default function ChallengeCard({ challenge, solved, index }: Props) {
 
   const handleView = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/challenges/${challenge.id}`)
+    router.push(`/challenges/${challenge.slug || challenge.id}`)
   }
 
   const handleOpenInstance = (e: React.MouseEvent) => {
