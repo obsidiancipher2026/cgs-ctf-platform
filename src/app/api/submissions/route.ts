@@ -4,12 +4,34 @@ import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
-const FIRST_BLOOD_BONUS = 100
+const BLOOD_BONUS: Record<string, number> = { easy: 25, medium: 50, hard: 100 }
+
+const RATE_LIMIT_WINDOW = 5_000
+const rateLimitMap = new Map<number, number>()
+
+function getBloodBonus(difficulty: string | null): number {
+  return BLOOD_BONUS[difficulty ?? ''] ?? 0
+}
+
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    crypto.timingSafeEqual(Buffer.from(a), Buffer.from(a))
+    return false
+  }
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
+}
 
 export async function POST(request: Request) {
   try {
     const { user, error } = await authenticate(request)
     if (error) return error
+
+    const now = Date.now()
+    const lastAttempt = rateLimitMap.get(user.id)
+    if (lastAttempt && now - lastAttempt < RATE_LIMIT_WINDOW) {
+      return jsonResponse({ detail: 'Too many attempts. Please wait a few seconds.' }, 429)
+    }
+    rateLimitMap.set(user.id, now)
 
     const body = await request.json()
     const { challenge_id, flag } = body
@@ -27,8 +49,18 @@ export async function POST(request: Request) {
     })
     if (existing) return jsonResponse({ detail: 'Already solved this challenge' }, 409)
 
-    const hashed = crypto.createHash('sha256').update(flag.trim()).digest('hex')
-    if (hashed !== challenge.flag) {
+    const trimmed = flag.trim()
+    const storedFlags = await prisma.realFlag.findMany({
+      where: { challengeName: challenge.title },
+      select: { flag: true },
+    })
+    const validFlags = [challenge.flag, ...storedFlags.map(f => f.flag)]
+    const validHashes = validFlags.map(f => crypto.createHash('sha256').update(f).digest('hex'))
+
+    const flagHash = crypto.createHash('sha256').update(trimmed).digest('hex')
+    const match = validHashes.some(h => constantTimeEqual(flagHash, h))
+
+    if (!match) {
       return jsonResponse({ detail: 'Incorrect flag' }, 400)
     }
 
@@ -36,7 +68,8 @@ export async function POST(request: Request) {
       where: { challengeId: challenge.id, solved: true },
     })
     const isFirstBlood = existingSolves === 0
-    const totalPoints = challenge.points + (isFirstBlood ? FIRST_BLOOD_BONUS : 0)
+    const bloodBonus = isFirstBlood ? getBloodBonus(challenge.difficulty) : 0
+    const totalPoints = challenge.points + bloodBonus
 
     await prisma.submission.create({
       data: { userId: user.id, challengeId: challenge.id, solved: true },
@@ -61,7 +94,7 @@ export async function POST(request: Request) {
       message: 'Correct flag!',
       points_awarded: challenge.points,
       first_blood: isFirstBlood,
-      first_blood_bonus: isFirstBlood ? FIRST_BLOOD_BONUS : 0,
+      first_blood_bonus: bloodBonus,
       total_points_awarded: totalPoints,
     })
   } catch {
