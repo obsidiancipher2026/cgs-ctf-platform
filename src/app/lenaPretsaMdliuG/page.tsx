@@ -10,7 +10,7 @@ import {
   Loader2, Menu, X,
   Lock, Plus, Pencil, KeyRound,
   Search, FileText, AlertTriangle, Flag,
-  Flame, Target, Radio, Eye, EyeOff,
+  Flame, Target, Radio, Eye, EyeOff, RotateCcw,
 
 } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -640,8 +640,10 @@ export default function AdminPage() {
                       <table className="w-full text-left admin-table">
                         <thead>
                           <tr className="text-txt-secondary font-mono text-xs uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)]">
-                            <th className="p-3">Username</th>
+                            <th className="p-3">Player Name</th>
                             <th className="p-3">Email</th>
+                            <th className="p-3">Solves</th>
+                            <th className="p-3">Blood Pts</th>
                             <th className="p-3">Score</th>
                             <th className="p-3">Status</th>
                             <th className="p-3">Actions</th>
@@ -650,16 +652,18 @@ export default function AdminPage() {
                         <tbody>
                           {users.map((u: any) => (
                             <tr key={u.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.05)] transition-colors">
-                              <td className="p-3 font-mono text-sm text-txt-primary flex items-center gap-2">
-                                {u.avatar_url && (
-                                  <img src={u.avatar_url} alt="" className="w-6 h-6 rounded-full" />
-                                )}
-                                {u.username}
+                              <td className="p-3 font-mono text-sm text-txt-primary">
+                                <div className="flex items-center gap-2">
+                                  {u.avatarUrl && <img src={u.avatarUrl} alt="" className="w-6 h-6 rounded-full" />}
+                                  <span>{u.username}</span>
+                                </div>
                               </td>
                               <td className="p-3 font-mono text-xs text-txt-secondary">{u.email}</td>
+                              <td className="p-3 font-mono text-sm text-txt-primary">{u.solves}</td>
+                              <td className="p-3 font-mono text-sm text-[var(--alert-coral)]">{u.bloodPoints}</td>
                               <td className="p-3 font-mono text-sm text-[var(--aurora-emerald)]">{u.score}</td>
                               <td className="p-3">
-                                {u.is_banned ? (
+                                {u.isBanned ? (
                                   <span className="text-xs font-mono text-[var(--aurora-violet)]">Banned</span>
                                 ) : u.status === 'active' ? (
                                   <span className="text-xs font-mono text-[var(--aurora-emerald)]">Active</span>
@@ -668,30 +672,51 @@ export default function AdminPage() {
                                 )}
                               </td>
                               <td className="p-3">
-                                <div className="flex items-center gap-2 flex-wrap">
+                                <div className="flex items-center gap-1.5 flex-wrap min-w-[200px]">
+                                  <button onClick={() => { setPasswordModal({ userId: u.id, username: u.username }); setPasswordModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Change Password">
+                                    <KeyRound className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button onClick={() => { setUsernameModal({ userId: u.id, username: u.username }); setUsernameModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Change Username">
+                                    <Pencil className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button onClick={async () => {
+                                    if (!confirm(`Reset score for "${u.username}" to 0?`)) return;
+                                    try { await api.resetUserScore(u.id); toast.success('Score reset'); loadTabData('users'); }
+                                    catch { toast.error('Failed to reset score'); }
+                                  }} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Score Points">
+                                    <RefreshCw className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button onClick={async () => {
+                                    if (!confirm(`Reset blood points for "${u.username}" to 0?`)) return;
+                                    try { await api.resetUserBlood(u.id); toast.success('Blood points reset'); loadTabData('users'); }
+                                    catch { toast.error('Failed to reset blood points'); }
+                                  }} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Blood Points">
+                                    <Flame className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button onClick={async () => {
+                                    if (!confirm(`Reset all solves, score, and blood points for "${u.username}"? This cannot be undone.`)) return;
+                                    try { await api.resetUserSolves(u.id); toast.success('Solves reset'); loadTabData('users'); }
+                                    catch { toast.error('Failed to reset solves'); }
+                                  }} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Solve Counts">
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                  </button>
                                   {u.status === 'pending' && (
                                     <button onClick={() => handleApprove(u.id)} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Approve User">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
                                   )}
-                                  {!u.is_banned ? (
-                                    <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Ban">
+                                  <button onClick={() => handleDeleteUser(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(255,92,114,0.1)] text-[var(--alert-coral)] hover:bg-[rgba(255,92,114,0.2)] transition-all" title="Delete User">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  {!u.isBanned ? (
+                                    <button onClick={() => handleBan(u.id)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Ban User">
                                       <Ban className="w-3.5 h-3.5" />
                                     </button>
                                   ) : (
-                                    <button onClick={() => handleUnban(u.id)} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Unban">
+                                    <button onClick={() => handleUnban(u.id)} className="p-1.5 rounded-lg bg-[rgba(52,232,158,0.1)] text-[var(--aurora-emerald)] hover:bg-[rgba(52,232,158,0.2)] transition-all" title="Unban User">
                                       <CheckCircle className="w-3.5 h-3.5" />
                                     </button>
                                   )}
-                                  <button onClick={() => { setUsernameModal({ userId: u.id, username: u.username }); setUsernameModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Edit Username">
-                                    <Pencil className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button onClick={() => { setPasswordModal({ userId: u.id, username: u.username }); setPasswordModalValue(''); }} className="p-1.5 rounded-lg bg-[rgba(34,211,238,0.1)] text-[var(--aurora-cyan)] hover:bg-[rgba(34,211,238,0.2)] transition-all" title="Change Password">
-                                    <KeyRound className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button onClick={() => handleDeleteUser(u.id, u.username)} className="p-1.5 rounded-lg bg-[rgba(124,92,255,0.1)] text-[var(--aurora-violet)] hover:bg-[rgba(124,92,255,0.2)] transition-all" title="Delete">
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
                                 </div>
                               </td>
                             </tr>

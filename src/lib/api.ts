@@ -122,6 +122,21 @@ class ApiClient {
     return data;
   }
 
+  async resetUserScore(userId: number) {
+    const { data } = await this.client.post('/api/admin/users/reset-score', { user_id: userId });
+    return data;
+  }
+
+  async resetUserBlood(userId: number) {
+    const { data } = await this.client.post('/api/admin/users/reset-blood', { user_id: userId });
+    return data;
+  }
+
+  async resetUserSolves(userId: number) {
+    const { data } = await this.client.post('/api/admin/users/reset-solves', { user_id: userId });
+    return data;
+  }
+
   async getAdminLogs(severity?: string) {
     const params = severity ? `?severity=${severity}` : '';
     const { data } = await this.client.get(`/api/admin/logs${params}`);
