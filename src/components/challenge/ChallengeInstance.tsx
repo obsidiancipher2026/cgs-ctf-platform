@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
+import WebChallengePlayground from './WebChallengePlayground'
 
 interface Props {
   slug: string
@@ -9,7 +10,16 @@ interface Props {
   instanceUrl?: string | null
 }
 
-export default function ChallengeInstance({ instanceUrl }: Props) {
+const PLAYGROUND_PREFIX = '/playground/'
+
+export default function ChallengeInstance({ slug, instanceUrl }: Props) {
+  const isPlayground = instanceUrl?.startsWith(PLAYGROUND_PREFIX)
+  const playgroundSlug = isPlayground ? instanceUrl!.replace(PLAYGROUND_PREFIX, '') : null
+
+  if (isPlayground && playgroundSlug) {
+    return <WebChallengePlayground slug={playgroundSlug} title="Challenge" />
+  }
+
   if (!instanceUrl) return null
 
   return (

@@ -11,6 +11,9 @@ const generateSlug = (title: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
+const playgroundSlug = (title: string): string =>
+  `/playground/${generateSlug(title)}`
+
 interface ChallengeData {
   title: string; description: string; category: string; difficulty: string;
   points: number; flag: string; hint: string | null; files?: string | null; instanceUrl?: string | null;
@@ -986,7 +989,7 @@ async function seedChallenges() {
         flag: hashFlag(c.flag),
         hint: c.hint ? c.hint : null,
         files: c.files ? c.files : null,
-        instanceUrl: c.instanceUrl ? c.instanceUrl : null,
+        instanceUrl: c.instanceUrl ? c.instanceUrl : (c.category === 'web' ? playgroundSlug(c.title) : null),
         published: true,
         markdown: c.description,
         story: null,
@@ -1010,7 +1013,7 @@ async function seedChallenges() {
         flag: hashFlag(c.flag),
         hint: c.hint ? c.hint : null,
         files: c.files ? c.files : null,
-        instanceUrl: c.instanceUrl ? c.instanceUrl : null,
+        instanceUrl: c.instanceUrl ? c.instanceUrl : (c.category === 'web' ? playgroundSlug(c.title) : null),
         published: true,
         markdown: c.description,
         story: null,
