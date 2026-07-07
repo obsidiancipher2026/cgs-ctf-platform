@@ -4,6 +4,8 @@ import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
+const FIRST_BLOOD_BONUS = 100
+
 export async function POST(request: Request) {
   try {
     const { user, error } = await authenticate(request)
@@ -30,20 +32,38 @@ export async function POST(request: Request) {
       return jsonResponse({ detail: 'Incorrect flag' }, 400)
     }
 
+    const existingSolves = await prisma.submission.count({
+      where: { challengeId: challenge.id, solved: true },
+    })
+    const isFirstBlood = existingSolves === 0
+    const totalPoints = challenge.points + (isFirstBlood ? FIRST_BLOOD_BONUS : 0)
+
     await prisma.submission.create({
       data: { userId: user.id, challengeId: challenge.id, solved: true },
     })
 
     await prisma.user.update({
       where: { id: user.id },
-      data: { score: { increment: challenge.points } },
+      data: { score: { increment: totalPoints } },
     })
 
     await prisma.log.create({
-      data: { action: 'challenge_solved', userId: user.id, ipAddress: getClientIp(request), severity: 'info', details: JSON.stringify({ challenge_id: challenge.id, title: challenge.title }) },
+      data: {
+        action: isFirstBlood ? 'challenge_first_blood' : 'challenge_solved',
+        userId: user.id,
+        ipAddress: getClientIp(request),
+        severity: 'info',
+        details: JSON.stringify({ challenge_id: challenge.id, title: challenge.title, is_first_blood: isFirstBlood, points: totalPoints }),
+      },
     })
 
-    return jsonResponse({ message: 'Correct flag!', points_awarded: challenge.points })
+    return jsonResponse({
+      message: 'Correct flag!',
+      points_awarded: challenge.points,
+      first_blood: isFirstBlood,
+      first_blood_bonus: isFirstBlood ? FIRST_BLOOD_BONUS : 0,
+      total_points_awarded: totalPoints,
+    })
   } catch {
     return jsonResponse({ detail: 'Submission failed' }, 500)
   }

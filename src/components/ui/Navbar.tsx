@@ -15,6 +15,7 @@ const publicLinks = [
 
 const protectedLinks = [
   { href: '/challenges', label: 'Challenges' },
+  { href: '/challenges/submit', label: 'Submit Flag' },
 ];
 
 function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
