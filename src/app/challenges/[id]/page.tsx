@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Shield, CheckCircle, XCircle, Flag, Download, ExternalLink, ArrowLeft, Lock, Unlock } from 'lucide-react';
+import { Shield, CheckCircle, XCircle, Flag, Download, ExternalLink, ArrowLeft, Lock, Unlock, ArrowRight } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
@@ -11,12 +11,10 @@ import toast from 'react-hot-toast';
 export default function ChallengeDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, isAuthenticated } = useStore();
+  const { isAuthenticated } = useStore();
   const [challenge, setChallenge] = useState<any>(null);
   const [solved, setSolved] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [flagInput, setFlagInput] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   const files: { name: string }[] = challenge?.files ? JSON.parse(challenge.files) : [];
 
@@ -42,21 +40,6 @@ export default function ChallengeDetailPage() {
     }
   };
 
-  const handleSubmitFlag = async () => {
-    if (!flagInput.trim()) return;
-    setSubmitting(true);
-    try {
-      const res = await api.submitFlag(Number(id), flagInput.trim());
-      toast.success(res.message);
-      setSolved(true);
-      setFlagInput('');
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Incorrect flag');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   if (loading) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-[#05080f] via-[#070b15] to-[#05080f] flex items-center justify-center">
@@ -76,6 +59,18 @@ export default function ChallengeDetailPage() {
     }
   };
 
+  const diffMeta: Record<string, { label: string; bars: number; color: string }> = {
+    easy: { label: 'Easy', bars: 1, color: 'bg-[var(--aurora-emerald)]' },
+    medium: { label: 'Medium', bars: 2, color: 'bg-[var(--aurora-cyan)]' },
+    hard: { label: 'Hard', bars: 3, color: 'bg-[#FF4500]' },
+  };
+  const diff = diffMeta[challenge.difficulty] || { label: 'Unknown', bars: 0, color: 'bg-txt-muted' };
+
+  const catColors: Record<string, string> = {
+    web: 'text-[var(--aurora-cyan)]', crypto: 'text-[var(--aurora-violet)]',
+    forensics: 'text-[var(--aurora-emerald)]', reverse: 'text-amber-400', misc: 'text-pink-400',
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#05080f] via-[#070b15] to-[#05080f]">
       <div className="max-w-4xl mx-auto px-4 py-10">
@@ -85,45 +80,64 @@ export default function ChallengeDetailPage() {
         </button>
 
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="card rounded-2xl p-8 border-l-4 border-l-[var(--aurora-cyan)] relative overflow-hidden">
+          <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 relative overflow-hidden">
+            {/* Background glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--aurora-violet)]/5 rounded-full blur-[100px] pointer-events-none" />
+
             {solved && (
               <div className="absolute top-4 right-4 flex items-center gap-2 text-[var(--aurora-emerald)] font-mono text-sm">
                 <CheckCircle className="w-5 h-5" /> Solved
               </div>
             )}
 
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h1 className="font-display text-2xl text-txt-primary">{challenge.title}</h1>
-                <div className="flex gap-2 mt-2">
-                  <span className="inline-block px-3 py-0.5 rounded text-xs font-mono uppercase tracking-wider bg-[rgba(124,92,255,0.12)] text-[var(--aurora-violet)]">{challenge.category}</span>
-                  <span className={`inline-block px-3 py-0.5 rounded text-xs font-mono uppercase tracking-wider bg-black/30 ${getDifficultyColor(challenge.difficulty)}`}>{challenge.difficulty}</span>
+            {/* Header */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`text-[11px] font-mono uppercase tracking-wider ${catColors[challenge.category] || 'text-txt-muted'}`}>
+                    {challenge.category}
+                  </span>
+                  <span className="text-txt-muted">·</span>
+                  <span className={`text-[11px] font-mono ${getDifficultyColor(challenge.difficulty)}`}>
+                    {diff.label}
+                  </span>
+                  <div className="flex gap-[2px]">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className={`w-4 h-1.5 rounded-full ${i <= diff.bars ? diff.color : 'bg-white/[0.06]'}`} />
+                    ))}
+                  </div>
                 </div>
+                <h1 className="font-display text-3xl text-txt-primary mb-2">{challenge.title}</h1>
+                <p className="text-sm font-mono text-txt-secondary leading-relaxed">{challenge.description}</p>
               </div>
-              <div className="text-right">
-                <div className="font-display text-3xl text-txt-primary">{challenge.points}</div>
-                <div className="text-txt-muted font-mono text-xs uppercase tracking-wider">Points</div>
+              <div className="shrink-0 ml-6 text-right">
+                <div className="font-display text-4xl text-txt-primary tabular-nums">{challenge.points}</div>
+                <div className="text-txt-muted font-mono text-[10px] uppercase tracking-wider">Points</div>
               </div>
             </div>
 
-            <p className="text-txt-secondary font-mono text-sm leading-relaxed mb-6">{challenge.description}</p>
-
+            {/* Hint */}
             {challenge.hint && (
-              <details className="mb-6">
-                <summary className="text-txt-muted font-mono text-xs uppercase tracking-wider cursor-pointer hover:text-[var(--aurora-cyan)] transition-colors">Hint</summary>
-                <p className="text-yellow-300 font-mono text-sm mt-2 italic">{challenge.hint}</p>
+              <details className="mb-6 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                <summary className="text-txt-muted font-mono text-xs uppercase tracking-wider cursor-pointer hover:text-[var(--aurora-cyan)] transition-colors select-none">
+                  Need a hint?
+                </summary>
+                <p className="text-yellow-300 font-mono text-sm mt-3 italic leading-relaxed">{challenge.hint}</p>
               </details>
             )}
 
+            {/* Assets + Instance */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               {files.length > 0 && (
-                <div className="card rounded-xl p-4 bg-[rgba(34,211,238,0.03)] border border-[rgba(34,211,238,0.1)]">
-                  <h3 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2"><Download className="w-4 h-4" /> Download Assets</h3>
+                <div className="rounded-xl p-4 bg-white/[0.03] border border-white/[0.06]">
+                  <h3 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2">
+                    <Download className="w-4 h-4 text-[var(--aurora-cyan)]" /> Download Assets
+                  </h3>
                   <div className="space-y-2">
                     {files.map((f, i) => (
                       <a key={i} href={`/api/challenges/${id}/files?name=${f.name}`} download
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[rgba(34,211,238,0.06)] border border-[rgba(34,211,238,0.12)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.12)] transition-all">
-                        <Unlock className="w-3 h-3" /> {f.name}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-white/[0.1] transition-all">
+                        <Unlock className="w-3 h-3 shrink-0" /> {f.name}
                       </a>
                     ))}
                   </div>
@@ -131,43 +145,41 @@ export default function ChallengeDetailPage() {
               )}
 
               {challenge.instanceUrl && (
-                <div className="card rounded-xl p-4 bg-[rgba(16,185,129,0.03)] border border-[rgba(16,185,129,0.1)]">
-                  <h3 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2"><ExternalLink className="w-4 h-4" /> Live Instance</h3>
+                <div className="rounded-xl p-4 bg-white/[0.03] border border-white/[0.06]">
+                  <h3 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4 text-[var(--aurora-emerald)]" /> Live Instance
+                  </h3>
                   <a href={challenge.instanceUrl} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[rgba(16,185,129,0.1)] border border-[rgba(16,185,129,0.25)] text-[var(--aurora-emerald)] font-mono text-sm hover:bg-[rgba(16,185,129,0.18)] transition-all w-fit">
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--aurora-emerald)]/10 border border-[var(--aurora-emerald)]/25 text-[var(--aurora-emerald)] font-mono text-sm hover:bg-[var(--aurora-emerald)]/15 transition-all w-fit">
                     <ExternalLink className="w-4 h-4" /> Open Instance
                   </a>
                 </div>
               )}
             </div>
 
-            {solved ? (
-              <div className="border-t border-[rgba(34,211,238,0.08)] pt-6">
+            {/* Actions */}
+            <div className="border-t border-white/[0.06] pt-6">
+              {solved ? (
                 <div className="flex items-center gap-3 text-[var(--aurora-emerald)] font-mono text-sm">
                   <CheckCircle className="w-5 h-5" /> You have solved this challenge
                 </div>
-              </div>
-            ) : !isAuthenticated ? (
-              <div className="border-t border-[rgba(34,211,238,0.08)] pt-6">
+              ) : !isAuthenticated ? (
                 <div className="flex items-center gap-3 text-txt-muted font-mono text-sm">
                   <Lock className="w-4 h-4" /> <a href="/login" className="text-[var(--aurora-cyan)] hover:underline">Login</a> to submit flags
                 </div>
-              </div>
-            ) : (
-              <div className="border-t border-[rgba(34,211,238,0.08)] pt-6">
-                <h3 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2"><Flag className="w-4 h-4" /> Submit Flag</h3>
-                <div className="flex gap-2">
-                  <input type="text" value={flagInput} onChange={e => setFlagInput(e.target.value)}
-                    placeholder="CGS{...}" autoFocus
-                    className="input-field flex-1 px-4 py-2.5 rounded-xl font-mono text-sm"
-                    onKeyDown={e => { if (e.key === 'Enter') handleSubmitFlag(); }} />
-                  <button onClick={handleSubmitFlag} disabled={submitting}
-                    className="px-6 py-2.5 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] disabled:opacity-50 transition-all">
-                    {submitting ? 'Submitting...' : 'Submit'}
-                  </button>
-                </div>
-              </div>
-            )}
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => router.push(`/challenges/submit?id=${id}`)}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--aurora-violet)]/20 to-[var(--aurora-cyan)]/10 border border-[var(--aurora-violet)]/25 text-sm font-mono text-txt-primary hover:from-[var(--aurora-violet)]/30 hover:to-[var(--aurora-cyan)]/20 hover:border-[var(--aurora-violet)]/40 transition-all flex items-center gap-2 w-fit"
+                >
+                  <Flag className="w-4 h-4 text-[var(--aurora-cyan)]" />
+                  Submit Flag
+                  <ArrowRight className="w-4 h-4" />
+                </motion.button>
+              )}
+            </div>
           </div>
         </motion.div>
       </div>

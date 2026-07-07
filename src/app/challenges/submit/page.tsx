@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flag, CheckCircle, Zap, Trophy, ArrowLeft } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -10,10 +10,11 @@ import toast from 'react-hot-toast';
 
 export default function SubmitFlagPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated } = useStore();
   const [challenges, setChallenges] = useState<any[]>([]);
   const [solvedIds, setSolvedIds] = useState<Set<number>>(new Set());
-  const [selectedId, setSelectedId] = useState('');
+  const [selectedId, setSelectedId] = useState(searchParams.get('id') || '');
   const [flag, setFlag] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
