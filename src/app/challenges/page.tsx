@@ -3,10 +3,40 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, CheckCircle, XCircle, Flag, Lock, Unlock, Search } from 'lucide-react';
+import { Shield, CheckCircle, XCircle, Flag, Lock, Unlock, Search, Filter } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useStore } from '@/lib/store';
 import toast from 'react-hot-toast';
+
+const catColors: Record<string, string> = {
+  web: 'text-[var(--aurora-cyan)]',
+  crypto: 'text-[var(--aurora-violet)]',
+  forensics: 'text-[var(--aurora-emerald)]',
+  reverse: 'text-amber-400',
+  misc: 'text-pink-400',
+  warmup: 'text-yellow-400',
+};
+
+const diffColors: Record<string, string> = {
+  easy: 'text-[var(--aurora-emerald)]',
+  medium: 'text-[var(--aurora-cyan)]',
+  hard: 'text-[#FF4500]',
+};
+
+const catBgColors: Record<string, string> = {
+  web: 'bg-[rgba(34,211,238,0.1)] border-[rgba(34,211,238,0.25)]',
+  crypto: 'bg-[rgba(124,92,255,0.1)] border-[rgba(124,92,255,0.25)]',
+  forensics: 'bg-[rgba(16,185,129,0.1)] border-[rgba(16,185,129,0.25)]',
+  reverse: 'bg-[rgba(251,191,36,0.1)] border-[rgba(251,191,36,0.25)]',
+  misc: 'bg-[rgba(244,114,182,0.1)] border-[rgba(244,114,182,0.25)]',
+  warmup: 'bg-[rgba(250,204,21,0.1)] border-[rgba(250,204,21,0.25)]',
+};
+
+const diffBgColors: Record<string, string> = {
+  easy: 'bg-[rgba(16,185,129,0.1)] border-[rgba(16,185,129,0.25)]',
+  medium: 'bg-[rgba(34,211,238,0.1)] border-[rgba(34,211,238,0.25)]',
+  hard: 'bg-[rgba(255,69,0,0.1)] border-[rgba(255,69,0,0.25)]',
+};
 
 export default function ChallengesPage() {
   const router = useRouter();
@@ -18,6 +48,7 @@ export default function ChallengesPage() {
   const [flagInput, setFlagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [difficultyFilter, setDifficultyFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -54,50 +85,84 @@ export default function ChallengesPage() {
   };
 
   const categories = Array.from(new Set(challenges.map(c => c.category)));
+  const difficulties = Array.from(new Set(challenges.map(c => c.difficulty)));
+
   const filtered = challenges.filter(c => {
     if (categoryFilter && c.category !== categoryFilter) return false;
+    if (difficultyFilter && c.difficulty !== difficultyFilter) return false;
     if (searchQuery && !c.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
-  const getDifficultyColor = (d: string) => {
-    switch (d) {
-      case 'easy': return 'text-[var(--aurora-emerald)]';
-      case 'medium': return 'text-[var(--aurora-cyan)]';
-      case 'hard': return 'text-[#FF4500]';
-      default: return 'text-txt-muted';
-    }
-  };
+  const getDifficultyColor = (d: string) => diffColors[d] || 'text-txt-muted';
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#05080f] via-[#070b15] to-[#05080f]">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <h1 className="font-display text-3xl text-txt-primary mb-2">CGS Challenges</h1>
-          <p className="text-txt-secondary font-mono text-sm">
-            {challenges.length} challenges available · {solvedIds.size} solved
-          </p>
-        </motion.div>
+      <div className="max-w-7xl mx-auto px-4 py-10 flex gap-8">
+        <aside className="w-56 shrink-0 hidden md:block">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="sticky top-24 space-y-6">
+            <div>
+              <h2 className="font-display text-sm text-txt-primary mb-3 flex items-center gap-2"><Filter className="w-3.5 h-3.5" /> Filters</h2>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-txt-muted" />
+                <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search..." className="input-field w-full pl-8 pr-3 py-2 rounded-lg font-mono text-xs" />
+              </div>
+            </div>
 
-        <div className="flex flex-wrap gap-3 mb-8">
-          <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted" />
-            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search challenges..." className="input-field w-full pl-9 pr-4 py-2.5 rounded-xl font-mono text-sm" />
-          </div>
-          <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
-            className="input-field px-4 py-2.5 rounded-xl font-mono text-sm bg-[#0a0f18]">
-            <option value="">All Categories</option>
-            {categories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
-          </select>
-        </div>
+            <div>
+              <h3 className="font-mono text-[10px] uppercase tracking-wider text-txt-muted mb-2">Category</h3>
+              <div className="space-y-1">
+                <button onClick={() => setCategoryFilter('')}
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${!categoryFilter ? 'bg-[rgba(34,211,238,0.08)] text-[var(--aurora-cyan)]' : 'text-txt-muted hover:text-txt-secondary'}`}>
+                  All Categories
+                </button>
+                {categories.map(cat => (
+                  <button key={cat} onClick={() => setCategoryFilter(cat === categoryFilter ? '' : cat)}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${categoryFilter === cat ? `${catBgColors[cat]} ${catColors[cat]}` : 'text-txt-muted hover:text-txt-secondary'}`}>
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {loading ? (
-          <div className="text-center py-20"><div className="w-8 h-8 border-2 border-[var(--aurora-cyan)] border-t-transparent rounded-full animate-spin mx-auto" /></div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-txt-muted font-mono">No challenges found</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div>
+              <h3 className="font-mono text-[10px] uppercase tracking-wider text-txt-muted mb-2">Difficulty</h3>
+              <div className="space-y-1">
+                <button onClick={() => setDifficultyFilter('')}
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${!difficultyFilter ? 'bg-[rgba(34,211,238,0.08)] text-[var(--aurora-cyan)]' : 'text-txt-muted hover:text-txt-secondary'}`}>
+                  All Difficulties
+                </button>
+                {difficulties.map(diff => (
+                  <button key={diff} onClick={() => setDifficultyFilter(diff === difficultyFilter ? '' : diff)}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${difficultyFilter === diff ? `${diffBgColors[diff]} ${diffColors[diff]}` : 'text-txt-muted hover:text-txt-secondary'}`}>
+                    {diff}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </aside>
+
+        <div className="flex-1 min-w-0">
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+            <h1 className="font-display text-3xl text-txt-primary mb-2">CGS Challenges</h1>
+            <p className="text-txt-secondary font-mono text-sm">
+              {challenges.length} challenges available · {solvedIds.size} solved
+              {(categoryFilter || difficultyFilter) && (
+                <span className="ml-2 text-txt-muted">
+                  · {filtered.length} shown
+                </span>
+              )}
+            </p>
+          </motion.div>
+
+          {loading ? (
+            <div className="text-center py-20"><div className="w-8 h-8 border-2 border-[var(--aurora-cyan)] border-t-transparent rounded-full animate-spin mx-auto" /></div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 text-txt-muted font-mono">No challenges found</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.map((challenge, i) => {
               const solved = solvedIds.has(challenge.id);
               return (
@@ -130,7 +195,7 @@ export default function ChallengesPage() {
                   {challenge.hint && (
                     <details className="mb-4" onClick={e => e.stopPropagation()}>
                       <summary className="text-txt-muted font-mono text-[10px] uppercase tracking-wider cursor-pointer hover:text-[var(--aurora-cyan)] transition-colors">Hint</summary>
-                      <p className="text-txt-muted font-mono text-xs mt-2 italic">{challenge.hint}</p>
+                      <p className="text-yellow-300 font-mono text-xs mt-2 italic">{challenge.hint}</p>
                     </details>
                   )}
 
@@ -174,8 +239,9 @@ export default function ChallengesPage() {
                 </motion.div>
               );
             })}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

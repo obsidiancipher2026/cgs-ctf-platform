@@ -111,7 +111,7 @@ export default function ChallengeDetailPage() {
             {challenge.hint && (
               <details className="mb-6">
                 <summary className="text-txt-muted font-mono text-xs uppercase tracking-wider cursor-pointer hover:text-[var(--aurora-cyan)] transition-colors">Hint</summary>
-                <p className="text-txt-muted font-mono text-sm mt-2 italic">{challenge.hint}</p>
+                <p className="text-yellow-300 font-mono text-sm mt-2 italic">{challenge.hint}</p>
               </details>
             )}
 
