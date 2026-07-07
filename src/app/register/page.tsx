@@ -70,7 +70,7 @@ export default function RegisterPage() {
           </div>
 
           <p className="text-txt-muted text-xs leading-relaxed">
-            Competitive CTF challenges for cybersecurity enthusiasts.
+            Join the Cyber Guardians Society community.
           </p>
         </div>
       </div>

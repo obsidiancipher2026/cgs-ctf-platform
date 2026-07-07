@@ -15,13 +15,6 @@ export async function GET(request: Request) {
 
   const users = await prisma.user.findMany({ orderBy: { id: 'asc' } })
 
-  const solveCounts = await prisma.submission.groupBy({
-    by: ['userId'],
-    where: { isCorrect: true },
-    _count: { id: true },
-  })
-  const solveMap = new Map(solveCounts.map(s => [s.userId, s._count.id]))
-
   const result = users.map(u => ({
     id: u.id,
     username: u.username,
@@ -31,7 +24,7 @@ export async function GET(request: Request) {
     status: u.status,
     score: u.score,
     ranking: u.ranking,
-    solves: solveMap.get(u.id) || 0,
+    solves: 0,
     isBanned: u.isBanned,
     teamId: u.teamId,
     lastIp: u.lastIp,

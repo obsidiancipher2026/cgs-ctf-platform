@@ -13,10 +13,7 @@ const pillars = [
 ];
 
 const rules = [
-  { icon: Flag, title: 'Flag Format', desc: 'All flags follow the format CGS{...}. Submit the exact flag to earn points for a challenge.', color: 'text-aurora-violet' },
-  { icon: Trophy, title: 'Scoring', desc: 'Points are awarded per challenge based on difficulty. Easy=25, Medium=50, Hard=75, Expert=100 bonus blood points.', color: 'text-green-400' },
-  { icon: Eye, title: 'No Sharing', desc: 'Do not share flags, solutions, or hints with other players. Collusion will result in disqualification.', color: 'text-yellow-400' },
-  { icon: Lock, title: 'Fair Play', desc: 'Only use the provided platform. Do not attack the infrastructure, other users\' accounts, or attempt to bypass security.', color: 'text-purple-400' },
+  { icon: Shield, title: 'Fair Play', desc: 'Only use the provided platform. Do not attack the infrastructure, other users\' accounts, or attempt to bypass security.', color: 'text-purple-400' },
   { icon: CheckCircle, title: 'Account Rules', desc: 'One account per person. Multiple accounts will be banned. Keep your credentials secure and do not share access.', color: 'text-aurora-cyan' },
   { icon: AlertTriangle, title: 'Respect', desc: 'Be respectful to all community members. Harassment, hate speech, or toxic behavior results in immediate removal.', color: 'text-orange-400' },
 ];

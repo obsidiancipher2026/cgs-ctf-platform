@@ -13,11 +13,7 @@ const publicLinks = [
   { href: '/announcements', label: 'Announcements' },
 ];
 
-const protectedLinks = [
-  { href: '/challenges', label: 'Challenges' },
-  { href: '/flag-submit', label: 'Flag Submit' },
-  { href: '/scoreboard', label: 'Scoreboard' },
-];
+const protectedLinks: { href: string; label: string }[] = [];
 
 function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
   return (

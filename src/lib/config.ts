@@ -45,12 +45,6 @@ export const config = {
     }
   },
 
-  ctf: {
-    flagFormat: process.env.FLAG_FORMAT || 'CGS{}',
-    maxLoginAttempts: parseInt(process.env.MAX_LOGIN_ATTEMPTS || '5', 10),
-    lockoutDurationSeconds: parseInt(process.env.LOCKOUT_DURATION_SECONDS || '900', 10),
-  },
-
   rateLimit: {
     auth: parseInt(process.env.RATE_LIMIT_AUTH || '5', 10),
     admin: parseInt(process.env.RATE_LIMIT_ADMIN || '30', 10),
@@ -67,9 +61,6 @@ export const config = {
     botDetectionEnabled: process.env.BOT_DETECTION_ENABLED !== 'false',
     quarantineMinutes: parseInt(process.env.QUARANTINE_MINUTES || '5', 10),
     accountLockoutEnabled: process.env.ACCOUNT_LOCKOUT_ENABLED !== 'false',
-    maxFailedSubmissions: parseInt(process.env.MAX_FAILED_SUBMISSIONS || '10', 10),
-    submissionCooldownSeconds: parseInt(process.env.SUBMISSION_COOLDOWN_SECONDS || '3', 10),
-    maxSubmissionsPerMinute: parseInt(process.env.MAX_SUBMISSIONS_PER_MINUTE || '5', 10),
     jwtRotationInterval: parseInt(process.env.JWT_ROTATION_INTERVAL || '86400', 10),
   },
 }

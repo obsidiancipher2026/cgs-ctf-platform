@@ -16,7 +16,5 @@ export async function GET(request: Request) {
     bot_detection_enabled: config.security.botDetectionEnabled,
     account_lockout_enabled: config.security.accountLockoutEnabled,
     quarantine_minutes: config.security.quarantineMinutes,
-    max_login_attempts: config.ctf.maxLoginAttempts,
-    lockout_duration: config.ctf.lockoutDurationSeconds,
   })
 }

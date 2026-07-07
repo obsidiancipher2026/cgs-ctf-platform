@@ -7,8 +7,6 @@ const quickLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/announcements', label: 'Announcements' },
-  { href: '/challenges', label: 'Challenges' },
-  { href: '/scoreboard', label: 'Scoreboard' },
 ];
 
 const socialLinks = [
@@ -30,7 +28,7 @@ export default function Footer() {
               <span className="font-display font-bold text-sm text-txt-primary tracking-wide">CGS CTF</span>
             </div>
             <p className="text-txt-muted text-xs leading-relaxed mb-5">
-              Empowering the next generation of cybersecurity professionals through competitive CTF challenges.
+              Empowering the next generation of cybersecurity professionals.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((s) => (

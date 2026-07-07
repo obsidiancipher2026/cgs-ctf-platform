@@ -101,14 +101,6 @@ const features = [
   { icon: Key, title: 'HMAC Tokens', desc: 'CSRF protection via HMAC-based tokens on all admin mutating endpoints', side: 'blue' as const },
 ];
 
-const categories = [
-  { name: 'Cryptography', icon: '🔐', desc: 'Break codes and hidden messages', slug: 'crypto' },
-  { name: 'Web Exploitation', icon: '🌐', desc: 'Find weaknesses in websites', slug: 'web' },
-  { name: 'Reverse Engineering', icon: '⚙️', desc: 'Take apart programs and understand them', slug: 'reverse' },
-  { name: 'Forensics', icon: '🔎', desc: 'Investigate digital evidence', slug: 'forensics' },
-  { name: 'Miscellaneous', icon: '🎲', desc: 'Anything and everything unexpected', slug: 'misc' },
-];
-
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -148,11 +140,11 @@ export default function Home() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/challenges" className="btn-primary px-8 py-4 text-sm inline-flex items-center justify-center gap-2">
-                View Challenges <ArrowRight className="w-4 h-4" />
+              <Link href="/register" className="btn-primary px-8 py-4 text-sm inline-flex items-center justify-center gap-2">
+                Get Started <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/scoreboard" className="btn-outline px-8 py-4 text-sm inline-flex items-center justify-center gap-2">
-                Leaderboard
+              <Link href="/about" className="btn-outline px-8 py-4 text-sm inline-flex items-center justify-center gap-2">
+                Learn More
               </Link>
             </div>
           </motion.div>
@@ -201,35 +193,6 @@ export default function Home() {
                 </motion.div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="py-16 sm:py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-12">
-            <h2 className="font-display font-bold text-2xl sm:text-3xl text-txt-primary">What Will You Break?</h2>
-          </motion.div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {categories.map((cat, i) => (
-              <motion.div
-                key={cat.name}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.08 }}
-              >
-                <Link
-                  href={`/challenges?category=${cat.slug}`}
-                  className="card card-lift glitch-hover block p-6 text-center group"
-                >
-                  <div className="text-3xl mb-3">{cat.icon}</div>
-                  <h3 className="font-body font-semibold text-txt-primary text-sm mb-1 group-hover:text-aurora-violet transition-colors">{cat.name}</h3>
-                  <p className="text-txt-muted text-xs">{cat.desc}</p>
-                </Link>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
