@@ -212,7 +212,7 @@ async function main() {
       points,
       flag: hashed,
       hint,
-      published: false,
+      published: true,
     }
   })
 
