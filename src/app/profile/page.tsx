@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { User, Loader2, Settings, Save, Eye, EyeOff, KeyRound, RefreshCw } from 'lucide-react';
+import { User, Loader2, Settings, Save, Eye, EyeOff, KeyRound, RefreshCw, Trophy, CheckCircle, Clock } from 'lucide-react';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -17,6 +17,8 @@ export default function ProfilePage() {
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [solves, setSolves] = useState<any[]>([]);
+  const [solvesLoading, setSolvesLoading] = useState(true);
 
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { if (mounted && (!isAuthenticated || !user)) router.push('/login'); }, [mounted, isAuthenticated, user, router]);
@@ -24,6 +26,14 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!mounted || !isAuthenticated || !user) return;
     if (user) setSettingsForm({ username: user.username || '', email: user.email || '', university: (user as any).college || '', country: (user as any).country || '' });
+    const loadSolves = async () => {
+      try {
+        const data = await api.getUserSolves();
+        setSolves(data);
+      } catch {}
+      finally { setSolvesLoading(false); }
+    };
+    loadSolves();
   }, [mounted, isAuthenticated, user]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -85,6 +95,47 @@ export default function ProfilePage() {
 
           {/* Settings */}
           <div className="space-y-6">
+            {/* Solve History */}
+            <div className="bg-surface border border-border-c rounded-lg p-5 sm:p-6">
+              <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><Trophy className="w-5 h-5 text-aurora-emerald" /> Solve History</h2>
+              {solvesLoading ? (
+                <div className="flex items-center justify-center py-6"><Loader2 className="w-5 h-5 text-aurora-cyan animate-spin" /></div>
+              ) : solves.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-txt-muted text-sm font-mono mb-3">No challenges solved yet</p>
+                  <a href="/challenges" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[var(--aurora-violet)]/20 to-[var(--aurora-cyan)]/10 border border-[var(--aurora-violet)]/25 text-xs font-mono text-txt-primary hover:from-[var(--aurora-violet)]/30 hover:to-[var(--aurora-cyan)]/20 transition-all">
+                    Browse Challenges
+                  </a>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {solves.map((s: any, i: number) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-white/[0.12] transition-all"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <CheckCircle className="w-4 h-4 text-aurora-emerald shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm text-txt-primary font-mono truncate">{s.title}</p>
+                          <p className="text-[10px] text-txt-muted font-mono">{s.category}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="text-xs font-mono text-aurora-violet font-bold">{s.points} pts</span>
+                        <span className="text-[10px] font-mono text-txt-muted flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {new Date(s.solved_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="bg-surface border border-border-c rounded-lg p-5 sm:p-6">
               <h2 className="font-display font-bold text-txt-primary text-lg mb-4 flex items-center gap-2"><Settings className="w-5 h-5 text-aurora-cyan" /> Profile Settings</h2>
               <form onSubmit={handleUpdateProfile} className="space-y-4">

@@ -14,10 +14,7 @@ function getBloodBonus(difficulty: string | null): number {
 }
 
 function constantTimeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    crypto.timingSafeEqual(Buffer.from(a), Buffer.from(a))
-    return false
-  }
+  if (a.length !== b.length) return false
   return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
 }
 
@@ -73,6 +70,11 @@ export async function POST(request: Request) {
 
     await prisma.submission.create({
       data: { userId: user.id, challengeId: challenge.id, solved: true },
+    })
+
+    await prisma.challenge.update({
+      where: { id: challenge.id },
+      data: { solveCount: { increment: 1 } },
     })
 
     await prisma.user.update({
