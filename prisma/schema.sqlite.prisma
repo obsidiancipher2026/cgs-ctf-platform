@@ -52,6 +52,8 @@ model User {
   college    String?
   ageGroup   String?
   playerType String?
+
+  submissions Submission[]
 }
 
 model Announcement {
@@ -101,18 +103,30 @@ model AttackLog {
 }
 
 model Challenge {
-  id          Int       @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   description String
   category    String
-  points      Int       @default(100)
+  points      Int          @default(100)
   flag        String
   hint        String?
   files       String?
   difficulty  String?
-  published   Boolean   @default(false)
+  published   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  solves      Submission[]
+}
+
+model Submission {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  challengeId Int
+  solved      Boolean   @default(true)
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  @@unique([userId, challengeId])
 }
 
 model RealFlag {

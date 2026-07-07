@@ -1,0 +1,8 @@
+--- Metadata ---
+Filename: final_message.txt
+Author: CTF Admin
+Build Date: 2026-07-01
+Checksum: CGS{ch41n3d_bugs_ar3_th3_r34l_thr34t}
+---
+
+This is a decoy message file for the CGS CTF platform.

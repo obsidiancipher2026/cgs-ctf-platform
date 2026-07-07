@@ -1,0 +1,2 @@
+# No external dependencies required (uses only stdlib)
+# scapy>=2.4.0  # optional, for manual inspection

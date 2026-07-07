@@ -325,6 +325,22 @@ class ApiClient {
     const { data } = await this.client.post('/api/admin/challenges/unpublish-category', { category });
     return data;
   }
+
+  async getPublicChallenges(category?: string) {
+    const params = category ? `?category=${encodeURIComponent(category)}` : '';
+    const { data } = await this.client.get(`/api/challenges${params}`);
+    return data;
+  }
+
+  async submitFlag(challengeId: number, flag: string) {
+    const { data } = await this.client.post('/api/submissions', { challenge_id: challengeId, flag });
+    return data;
+  }
+
+  async getUserSolves() {
+    const { data } = await this.client.get('/api/auth/me/solves');
+    return data;
+  }
 }
 
 export const api = new ApiClient();
