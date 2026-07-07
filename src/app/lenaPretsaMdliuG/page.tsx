@@ -1266,7 +1266,9 @@ export default function AdminPage() {
                     </div>
                   )}
 
-                  {activeTab === 'warmups' && (
+                  {activeTab === 'warmups' && (() => {
+                    const webChallenges = warmupChallenges.filter((c: any) => c.category === 'web');
+                    return (
                     <div className="space-y-6">
                       <div className="flex items-center justify-between flex-wrap gap-3">
                         <h3 className="font-display text-lg text-txt-primary flex items-center gap-2">
@@ -1293,10 +1295,9 @@ export default function AdminPage() {
                       </div>
 
                       <div className="flex items-center gap-4 flex-wrap text-xs font-mono text-txt-muted px-1">
-                        <span>Total: <strong className="text-txt-primary">{warmupChallenges.length}</strong></span>
-                        <span>Web: <strong className="text-[var(--aurora-cyan)]">{warmupChallenges.filter((c: any) => c.category === 'web').length}</strong></span>
-                        <span>Live: <strong className="text-[var(--aurora-emerald)]">{warmupChallenges.filter((c: any) => c.published).length}</strong></span>
-                        <span>Draft: <strong className="text-[#FF4500]">{warmupChallenges.filter((c: any) => !c.published).length}</strong></span>
+                        <span>Total: <strong className="text-txt-primary">{webChallenges.length}</strong></span>
+                        <span>Live: <strong className="text-[var(--aurora-emerald)]">{webChallenges.filter((c: any) => c.published).length}</strong></span>
+                        <span>Draft: <strong className="text-[#FF4500]">{webChallenges.filter((c: any) => !c.published).length}</strong></span>
                       </div>
 
                       {editChallenge?._new && (
@@ -1372,9 +1373,9 @@ export default function AdminPage() {
                               </tr>
                             </thead>
                             <tbody>
-                              {warmupChallenges.length === 0 ? (
-                                <tr><td colSpan={7} className="p-10 text-center text-txt-muted font-mono text-sm">No challenges yet</td></tr>
-                              ) : warmupChallenges.map((c: any) => (
+                              {webChallenges.length === 0 ? (
+                                <tr><td colSpan={7} className="p-10 text-center text-txt-muted font-mono text-sm">No web challenges yet</td></tr>
+                              ) : webChallenges.map((c: any) => (
                                 <tr key={c.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
                                   {editChallenge?.id === c.id ? (
                                     <>
@@ -1452,7 +1453,8 @@ export default function AdminPage() {
                         </div>
                       </div>
                     </div>
-                  )}
+                    );
+                  })()}
 
                   {activeTab === 'challenges' && (
                     <div className="space-y-6">
