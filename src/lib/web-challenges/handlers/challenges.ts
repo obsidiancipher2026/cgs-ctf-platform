@@ -335,8 +335,8 @@ export const openRedirect: ChallengeDef = {
 }
 
 export const corsChallenge: ChallengeDef = {
-  slug: 'cors',
-  title: 'CORS',
+  slug: 'cors-misconfig',
+  title: 'CORS Misconfig',
   handler: (req: PlaygroundRequest) => {
     const origin = req.headers['origin'] || req.headers['referer'] || ''
     const host = req.headers['host'] || 'localhost'
@@ -378,8 +378,8 @@ export const idor: ChallengeDef = {
 /* ───────────────────────── HARD ───────────────────────── */
 
 export const ssrf: ChallengeDef = {
-  slug: 'ssrf',
-  title: 'SSRF',
+  slug: 'ssrf-to-the-crown-jewels',
+  title: 'SSRF to the Crown Jewels',
   handler: (req: PlaygroundRequest) => {
     const url = req.query['url'] || req.body?.match(/url=([^&]+)/)?.[1] || ''
     const decoded = decodeURIComponent(url)
@@ -401,8 +401,8 @@ export const ssrf: ChallengeDef = {
 }
 
 export const xss: ChallengeDef = {
-  slug: 'xss',
-  title: 'XSS',
+  slug: 'xss-to-admin',
+  title: 'XSS to Admin',
   handler: (req: PlaygroundRequest) => {
     const comment = req.body?.match(/comment=([^&]+)/)?.[1] || ''
     const decoded = decodeURIComponent(comment)
@@ -455,8 +455,8 @@ export const prototypePollution: ChallengeDef = {
 }
 
 export const jwtNone: ChallengeDef = {
-  slug: 'jwt-none',
-  title: 'JWT None',
+  slug: 'jwt-algorithm-confusion',
+  title: 'JWT Algorithm Confusion',
   handler: (req: PlaygroundRequest) => {
     const auth = req.headers['authorization'] || ''
     const token = auth.replace('Bearer ', '')
@@ -485,8 +485,8 @@ export const jwtNone: ChallengeDef = {
 }
 
 export const csrf: ChallengeDef = {
-  slug: 'csrf',
-  title: 'CSRF',
+  slug: 'csrf-token-bypass',
+  title: 'CSRF Token Bypass',
   handler: (req: PlaygroundRequest) => {
     const origin = req.headers['origin'] || req.headers['referer'] || ''
     const host = req.headers['host'] || 'localhost'
