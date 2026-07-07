@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import { ExternalLink, RefreshCw, Code, Terminal, RotateCcw } from 'lucide-react'
+import { RefreshCw, Code, Terminal, RotateCcw } from 'lucide-react'
 
 interface Props {
   slug: string
@@ -16,7 +15,7 @@ interface PlaygroundView {
   flag?: string
 }
 
-export default function WebChallengePlayground({ slug, title }: Props) {
+export default function WebChallengePlayground({ slug }: Props) {
   const [view, setView] = useState<PlaygroundView | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -91,100 +90,89 @@ export default function WebChallengePlayground({ slug, title }: Props) {
   const isHtml = view?.headers?.['content-type']?.includes('text/html') || false
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.04] to-white/[0.01] overflow-hidden"
-    >
-      <div className="p-5 pb-0">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--aurora-cyan)]" />
-            <span className="font-display text-sm text-txt-primary">{title} — Playground</span>
+    <div className="h-full flex flex-col">
+      {/* Flag banner */}
+      {foundFlag && (
+        <div className="shrink-0 px-4 py-2.5 bg-[rgba(52,232,158,0.1)] border-b border-[rgba(52,232,158,0.2)]">
+          <p className="text-[10px] font-mono text-[var(--aurora-emerald)] uppercase tracking-wider mb-0.5">Flag Found!</p>
+          <p className="text-sm font-mono text-[var(--aurora-emerald)] font-bold break-all">{foundFlag}</p>
+        </div>
+      )}
+
+      {/* Request builder */}
+      <form onSubmit={handleSubmit} className="shrink-0 px-4 py-2.5 border-b border-white/[0.06] bg-[#070b15]">
+        <div className="flex gap-2 items-start">
+          <select
+            value={method}
+            onChange={e => setMethod(e.target.value as 'GET' | 'POST')}
+            className="px-2 py-1.5 rounded font-mono text-xs text-[var(--aurora-cyan)] border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.05)] shrink-0 outline-none"
+          >
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+          </select>
+          <div className="flex-1 min-w-0 flex gap-2">
+            <input
+              value={bodyInput}
+              onChange={e => setBodyInput(e.target.value)}
+              placeholder={method === 'GET' ? 'Query params (key=value&...)' : 'Request body'}
+              className="flex-1 px-2.5 py-1.5 rounded font-mono text-xs bg-black/30 border border-white/[0.08] text-txt-primary placeholder:text-txt-muted outline-none"
+            />
+            <input
+              value={extraHeaders}
+              onChange={e => setExtraHeaders(e.target.value)}
+              placeholder="Headers (Header: val per line)"
+              className="w-52 px-2.5 py-1.5 rounded font-mono text-[10px] bg-black/30 border border-white/[0.08] text-txt-primary placeholder:text-txt-muted outline-none"
+            />
+            <input
+              value={cookiesInput}
+              onChange={e => setCookiesInput(e.target.value)}
+              placeholder="Cookies (key=val; ...)"
+              className="w-44 px-2.5 py-1.5 rounded font-mono text-[10px] bg-black/30 border border-white/[0.08] text-txt-primary placeholder:text-txt-muted outline-none"
+            />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex gap-1 shrink-0">
             <button
-              onClick={() => setShowRaw(!showRaw)}
-              className={`p-1.5 rounded-lg text-xs font-mono transition-all ${showRaw ? 'bg-[rgba(34,211,238,0.15)] text-[var(--aurora-cyan)]' : 'text-txt-muted hover:text-txt-secondary hover:bg-white/[0.06]'}`}
-              title="Toggle raw response"
+              type="button"
+              onClick={() => { setShowRaw(!showRaw); setView(null); fetchPlayground('GET', '', '', '') }}
+              className={`p-1.5 rounded text-xs transition-all ${showRaw ? 'bg-[rgba(34,211,238,0.15)] text-[var(--aurora-cyan)]' : 'text-txt-muted hover:text-txt-secondary'}`}
+              title="Toggle raw/rendered view"
             >
               <Code className="w-3.5 h-3.5" />
             </button>
             <button
+              type="button"
               onClick={() => fetchPlayground('GET', '', '', '')}
-              className="p-1.5 rounded-lg text-txt-muted hover:text-txt-secondary hover:bg-white/[0.06] transition-all"
+              className="p-1.5 rounded text-txt-muted hover:text-txt-secondary transition-all"
               title="Reset"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
-          </div>
-        </div>
-
-        {foundFlag && (
-          <div className="mb-4 px-4 py-3 rounded-xl bg-[rgba(52,232,158,0.12)] border border-[rgba(52,232,158,0.25)]">
-            <p className="text-[10px] font-mono text-[var(--aurora-emerald)] uppercase tracking-wider mb-1">Flag Found!</p>
-            <p className="text-sm font-mono text-[var(--aurora-emerald)] font-bold break-all">{foundFlag}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-2.5 mb-4">
-          <div className="flex gap-2 items-start">
-            <select
-              value={method}
-              onChange={e => setMethod(e.target.value as 'GET' | 'POST')}
-              className="input-field px-2.5 py-2 rounded-lg font-mono text-xs text-[var(--aurora-cyan)] border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.05)] shrink-0"
-            >
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-            </select>
-            <div className="flex-1 min-w-0">
-              <input
-                value={bodyInput}
-                onChange={e => setBodyInput(e.target.value)}
-                placeholder={method === 'GET' ? 'Query params (key=value&...)' : 'Request body'}
-                className="input-field w-full px-3 py-2 rounded-lg font-mono text-xs"
-              />
-            </div>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 rounded-lg bg-[rgba(34,211,238,0.12)] border border-[rgba(34,211,238,0.25)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] disabled:opacity-40 transition-all shrink-0 flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded bg-[rgba(34,211,238,0.12)] border border-[rgba(34,211,238,0.25)] text-[var(--aurora-cyan)] font-mono text-xs hover:bg-[rgba(34,211,238,0.2)] disabled:opacity-40 transition-all flex items-center gap-1.5"
             >
               {loading ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Terminal className="w-3 h-3" />}
               Send
             </button>
           </div>
+        </div>
+      </form>
 
-          <div className="flex gap-2">
-            <input
-              value={extraHeaders}
-              onChange={e => setExtraHeaders(e.target.value)}
-              placeholder="Custom headers (Header: value per line)"
-              className="input-field flex-1 px-3 py-1.5 rounded-lg font-mono text-[10px]"
-            />
-            <input
-              value={cookiesInput}
-              onChange={e => setCookiesInput(e.target.value)}
-              placeholder="Cookies (key=value; ...)"
-              className="input-field flex-1 px-3 py-1.5 rounded-lg font-mono text-[10px]"
-            />
-          </div>
-        </form>
-      </div>
-
-      <div className="border-t border-white/[0.06]">
+      {/* Response area */}
+      <div className="flex-1 min-h-0">
         {error && (
           <div className="p-4 text-xs font-mono text-[#FF5C72]">{error}</div>
         )}
 
         {loading && (
-          <div className="flex items-center justify-center py-10">
+          <div className="flex items-center justify-center h-full">
             <RefreshCw className="w-5 h-5 text-[var(--aurora-cyan)] animate-spin" />
           </div>
         )}
 
         {!loading && view && showRaw && (
-          <div className="p-4 font-mono text-xs leading-relaxed">
+          <div className="h-full overflow-auto p-4 font-mono text-xs leading-relaxed">
             <div className="text-txt-muted mb-2">
               HTTP/1.1 {view.status} <span className="text-txt-secondary">{view.status === 200 ? 'OK' : view.status === 302 ? 'Found' : view.status === 404 ? 'Not Found' : 'Error'}</span>
             </div>
@@ -200,32 +188,29 @@ export default function WebChallengePlayground({ slug, title }: Props) {
         )}
 
         {!loading && view && !showRaw && (isHtml || srcdoc) && (
-          <div className="bg-white rounded-b-2xl" style={{ minHeight: 300 }}>
-            <iframe
-              ref={iframeRef}
-              srcDoc={srcdoc}
-              className="w-full border-0 rounded-b-2xl"
-              style={{ minHeight: 300, height: Math.max(300, Math.min(800, (view.body.match(/<[^>]+>/g) || []).length * 10)) }}
-              title="Challenge playground"
-              sandbox="allow-scripts allow-forms"
-            />
-          </div>
+          <iframe
+            ref={iframeRef}
+            srcDoc={srcdoc}
+            className="w-full h-full border-0 bg-white"
+            title="Challenge playground"
+            sandbox="allow-scripts allow-forms"
+          />
         )}
 
         {!loading && view && !showRaw && !isHtml && !srcdoc && (
-          <div className="p-4">
-            <pre className="text-xs font-mono text-txt-secondary whitespace-pre-wrap bg-black/20 p-3 rounded-lg">
+          <div className="h-full overflow-auto p-4">
+            <pre className="text-xs font-mono text-txt-secondary whitespace-pre-wrap bg-black/20 p-3 rounded">
               {view.body.length > 3000 ? view.body.slice(0, 3000) + '\n...' : view.body}
             </pre>
           </div>
         )}
 
         {!loading && !view && !error && (
-          <div className="p-10 text-center text-xs font-mono text-txt-muted">
+          <div className="flex items-center justify-center h-full text-xs font-mono text-txt-muted">
             Send a request to interact with the challenge.
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   )
 }

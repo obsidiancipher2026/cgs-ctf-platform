@@ -26,16 +26,21 @@ export default function PlaygroundPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#05080f] via-[#070b15] to-[#05080f]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+    <main className="h-screen flex flex-col bg-[#05080f] overflow-hidden">
+      <header className="shrink-0 flex items-center gap-3 px-4 py-2 border-b border-white/[0.06] bg-[#070b15]">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-txt-muted hover:text-txt-primary font-mono text-xs mb-6 transition-colors"
+          className="flex items-center gap-1.5 text-txt-muted hover:text-txt-primary font-mono text-[11px] transition-colors"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="w-3 h-3" />
           Back
         </button>
+        <span className="w-px h-4 bg-white/[0.08]" />
+        <span className="font-display text-sm text-txt-primary">{handler.title}</span>
+        <span className="text-[10px] font-mono text-txt-muted bg-white/[0.04] px-2 py-0.5 rounded">Playground</span>
+      </header>
 
+      <div className="flex-1 min-h-0">
         <WebChallengePlayground slug={slug} title={handler.title} />
       </div>
     </main>
