@@ -133,7 +133,7 @@ header p{color:#8E8E93;font-size:14px;font-family:-apple-system,sans-serif}
 footer{margin-top:60px;color:#C7C7CC;font-size:12px;text-align:center;font-family:-apple-system,sans-serif}
 footer em{font-style:italic}</style></head><body>
 <header><h1>PixelArchive</h1><p>&mdash; captured moments &mdash;</p></header>
-<div class="featured"><div class="caption"><h3>Featured: "Silent Horizon"</h3><p>Late autumn light over the coastal range. Shot on medium format film, pushed one stop.</p><a href="assets/featured-photo.jpg" download>Download Original &darr;</a></div></div>
+<div class="featured"><div class="caption"><h3>Featured: "Silent Horizon"</h3>    <p>Late autumn light over the coastal range. Shot on medium format film, pushed one stop.</p><a href="/standalone/pixelarchive/assets/featured-photo.jpg" download>Download Original &darr;</a></div></div>
 <div class="gallery">
 <div class="photo"><div class="caption">Lichen Study #4 &mdash; detail from a granite outcropping, Pacific Northwest.</div></div>
 <div class="photo"><div class="caption">Steam &mdash; morning train through the valley, March 2024.</div></div>
@@ -189,7 +189,7 @@ h1,h2,h3{font-weight:600;line-height:1.3}
 pre,code{font-family:'JetBrains Mono','Fira Code',monospace;background:var(--token-surface);padding:2px 6px;border-radius:4px;font-size:14px}
 .swatch{width:48px;height:48px;border-radius:var(--token-radius);border:1px solid var(--token-border)}`, 'text/css')
   }
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CGS Design System</title><link rel="stylesheet" href="assets/tokens.css">
+  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CGS Design System</title><link rel="stylesheet" href="/standalone/styleguide/assets/tokens.css">
 </head><body style="padding:40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#111;max-width:960px;margin:0 auto">
 <h1 style="font-size:28px;margin-bottom:4px">CGS Design System</h1>
 <p style="color:#6B7280;margin-bottom:32px;font-size:14px">Internal Style Guide v1.4 — for CGS product teams</p>

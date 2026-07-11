@@ -12,7 +12,7 @@ const generateSlug = (title: string): string =>
     .replace(/^-+|-+$/g, '')
 
 const playgroundSlug = (title: string): string =>
-  `/standalone/${generateSlug(title)}/`
+  `/standalone/${generateSlug(title)}`
 
 interface ChallengeData {
   title: string; description: string; category: string; difficulty: string;
