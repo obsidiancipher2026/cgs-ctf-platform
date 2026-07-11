@@ -118,7 +118,9 @@ export default function WebChallengePlayground({ slug }: Props) {
     fetchPlayground({ m: method, p: path, b: bodyInput, h: extraHeaders, c: cookiesInput })
   }
 
-  const srcdoc = view?.body?.startsWith('<!') ? view.body : undefined
+  const srcdoc = view?.body?.startsWith('<!')
+    ? view.body.replace('<head>', `<head><base href="/standalone/${slug}/">`)
+    : undefined
   const isHtml = view?.headers?.['content-type']?.includes('text/html') || !!srcdoc || false
 
   return (

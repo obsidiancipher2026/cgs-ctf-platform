@@ -4,11 +4,21 @@ import { PlaygroundRequest, extractCookies } from '@/lib/web-challenges/types'
 
 export async function GET(request: NextRequest, { params }: { params: { slug: string[] } }) {
   const { slug, subPath } = resolve(params.slug)
+  const url = new URL(request.url)
+  if (subPath === '/' && !url.pathname.endsWith('/')) {
+    url.pathname += '/'
+    return NextResponse.redirect(url)
+  }
   return handleRequest(request, slug, subPath, 'GET')
 }
 
 export async function POST(request: NextRequest, { params }: { params: { slug: string[] } }) {
   const { slug, subPath } = resolve(params.slug)
+  const url = new URL(request.url)
+  if (subPath === '/' && !url.pathname.endsWith('/')) {
+    url.pathname += '/'
+    return NextResponse.redirect(url)
+  }
   return handleRequest(request, slug, subPath, 'POST')
 }
 
