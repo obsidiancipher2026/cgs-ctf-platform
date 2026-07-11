@@ -19,8 +19,32 @@ interface ChallengeData {
   points: number; flag: string; hint: string | null; files?: string | null; instanceUrl?: string | null;
 }
 
-// No challenges are seeded. The platform currently has no challenges.
-const challenges: ChallengeData[] = []
+const challenges: ChallengeData[] = [
+  {
+    title: 'NovaSec Portal',
+    description: "NovaSec Labs just launched their shiny new company portal. Their security team is confident there's nothing interesting here — 'just a clean page,' they said. But web servers talk in more ways than one. Sometimes the most important message isn't what gets displayed on screen.",
+    category: 'web', difficulty: 'easy', points: 100,
+    flag: 'CGS{h3ad3rs_sp34k_l0ud3r_th4n_p4g3s}',
+    hint: 'Web servers communicate using more than just HTML.',
+    instanceUrl: null,
+  },
+  {
+    title: 'TimeVault',
+    description: 'TimeVault is counting down to something classified. The developers were in a rush and pushed their work straight to production. While everyone stares at the ticking clock, the real secret is hidden in how the page is dressed — not in what it does.',
+    category: 'web', difficulty: 'easy', points: 100,
+    flag: 'CGS{css_v4r1abl3s_4r3_m0r3_th4n_c0l0rs}',
+    hint: 'The secret isnt in the JavaScript. Look at how the page is styled.',
+    instanceUrl: null,
+  },
+  {
+    title: 'DebugMode',
+    description: 'CGS SysMonitor is an internal dashboard used to track system health across the Cyber Guardians infrastructure. An engineer left debug mode enabled before deploying to production. The logs on screen look normal. But not everything shows on screen — and not everything the system says is for your eyes. Or is it?',
+    category: 'web', difficulty: 'easy', points: 100,
+    flag: 'CGS{c0ns0l3_l0gs_d0nt_l13_t0_y0u}',
+    hint: 'Developers leave messages while they code. Where do those messages usually go?',
+    instanceUrl: null,
+  },
+]
 
 const getTags = (category: string, difficulty: string): string => {
   const tags: string[] = [category, difficulty]
@@ -100,6 +124,7 @@ async function seedChallenges() {
         hint: c.hint ? c.hint : null,
         files: c.files ? c.files : null,
         instanceUrl: c.instanceUrl ? c.instanceUrl : (c.category === 'web' ? playgroundSlug(c.title) : null),
+        published: true,
         markdown: c.description,
         story: null,
         downloads: c.files ? c.files : null,
@@ -123,7 +148,7 @@ async function seedChallenges() {
         hint: c.hint ? c.hint : null,
         files: c.files ? c.files : null,
         instanceUrl: c.instanceUrl ? c.instanceUrl : (c.category === 'web' ? playgroundSlug(c.title) : null),
-        published: false,
+        published: true,
         markdown: c.description,
         story: null,
         downloads: c.files ? c.files : null,

@@ -1,8 +1,11 @@
 import { ChallengeDef } from '../types'
+import { documentChallenges } from './document-challenges'
 
 export const challengeHandlers: Record<string, ChallengeDef> = {}
 
-const defs: ChallengeDef[] = []
+const defs: ChallengeDef[] = [
+  ...documentChallenges,
+]
 
 for (const def of defs) {
   challengeHandlers[def.slug] = def
