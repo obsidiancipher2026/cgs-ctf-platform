@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Trophy, Users, Layers, CheckCircle, Zap, Minus, RefreshCw, Target } from 'lucide-react'
+import { Trophy, Users, Layers, CheckCircle, Zap, RefreshCw, Target } from 'lucide-react'
 
 export interface ScoreboardPlayer {
   rank: number
@@ -13,7 +13,6 @@ export interface ScoreboardPlayer {
   college: string | null
   solves: number
   totalChallenges: number
-  lastActivity: { title: string; time: string } | null
   createdAt: string
 }
 
@@ -28,17 +27,6 @@ interface ScoreboardProps {
   players: ScoreboardPlayer[]
   stats: ScoreboardStats | null
   loading?: boolean
-}
-
-function getRelativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins} min ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  const days = Math.floor(hrs / 24)
-  return `${days}d ago`
 }
 
 function Skeleton() {
@@ -156,8 +144,6 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                     <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5" style={{ color: 'var(--aurora-cyan)' }}>Player</th>
                     <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-20 text-right" style={{ color: 'var(--aurora-cyan)' }}>Points</th>
                     <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-24 text-center hidden sm:table-cell" style={{ color: 'var(--aurora-cyan)' }}>Solved</th>
-                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-36 hidden md:table-cell" style={{ color: 'var(--aurora-cyan)' }}>Last Activity</th>
-                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-16 text-center hidden lg:table-cell" style={{ color: 'var(--aurora-cyan)' }}>Trend</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -194,25 +180,6 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                             {player.solves}<span className="text-txt-muted">/{player.totalChallenges}</span>
                           </span>
                         </td>
-                        <td className="px-4 py-3 hidden md:table-cell">
-                          {player.lastActivity ? (
-                            <div>
-                              <p className="font-mono text-[11px] truncate max-w-[140px]" style={{ color: 'var(--text-secondary)' }} title={player.lastActivity.title}>
-                                {player.lastActivity.title}
-                              </p>
-                              <p className="font-mono text-[9px]" style={{ color: 'var(--text-muted)' }}>
-                                {getRelativeTime(player.lastActivity.time)}
-                              </p>
-                            </div>
-                          ) : (
-                            <span className="font-mono text-[11px]" style={{ color: 'var(--text-muted)' }}>—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-center hidden lg:table-cell">
-                          <span className="inline-flex items-center gap-1 font-mono text-[11px]" style={{ color: 'var(--text-muted)' }}>
-                            <Minus className="w-3 h-3" /> —
-                          </span>
-                        </td>
                       </tr>
                     )
                   })}
@@ -245,25 +212,6 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                       <td className="px-4 py-3 text-center hidden sm:table-cell">
                         <span className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>
                           {player.solves}<span className="text-txt-muted">/{player.totalChallenges}</span>
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell">
-                        {player.lastActivity ? (
-                          <div>
-                            <p className="font-mono text-[11px] truncate max-w-[140px]" style={{ color: 'var(--text-secondary)' }} title={player.lastActivity.title}>
-                              {player.lastActivity.title}
-                            </p>
-                            <p className="font-mono text-[9px]" style={{ color: 'var(--text-muted)' }}>
-                              {getRelativeTime(player.lastActivity.time)}
-                            </p>
-                          </div>
-                        ) : (
-                          <span className="font-mono text-[11px]" style={{ color: 'var(--text-muted)' }}>—</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-center hidden lg:table-cell">
-                        <span className="inline-flex items-center gap-1 font-mono text-[11px]" style={{ color: 'var(--text-muted)' }}>
-                          <Minus className="w-3 h-3" /> —
                         </span>
                       </td>
                     </tr>

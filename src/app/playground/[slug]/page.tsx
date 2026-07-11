@@ -1,16 +1,39 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import WebChallengePlayground from '@/components/challenge/WebChallengePlayground'
-import { getChallengeHandler } from '@/lib/web-challenges/handlers'
 
 export default function PlaygroundPage() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
-  const handler = getChallengeHandler(slug)
+  const [title, setTitle] = useState('')
+  const [notFound, setNotFound] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  if (!handler) {
+  useEffect(() => {
+    fetch(`/api/playground/${slug}`, { method: 'HEAD' })
+      .then(res => {
+        if (res.status === 404) {
+          setNotFound(true)
+        } else {
+          setTitle(slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
+        }
+      })
+      .catch(() => setNotFound(true))
+      .finally(() => setLoading(false))
+  }, [slug])
+
+  if (loading) {
+    return (
+      <main className="h-screen flex items-center justify-center bg-[#05080f]">
+        <div className="text-txt-muted font-mono text-xs">Loading...</div>
+      </main>
+    )
+  }
+
+  if (notFound) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-[#05080f] via-[#070b15] to-[#05080f] flex items-center justify-center">
         <div className="text-center">
@@ -29,19 +52,19 @@ export default function PlaygroundPage() {
     <main className="h-screen flex flex-col bg-[#05080f] overflow-hidden">
       <header className="shrink-0 flex items-center gap-3 px-4 py-2 border-b border-white/[0.06] bg-[#070b15]">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/challenges')}
           className="flex items-center gap-1.5 text-txt-muted hover:text-txt-primary font-mono text-[11px] transition-colors"
         >
           <ArrowLeft className="w-3 h-3" />
           Back
         </button>
         <span className="w-px h-4 bg-white/[0.08]" />
-        <span className="font-display text-sm text-txt-primary">{handler.title}</span>
+        <span className="font-display text-sm text-txt-primary">{title}</span>
         <span className="text-[10px] font-mono text-txt-muted bg-white/[0.04] px-2 py-0.5 rounded">Playground</span>
       </header>
 
       <div className="flex-1 min-h-0">
-        <WebChallengePlayground slug={slug} title={handler.title} />
+        <WebChallengePlayground slug={slug} title={title} />
       </div>
     </main>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { RefreshCw, Code, Terminal, RotateCcw } from 'lucide-react'
+import { RefreshCw, Code, Terminal, RotateCcw, X } from 'lucide-react'
 
 interface Props {
   slug: string
@@ -15,6 +15,21 @@ interface PlaygroundView {
   flag?: string
 }
 
+const DISMISSED_FLAGS_KEY = 'cg-ctf-dismissed-flags'
+
+function getDismissedFlags(): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(DISMISSED_FLAGS_KEY)
+    return new Set(raw ? JSON.parse(raw) : [])
+  } catch { return new Set() }
+}
+
+function dismissFlag(slug: string) {
+  const set = getDismissedFlags()
+  set.add(slug)
+  sessionStorage.setItem(DISMISSED_FLAGS_KEY, JSON.stringify([...set]))
+}
+
 export default function WebChallengePlayground({ slug }: Props) {
   const [view, setView] = useState<PlaygroundView | null>(null)
   const [loading, setLoading] = useState(false)
@@ -25,6 +40,7 @@ export default function WebChallengePlayground({ slug }: Props) {
   const [extraHeaders, setExtraHeaders] = useState('')
   const [cookiesInput, setCookiesInput] = useState('')
   const [foundFlag, setFoundFlag] = useState<string | null>(null)
+  const [flagDismissed, setFlagDismissed] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const fetchPlayground = useCallback(async (m?: string, b?: string, h?: string, c?: string) => {
@@ -50,7 +66,7 @@ export default function WebChallengePlayground({ slug }: Props) {
       })
 
       const flag = res.headers.get('x-challenge-flag') || undefined
-      if (flag) setFoundFlag(flag)
+      if (flag && !getDismissedFlags().has(slug)) setFoundFlag(flag)
 
       const text = await res.text()
       const respHeaders: Record<string, string> = {}
@@ -92,10 +108,19 @@ export default function WebChallengePlayground({ slug }: Props) {
   return (
     <div className="h-full flex flex-col">
       {/* Flag banner */}
-      {foundFlag && (
-        <div className="shrink-0 px-4 py-2.5 bg-[rgba(52,232,158,0.1)] border-b border-[rgba(52,232,158,0.2)]">
-          <p className="text-[10px] font-mono text-[var(--aurora-emerald)] uppercase tracking-wider mb-0.5">Flag Found!</p>
-          <p className="text-sm font-mono text-[var(--aurora-emerald)] font-bold break-all">{foundFlag}</p>
+      {foundFlag && !flagDismissed && (
+        <div className="shrink-0 px-4 py-2.5 bg-[rgba(52,232,158,0.1)] border-b border-[rgba(52,232,158,0.2)] flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-mono text-[var(--aurora-emerald)] uppercase tracking-wider mb-0.5">Flag Found!</p>
+            <p className="text-sm font-mono text-[var(--aurora-emerald)] font-bold break-all">{foundFlag}</p>
+          </div>
+          <button
+            onClick={() => { setFlagDismissed(true); dismissFlag(slug) }}
+            className="p-1 rounded hover:bg-white/[0.08] text-[var(--aurora-emerald)]/60 hover:text-[var(--aurora-emerald)] transition-all shrink-0"
+            title="Dismiss flag"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 

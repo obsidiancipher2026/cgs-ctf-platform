@@ -1,6 +1,6 @@
 import { ChallengeDef } from '../types'
 import {
-  hiddenInPlainSight, cookieJar, loginFree, hiddenInput, viewSource, guestVsAdmin,
+  hiddenInPlainSight, cookieJar, viewSource, guestVsAdmin,
   pathAsParameter, apiRateLimitRace, sqliSpeakeasy, pathLessTraveled, blindSqli,
   nosqlInjection, ssti, openRedirect, corsChallenge, idor, ssrf, xss,
   prototypePollution, jwtNone, csrf, xxe, raceCondition, webCachePoisoning,
@@ -9,7 +9,7 @@ import {
 export const challengeHandlers: Record<string, ChallengeDef> = {}
 
 const defs: ChallengeDef[] = [
-  hiddenInPlainSight, cookieJar, loginFree, hiddenInput, viewSource, guestVsAdmin,
+  hiddenInPlainSight, cookieJar, viewSource, guestVsAdmin,
   pathAsParameter, apiRateLimitRace, sqliSpeakeasy, pathLessTraveled, blindSqli,
   nosqlInjection, ssti, openRedirect, corsChallenge, idor, ssrf, xss,
   prototypePollution, jwtNone, csrf, xxe, raceCondition, webCachePoisoning,

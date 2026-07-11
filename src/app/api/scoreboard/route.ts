@@ -33,14 +33,6 @@ export async function GET() {
     })
     const solvesMap = new Map(solvesCounts.map(s => [s.userId, s._count.id]))
 
-    const latestSubs = await prisma.submission.findMany({
-      where: { userId: { in: userIds } },
-      orderBy: { createdAt: 'desc' },
-      select: { userId: true, createdAt: true, challenge: { select: { title: true } } },
-      distinct: ['userId'],
-    })
-    const activityMap = new Map(latestSubs.map(s => [s.userId, { title: s.challenge.title, time: s.createdAt }]))
-
     const ranked = users.map((u, i) => ({
       rank: i + 1,
       id: u.id,
@@ -51,7 +43,6 @@ export async function GET() {
       college: u.college,
       solves: solvesMap.get(u.id) ?? 0,
       totalChallenges,
-      lastActivity: activityMap.get(u.id) ?? null,
       createdAt: u.createdAt,
     }))
 

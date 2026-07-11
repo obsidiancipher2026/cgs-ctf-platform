@@ -10,6 +10,14 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
   return handleRequest(request, params.slug, 'POST')
 }
 
+export async function HEAD(request: NextRequest, { params }: { params: { slug: string } }) {
+  const handler = getChallengeHandler(params.slug)
+  if (!handler) {
+    return new NextResponse(null, { status: 404 })
+  }
+  return new NextResponse(null, { status: 200 })
+}
+
 async function handleRequest(request: NextRequest, slug: string, method: string) {
   const handler = getChallengeHandler(slug)
   if (!handler) {

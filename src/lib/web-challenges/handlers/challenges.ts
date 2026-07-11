@@ -48,76 +48,16 @@ export const cookieJar: ChallengeDef = {
   },
 }
 
-export const loginFree: ChallengeDef = {
-  slug: 'login-free',
-  title: 'Login Free',
-  handler: (req: PlaygroundRequest) => {
-    if (req.path === '/graphql' || req.path === '/api/graphql') {
-      if (req.body?.includes('__schema') || req.body?.includes('__type')) {
-        return json({
-          data: {
-            __schema: {
-              types: [
-                { name: 'Query', fields: [{ name: 'flag', args: [{ name: 'token', type: { name: 'String' } }] }] },
-                { name: 'Flag', fields: [{ name: 'value', type: { name: 'String' } }] },
-              ],
-            },
-          },
-        })
-      }
-      if (req.body?.includes('flag') && req.body?.includes('supersecret')) {
-        return json({ data: { flag: { value: 'CGS{1ntr0sp3ct10n_1s_th3_r34l_k3y}' } } }, 'CGS{1ntr0sp3ct10n_1s_th3_r34l_k3y}')
-      }
-      return json({ data: { flag: { value: null } } })
-    }
-    return html(simplePage('Login Free', `
-      <p>Welcome to the admin panel login.</p>
-      <p>Try exploring the API at <code>/graphql</code> or <code>/api/graphql</code>.</p>
-      <p>Hint: Use introspection to discover the schema.</p>
-    `))
-  },
-}
-
-export const hiddenInput: ChallengeDef = {
-  slug: 'hidden-input',
-  title: 'Hidden Input',
-  handler: (req: PlaygroundRequest) => {
-    const body = req.body || ''
-    if (body.includes('is_admin=true') || body.includes('is_admin=1')) {
-      return html(flagPage('Hidden Input', `
-        <p>Registration successful as <strong>Administrator</strong>!</p>
-        <div class="flag">CGS{h1dd3n_f13lds_d0nt_st0p_4ny0n3}</div>
-      `, 'CGS{h1dd3n_f13lds_d0nt_st0p_4ny0n3}'))
-    }
-    return html(simplePage('Registration Form', `
-      <form method="POST">
-        <p><label>Username:<br><input name="username" value="player1"></label></p>
-        <p><label>Email:<br><input name="email" value="a@b.com"></label></p>
-        <!-- <input type="hidden" name="is_admin" value="false"> -->
-        <p><button type="submit">Register</button></p>
-      </form>
-      <p class="hint" style="color:#94a3b8;font-size:11px">The form has a hidden field. Check the HTML.</p>
-    `))
-  },
-}
-
 export const viewSource: ChallengeDef = {
   slug: 'view-source',
   title: 'View Source',
   handler: () => {
-    const minified = 'function check(){let a=document.getElementById("flag").value;let b=["C","G","S","{","m","1","n","1","f","1","3","d","_","d","0","3","s","n","t","_","m","3","4","n","_","h","1","d","d","3","n","}"];if(a===b.join("")){alert("Correct!")}else{alert("Wrong!")}}'
-    return {
-      status: 200,
-      headers: { 'Content-Type': 'text/html', 'X-Flag': 'CGS{m1n1f13d_d03snt_m34n_h1dd3n}' },
-      body: simplePage('Flag Checker', `
-        <p>Enter the flag to verify it:</p>
-        <input id="flag" placeholder="CGS{...}">
-        <button onclick="check()">Verify</button>
-        <pre>${minified}</pre>
-        <p style="color:#94a3b8;font-size:11px">The source is minified. Try formatting it.</p>
-      `),
-      flag: 'CGS{m1n1f13d_d03snt_m34n_h1dd3n}',
-    }
+    return html(simplePage('View Source', `
+      <p>Our new security portal VaultCore is now live!</p>
+      <p>Visit the site and inspect it carefully. Sometimes the most important things are hidden in plain sight.</p>
+      <p><a href="/challenge-instances/20/" target="_blank" style="display:inline-block;margin-top:12px;padding:10px 24px;background:rgba(34,211,238,0.12);border:1px solid rgba(34,211,238,0.25);color:#22d3ee;border-radius:6px;text-decoration:none;font-family:monospace;">Open VaultCore Portal →</a></p>
+      <p style="color:#94a3b8;font-size:11px;margin-top:12px">Hint: The source code tells a story. Look at what the browser loads.</p>
+    `))
   },
 }
 
@@ -148,7 +88,7 @@ export const guestVsAdmin: ChallengeDef = {
 }
 
 export const pathAsParameter: ChallengeDef = {
-  slug: 'path-as-parameter',
+  slug: 'path-as-a-parameter',
   title: 'Path as a Parameter',
   handler: (req: PlaygroundRequest) => {
     const file = req.query['file'] || 'welcome.txt'
@@ -345,7 +285,7 @@ export const corsChallenge: ChallengeDef = {
         secret: 'CGS{c0rs_th1nk1ng_y0u_c4n_r34d}',
         message: 'This data is accessible cross-origin due to permissive CORS policy.',
         sensitive: true,
-      })
+      }, 'CGS{c0rs_th1nk1ng_y0u_c4n_r34d}')
     }
     return json({
       message: 'CORS headers not triggered. Make a request from a different origin.',
@@ -569,7 +509,7 @@ export const raceCondition: ChallengeDef = {
 }
 
 export const webCachePoisoning: ChallengeDef = {
-  slug: 'web-cache-poisoning',
+  slug: 'cache-poisoning',
   title: 'Web Cache Poisoning',
   handler: (req: PlaygroundRequest) => {
     const xHost = req.headers['x-forwarded-host'] || req.headers['host'] || 'localhost'
