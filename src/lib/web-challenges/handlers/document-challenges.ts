@@ -436,39 +436,172 @@ ${isAuth ? `
 
 // 12 — IDOR Inbox
 const IDOR_FLAG = 'CGS{1nc0rr3ct_d1r3ct_0bj3ct_r3f3r3nc3s}'
-const messages: Record<number, any> = {
-  1: { id: 1, from: 'support@cgs.internal', subject: 'Your ticket #4421', body: 'Hi there, your request has been received. We will follow up within 24 hours.' },
-  2: { id: 2, from: 'noreply@cgs.internal', subject: 'Password changed', body: 'Your password was changed successfully. If you did not request this, contact IT.' },
-  3: { id: 3, from: 'updates@cgs.internal', subject: 'Weekly digest', body: 'This week: 3 new features deployed, 12 bugs fixed, 0 incidents.' },
-  4: { id: 4, from: 'hr@cgs.internal', subject: 'Benefits enrollment', body: 'Open enrollment for Q3 benefits ends Friday. Don\'t forget to update your selections.' },
-  5: { id: 5, from: 'devops@cgs.internal', subject: 'Scheduled maintenance', body: 'Server maintenance will occur Saturday 2:00 AM - 4:00 AM EST. Expect brief downtime.' },
-  6: { id: 6, from: 'alerts@cgs.internal', subject: 'Unusual login detected', body: 'A login from an unrecognized device was detected. If this was you, no action needed.' },
-  7: { id: 7, from: 'admin@cgs.internal', subject: 'Rotation reminder', body: 'New vault passphrase rotated: ' + IDOR_FLAG },
-  8: { id: 8, from: 'bot@cgs.internal', subject: 'Backup complete', body: 'Nightly backup completed. 2.4 GB stored. Encryption verified.' },
+const idorMessages: Record<number, {id: number, from: string, subject: string, body: string, date: string}> = {
+  1: { id: 1, from: 'support@cgs.internal', subject: 'Your ticket #4421', body: 'Hi there, your request has been received. We will follow up within 24 hours.', date: 'Oct 12' },
+  2: { id: 2, from: 'noreply@cgs.internal', subject: 'Password changed', body: 'Your password was changed successfully. If you did not request this, contact IT.', date: 'Oct 11' },
+  3: { id: 3, from: 'updates@cgs.internal', subject: 'Weekly digest', body: 'This week: 3 new features deployed, 12 bugs fixed, 0 incidents.', date: 'Oct 10' },
+  4: { id: 4, from: 'hr@cgs.internal', subject: 'Benefits enrollment', body: 'Open enrollment for Q3 benefits ends Friday. Don\'t forget to update your selections.', date: 'Oct 09' },
+  5: { id: 5, from: 'devops@cgs.internal', subject: 'Scheduled maintenance', body: 'Server maintenance will occur Saturday 2:00 AM - 4:00 AM EST. Expect brief downtime.', date: 'Oct 08' },
+  6: { id: 6, from: 'alerts@cgs.internal', subject: 'Unusual login detected', body: 'A login from an unrecognized device was detected. If this was you, no action needed.', date: 'Oct 07' },
+  7: { id: 7, from: 'admin@cgs.internal', subject: 'Classified: Operation Vault', body: 'New vault passphrase rotated. Keep this secure: ' + IDOR_FLAG, date: 'Oct 07' },
+  8: { id: 8, from: 'bot@cgs.internal', subject: 'Backup complete', body: 'Nightly backup completed. 2.4 GB stored. Encryption verified.', date: 'Oct 06' },
+  9: { id: 9, from: 'facilities@cgs.internal', subject: 'Office Closure', body: 'The 3rd-floor pantry is closed for renovation.', date: 'Oct 05' },
+  10: { id: 10, from: 'it@cgs.internal', subject: 'New VPN Client', body: 'Please install the new VPN client by EOD.', date: 'Oct 04' },
+  11: { id: 11, from: 'events@cgs.internal', subject: 'Holiday Party RSVP', body: 'Please RSVP for the annual holiday party!', date: 'Oct 04' },
+  12: { id: 12, from: 'security@cgs.internal', subject: 'Phishing Simulation', body: 'You passed the recent phishing simulation. Good job.', date: 'Oct 03' },
+  13: { id: 13, from: 'hr@cgs.internal', subject: 'Performance Review', body: 'Your annual performance review is scheduled for next week.', date: 'Oct 02' },
+  14: { id: 14, from: 'updates@cgs.internal', subject: 'System Outage', body: 'JIRA will be down for 30 minutes tonight.', date: 'Oct 01' },
+  15: { id: 15, from: 'ceo@cgs.internal', subject: 'Quarterly Update', body: 'We had a great quarter! Thanks everyone.', date: 'Sep 30' },
+  16: { id: 16, from: 'support@cgs.internal', subject: 'Ticket #4422 Resolved', body: 'Your request regarding the monitor stand is resolved.', date: 'Sep 29' },
+  17: { id: 17, from: 'noreply@cgs.internal', subject: 'Login from New Device', body: 'We detected a login from a new device (Windows).', date: 'Sep 28' },
+  18: { id: 18, from: 'alerts@cgs.internal', subject: 'High CPU Usage', body: 'Server APP-04 is experiencing high CPU usage.', date: 'Sep 27' },
+  19: { id: 19, from: 'devops@cgs.internal', subject: 'Deployment Successful', body: 'Release v2.4.1 has been deployed successfully.', date: 'Sep 26' },
+  20: { id: 20, from: 'bot@cgs.internal', subject: 'Weekly Sync', body: 'Reminder: Engineering weekly sync in 10 minutes.', date: 'Sep 25' }
 }
+
 const idorHandler = (req: PlaygroundRequest): PlaygroundResponse => {
-  const match = req.path.match(/^\/api\/messages\/(\d+)$/)
-  if (match) {
-    const msg = messages[parseInt(match[1])]
-    if (!msg) return errJson(404, 'not found')
-    return json(msg)
+  // ── Login endpoint ──
+  if (req.method === 'POST' && req.path === '/api/login') {
+    const params = new URLSearchParams(req.body || '')
+    const user = params.get('username')
+    const pass = params.get('password')
+    if (user === 'agent' && pass === 'shadow99') {
+      return {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Set-Cookie': 'session=authenticated-user; Path=/; SameSite=Lax'
+        },
+        body: JSON.stringify({ ok: true, redirect: 'message/1' })
+      }
+    }
+    return json({ error: 'Invalid credentials' })
   }
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Mail</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;padding:40px;max-width:700px;margin:0 auto}
-h1{font-size:24px;color:#3B82F6;margin-bottom:4px}.sub{color:#94A3B8;font-size:13px;margin-bottom:20px}
-.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:16px;margin-bottom:12px;cursor:pointer}
-.card h3{font-size:15px;margin-bottom:4px}.card .from{color:#94A3B8;font-size:12px}.card .preview{color:#64748B;font-size:13px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#detail{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:20px;display:none;margin-top:12px}
-#detail h2{font-size:16px;margin-bottom:4px}#detail .meta{color:#94A3B8;font-size:12px;margin-bottom:12px}#detail .body{color:#E2E8F0;font-size:14px;line-height:1.6}
-footer{color:#475569;font-size:11px;text-align:center;margin-top:40px}
+
+  const isAuth = req.cookies.session === 'authenticated-user'
+
+  // ── Message view (URL-based ID) ──
+  const messageMatch = req.path.match(/^\/message\/(\d+)$/)
+  if (messageMatch) {
+    if (!isAuth) {
+      return { status: 302, headers: { 'Location': '/', 'Content-Type': 'text/html' }, body: 'Redirecting...' }
+    }
+    const id = parseInt(messageMatch[1], 10)
+    if (id < 1 || id > 20) {
+      return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Message Not Found</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.err-box{text-align:center;padding:60px}.err-box h1{font-size:72px;color:#ef4444;font-weight:800;margin-bottom:8px}.err-box p{color:#94a3b8;font-size:15px;margin-bottom:24px}
+.err-box a{color:#3b82f6;text-decoration:none;font-size:14px}</style></head><body>
+<div class="err-box"><h1>404</h1><p>Message ID ${id} does not exist.<br>Valid range: 1–20</p><a href="message/1">&larr; Back to your messages</a></div></body></html>`)
+    }
+    const msg = idorMessages[id]
+    
+    return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Mail — ${msg.subject}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f8fafc;color:#0f172a;min-height:100vh}
+.topbar{background:#ffffff;border-bottom:1px solid #e2e8f0;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 2px 0 rgba(0,0,0,0.05)}
+.topbar .brand{display:flex;align-items:center;gap:12px}
+.topbar .brand .icon{width:36px;height:36px;background:#2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff}
+.topbar .brand span{font-weight:600;font-size:18px;color:#1e293b}
+.topbar .nav-right{display:flex;align-items:center;gap:16px}
+.topbar .nav-right .user-pill{font-size:13px;color:#64748b}
+.topbar .logout{color:#ef4444;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;padding:6px 12px;border-radius:6px;transition:background .2s}
+.topbar .logout:hover{background:#fee2e2}
+.main{max-width:800px;margin:40px auto;padding:0 24px}
+.mail-card{background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);overflow:hidden}
+.mail-header{padding:24px 32px;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+.mail-header h1{font-size:24px;font-weight:700;color:#0f172a;margin-bottom:16px}
+.mail-meta{display:flex;justify-content:space-between;align-items:flex-start}
+.mail-sender{display:flex;align-items:center;gap:12px}
+.sender-avatar{width:40px;height:40px;border-radius:50%;background:#e0e7ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px}
+.sender-info .name{font-weight:600;color:#1e293b;font-size:14px}
+.sender-info .email{color:#64748b;font-size:13px;margin-top:2px}
+.mail-date{color:#64748b;font-size:13px;font-weight:500}
+.mail-body{padding:32px;font-size:15px;line-height:1.6;color:#334155;white-space:pre-wrap}
+.id-badge{display:inline-block;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:4px 8px;font-size:12px;color:#64748b;font-family:monospace;margin-bottom:16px}
+.footer-note{text-align:center;color:#94a3b8;font-size:12px;margin-top:40px;padding-bottom:40px}
+${id === 7 ? `.mail-body{background:#fff1f2;border:1px solid #fecdd3;border-radius:8px;padding:24px;color:#9f1239;font-family:monospace;font-size:14px}` : ''}
 </style></head><body>
-<h1>CGS Mail</h1><p class="sub">user@cgs.internal &mdash; Inbox</p><div id="inbox"><p style="color:#64748B">Loading messages...</p></div>
-<div id="detail"><h2 id="detailSubj"></h2><p class="meta" id="detailFrom"></p><div class="body" id="detailBody"></div></div>
-<footer>CGS Internal Mail &bull; v1.2</footer>
-<script>
-!function(){fetch('api/messages/1').then(function(r){return r.json()}).then(function(d){var h='<div class="card" onclick="showMsg('+d.id+')"><h3>'+d.subject+'</h3><div class="from">'+d.from+'</div><div class="preview">'+d.body.substring(0,60)+'</div></div>';for(var i=2;i<=8;i++){h+='<div class="card" onclick="showMsg('+i+')"><h3>Message #'+i+'</h3><div class="from">user'+i+'@cgs.internal</div><div class="preview">Click to load...</div></div>'}document.getElementById('inbox').innerHTML=h})}();
-function showMsg(id){fetch('api/messages/'+id).then(function(r){return r.json()}).then(function(d){document.getElementById('detail').style.display='block';document.getElementById('detailSubj').textContent=d.subject;document.getElementById('detailFrom').textContent='From: '+d.from;document.getElementById('detailBody').textContent=d.body})}
-</script></body></html>`)
+<div class="topbar">
+<div class="brand"><div class="icon">M</div><span>CGS Mail</span></div>
+<div class="nav-right">
+<div class="user-pill">agent@cgs.internal</div>
+<a href="#" class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';window.location='/'">Sign Out</a>
+</div></div>
+<div class="main">
+<div class="id-badge">Message ID: ${id}</div>
+<div class="mail-card">
+<div class="mail-header">
+<h1>${msg.subject}</h1>
+<div class="mail-meta">
+<div class="mail-sender">
+<div class="sender-avatar">${msg.from[0].toUpperCase()}</div>
+<div class="sender-info">
+<div class="name">${msg.from.split('@')[0]}</div>
+<div class="email">&lt;${msg.from}&gt;</div>
+</div></div>
+<div class="mail-date">${msg.date}</div>
+</div></div>
+<div class="mail-body">${msg.body}</div>
+</div>
+<p class="footer-note">CGS Internal Mail System</p>
+</div></body></html>`)
+  }
+
+  // ── Login page (unauthenticated) ──
+  if (!isAuth) {
+    return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Mail Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f8fafc;color:#0f172a;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-container{width:400px}
+.logo-area{text-align:center;margin-bottom:32px}
+.logo-icon{width:56px;height:56px;background:#2563eb;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;color:#fff;margin-bottom:16px;box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+.logo-area h1{font-size:24px;font-weight:700;color:#0f172a;margin-bottom:8px}
+.logo-area p{color:#64748b;font-size:14px}
+.login-card{background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:32px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8px}
+.field input{width:100%;padding:12px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;color:#0f172a;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.cred-display{background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:8px;padding:16px;margin-bottom:24px}
+.cred-display p{font-size:12px;color:#64748b;margin-bottom:8px;font-weight:500;text-align:center}
+.cred-display .cred-row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}
+.cred-display .cred-row span:first-child{color:#64748b}
+.cred-display .cred-row span:last-child{font-family:monospace;font-weight:600;color:#0f172a}
+.submit-btn{width:100%;padding:12px;background:#2563eb;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.submit-btn:hover{background:#1d4ed8}
+.error-msg{color:#ef4444;font-size:13px;text-align:center;margin-top:16px;display:none;font-weight:500}
+.footer-text{text-align:center;color:#94a3b8;font-size:12px;margin-top:24px}
+</style></head><body>
+<div class="login-container">
+<div class="logo-area">
+<div class="logo-icon">M</div>
+<h1>CGS Mail</h1>
+<p>Sign in to your inbox</p>
+</div>
+<div class="login-card">
+<div class="cred-display">
+<p>Demo credentials provided for training:</p>
+<div class="cred-row"><span>Username</span><span>agent</span></div>
+<div class="cred-row"><span>Password</span><span>shadow99</span></div>
+</div>
+<form id="loginForm">
+<div class="field"><label>Username</label><input type="text" name="username" id="username"></div>
+<div class="field"><label>Password</label><input type="password" name="password" id="password"></div>
+<button type="submit" class="submit-btn">Sign In</button>
+</form>
+<div class="error-msg" id="err">Invalid username or password.</div>
+</div>
+<p class="footer-text">CGS Internal Systems</p>
+</div>
+<script>(function(){var f=document.getElementById('loginForm');f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f);fetch('api/login',{method:'POST',body:new URLSearchParams(d)}).then(function(r){return r.json()}).then(function(j){if(j.ok){window.location.href='message/1'}else{document.getElementById('err').style.display='block'}}).catch(function(){})})})()</script>
+</body></html>`)
+  }
+
+  // ── Authenticated root: redirect to message/1 ──
+  return { status: 302, headers: { 'Location': 'message/1', 'Content-Type': 'text/html' }, body: 'Redirecting to inbox...' }
 }
 
 // 13 — ReflectedNote
