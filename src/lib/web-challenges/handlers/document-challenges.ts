@@ -327,111 +327,190 @@ document.getElementById('unlockBtn').addEventListener('click',function(){var c=d
 
 // 11 — HiddenAPI
 const HIDDEN_FLAG = 'CGS{th3_ui_1sn7_th3_wh0l3_4p1_surf4c3}'
+const hiddenApiUsers: Array<{ id: number; name: string; role: string; dept: string; email: string; joined: string; status: string; note?: string }> = [
+  { id: 1,  name: 'Alice Chen',      role: 'Software Engineer',     dept: 'Engineering',  email: 'alice.chen@cgs.internal',      joined: '2023-03-12', status: 'Active' },
+  { id: 2,  name: 'Bob Martinez',    role: 'Campaign Lead',         dept: 'Marketing',    email: 'bob.martinez@cgs.internal',    joined: '2022-08-05', status: 'Active' },
+  { id: 3,  name: 'Carol Smith',     role: 'UI Designer',           dept: 'Design',       email: 'carol.smith@cgs.internal',     joined: '2024-01-20', status: 'Active' },
+  { id: 4,  name: 'Dave Johnson',    role: 'DevOps Engineer',       dept: 'Engineering',  email: 'dave.johnson@cgs.internal',    joined: '2021-11-03', status: 'Active' },
+  { id: 5,  name: 'Eve Williams',    role: 'HR Specialist',         dept: 'HR',           email: 'eve.williams@cgs.internal',    joined: '2023-06-17', status: 'Active' },
+  { id: 6,  name: 'Frank Brown',     role: 'Financial Analyst',     dept: 'Finance',      email: 'frank.brown@cgs.internal',     joined: '2022-02-28', status: 'Active' },
+  { id: 7,  name: 'Grace Lee',       role: 'Chief Security Officer',dept: 'Executive',    email: 'grace.lee@cgs.internal',       joined: '2020-09-01', status: 'Active', note: HIDDEN_FLAG },
+  { id: 8,  name: 'Henry Davis',     role: 'Backend Engineer',      dept: 'Engineering',  email: 'henry.davis@cgs.internal',     joined: '2023-10-14', status: 'Active' },
+  { id: 9,  name: 'Ivy Wilson',      role: 'Product Designer',      dept: 'Design',       email: 'ivy.wilson@cgs.internal',      joined: '2024-04-02', status: 'Active' },
+  { id: 10, name: 'Jack Thompson',   role: 'Content Strategist',    dept: 'Marketing',    email: 'jack.thompson@cgs.internal',   joined: '2022-12-11', status: 'Active' },
+  { id: 11, name: 'Karen Garcia',    role: 'Recruiter',             dept: 'HR',           email: 'karen.garcia@cgs.internal',    joined: '2023-05-22', status: 'On Leave' },
+  { id: 12, name: 'Leo Anderson',    role: 'Accountant',            dept: 'Finance',      email: 'leo.anderson@cgs.internal',    joined: '2021-07-09', status: 'Active' },
+  { id: 13, name: 'Mia Taylor',      role: 'QA Engineer',           dept: 'Engineering',  email: 'mia.taylor@cgs.internal',      joined: '2024-02-18', status: 'Active' },
+  { id: 14, name: 'Noah Thomas',     role: 'Motion Designer',       dept: 'Design',       email: 'noah.thomas@cgs.internal',     joined: '2023-08-30', status: 'Active' },
+  { id: 15, name: 'Olivia White',    role: 'SEO Manager',           dept: 'Marketing',    email: 'olivia.white@cgs.internal',    joined: '2022-04-15', status: 'Active' },
+  { id: 16, name: 'Peter Harris',    role: 'Security Engineer',     dept: 'Engineering',  email: 'peter.harris@cgs.internal',    joined: '2021-01-07', status: 'Active' },
+  { id: 17, name: 'Quinn Martin',    role: 'Treasury Analyst',      dept: 'Finance',      email: 'quinn.martin@cgs.internal',    joined: '2023-09-25', status: 'Active' },
+  { id: 18, name: 'Rachel Lee',      role: 'UX Researcher',         dept: 'Design',       email: 'rachel.lee@cgs.internal',      joined: '2024-03-08', status: 'Active' },
+  { id: 19, name: 'Sam Clark',       role: 'Benefits Coordinator',  dept: 'HR',           email: 'sam.clark@cgs.internal',       joined: '2022-10-19', status: 'Active' },
+  { id: 20, name: 'Tina Walker',     role: 'SRE Lead',              dept: 'Engineering',  email: 'tina.walker@cgs.internal',     joined: '2020-06-14', status: 'Active' },
+]
+
 const hiddenApiHandler = (req: PlaygroundRequest): PlaygroundResponse => {
+  // ── Login endpoint ──
   if (req.method === 'POST' && req.path === '/api/login') {
     const params = new URLSearchParams(req.body || '')
     const user = params.get('username')
     const pass = params.get('password')
-    if (user === 'admin' && pass === 'admin123') {
+    if (user === 'agent' && pass === 'shadow99') {
       return {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
           'Set-Cookie': 'session=authenticated-user; Path=/; SameSite=Lax'
         },
-        body: JSON.stringify({ ok: true })
+        body: JSON.stringify({ ok: true, redirect: 'profile/1' })
       }
     }
     return json({ error: 'Invalid credentials' })
   }
 
-  if (req.path === '/api/users' || req.path.startsWith('/api/users/')) {
-    if (req.cookies.session !== 'authenticated-user') return error(401, 'Unauthorized')
-    const id = parseInt(req.path.replace('/api/users/', ''), 10)
-    if (isNaN(id) || id < 1 || id > 20) return json({ error: 'Invalid user ID' })
-    const users: Array<{ id: number; name: string; dept: string; flag?: string }> = [
-      { id: 1,  name: 'Alice Chen',      dept: 'Engineering' },
-      { id: 2,  name: 'Bob Martinez',    dept: 'Marketing'   },
-      { id: 3,  name: 'Carol Smith',     dept: 'Design'      },
-      { id: 4,  name: 'Dave Johnson',    dept: 'Engineering' },
-      { id: 5,  name: 'Eve Williams',    dept: 'HR'          },
-      { id: 6,  name: 'Frank Brown',     dept: 'Finance'     },
-      { id: 7,  name: 'Grace Lee',       dept: 'Executive'   },
-      { id: 8,  name: 'Henry Davis',     dept: 'Engineering' },
-      { id: 9,  name: 'Ivy Wilson',      dept: 'Design'      },
-      { id: 10, name: 'Jack Thompson',   dept: 'Marketing'   },
-      { id: 11, name: 'Karen Garcia',    dept: 'HR'          },
-      { id: 12, name: 'Leo Anderson',    dept: 'Finance'     },
-      { id: 13, name: 'Mia Taylor',      dept: 'Engineering' },
-      { id: 14, name: 'Noah Thomas',     dept: 'Design'      },
-      { id: 15, name: 'Olivia White',    dept: 'Marketing'   },
-      { id: 16, name: 'Peter Harris',    dept: 'Engineering' },
-      { id: 17, name: 'Quinn Martin',    dept: 'Finance'     },
-      { id: 18, name: 'Rachel Lee',      dept: 'Design'      },
-      { id: 19, name: 'Sam Clark',       dept: 'HR'          },
-      { id: 20, name: 'Tina Walker',     dept: 'Engineering' },
-    ]
-    const user = { ...users[id - 1] }
-    if (id === 7) user.flag = HIDDEN_FLAG
-    return json(user, id === 7 ? HIDDEN_FLAG : undefined)
-  }
-
   const isAuth = req.cookies.session === 'authenticated-user'
 
-  const userCards = [
-    [1,'Alice Chen','Engineering'],[2,'Bob Martinez','Marketing'],[3,'Carol Smith','Design'],
-    [4,'Dave Johnson','Engineering'],[5,'Eve Williams','HR'],[6,'Frank Brown','Finance'],
-    [7,'Grace Lee','Executive'],[8,'Henry Davis','Engineering'],[9,'Ivy Wilson','Design'],
-    [10,'Jack Thompson','Marketing'],[11,'Karen Garcia','HR'],[12,'Leo Anderson','Finance'],
-    [13,'Mia Taylor','Engineering'],[14,'Noah Thomas','Design'],[15,'Olivia White','Marketing'],
-    [16,'Peter Harris','Engineering'],[17,'Quinn Martin','Finance'],[18,'Rachel Lee','Design'],
-    [19,'Sam Clark','HR'],[20,'Tina Walker','Engineering']
-  ].map(([id, name, dept]) =>
-    `<div class="card"><span class="badge">${id}</span><h3>${name}</h3><p>${dept}</p></div>`
-  ).join('\n')
+  // ── Profile page (URL-based ID) ──
+  const profileMatch = req.path.match(/^\/profile\/(\d+)$/)
+  if (profileMatch) {
+    if (!isAuth) {
+      return { status: 302, headers: { 'Location': '/', 'Content-Type': 'text/html' }, body: 'Redirecting...' }
+    }
+    const id = parseInt(profileMatch[1], 10)
+    if (id < 1 || id > 20) {
+      return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Employee Not Found</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',-apple-system,sans-serif;background:#0a0e1a;color:#c8cdd8;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.err-box{text-align:center;padding:60px}.err-box h1{font-size:72px;color:#ef4444;font-weight:800;margin-bottom:8px}.err-box p{color:#64748b;font-size:15px;margin-bottom:24px}
+.err-box a{color:#6366f1;text-decoration:none;font-size:14px}</style></head><body>
+<div class="err-box"><h1>404</h1><p>Employee ID ${id} does not exist.<br>Valid range: 1–20</p><a href="profile/1">&larr; Back to your profile</a></div></body></html>`)
+    }
+    const emp = hiddenApiUsers[id - 1]
+    const initials = emp.name.split(' ').map(n => n[0]).join('')
+    const avatarColors = ['#6366f1','#ec4899','#14b8a6','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#10b981','#f97316','#3b82f6']
+    const avatarColor = avatarColors[(id - 1) % avatarColors.length]
+    const isTarget = id === 7
 
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>HiddenAPI — Employee Portal</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;min-height:100vh}
-.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at top,#1E293B,#0F172A)}
-.login-box{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:40px;width:360px}
-.login-box h1{font-size:20px;color:#F1F5F9;margin-bottom:4px}.login-box .sub{color:#94A3B8;font-size:13px;margin-bottom:24px}
-.login-box label{display:block;color:#94A3B8;font-size:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.login-box input{width:100%;padding:10px 12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;font-size:14px;margin-bottom:16px;outline:none}
-.login-box input:focus{border-color:#3B82F6}.login-box .hint{font-size:12px;color:#64748B;margin-bottom:20px;padding:8px 12px;background:#0F172A;border-radius:6px;font-family:monospace;text-align:center}
-.login-box button{width:100%;padding:10px;background:#3B82F6;border:none;border-radius:6px;color:#fff;font-size:14px;cursor:pointer}
-.login-box button:hover{background:#2563EB}.login-box .error{color:#EF4444;font-size:13px;margin-bottom:12px;display:none}
-.container{max-width:960px;margin:0 auto;padding:32px 20px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
-header h1{font-size:22px;color:#F1F5F9}header .logout{color:#94A3B8;font-size:13px;cursor:pointer;text-decoration:underline}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:16px;position:relative;cursor:default}
-.card .badge{position:absolute;top:8px;right:8px;background:#3B82F6;color:#fff;font-size:10px;border-radius:4px;padding:2px 6px;font-weight:700}
-.card h3{font-size:14px;color:#F1F5F9;margin-bottom:4px}.card p{font-size:12px;color:#94A3B8}
-.hint-bar{margin-top:24px;padding:12px 16px;background:#1E293B;border:1px solid #334155;border-radius:8px;font-size:13px;color:#94A3B8;text-align:center}
-.hint-bar code{color:#3B82F6;background:#0F172A;padding:2px 6px;border-radius:4px;font-size:12px}
-.card.flag{box-shadow:inset 0 0 0 2px #EF4444;opacity:.4;pointer-events:none}
-.card.flag .badge{background:#EF4444}</style></head><body>
-${isAuth ? `
-<div class="container">
-<header><h1>Employee Directory</h1><span class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';location.reload()">logout</span></header>
-<div class="grid">${userCards}</div>
-<div class="hint-bar">Access employee details via the internal API: <code>api/users/N</code></div>
-</div>` : `
-<div class="login-page">
-<div class="login-box">
+    return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Profile — ${emp.name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:#06080f;color:#c8cdd8;min-height:100vh}
+.topbar{background:#0c1120;border-bottom:1px solid #1a2035;padding:14px 32px;display:flex;justify-content:space-between;align-items:center}
+.topbar .brand{display:flex;align-items:center;gap:10px}
+.topbar .brand .icon{width:32px;height:32px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+.topbar .brand span{font-weight:700;font-size:15px;color:#e2e8f0;letter-spacing:.5px}
+.topbar .nav-right{display:flex;align-items:center;gap:16px}
+.topbar .nav-right .user-pill{background:#1a2035;border:1px solid #2a3050;border-radius:20px;padding:6px 14px 6px 8px;display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8}
+.topbar .nav-right .user-pill .dot{width:8px;height:8px;background:#10b981;border-radius:50%}
+.topbar .logout{color:#64748b;font-size:12px;cursor:pointer;text-decoration:underline;transition:color .2s}
+.topbar .logout:hover{color:#ef4444}
+.main{max-width:720px;margin:40px auto;padding:0 24px}
+.profile-header{display:flex;align-items:center;gap:24px;margin-bottom:32px}
+.avatar{width:80px;height:80px;border-radius:20px;background:${avatarColor};display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;box-shadow:0 8px 32px ${avatarColor}40;flex-shrink:0}
+.profile-header .info h1{font-size:24px;font-weight:700;color:#f1f5f9;margin-bottom:4px}
+.profile-header .info .role{color:#94a3b8;font-size:14px;font-weight:500}
+.profile-header .info .id-badge{display:inline-block;background:#1a2035;border:1px solid #2a3050;border-radius:6px;padding:2px 8px;font-size:11px;color:#6366f1;font-weight:700;margin-top:6px;font-family:'JetBrains Mono',monospace}
+.card{background:#0c1120;border:1px solid #1a2035;border-radius:14px;padding:28px;margin-bottom:20px;transition:border-color .3s}
+.card:hover{border-color:#2a3050}
+.card .section-title{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:16px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.detail-item .label{font-size:11px;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.detail-item .value{font-size:14px;color:#e2e8f0;font-weight:500}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.status-active{background:#10b981}.status-leave{background:#f59e0b}
+${isTarget ? `.flag-card{background:linear-gradient(135deg,#0c1120 0%,#1a0a2e 100%);border:1px solid #6366f1;box-shadow:0 0 40px rgba(99,102,241,0.1)}
+.flag-card .section-title{color:#6366f1}
+.flag-value{background:#06080f;border:1px solid #2a3050;border-radius:8px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#a78bfa;word-break:break-all;letter-spacing:.5px;position:relative;overflow:hidden}
+.flag-value::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#6366f1,transparent)}` : ''}
+.footer-note{text-align:center;color:#2a3050;font-size:11px;margin-top:40px;padding-bottom:40px}
+</style></head><body>
+<div class="topbar">
+<div class="brand"><div class="icon">EP</div><span>Employee Portal</span></div>
+<div class="nav-right">
+<div class="user-pill"><div class="dot"></div>Logged in as agent</div>
+<span class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';window.location='/'">Sign Out</span>
+</div></div>
+<div class="main">
+<div class="profile-header">
+<div class="avatar">${initials}</div>
+<div class="info">
+<h1>${emp.name}</h1>
+<div class="role">${emp.role}</div>
+<div class="id-badge">ID #${String(id).padStart(3,'0')}</div>
+</div></div>
+<div class="card">
+<div class="section-title">Employee Details</div>
+<div class="detail-grid">
+<div class="detail-item"><div class="label">Department</div><div class="value">${emp.dept}</div></div>
+<div class="detail-item"><div class="label">Email</div><div class="value">${emp.email}</div></div>
+<div class="detail-item"><div class="label">Joined</div><div class="value">${emp.joined}</div></div>
+<div class="detail-item"><div class="label">Status</div><div class="value"><span class="status-dot ${emp.status === 'Active' ? 'status-active' : 'status-leave'}"></span>${emp.status}</div></div>
+</div></div>
+${isTarget ? `<div class="card flag-card">
+<div class="section-title">Classified — Security Clearance Required</div>
+<p style="color:#94a3b8;font-size:13px;margin-bottom:14px">This employee has a classified note attached to their profile:</p>
+<div class="flag-value">${HIDDEN_FLAG}</div>
+</div>` : ''}
+<p class="footer-note">Employee Portal v3.2 &bull; CGS Internal Systems</p>
+</div></body></html>`)
+  }
+
+  // ── Login page (unauthenticated) ──
+  if (!isAuth) {
+    return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>HiddenAPI — Employee Portal Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:#06080f;color:#c8cdd8;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%,rgba(99,102,241,0.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(139,92,246,0.06) 0%,transparent 50%);pointer-events:none;animation:drift 20s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate(0,0)}100%{transform:translate(-3%,2%)}}
+.login-container{position:relative;z-index:1;width:400px}
+.logo-area{text-align:center;margin-bottom:32px}
+.logo-icon{width:56px;height:56px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;margin-bottom:16px;box-shadow:0 8px 32px rgba(99,102,241,0.3)}
+.logo-area h1{font-size:22px;font-weight:700;color:#f1f5f9;margin-bottom:4px}
+.logo-area p{color:#64748b;font-size:13px}
+.login-card{background:#0c1120;border:1px solid #1a2035;border-radius:16px;padding:32px;box-shadow:0 24px 64px rgba(0,0,0,0.4)}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
+.field input{width:100%;padding:12px 14px;background:#06080f;border:1px solid #1a2035;border-radius:10px;color:#e2e8f0;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .3s,box-shadow .3s}
+.field input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.15)}
+.cred-display{background:#0a0f1e;border:1px solid #1a2035;border-radius:10px;padding:14px 16px;margin-bottom:24px;display:flex;gap:20px}
+.cred-display .cred-item{flex:1}
+.cred-display .cred-label{font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.cred-display .cred-value{font-family:'JetBrains Mono',monospace;font-size:13px;color:#a78bfa;font-weight:600}
+.submit-btn{width:100%;padding:13px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .2s;font-family:'Inter',sans-serif}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,0.3)}
+.submit-btn:active{transform:translateY(0)}
+.error-msg{color:#ef4444;font-size:12px;text-align:center;margin-top:12px;display:none;font-weight:500}
+.footer-text{text-align:center;color:#1a2035;font-size:11px;margin-top:24px}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+</style></head><body>
+<div class="grid-bg"></div>
+<div class="login-container">
+<div class="logo-area">
+<div class="logo-icon">EP</div>
 <h1>Employee Portal</h1>
-<p class="sub">Sign in to access the directory</p>
-<div class="error" id="err">Invalid credentials</div>
-<form id="loginForm">
-<label>Username</label><input type="text" name="username" value="admin">
-<label>Password</label><input type="password" name="password" value="admin123">
-<div class="hint">Demo credentials pre-filled above</div>
-<button type="submit">Sign In</button>
-</form>
+<p>Internal employee directory system</p>
 </div>
-<script>(function(){var f=document.getElementById('loginForm');f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f);fetch('api/login',{method:'POST',body:new URLSearchParams(d)}).then(function(r){return r.json()}).then(function(j){if(j.ok){location.reload()}else{document.getElementById('err').style.display='block'}}).catch(function(){})})})()</script>
-</div>`}
+<div class="login-card">
+<div class="cred-display">
+<div class="cred-item"><div class="cred-label">Username</div><div class="cred-value">agent</div></div>
+<div class="cred-item"><div class="cred-label">Password</div><div class="cred-value">shadow99</div></div>
+</div>
+<form id="loginForm">
+<div class="field"><label>Username</label><input type="text" name="username" id="username" autocomplete="off"></div>
+<div class="field"><label>Password</label><input type="password" name="password" id="password" autocomplete="off"></div>
+<button type="submit" class="submit-btn">Sign In</button>
+</form>
+<div class="error-msg" id="err">Invalid credentials. Please try again.</div>
+</div>
+<p class="footer-text">CGS Internal Systems &bull; Authorized Access Only</p>
+</div>
+<script>(function(){var f=document.getElementById('loginForm');f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f);fetch('api/login',{method:'POST',body:new URLSearchParams(d)}).then(function(r){return r.json()}).then(function(j){if(j.ok){window.location.href='profile/1'}else{document.getElementById('err').style.display='block'}}).catch(function(){})})})()</script>
 </body></html>`)
+  }
+
+  // ── Authenticated root: redirect to profile/1 ──
+  return { status: 302, headers: { 'Location': 'profile/1', 'Content-Type': 'text/html' }, body: 'Redirecting to your profile...' }
 }
 
 // 12 — IDOR Inbox
