@@ -1,0 +1,12 @@
+{
+    "name": "path-less-traveled",
+    "version": "1.0.0",
+    "description": "Challenge 16 - Path traversal",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2"
+    }
+}

@@ -194,6 +194,7 @@ export default function ChallengeWorkspacePage() {
                   slug={challenge.slug}
                   instanceType={challenge.instanceType}
                   instanceUrl={challenge.instanceUrl}
+                  challengeId={challenge.id}
                 />
                 {challenge.instanceUrl?.startsWith('/playground/') && (
                   <div className="mt-2 text-[10px] font-mono text-txt-muted text-center">

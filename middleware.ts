@@ -44,9 +44,10 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
 
   const isDev = process.env.NODE_ENV === 'development'
+  const isAdminPath = pathname.startsWith('/lenaPretsaMdliuG')
   const csp = [
     "default-src 'self'",
-    isDev ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'" : "script-src 'self'",
+    isDev || isAdminPath ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'" : "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self' https://fonts.gstatic.com",

@@ -2,8 +2,13 @@ import prisma from '@/lib/prisma'
 import { authenticate, requireAdmin, jsonResponse, getClientIp } from '@/lib/auth'
 import { config } from '@/lib/config'
 import { csrfProtection } from '@/lib/csrf'
+import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
+
+function hashFlag(flag: string) {
+  return crypto.createHash('sha256').update(flag).digest('hex')
+}
 
 export async function GET(request: Request) {
   const { user, error } = await authenticate(request)
@@ -47,7 +52,7 @@ export async function POST(request: Request) {
         description,
         category,
         points: parseInt(points) || 100,
-        flag,
+        flag: hashFlag(flag),
         hint: hint || null,
         files: files || null,
         difficulty: difficulty || null,

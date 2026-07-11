@@ -51,7 +51,14 @@ export async function POST(request: Request) {
       where: { challengeName: challenge.title },
       select: { flag: true },
     })
-    const validHashes = [challenge.flag, ...storedFlags.map(f => crypto.createHash('sha256').update(f.flag).digest('hex'))]
+    const validHashes: string[] = [challenge.flag, ...storedFlags.map(f => crypto.createHash('sha256').update(f.flag).digest('hex'))]
+
+    // Also check per-instance unique flags
+    const userInstance = await prisma.instance.findFirst({
+      where: { userId: user.id, challengeId: challenge.id, status: 'running' },
+      select: { flagHash: true },
+    })
+    if (userInstance) validHashes.push(userInstance.flagHash)
 
     const flagHash = crypto.createHash('sha256').update(trimmed).digest('hex')
     const match = validHashes.some(h => constantTimeEqual(flagHash, h))

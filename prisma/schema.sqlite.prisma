@@ -154,6 +154,24 @@ model RealFlag {
   updatedAt     DateTime  @updatedAt
 }
 
+model Instance {
+  id          Int      @id @default(autoincrement())
+  instanceId  String   @unique
+  challengeId Int
+  userId      Int
+  flagHash    String
+  url         String?
+  containerRef String?
+  status      String   @default("running")
+  startedAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, challengeId])
+}
+
 model SecurityConfig {
   id    Int    @id @default(autoincrement())
   key   String @unique

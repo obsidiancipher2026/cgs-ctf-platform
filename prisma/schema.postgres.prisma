@@ -1,7 +1,5 @@
 // PostgreSQL schema for production (Vercel).
-// For local SQLite development, switch to the SQLite schema:
-//   Copy-Item prisma/schema.sqlite.prisma prisma/schema.prisma
-// Or use: npm run db:switch:sqlite
+// Use: npx prisma db push && npx prisma generate
 
 generator client {
   provider = "prisma-client-js"
@@ -36,6 +34,7 @@ model User {
   isBanned       Boolean  @default(false)
   score          Int      @default(0)
   ranking        Int      @default(0)
+  bloodPoints    Int      @default(0)
   lastIp         String?
   lastLogin      DateTime?
   createdAt      DateTime @default(now())
@@ -54,6 +53,7 @@ model User {
   playerType String?
 
   submissions Submission[]
+  instances   Instance[]
 }
 
 model Announcement {
@@ -103,20 +103,33 @@ model AttackLog {
 }
 
 model Challenge {
-  id          Int          @id @default(autoincrement())
-  title       String
-  description String
-  category    String
-  points      Int          @default(100)
-  flag        String
-  hint        String?
-  files       String?
-  difficulty  String?
-  published   Boolean      @default(false)
-  instanceUrl String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  solves      Submission[]
+  id            Int      @id @default(autoincrement())
+  title         String
+  slug          String   @unique @default("")
+  description   String
+  markdown      String?
+  story         String?
+  category      String
+  difficulty    String?
+  points        Int      @default(100)
+  flag          String
+  hint          String?
+  hints         String?
+  hintPenalty   Int      @default(0)
+  files         String?
+  downloads     String?
+  author        String?
+  tags          String?
+  published     Boolean  @default(false)
+  instanceUrl   String?
+  instanceType  String?
+  estimatedTime Int?
+  solveCount    Int      @default(0)
+  solveRate     Float    @default(0.0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  solves        Submission[]
+  instances     Instance[]
 }
 
 model Submission {
@@ -139,6 +152,24 @@ model RealFlag {
   createdBy     Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Instance {
+  id           Int      @id @default(autoincrement())
+  instanceId   String   @unique
+  challengeId  Int
+  userId       Int
+  flagHash     String
+  url          String?
+  containerRef String?
+  status       String   @default("running")
+  startedAt    DateTime @default(now())
+  expiresAt    DateTime
+
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, challengeId])
 }
 
 model SecurityConfig {

@@ -386,6 +386,27 @@ class ApiClient {
     const { data } = await this.client.get('/api/auth/me/solves');
     return data;
   }
+
+  // Instance management
+  async startInstance(challengeId: number) {
+    const { data } = await this.client.post('/api/instances/start', { challengeId });
+    return data;
+  }
+
+  async stopInstance(instanceId: string) {
+    const { data } = await this.client.post('/api/instances/stop', { instanceId });
+    return data;
+  }
+
+  async getInstanceStatus(instanceId: string) {
+    const { data } = await this.client.get(`/api/instances/status/${instanceId}`);
+    return data;
+  }
+
+  async getUserInstances() {
+    const { data } = await this.client.get('/api/instances/list');
+    return data;
+  }
 }
 
 export const api = new ApiClient();

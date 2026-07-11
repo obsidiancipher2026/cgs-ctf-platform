@@ -9,16 +9,16 @@ services:
       - "3100:3100"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./challenge-sites:/app/challenge-sites:ro
+      - ./challenge-apps:/app/challenge-apps:ro
     environment:
       - NODE_ENV=production
       - INSTANCE_PORT=3100
       - BASE_DOMAIN=localhost
-      - INSTANCE_PREFIX=ctf
-      - INSTANCE_TTL=1800
+      - INSTANCE_TTL=2700
       - MAX_INSTANCES=3
       - DOCKER_SOCKET=/var/run/docker.sock
-      - CHALLENGE_SITES_DIR=/app/challenge-sites
+      - CHALLENGE_APPS_DIR=/app/challenge-apps
+      - FLAG_SECRET=change-this-in-production
     restart: unless-stopped
     networks:
       - ctf-network

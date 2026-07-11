@@ -38,5 +38,14 @@ Thumbs.db
 .vercel
 .env*
 
+# Challenge apps
+challenge-apps/*/node_modules/
+challenge-apps/**/node_modules/
+
+# Dev artifacts
+dev.err
+dev.log
+tsconfig.tsbuildinfo
+
 # Nested prisma dir
 prisma/prisma/
