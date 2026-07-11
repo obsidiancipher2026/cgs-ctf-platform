@@ -262,7 +262,7 @@ button{width:100%;padding:12px;background:#3B82F6;border:none;border-radius:6px;
 a{color:#3B82F6;text-decoration:none;font-size:13px;display:block;text-align:center;margin-top:12px}</style></head><body>
 <h1>CGS Members Portal</h1><p style="color:#94A3B8;margin-bottom:8px">Sign in to access your dashboard.</p>
 <form id="login"><label>Username</label><input type="text" id="user" value="admin"><label>Password</label><input type="password" id="pass" value="password">
-<button type="submit">Sign In</button><div class="error" id="err"></div></form><a href="/dashboard">Dashboard (requires login)</a>
+<button type="submit">Sign In</button><div class="error" id="err"></div></form><a href="dashboard">Dashboard (requires login)</a>
 <p class="hint">Trouble signing in? Contact your administrator.</p>
 <script>document.getElementById('login').addEventListener('submit',function(e){e.preventDefault();document.getElementById('err').textContent='Invalid credentials. Please try again.'})</script></body></html>`
   }
