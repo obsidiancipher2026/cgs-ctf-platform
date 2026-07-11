@@ -18,14 +18,13 @@ export const hiddenInPlainSight: ChallengeDef = {
     status: 200,
     headers: {
       'Content-Type': 'text/html',
-      'X-Flag': 'CGS{h34d3rs_h1d3_th1ngs_t00}',
+      'Flag': 'CGS{h34d3rs_h1d3_th1ngs_t00}',
       'X-Hint': 'Look in the response headers',
     },
     body: simplePage('Hidden in Plain Sight', `
       <p>Welcome to our landing page. Everything looks normal.</p>
       <p>Check the network response — sometimes the server says more than what's on screen.</p>
     `),
-    flag: 'CGS{h34d3rs_h1d3_th1ngs_t00}',
   }),
 }
 
@@ -42,8 +41,7 @@ export const cookieJar: ChallengeDef = {
     }
     return html(simplePage('Cookie Jar', `
       <p>Welcome, Guest! The admin area is locked.</p>
-      <p>Try changing your <strong>role</strong> cookie to <code>admin</code>.</p>
-      <p>Your current cookies: <code>${JSON.stringify(cookies)}</code></p>
+      <p style="color:#94a3b8;font-size:11px">Hint: The server checks for a cookie to determine your role. Use the cookie input field to set it.</p>
     `))
   },
 }
