@@ -24,7 +24,7 @@ export async function isAdminAccessToken(token: string, secret: string): Promise
     const valid = await crypto.subtle.verify(
       'HMAC',
       key,
-      base64UrlDecode(signature),
+      base64UrlDecode(signature).buffer as ArrayBuffer,
       new TextEncoder().encode(`${header}.${payload}`),
     )
     if (!valid) return false
