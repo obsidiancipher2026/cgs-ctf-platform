@@ -177,7 +177,7 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                         </td>
                         <td className="px-4 py-3 text-center hidden sm:table-cell">
                           <span className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>
-                            {player.solves}<span className="text-txt-muted">/{player.totalChallenges}</span>
+                            {player.solves}<span style={{ color: 'var(--text-muted)' }}>/{player.totalChallenges}</span>
                           </span>
                         </td>
                       </tr>

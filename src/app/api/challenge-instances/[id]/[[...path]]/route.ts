@@ -2,11 +2,36 @@ import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 
+const ALLOWED_EXTENSIONS = new Set(['.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.txt'])
+
+const MIME_TYPES: Record<string, string> = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.txt': 'text/plain',
+}
+
 export async function GET(request: NextRequest, { params }: { params: { id: string; path?: string[] } }) {
   const { id, path: filePathParts } = params
   const fileName = filePathParts?.length ? filePathParts.join('/') : 'index.html'
 
-  const fullPath = path.join(process.cwd(), 'challenge-sites', id, fileName)
+  if (fileName.includes('..')) {
+    return new NextResponse('Forbidden', { status: 403 })
+  }
+
+  const baseDir = path.join(process.cwd(), 'challenge-sites', id)
+  const fullPath = path.join(baseDir, fileName)
+
+  if (!fullPath.startsWith(baseDir)) {
+    return new NextResponse('Forbidden', { status: 403 })
+  }
 
   try {
     if (!fs.existsSync(fullPath) || fs.statSync(fullPath).isDirectory()) {
@@ -14,24 +39,14 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     const ext = path.extname(fileName).toLowerCase()
-    const mimeTypes: Record<string, string> = {
-      '.html': 'text/html',
-      '.css': 'text/css',
-      '.js': 'application/javascript',
-      '.json': 'application/json',
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.gif': 'image/gif',
-      '.svg': 'image/svg+xml',
-      '.ico': 'image/x-icon',
-      '.txt': 'text/plain',
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      return new NextResponse('Forbidden', { status: 403 })
     }
 
     const content = fs.readFileSync(fullPath)
     return new NextResponse(content, {
       status: 200,
-      headers: { 'Content-Type': mimeTypes[ext] || 'application/octet-stream' },
+      headers: { 'Content-Type': MIME_TYPES[ext] || 'application/octet-stream' },
     })
   } catch {
     return new NextResponse('Not Found', { status: 404 })

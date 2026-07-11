@@ -88,7 +88,7 @@ export default function WebChallengePlayground({ slug }: Props) {
 
   useEffect(() => {
     fetchPlayground('GET', '', '', '')
-  }, [slug])
+  }, [slug, fetchPlayground])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

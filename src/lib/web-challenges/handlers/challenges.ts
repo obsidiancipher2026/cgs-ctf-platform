@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { ChallengeDef, PlaygroundRequest, html, json, text, redirect, error, extractCookies } from '../types'
 
-function flagPage(title: string, bodyHtml: string, flag: string): string {
+function flagPage(title: string, bodyHtml: string, _flag: string): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>body{background:#0a0c14;color:#e2e8f0;font-family:monospace;padding:40px;max-width:700px;margin:auto;line-height:1.6}a{color:#22d3ee}.flag{background:rgba(52,232,158,0.15);color:#34e89e;padding:12px 20px;border-radius:8px;border:1px solid rgba(52,232,158,0.3);margin:20px 0;font-size:14px;text-align:center}.box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;margin:16px 0}h1{font-size:20px;color:#f1f5f9}code{color:#22d3ee;font-size:13px}input,textarea,select{background:#0a0c14;border:1px solid rgba(255,255,255,0.12);color:#e2e8f0;padding:8px 12px;border-radius:6px;font-family:monospace;font-size:13px;width:100%;box-sizing:border-box}button{background:rgba(34,211,238,0.12);border:1px solid rgba(34,211,238,0.25);color:#22d3ee;padding:8px 16px;border-radius:6px;font-family:monospace;cursor:pointer;font-size:13px}button:hover{background:rgba(34,211,238,0.2)}pre{background:#05070c;padding:12px;border-radius:6px;overflow-x:auto;font-size:12px;color:#94a3b8}.solved{color:#34e89e;font-weight:bold}</style></head><body><div class="box"><h1>${title}</h1>${bodyHtml}</div></body></html>`
 }
 
@@ -93,7 +93,7 @@ export const pathAsParameter: ChallengeDef = {
   handler: (req: PlaygroundRequest) => {
     const file = req.query['file'] || 'welcome.txt'
     const safeDir = 'files/'
-    if (file.includes('..') || file.includes('../')) {
+    if (file.includes('..')) {
       return text(`flag.txt content:\nCGS{s4mpl3_4pp_l34ks_f1l3s}`, 'CGS{s4mpl3_4pp_l34ks_f1l3s}')
     }
     if (file === 'flag.txt') {
