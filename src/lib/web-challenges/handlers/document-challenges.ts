@@ -294,11 +294,11 @@ pre{background:#0F172A;padding:12px;border-radius:6px;font-size:12px;color:#A78B
 button{padding:10px 20px;background:#8B5CF6;border:none;color:#fff;border-radius:6px;font-weight:600;cursor:pointer;margin-right:8px}
 #result{margin-top:16px;color:#94A3B8;font-size:13px}</style></head><body>
 <h1>Token Viewer</h1><p style="color:#94A3B8;font-size:14px;margin-bottom:24px">Your current API token and profile information.</p>
-<div class="card"><h3>Current Token</h3><pre id="token">Loading...</pre></div>
+    <div class="card"><h3>Current Token</h3><textarea id="token" rows="3" style="width:100%;background:#0F172A;padding:12px;border-radius:6px;border:1px solid #334155;font-size:12px;color:#A78BFA;font-family:monospace;resize:vertical">Loading...</textarea></div>
 <button id="getToken">Get Token</button><button id="getProfile">Fetch Profile</button>
 <div id="result"></div>
-<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('api/token');var d=await r.json();document.getElementById('token').textContent=d.token});
-document.getElementById('getProfile').addEventListener('click',async function(){var r=await fetch('api/profile',{headers:{Authorization:'Bearer '+document.getElementById('token').textContent}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
+<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('api/token');var d=await r.json();document.getElementById('token').value=d.token});
+document.getElementById('getProfile').addEventListener('click',async function(){var r=await fetch('api/profile',{headers:{Authorization:'Bearer '+document.getElementById('token').value}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
 // 10 — LocalVault
