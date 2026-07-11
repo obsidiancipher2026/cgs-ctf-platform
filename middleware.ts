@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { readFileSync } from 'fs'
-import { join } from 'path'
+
+export const runtime = 'nodejs'
 
 const PUBLIC_PATHS = ['/', '/login', '/register', '/about', '/announcements', '/challenges', '/maintenance']
 
 function getMaintenanceStatus(): { enabled: boolean; message: string } {
   try {
+    const { readFileSync } = require('fs')
+    const { join } = require('path')
     const data = readFileSync(join(process.cwd(), 'public', 'maintenance.json'), 'utf-8')
     return JSON.parse(data)
   } catch {
