@@ -1,2 +1,0 @@
-IV: af1a7d5c7834de3c9c0ce88a430464f4
-Ciphertext: 5e54e0bfa409ac3523fb10d2003dda1db1dc1df2299eb4c815c3cc068b2cc809

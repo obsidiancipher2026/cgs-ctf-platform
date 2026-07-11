@@ -1,27 +1,8 @@
 import { ChallengeDef } from '../types'
-import {
-  robotsOnly, cookieMonster, viewSourceWontSaveYou, theParameterWhisperer,
-  headerGames, loginOptional, directoryOfSecrets, cacheMeIfYouCan,
-  theRedirectTrap, formOfTruth, blindAsABat, templateTrouble,
-  xssMarksTheSpot, raceToTheFlag, jwtNone, thePathLessTraveled,
-  deserializeThis, corsYouLater, graphqlGauntlet, theUploadZone,
-  ssrfToTheCloud, prototypeChaos, smugglersRoute, cachePoisoningCarnival,
-  xxeMarksAnotherSpot, theChainedExploit, secondOrderInjection,
-  websocketWhisper, crypticSignature, theSandboxEscape,
-} from './document-challenges'
 
 export const challengeHandlers: Record<string, ChallengeDef> = {}
 
-const defs: ChallengeDef[] = [
-  robotsOnly, cookieMonster, viewSourceWontSaveYou, theParameterWhisperer,
-  headerGames, loginOptional, directoryOfSecrets, cacheMeIfYouCan,
-  theRedirectTrap, formOfTruth, blindAsABat, templateTrouble,
-  xssMarksTheSpot, raceToTheFlag, jwtNone, thePathLessTraveled,
-  deserializeThis, corsYouLater, graphqlGauntlet, theUploadZone,
-  ssrfToTheCloud, prototypeChaos, smugglersRoute, cachePoisoningCarnival,
-  xxeMarksAnotherSpot, theChainedExploit, secondOrderInjection,
-  websocketWhisper, crypticSignature, theSandboxEscape,
-]
+const defs: ChallengeDef[] = []
 
 for (const def of defs) {
   challengeHandlers[def.slug] = def
