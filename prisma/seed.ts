@@ -325,7 +325,7 @@ const challenges: ChallengeData[] = [
     instanceUrl: null,
   },
   {
-    title: 'Path Less Traveled',
+    title: 'The Path Less Traveled',
     description: 'Every file has a filename parameter. Not every filename is a filename. Sometimes what looks like a name is actually a path.',
     category: 'web', difficulty: 'medium', points: 250,
     flag: 'CGS{th3_p4th_l3ss_tr4v3l3d_l34ds_t0_fl4gs}',
