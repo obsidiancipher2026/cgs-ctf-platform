@@ -10,7 +10,7 @@ import {
   Loader2, Menu, X,
   Lock, Plus, Pencil, KeyRound,
   Search, FileText, AlertTriangle, Flag,
-  Flame, Target, Radio, Eye, EyeOff, RotateCcw, Upload,
+  Flame, Target, Radio, Eye, EyeOff, RotateCcw, Upload, Wrench,
 
 } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -87,6 +87,10 @@ export default function AdminPage() {
 
   const [liveCategories, setLiveCategories] = useState<{ category: string; total: number; published: number; unpublished: number }[]>([]);
   const [publishingCat, setPublishingCat] = useState<string | null>(null);
+
+  const [maintenanceEnabled, setMaintenanceEnabled] = useState(false);
+  const [maintenanceMessage, setMaintenanceMessage] = useState('The site is currently under maintenance. Please check back later.');
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
 
   const tryAutoLogin = async () => {
     try {
@@ -218,6 +222,9 @@ export default function AdminPage() {
           setAllChallenges(all);
           break;
         }
+        case 'settings':
+          loadMaintenance();
+          break;
       }
     } catch (err: any) {
       toast.error(`Failed to load ${tab} data`);
@@ -356,6 +363,50 @@ export default function AdminPage() {
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || 'Failed to update credentials');
     }
+  };
+
+  const loadMaintenance = async () => {
+    try {
+      const res = await fetch('/api/admin/maintenance');
+      const data = await res.json();
+      setMaintenanceEnabled(data.enabled);
+      setMaintenanceMessage(data.message || 'The site is currently under maintenance. Please check back later.');
+    } catch {}
+  };
+
+  const handleToggleMaintenance = async () => {
+    setMaintenanceLoading(true);
+    try {
+      const res = await fetch('/api/admin/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !maintenanceEnabled }),
+      });
+      const data = await res.json();
+      setMaintenanceEnabled(data.enabled);
+      setMaintenanceMessage(data.message);
+      toast.success(data.enabled ? 'Maintenance mode ON' : 'Maintenance mode OFF');
+    } catch (err: any) {
+      toast.error('Failed to toggle maintenance mode');
+    }
+    setMaintenanceLoading(false);
+  };
+
+  const handleUpdateMaintenanceMessage = async () => {
+    setMaintenanceLoading(true);
+    try {
+      const res = await fetch('/api/admin/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: maintenanceMessage }),
+      });
+      const data = await res.json();
+      setMaintenanceMessage(data.message);
+      toast.success('Maintenance message updated');
+    } catch (err: any) {
+      toast.error('Failed to update message');
+    }
+    setMaintenanceLoading(false);
   };
 
   if (authChecking) {
@@ -1974,6 +2025,51 @@ export default function AdminPage() {
                           <Settings className="w-4 h-4" /> Update Credentials
                         </button>
                       </form>
+                    </div>
+                  )}
+
+                  {activeTab === 'settings' && (
+                    <div className="card rounded-xl p-6 mt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="font-display text-txt-primary">Maintenance Mode</h3>
+                          <p className="text-txt-muted font-mono text-xs mt-1">When enabled, all non-admin visitors see the maintenance page.</p>
+                        </div>
+                        <button
+                          onClick={handleToggleMaintenance}
+                          disabled={maintenanceLoading}
+                          className={`px-5 py-2.5 rounded-xl font-mono text-sm transition-all flex items-center gap-2 ${
+                            maintenanceEnabled
+                              ? 'bg-[rgba(239,68,68,0.15)] border border-[rgba(239,68,68,0.3)] text-red-400 hover:bg-[rgba(239,68,68,0.25)]'
+                              : 'bg-[rgba(52,232,158,0.1)] border border-[rgba(52,232,158,0.2)] text-emerald-400 hover:bg-[rgba(52,232,158,0.2)]'
+                          } disabled:opacity-50`}
+                        >
+                          {maintenanceLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wrench className="w-4 h-4" />}
+                          {maintenanceEnabled ? 'Disable Maintenance' : 'Enable Maintenance'}
+                        </button>
+                      </div>
+                      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-mono text-xs mb-4 ${
+                        maintenanceEnabled ? 'bg-[rgba(239,68,68,0.1)] text-red-400' : 'bg-[rgba(52,232,158,0.08)] text-emerald-400'
+                      }`}>
+                        <div className={`w-2 h-2 rounded-full ${maintenanceEnabled ? 'bg-red-400 animate-pulse' : 'bg-emerald-400'}`} />
+                        {maintenanceEnabled ? 'MAINTENANCE ON — Site is locked' : 'Site is live'}
+                      </div>
+                      <div>
+                        <label className="block text-txt-secondary font-mono text-xs mb-2">Maintenance Message</label>
+                        <textarea
+                          value={maintenanceMessage}
+                          onChange={(e) => setMaintenanceMessage(e.target.value)}
+                          rows={3}
+                          className="input-field w-full px-4 py-3 rounded-lg font-mono text-sm resize-none"
+                        />
+                        <button
+                          onClick={handleUpdateMaintenanceMessage}
+                          disabled={maintenanceLoading}
+                          className="mt-3 admin-action-btn px-5 py-2.5 rounded-xl bg-[rgba(34,211,238,0.1)] border border-[rgba(34,211,238,0.3)] text-[var(--aurora-cyan)] font-mono text-sm hover:bg-[rgba(34,211,238,0.2)] transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                          {maintenanceLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pencil className="w-4 h-4" />} Update Message
+                        </button>
+                      </div>
                     </div>
                   )}
                 </motion.div>

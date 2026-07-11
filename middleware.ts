@@ -1,7 +1,18 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
-const PUBLIC_PATHS = ['/', '/login', '/register', '/about', '/announcements', '/challenges']
+const PUBLIC_PATHS = ['/', '/login', '/register', '/about', '/announcements', '/challenges', '/maintenance']
+
+function getMaintenanceStatus(): { enabled: boolean; message: string } {
+  try {
+    const data = readFileSync(join(process.cwd(), 'public', 'maintenance.json'), 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    return { enabled: false, message: '' }
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -50,6 +61,15 @@ export async function middleware(request: NextRequest) {
 
   if (accessToken && (pathname === '/login' || pathname === '/register')) {
     return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  const maintenance = getMaintenanceStatus()
+  if (maintenance.enabled) {
+    const isAdmin = pathname.startsWith('/lenaPretsaMdliuG') || pathname.startsWith('/api/admin') || pathname.startsWith('/api/auth/admin')
+    if (!isAdmin && pathname !== '/maintenance') {
+      const maintenanceUrl = new URL('/maintenance', request.url)
+      return NextResponse.redirect(maintenanceUrl)
+    }
   }
 
   return response
