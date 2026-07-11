@@ -326,6 +326,64 @@ document.getElementById('unlockBtn').addEventListener('click',function(){var c=d
 }
 
 
+// 11 — HiddenAPI
+const HIDDEN_FLAG = 'CGS{th3_ui_1sn7_th3_wh0l3_4p1_surf4c3}'
+const hiddenApiHandler = (req: PlaygroundRequest): PlaygroundResponse => {
+  if (req.path === '/api/v1/public/stats') {
+    return json({ activeUsers: 142, uptime: '99.99%', load: '1.24', status: 'Healthy' })
+  }
+  
+  if (req.path === '/api/v2/internal/report') {
+    return json({ reportId: 'RPT-842', confidential: true, flag: HIDDEN_FLAG })
+  }
+  
+  if (req.path === '/app.bundle.js') {
+    return {
+      status: 200,
+      headers: { 'Content-Type': 'application/javascript' },
+      body: `
+// CGS Dashboard Frontend Bundle v2.1.0
+(function() {
+  const PUBLIC_ENDPOINT = '/api/v1/public/stats';
+  const INTERNAL_ENDPOINT = '/api/v2/internal/report'; // TODO: Remove before shipping to prod
+
+  function updateDashboard() {
+    fetch(PUBLIC_ENDPOINT)
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById('uptime').textContent = d.uptime;
+        document.getElementById('users').textContent = d.activeUsers;
+        document.getElementById('status').textContent = d.status;
+      })
+      .catch(console.error);
+  }
+  
+  updateDashboard();
+  setInterval(updateDashboard, 60000);
+})();
+      `.trim()
+    }
+  }
+
+  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Public Dashboard</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;padding:40px;max-width:800px;margin:0 auto}
+h1{color:#3B82F6;margin-bottom:8px;font-size:24px}p{color:#94A3B8;font-size:14px;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stat-card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:24px;text-align:center}
+.stat-card h3{font-size:13px;color:#94A3B8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.stat-card .val{font-size:32px;font-weight:bold;color:#F1F5F9}
+.stat-card .val.green{color:#10B981}
+</style></head><body>
+<h1>CGS Public Dashboard</h1><p>Real-time telemetry and system status.</p>
+<div class="grid">
+<div class="stat-card"><h3>Uptime</h3><div class="val" id="uptime">--</div></div>
+<div class="stat-card"><h3>Active Users</h3><div class="val" id="users">--</div></div>
+<div class="stat-card"><h3>Status</h3><div class="val green" id="status">--</div></div>
+</div>
+<script src="app.bundle.js"></script>
+</body></html>`)
+}
+
 // 12 — IDOR Inbox
 const IDOR_FLAG = 'CGS{1nc0rr3ct_d1r3ct_0bj3ct_r3f3r3nc3s}'
 const idorMessages: Record<number, {id: number, from: string, subject: string, body: string, date: string}> = {
@@ -1036,6 +1094,7 @@ export const documentChallenges: ChallengeDef[] = [
   { slug: 'cookiecrumbs',      title: 'CookieCrumbs',      handler: cookieHandler },
   { slug: 'tokenpeek',         title: 'TokenPeek',         handler: tokenPeekHandler },
   { slug: 'localvault',        title: 'LocalVault',        handler: localVaultHandler },
+  { slug: 'hiddenapi',         title: 'HiddenAPI',         handler: hiddenApiHandler },
   { slug: 'idor-inbox',        title: 'IDOR Inbox',        handler: idorHandler },
   { slug: 'reflectednote',     title: 'ReflectedNote',     handler: reflectedNoteHandler },
   { slug: 'nonealg',           title: 'NoneAlg',           handler: noneAlgHandler },
