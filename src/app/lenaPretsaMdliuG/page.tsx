@@ -367,7 +367,7 @@ export default function AdminPage() {
 
   const loadMaintenance = async () => {
     try {
-      const res = await fetch('/api/admin/maintenance');
+      const res = await fetch('/api/admin/maintenance', { credentials: 'include' });
       const data = await res.json();
       setMaintenanceEnabled(data.enabled);
       setMaintenanceMessage(data.message || 'The site is currently under maintenance. Please check back later.');
@@ -380,6 +380,7 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ enabled: !maintenanceEnabled }),
       });
       const data = await res.json();
@@ -398,6 +399,7 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ message: maintenanceMessage }),
       });
       const data = await res.json();
