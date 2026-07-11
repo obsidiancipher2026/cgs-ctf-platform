@@ -297,8 +297,8 @@ button{padding:10px 20px;background:#8B5CF6;border:none;color:#fff;border-radius
 <div class="card"><h3>Current Token</h3><pre id="token">Loading...</pre></div>
 <button id="getToken">Get Token</button><button id="getProfile">Fetch Profile</button>
 <div id="result"></div>
-<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('/api/token');var d=await r.json();document.getElementById('token').textContent=d.token});
-document.getElementById('getProfile').addEventListener('click',async function(){var r=await fetch('/api/profile',{headers:{Authorization:'Bearer '+document.getElementById('token').textContent}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
+<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('api/token');var d=await r.json();document.getElementById('token').textContent=d.token});
+document.getElementById('getProfile').addEventListener('click',async function(){var r=await fetch('api/profile',{headers:{Authorization:'Bearer '+document.getElementById('token').textContent}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
 // 10 — LocalVault
@@ -321,7 +321,7 @@ button{padding:10px 20px;background:#F59E0B;border:none;color:#000;border-radius
 <div class="premium" id="premiumPanel" style="display:none"><h2>Premium Content</h2><p>You have unlocked premium features. Your exclusive content is loading...</p><div id="flag"></div></div>
 <script>
 document.getElementById('unlockBtn').addEventListener('click',function(){var c=document.getElementById('code').value;var valid=['PREMIUM2024','GOLD','VIP','SECRET'];if(valid.includes(c)){localStorage.setItem('unlocked','true');location.reload()}else{document.getElementById('error').textContent='Invalid code. Try again.'}});
-!function(){var u=localStorage.getItem('unlocked');if(u==='true'){document.getElementById('lockedPanel').style.display='none';document.getElementById('premiumPanel').style.display='block';fetch('/api/premium-content',{headers:{'X-Unlocked':u}}).then(function(r){return r.json()}).then(function(d){if(d.flag){document.getElementById('flag').style.display='block';document.getElementById('flag').textContent=d.flag}}).catch(function(){})}}()
+!function(){var u=localStorage.getItem('unlocked');if(u==='true'){document.getElementById('lockedPanel').style.display='none';document.getElementById('premiumPanel').style.display='block';fetch('api/premium-content',{headers:{'X-Unlocked':u}}).then(function(r){return r.json()}).then(function(d){if(d.flag){document.getElementById('flag').style.display='block';document.getElementById('flag').textContent=d.flag}}).catch(function(){})}}()
 </script></body></html>`)
 }
 
@@ -377,8 +377,8 @@ footer{color:#475569;font-size:11px;text-align:center;margin-top:40px}
 <div id="detail"><h2 id="detailSubj"></h2><p class="meta" id="detailFrom"></p><div class="body" id="detailBody"></div></div>
 <footer>CGS Internal Mail &bull; v1.2</footer>
 <script>
-!function(){fetch('/api/messages/1').then(function(r){return r.json()}).then(function(d){var h='<div class="card" onclick="showMsg('+d.id+')"><h3>'+d.subject+'</h3><div class="from">'+d.from+'</div><div class="preview">'+d.body.substring(0,60)+'</div></div>';for(var i=2;i<=8;i++){h+='<div class="card" onclick="showMsg('+i+')"><h3>Message #'+i+'</h3><div class="from">user'+i+'@cgs.internal</div><div class="preview">Click to load...</div></div>'}document.getElementById('inbox').innerHTML=h})}();
-function showMsg(id){fetch('/api/messages/'+id).then(function(r){return r.json()}).then(function(d){document.getElementById('detail').style.display='block';document.getElementById('detailSubj').textContent=d.subject;document.getElementById('detailFrom').textContent='From: '+d.from;document.getElementById('detailBody').textContent=d.body})}
+!function(){fetch('api/messages/1').then(function(r){return r.json()}).then(function(d){var h='<div class="card" onclick="showMsg('+d.id+')"><h3>'+d.subject+'</h3><div class="from">'+d.from+'</div><div class="preview">'+d.body.substring(0,60)+'</div></div>';for(var i=2;i<=8;i++){h+='<div class="card" onclick="showMsg('+i+')"><h3>Message #'+i+'</h3><div class="from">user'+i+'@cgs.internal</div><div class="preview">Click to load...</div></div>'}document.getElementById('inbox').innerHTML=h})}();
+function showMsg(id){fetch('api/messages/'+id).then(function(r){return r.json()}).then(function(d){document.getElementById('detail').style.display='block';document.getElementById('detailSubj').textContent=d.subject;document.getElementById('detailFrom').textContent='From: '+d.from;document.getElementById('detailBody').textContent=d.body})}
 </script></body></html>`)
 }
 
@@ -465,7 +465,7 @@ button{padding:12px 32px;background:#00ff41;color:#000;border:none;font-family:m
 .hint{color:#333;font-size:11px;margin-top:20px}</style></head><body>
 <h1>CGS Flag Vendor</h1><div class="card"><p style="font-size:13px;margin-bottom:16px">Request a flag. One per IP per minute.</p><button id="vend">Vend Flag</button><div id="out"></div></div>
 <p class="hint">Rate limit: 1 request / minute per IP</p>
-<script>document.getElementById('vend').addEventListener('click',async function(){var r=await fetch('/api/vend');var d=await r.json();document.getElementById('out').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
+<script>document.getElementById('vend').addEventListener('click',async function(){var r=await fetch('api/vend');var d=await r.json();document.getElementById('out').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
 // 16 — GraphIntrospect
@@ -538,7 +538,7 @@ footer{color:#475569;font-size:11px;text-align:center;margin-top:40px}</style></
 <button onclick="loadDoc()">View</button></div>
 <pre id="output">Select a document and click View.</pre>
 <footer>CGS Internal Docs &bull; v1.2</footer>
-<script>function loadDoc(){var f=document.getElementById('fileSelect').value;fetch('/api/docs?file='+encodeURIComponent(f)).then(function(r){return r.text()}).then(function(d){document.getElementById('output').textContent=d})}
+<script>function loadDoc(){var f=document.getElementById('fileSelect').value;fetch('api/docs?file='+encodeURIComponent(f)).then(function(r){return r.text()}).then(function(d){document.getElementById('output').textContent=d})}
 document.getElementById('fileSelect').addEventListener('change',loadDoc);loadDoc()</script></body></html>`)
 }
 
@@ -621,7 +621,7 @@ footer{color:#475569;font-size:11px;margin-top:30px}</style></head><body>
 <div class="result" id="result"><p style="color:#94A3B8">Enter a search term above.</p></div>
 <div class="code">API: GET /api/search?q=your-query</div>
 <footer>CGS Product Catalog &bull; v1.0</footer>
-<script>function search(){var q=document.getElementById('q').value;fetch('/api/search?q='+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(d){document.getElementById('result').innerHTML=d.found?'<div class="found">Product found</div>':'<div class="notfound">Product not found</div>'})}
+<script>function search(){var q=document.getElementById('q').value;fetch('api/search?q='+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(d){document.getElementById('result').innerHTML=d.found?'<div class="found">Product found</div>':'<div class="notfound">Product not found</div>'})}
 document.getElementById('q').addEventListener('keydown',function(e){if(e.key==='Enter')search()})</script></body></html>`)
 }
 
@@ -651,7 +651,7 @@ footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></
 <div class="input-group"><input type="text" id="url" placeholder="https://example.com"><button onclick="preview()">Preview</button></div>
 <div class="preview" id="preview">Enter a URL above.</div>
 <footer>CGS Internal Tools &bull; v1.0</footer>
-<script>async function preview(){var u=document.getElementById('url').value;var r=await fetch('/api/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})});var d=await r.json();document.getElementById('preview').textContent=d.preview||d.error}
+<script>async function preview(){var u=document.getElementById('url').value;var r=await fetch('api/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})});var d=await r.json();document.getElementById('preview').textContent=d.preview||d.error}
 document.getElementById('url').addEventListener('keydown',function(e){if(e.key==='Enter')preview()})</script></body></html>`)
 }
 
@@ -713,8 +713,8 @@ button{padding:10px 20px;background:#EC4899;border:none;color:#fff;border-radius
 <h1>CGS API Console</h1><div class="card"><h3>Current Token</h3><pre id="token">Loading...</pre></div>
 <button id="getToken">Get Token</button><button id="adminBtn">Access Admin</button><div id="result"></div>
 <footer>CGS Internal API &bull; v3.0</footer>
-<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('/api/login');var d=await r.json();document.getElementById('token').textContent=d.token});
-document.getElementById('adminBtn').addEventListener('click',async function(){var r=await fetch('/api/admin',{headers:{Authorization:'Bearer '+document.getElementById('token').textContent}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
+<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('api/login');var d=await r.json();document.getElementById('token').textContent=d.token});
+document.getElementById('adminBtn').addEventListener('click',async function(){var r=await fetch('api/admin',{headers:{Authorization:'Bearer '+document.getElementById('token').textContent}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
 // 23 — RaceWin
@@ -744,7 +744,7 @@ button{padding:12px 32px;background:#ff4444;color:#000;border:none;font-family:m
 <button id="redeem">Redeem Now</button><div id="out"></div>
 <p class="hint">Only one redemption allowed per 30-second window. Be quick.</p></div>
 <script>var t=30;setInterval(function(){t--;if(t<0)t=30;document.getElementById('countdown').textContent=t},1000);
-document.getElementById('redeem').addEventListener('click',async function(){var r=await fetch('/api/redeem');var d=await r.json();document.getElementById('out').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
+document.getElementById('redeem').addEventListener('click',async function(){var r=await fetch('api/redeem');var d=await r.json();document.getElementById('out').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
 // 24 — ProtoPollute
@@ -778,8 +778,8 @@ footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></
 <div style="margin-top:12px"><button onclick="merge()">Merge</button><button onclick="whoami()">Check Identity</button></div>
 <div id="result"></div><div id="whoami"></div></div>
 <footer>CGS Internal &bull; v1.0</footer>
-<script>async function merge(){var r=await fetch('/api/merge-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:document.getElementById('settings').value});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d)}
-async function whoami(){var r=await fetch('/api/whoami');var d=await r.json();var e=document.getElementById('whoami');e.style.display='block';e.textContent=JSON.stringify(d,null,2)}</script></body></html>`)
+<script>async function merge(){var r=await fetch('api/merge-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:document.getElementById('settings').value});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d)}
+async function whoami(){var r=await fetch('api/whoami');var d=await r.json();var e=document.getElementById('whoami');e.style.display='block';e.textContent=JSON.stringify(d,null,2)}</script></body></html>`)
 }
 
 // 25 — SSTI Render
@@ -822,7 +822,7 @@ footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></
 <div class="card"><h3>Template Source</h3><textarea id="tmpl">Hello {{name}}, your order #{{order}} is confirmed.</textarea>
 <button onclick="preview()">Render Preview</button><div class="preview-out" id="preview">Preview will appear here.</div></div>
 <footer>CGS Marketing Tools &bull; v2.0</footer>
-<script>async function preview(){var r=await fetch('/api/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({template:document.getElementById('tmpl').value})});var d=await r.json();document.getElementById('preview').textContent=d.rendered||d.error}</script></body></html>`)
+<script>async function preview(){var r=await fetch('api/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({template:document.getElementById('tmpl').value})});var d=await r.json();document.getElementById('preview').textContent=d.rendered||d.error}</script></body></html>`)
 }
 
 // 26 — XXEcho
@@ -853,7 +853,7 @@ footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></
 <textarea id="xml">&lt;contact&gt;\n  &lt;name&gt;John Doe&lt;/name&gt;\n  &lt;email&gt;john@example.com&lt;/email&gt;\n&lt;/contact&gt;</textarea>
 <button onclick="importContact()">Import</button><div id="result"></div></div>
 <footer>CGS Internal &bull; v1.2</footer>
-<script>async function importContact(){var r=await fetch('/api/import-contact',{method:'POST',headers:{'Content-Type':'application/xml'},body:document.getElementById('xml').value});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)}</script></body></html>`)
+<script>async function importContact(){var r=await fetch('api/import-contact',{method:'POST',headers:{'Content-Type':'application/xml'},body:document.getElementById('xml').value});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)}</script></body></html>`)
 }
 
 // 27 — CORSChain
@@ -902,7 +902,7 @@ footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}
 <div id="simResult"></div></div>
 <footer>CGS Internal &bull; v2.1</footer>
 <script>
-document.getElementById('getInfo').addEventListener('click',async function(){var r=await fetch('/api/session-info',{credentials:'include'});var d=await r.json();document.getElementById('info').textContent=JSON.stringify(d,null,2)});
+document.getElementById('getInfo').addEventListener('click',async function(){var r=await fetch('api/session-info',{credentials:'include'});var d=await r.json();document.getElementById('info').textContent=JSON.stringify(d,null,2)});
 document.getElementById('simulateBtn').addEventListener('click',async function(){var r=await fetch('/simulate-victim',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({attackerUrl:document.getElementById('attackerUrl').value})});var d=await r.json();document.getElementById('simResult').textContent=JSON.stringify(d,null,2)})
 </script></body></html>`)
 }
