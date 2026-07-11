@@ -50,7 +50,11 @@ async function handleRequest(request: NextRequest, slug: string, path: string, m
     if (result.flag) {
       responseHeaders['x-challenge-flag'] = result.flag
     }
-    return new NextResponse(result.body, {
+    let body = result.body
+    if (result.body.startsWith('<!')) {
+      body = result.body.replace('<head>', `<head><base href="/standalone/${slug}/">`)
+    }
+    return new NextResponse(body, {
       status: result.status,
       headers: responseHeaders,
     })
