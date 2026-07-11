@@ -87,8 +87,6 @@ h1{font-size:16px;color:#58a6ff;letter-spacing:2px;text-transform:uppercase;marg
 .log-section h2{color:#8b949e;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
 .log-entry{color:#8b949e;font-size:12px;padding:3px 0;border-bottom:1px solid #161b22;font-family:'Courier New',monospace}
 .log-entry .time{color:#484f58}.log-entry .info{color:#58a6ff}.log-entry .warn{color:#d29922}.log-entry .debug{color:#3fb950}
-#debug-output{margin-top:16px;padding:16px;background:#0a0c10;border:1px solid #21262d;border-radius:6px;display:none}
-#debug-output pre{color:#3fb950;font-size:13px;white-space:pre-wrap;font-family:'Courier New',monospace}
 .cursor{display:inline-block;width:8px;height:14px;background:#3fb950;animation:blink 1s step-end infinite;vertical-align:middle;margin-left:4px}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.03) 0px,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 2px)}
@@ -100,11 +98,11 @@ footer{color:#484f58;font-size:10px;margin-top:20px;text-align:center}</style></
 <div class="metric"><div class="metric-label">Memory</div><div class="metric-value green" id="mem">6.2 / 16 GB</div></div>
 <div class="metric"><div class="metric-label">Network</div><div class="metric-value" id="net">1.4 Gbps</div></div>
 <div class="metric"><div class="metric-label">Threats</div><div class="metric-value green" id="threats">0</div></div></div>
-<div class="log-section"><h2>System Logs (live)</h2><div id="logs"></div><div id="debug-output"><pre></pre></div></div>
+<div class="log-section"><h2>System Logs (live)</h2><div id="logs"></div></div>
 <footer>CGS SysMonitor v3.0.2 &bull; INTERNAL USE ONLY</footer></div>
 <script>
 (function(){var L=document.getElementById('logs'),E=['[INFO] Health check passed','[INFO] Firewall rules synchronized','[WARN] Rate limit threshold at 72%','[INFO] Session token refreshed for admin','[DEBUG] Diagnostic mode active','[INFO] DNS resolution: 4ms','[WARN] Certificate expires in 14 days','[INFO] Backup completed: 2.4GB','[DEBUG] Memory heap utilization: 47%','[INFO] User session validated','[WARN] Deprecated API call detected: /v1/stats','[INFO] Audit log flushed to storage','[DEBUG] Replication lag: 0.2s'],i=0;!function n(){var d=document.createElement('div');d.className='log-entry';var t=new Date();d.innerHTML='<span class="time">['+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0')+']</span> '+E[i% E.length];L.appendChild(d);if(L.children.length>12)L.removeChild(L.firstChild);i++;setTimeout(n,800+Math.random()*800|0)}();
-setTimeout(function(){var d=document.getElementById('debug-output');d.style.display='block';d.querySelector('pre').textContent='[DEBUG] Auth subsystem check passed. Session token: ${FLAG_DEBUGMODE}';try{console.log('%c[DEBUG] Auth subsystem check passed. Session token: ${FLAG_DEBUGMODE}','color:#00FF41;font-weight:bold;font-size:13px;font-family:monospace')}catch(e){}},4000);
+setTimeout(function(){try{console.log('%c[DEBUG] Auth subsystem check passed. Session token: ${FLAG_DEBUGMODE}','color:#00FF41;font-weight:bold;font-size:13px;font-family:monospace')}catch(e){}},4000);
 setInterval(function(){document.getElementById('cpu').textContent=(Math.random()*30+15|0)+'%';document.getElementById('mem').textContent=(Math.random()*8+4).toFixed(1)+' / 16 GB';document.getElementById('net').textContent=(Math.random()*2+0.5).toFixed(1)+' Gbps'},3000)})();
 </script></body></html>`)
 
@@ -135,7 +133,7 @@ header p{color:#8E8E93;font-size:14px;font-family:-apple-system,sans-serif}
 footer{margin-top:60px;color:#C7C7CC;font-size:12px;text-align:center;font-family:-apple-system,sans-serif}
 footer em{font-style:italic}</style></head><body>
 <header><h1>PixelArchive</h1><p>&mdash; captured moments &mdash;</p></header>
-<div class="featured"><div class="caption"><h3>Featured: "Silent Horizon"</h3><p>Late autumn light over the coastal range. Shot on medium format film, pushed one stop.</p><a href="/assets/featured-photo.jpg" download>Download Original &darr;</a></div></div>
+<div class="featured"><div class="caption"><h3>Featured: "Silent Horizon"</h3><p>Late autumn light over the coastal range. Shot on medium format film, pushed one stop.</p><a href="assets/featured-photo.jpg" download>Download Original &darr;</a></div></div>
 <div class="gallery">
 <div class="photo"><div class="caption">Lichen Study #4 &mdash; detail from a granite outcropping, Pacific Northwest.</div></div>
 <div class="photo"><div class="caption">Steam &mdash; morning train through the valley, March 2024.</div></div>
@@ -191,7 +189,7 @@ h1,h2,h3{font-weight:600;line-height:1.3}
 pre,code{font-family:'JetBrains Mono','Fira Code',monospace;background:var(--token-surface);padding:2px 6px;border-radius:4px;font-size:14px}
 .swatch{width:48px;height:48px;border-radius:var(--token-radius);border:1px solid var(--token-border)}`, 'text/css')
   }
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CGS Design System</title><link rel="stylesheet" href="/assets/tokens.css">
+  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CGS Design System</title><link rel="stylesheet" href="assets/tokens.css">
 </head><body style="padding:40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#111;max-width:960px;margin:0 auto">
 <h1 style="font-size:28px;margin-bottom:4px">CGS Design System</h1>
 <p style="color:#6B7280;margin-bottom:32px;font-size:14px">Internal Style Guide v1.4 — for CGS product teams</p>
