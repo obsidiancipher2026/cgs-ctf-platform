@@ -28,19 +28,24 @@ async function handleRequest(request: NextRequest, slug: string, method: string)
   const query: Record<string, string> = {}
   url.searchParams.forEach((v, k) => { query[k] = v })
 
-  const headers: Record<string, string> = {}
-  request.headers.forEach((v, k) => { headers[k] = v })
+    const headers: Record<string, string> = {}
+    request.headers.forEach((v, k) => { headers[k] = v })
 
-  const body = method === 'POST' ? await request.text().catch(() => null) : null
+    const playgroundCookie = headers['x-playground-cookie']
+    if (playgroundCookie) {
+      headers['cookie'] = playgroundCookie
+    }
 
-  const playgroundReq: PlaygroundRequest = {
-    method,
-    path: url.pathname,
-    headers,
-    query,
-    body,
-    cookies: extractCookies(headers['cookie']),
-  }
+    const body = method === 'POST' ? await request.text().catch(() => null) : null
+
+    const playgroundReq: PlaygroundRequest = {
+      method,
+      path: url.pathname,
+      headers,
+      query,
+      body,
+      cookies: extractCookies(headers['cookie']),
+    }
 
   try {
     const result = await handler.handler(playgroundReq)

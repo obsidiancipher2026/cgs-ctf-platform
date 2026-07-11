@@ -57,7 +57,7 @@ export default function WebChallengePlayground({ slug }: Props) {
           if (k && v.length) reqHeaders[k.trim()] = v.join(':').trim()
         })
       }
-      if (c) reqHeaders['cookie'] = c
+      if (c) reqHeaders['x-playground-cookie'] = c
 
       const res = await fetch(`/api/playground/${slug}${meth === 'GET' && b ? '?' + b : ''}`, {
         method: meth,
