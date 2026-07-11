@@ -14,6 +14,10 @@ function htmlStatus(body: string, status: number): { status: number; headers: Re
   return { status, headers: { 'Content-Type': 'text/html' }, body }
 }
 
+// Module-level state used by stateful simulation challenges.
+let redeemCount = 0
+let storedDisplayName = ''
+
 /* ─── EASY (10) ─── */
 
 export const robotsOnly: ChallengeDef = {
@@ -333,7 +337,8 @@ export const xssMarksTheSpot: ChallengeDef = {
     const isAdmin = !!cookies.admin_session
     if (isAdmin) {
       const comments = JSON.parse(decodeURIComponent(req.query.comments || '[]'))
-      return html(`<h1>Admin View</h1><p>Admin session: ${cookies.admin_session}</p><h2>Comments</h2><div id="comments">${comments.join('')}</div>`)
+      const adminNote = '<!-- admin note: CGS{xss_th3_sp0t_g0t_th3_fl4g} -->'
+      return html(`<h1>Admin View</h1><p>Admin session: ${cookies.admin_session}</p><h2>Comments</h2><div id="comments">${comments.join('')}${adminNote}</div>`, 'CGS{xss_th3_sp0t_g0t_th3_fl4g}')
     }
     return html(`<h1>Comment Board</h1><form method="POST" action="/comment"><textarea name="comment"></textarea><button>Submit</button></form><hr><h2>Comments</h2><div id="comments"></div>`)
   },
@@ -344,7 +349,11 @@ export const raceToTheFlag: ChallengeDef = {
   title: 'Race to the Flag',
   handler: (req: PlaygroundRequest) => {
     if (req.method === 'POST' && req.path === '/redeem') {
-      return html('<h2>Coupon redeemed! (simulated)</h2><a href="/">Back</a>')
+      redeemCount++
+      if (redeemCount >= 20) {
+        return html('<h2>Bonus unlocked! Flag: CGS{r4c3_y0ur_w4y_t0_th3_fl4g}</h2>', 'CGS{r4c3_y0ur_w4y_t0_th3_fl4g}')
+      }
+      return html(`<h2>Coupon redeemed! (${redeemCount}/20)</h2><a href="/">Back</a>`)
     }
     return html(`<h1>Coupon Redemption</h1><p>Try code: COUPON50</p><form method="POST" action="/redeem"><input type="text" name="code" placeholder="COUPON50"><button>Redeem</button></form><p>Send 20+ concurrent requests to unlock the bonus flag.</p>`)
   },
@@ -455,6 +464,11 @@ export const theUploadZone: ChallengeDef = {
   title: 'The Upload Zone',
   handler: (req: PlaygroundRequest) => {
     if (req.method === 'POST' && req.path === '/upload') {
+      const fname = req.headers['x-filename'] || ''
+      const bodyHasJs = /filename="[^"]*\.js"/i.test(req.body || '')
+      if (fname.endsWith('.js') || bodyHasJs) {
+        return html(`<h1>Upload Successful</h1><p>Executed: ${fname || 'shell.js'}</p><div class="flag">CGS{uppl04d_y0ur_w4y_t0_v1ct0ry}</div>`, 'CGS{uppl04d_y0ur_w4y_t0_v1ct0ry}')
+      }
       return html(`<h1>Upload Successful</h1><p>File uploaded (simulated). Try uploading a file with .js extension.</p>`)
     }
     return html(`<!DOCTYPE html><html><head><title>The Upload Zone</title></head><body><h1>The Upload Zone</h1><p>Upload your images (JPG/PNG only):</p><form action="/upload" method="post" enctype="multipart/form-data"><input type="file" name="file" accept=".jpg,.png"><button>Upload</button></form></body></html>`)
@@ -572,6 +586,8 @@ export const secondOrderInjection: ChallengeDef = {
   title: 'Second-Order Injection',
   handler: (req: PlaygroundRequest) => {
     if (req.method === 'POST' && req.path === '/update-profile') {
+      const form = parseForm(req.body)
+      storedDisplayName = form['display_name'] || ''
       return { status: 302, headers: { 'Location': '/profile' }, body: '' }
     }
     if (req.path === '/profile') {
@@ -579,7 +595,11 @@ export const secondOrderInjection: ChallengeDef = {
     }
     if (req.path === '/admin/search') {
       const q = req.query['q'] || ''
-      return html(`<h1>Admin Search</h1><form><input name="q" value="${q}"><button>Search</button></form>`)
+      const dangerous = storedDisplayName && (/['"<]/.test(storedDisplayName) || /\bor\b/i.test(storedDisplayName))
+      return html(
+        `<h1>Admin Search</h1><form><input name="q" value="${q}"><button>Search</button></form><div class="results">${storedDisplayName ? 'Stored name: ' + storedDisplayName : ''}${dangerous ? '<div class="flag">CGS{s3c0nd_0rd3r_1nj3ct10n_1s_d3l4y3d}</div>' : '<p>No results</p>'}</div>`,
+        dangerous ? 'CGS{s3c0nd_0rd3r_1nj3ct10n_1s_d3l4y3d}' : undefined,
+      )
     }
     return html(`<h1>Second-Order Injection</h1><a href="/profile">Profile</a> | <a href="/admin/search">Admin Search</a>`)
   },
