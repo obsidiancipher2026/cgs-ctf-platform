@@ -1,0 +1,240 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0D1B2A;
+  color: #E8EEF4;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 30% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 70% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #E8EEF4 0%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.2rem;
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: #64748B;
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+}
+
+.hero-cta {
+  display: inline-block;
+  padding: 0.9rem 2.6rem;
+  border-radius: 8px;
+  border: none;
+  background: #3B82F6;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+}
+
+.hero-cta:hover {
+  background: #2563EB;
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+/* ─── SERVICES ─── */
+.services {
+  padding: 6rem 0;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #E8EEF4;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.service-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.service-card:hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  transform: translateY(-4px);
+}
+
+.service-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.service-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+  color: #E8EEF4;
+}
+
+.service-card p {
+  font-size: 0.92rem;
+  color: #94A3B8;
+  line-height: 1.7;
+}
+
+/* ─── SOURCE TRANSPARENCY ─── */
+.transparency {
+  padding: 6rem 0;
+}
+
+.transparency-subtitle {
+  text-align: center;
+  color: #64748B;
+  margin-top: -2rem;
+  margin-bottom: 3rem;
+  font-size: 1rem;
+}
+
+.code-block {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #0a1628;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.code-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.code-dot-red { background: #FF5F56; }
+.code-dot-yellow { background: #FFBD2E; }
+.code-dot-green { background: #27C93F; }
+
+.code-label {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: #64748B;
+}
+
+.code-body {
+  padding: 1.2rem 1.4rem;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #94A3B8;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  padding: 3rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.footer-brand strong {
+  font-size: 1.1rem;
+  color: #E8EEF4;
+}
+
+.footer-tag {
+  font-size: 0.8rem;
+  color: #64748B;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.footer-social a {
+  color: #64748B;
+  font-size: 1.3rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-social a:hover {
+  color: #3B82F6;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: #475569;
+}

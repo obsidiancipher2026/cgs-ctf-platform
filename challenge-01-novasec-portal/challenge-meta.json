@@ -1,0 +1,16 @@
+{
+  "id": "web-novasec-portal",
+  "title": "NovaSec Portal",
+  "category": "Web",
+  "difficulty": "Easy",
+  "points": 100,
+  "flag": "CGS{h3ad3rs_sp34k_l0ud3r_th4n_p4g3s}",
+  "description": "NovaSec Labs just launched their shiny new company portal. Their security team is confident there's nothing interesting here — 'just a clean page,' they said. But web servers talk in more ways than one. Sometimes the most important message isn't what gets displayed on screen.",
+  "hints": [
+    { "cost": 50, "text": "Web servers communicate using more than just HTML." },
+    { "cost": 100, "text": "Open DevTools. Click the Network tab. Reload the page. Select the main document request. Look at the Response Headers panel." }
+  ],
+  "tags": ["http-headers", "devtools", "recon", "network"],
+  "author": "CGS",
+  "challenge_url": "https://cgs-novasec-portal.vercel.app"
+}

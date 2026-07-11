@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CGS SysMonitor v2.4</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #00FF41;
+    font-family: 'Courier New', 'Consolas', monospace;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ─── Scanline overlay ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 65, 0.03) 0px,
+      rgba(0, 255, 65, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 10;
+  }
+
+  /* ─── Header ─── */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1.2rem;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.25);
+    font-size: 0.85rem;
+    user-select: none;
+  }
+
+  .header-title {
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .header-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: #00CC33;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00FF41;
+    box-shadow: 0 0 8px #00FF41;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  /* ─── Panels ─── */
+  .dashboard {
+    display: flex;
+    height: calc(100vh - 42px);
+  }
+
+  .panel-logs {
+    flex: 3;
+    padding: 0.8rem 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0, 255, 65, 0.1);
+  }
+
+  .panel-status {
+    flex: 2;
+    padding: 0.8rem 1rem;
+    overflow-y: auto;
+  }
+
+  .panel-title {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #00AA33;
+    margin-bottom: 0.8rem;
+    user-select: none;
+  }
+
+  /* ─── Log stream ─── */
+  .log-stream {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .log-scroll {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .log-scroll .cursor {
+    display: inline-block;
+    animation: blink 1s step-end infinite;
+    color: #00FF41;
+    font-size: 0.72rem;
+    line-height: 1.65;
+    user-select: none;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .log-line {
+    font-size: 0.72rem;
+    line-height: 1.65;
+    white-space: pre;
+    opacity: 0;
+    animation: fadeIn 0.15s ease-out forwards;
+  }
+
+  .log-line .timestamp { color: #006622; }
+  .log-line .level-info  { color: #00CC33; }
+  .log-line .level-warn  { color: #FFAA00; }
+  .log-line .level-error { color: #FF3333; }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* ─── Status gauges ─── */
+  .gauge-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .gauge-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #00AA33;
+    margin-bottom: 0.35rem;
+  }
+
+  .gauge-track {
+    height: 12px;
+    background: rgba(0, 255, 65, 0.08);
+    border: 1px solid rgba(0, 255, 65, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .gauge-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00AA33, #00FF41);
+    transition: width 0.6s ease;
+    border-radius: 1px;
+  }
+
+  .status-line {
+    font-size: 0.7rem;
+    color: #006622;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-title">CGS SysMonitor v2.4</span>
+  <span class="header-indicator">
+    <span class="live-dot"></span>
+    <span>LIVE</span>
+  </span>
+</div>
+
+<div class="dashboard">
+  <div class="panel-logs">
+    <div class="panel-title">System Logs</div>
+    <div class="log-stream" id="logStream">
+      <div class="log-scroll" id="logScroll"><span class="cursor">_</span></div>
+    </div>
+  </div>
+
+  <div class="panel-status">
+    <div class="panel-title">System Status</div>
+
+    <div class="gauge-group">
+      <div class="gauge-label"><span>CPU</span><span id="cpuVal">23%</span></div>
+      <div class="gauge-track"><div class="gauge-fill" id="cpuFill" style="width:23%"></div></div>
+    </div>
+
+    <div class="gauge-group">
+      <div class="gauge-label"><span>RAM</span><span id="ramVal">3.2 GB / 8 GB</span></div>
+      <div class="gauge-track"><div class="gauge-fill" id="ramFill" style="width:40%"></div></div>
+    </div>
+
+    <div class="gauge-group">
+      <div class="gauge-label"><span>DISK</span><span id="diskVal">214 GB / 500 GB</span></div>
+      <div class="gauge-track"><div class="gauge-fill" id="diskFill" style="width:43%"></div></div>
+    </div>
+
+    <div class="status-line" id="statusLine">Uptime: 14d 7h 32m | Active sessions: 3 | Alerts: 0</div>
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════
+  // CGS SysMonitor — Log engine
+  // ═══════════════════════════════════════════
+
+  var logs = [
+    '[INFO] CPU usage: 23% — within normal threshold',
+    '[INFO] Memory: 3.2GB / 8GB — OK',
+    '[WARN] Packet loss detected on eth0: 0.3%',
+    '[INFO] Backup job completed — /var/backup/snapshot-041',
+    '[WARN] TLS certificate expiry in 14 days — renew soon',
+    '[INFO] Auth module loaded — 3 active sessions',
+    '[INFO] Firewall rules updated — 1204 active rules',
+    '[INFO] Scheduled task ran: log-rotate @ 03:00',
+    '[ERROR] Failed to reach metrics endpoint — retrying...',
+    '[INFO] Connection from 192.168.1.44 — established',
+    '[INFO] Disk I/O: 45MB/s read, 22MB/s write — nominal',
+    '[WARN] DNS resolution slow on secondary interface',
+    '[INFO] Heartbeat check passed — all services healthy',
+    '[INFO] SSH session closed — user: ops-admin',
+    '[ERROR] Rate limit triggered on /api/v2/metrics',
+    '[INFO] Cache flush completed — 1.2GB freed',
+    '[INFO] New SSL certificate staged for deployment',
+    '[WARN] Swap usage: 12% — above baseline',
+    '[INFO] Container health check: 4/4 running',
+    '[INFO] Log shipping batch #8423 — delivered',
+    '[ERROR] Time drift detected on node-03: 240ms offset',
+    '[INFO] Patch schedule: pending updates for 6 packages',
+    '[INFO] Database connection pool: 12/20 active',
+    '[WARN] Filesystem /var at 78% capacity',
+    '[INFO] Audit trail exported — /var/log/audit/20260315',
+  ];
+
+  var logScroll = document.getElementById('logScroll');
+  var logCount = 0;
+
+  function addLog() {
+    var raw = logs[Math.floor(Math.random() * logs.length)];
+    var now = new Date();
+    var ts = '[' +
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0') + ':' +
+      String(now.getSeconds()).padStart(2,'0') + ']';
+
+    var level = '';
+    if (raw.indexOf('[INFO]') !== -1) level = 'info';
+    else if (raw.indexOf('[WARN]') !== -1) level = 'warn';
+    else if (raw.indexOf('[ERROR]') !== -1) level = 'error';
+
+    var text = raw.replace(/\[(INFO|WARN|ERROR)\] /, '');
+
+    var el = document.createElement('div');
+    el.className = 'log-line';
+    el.innerHTML =
+      '<span class="timestamp">' + ts + '</span> ' +
+      '<span class="level-' + level + '">[' + level.toUpperCase() + ']</span> ' +
+      text;
+    logScroll.insertBefore(el, logScroll.querySelector('.cursor'));
+
+    logCount++;
+
+    // Remove oldest logs to keep scroll clean
+    while (logScroll.children.length > 150) {
+      logScroll.removeChild(logScroll.firstChild);
+    }
+  }
+
+  // Initial burst
+  for (var i = 0; i < 12; i++) addLog();
+
+  // Continuous stream
+  setInterval(addLog, 1200);
+
+  // ─── Gauge randomizer ───
+
+  function updateGauges() {
+    var cpu = 15 + Math.random() * 35;
+    document.getElementById('cpuVal').textContent = Math.round(cpu) + '%';
+    document.getElementById('cpuFill').style.width = cpu + '%';
+
+    var ramGB = 2 + Math.random() * 4;
+    document.getElementById('ramVal').textContent = ramGB.toFixed(1) + ' GB / 8 GB';
+    document.getElementById('ramFill').style.width = (ramGB / 8 * 100) + '%';
+
+    var diskGB = 180 + Math.random() * 60;
+    document.getElementById('diskVal').textContent = Math.round(diskGB) + ' GB / 500 GB';
+    document.getElementById('diskFill').style.width = (diskGB / 500 * 100) + '%';
+
+    var upDays = 10 + Math.floor(Math.random() * 10);
+    var upHrs = Math.floor(Math.random() * 24);
+    var upMin = Math.floor(Math.random() * 60);
+    var sess = 1 + Math.floor(Math.random() * 6);
+    document.getElementById('statusLine').textContent =
+      'Uptime: ' + upDays + 'd ' + upHrs + 'h ' + upMin + 'm | Active sessions: ' + sess + ' | Alerts: 0';
+  }
+
+  setInterval(updateGauges, 4000);
+  updateGauges();
+
+  // ═══════════════════════════════════════════
+  // Debug payload — fires after 4 seconds
+  // ═══════════════════════════════════════════
+
+  setTimeout(function() {
+    console.log(
+      '%c[DEBUG] Auth subsystem check passed. Session token: CGS{c0ns0l3_l0gs_d0nt_l13_t0_y0u}',
+      'color: #00FF41; font-weight: bold; font-size: 13px; font-family: monospace;'
+    );
+  }, 4000);
+</script>
+</body>
+</html>

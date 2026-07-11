@@ -1,0 +1,16 @@
+{
+  "id": "web-debugmode",
+  "title": "DebugMode",
+  "category": "Web",
+  "difficulty": "Easy",
+  "points": 100,
+  "flag": "CGS{c0ns0l3_l0gs_d0nt_l13_t0_y0u}",
+  "description": "CGS SysMonitor is an internal dashboard used to track system health across the Cyber Guardians infrastructure. An engineer left debug mode enabled before deploying to production. The logs on screen look normal. But not everything shows on screen — and not everything the system says is for your eyes. Or is it?",
+  "hints": [
+    { "cost": 50, "text": "Developers leave messages while they code. Where do those messages usually go?" },
+    { "cost": 100, "text": "Open your browser DevTools and click the Console tab. Then wait a few seconds and watch carefully." }
+  ],
+  "tags": ["console", "javascript", "devtools", "debugging"],
+  "author": "CGS",
+  "challenge_url": "https://cgs-debugmode.vercel.app"
+}

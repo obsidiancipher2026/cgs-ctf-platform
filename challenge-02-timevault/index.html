@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeVault — Classified Countdown</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    /* System variables - do not modify */
+    --vault-key: CGS{css_v4r1abl3s_4r3_m0r3_th4n_c0l0rs};
+    --build-ref: tv-2024-classified;
+    --primary: #8B5CF6;
+    --primary-glow: rgba(139, 92, 246, 0.3);
+    --bg: #070714;
+    --text: #E2E8F0;
+    --muted: #64748B;
+    --star-color: rgba(255, 255, 255, 0.6);
+    --star-small: 1px;
+    --star-medium: 2px;
+    --star-large: 3px;
+  }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ─── Animated Starfield ─── */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--star-color);
+    animation: twinkle var(--dur, 3s) ease-in-out infinite alternate, drift var(--drift, 60s) linear infinite;
+  }
+
+  @keyframes twinkle {
+    0%   { opacity: 0.2; transform: scale(0.8); }
+    100% { opacity: 1;   transform: scale(1.2); }
+  }
+
+  @keyframes drift {
+    0%   { transform: translateY(0) translateX(0); }
+    50%  { transform: translateY(-20px) translateX(10px); }
+    100% { transform: translateY(-40px) translateX(-5px); }
+  }
+
+  /* ─── Main Content ─── */
+  .vault {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .classified-stamp {
+    display: inline-block;
+    border: 3px solid #EF4444;
+    color: #EF4444;
+    font-family: 'Courier New', monospace;
+    font-weight: 900;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    padding: 0.3rem 1.4rem;
+    transform: rotate(-6deg);
+    letter-spacing: 4px;
+    margin-bottom: 1.5rem;
+    user-select: none;
+  }
+
+  .vault-title {
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: var(--muted);
+  }
+
+  .vault-subtitle {
+    font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+
+  /* ─── Timer ─── */
+  .timer {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.8rem, 3vw, 2.5rem);
+    margin-bottom: 2.5rem;
+  }
+
+  .timer-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .timer-value {
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--primary);
+    text-shadow: 0 0 40px var(--primary-glow), 0 0 10px var(--primary-glow);
+    line-height: 1;
+    font-family: 'Courier New', 'Fira Code', monospace;
+  }
+
+  .timer-label {
+    font-size: clamp(0.6rem, 1vw, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--muted);
+    font-family: 'Courier New', monospace;
+  }
+
+  .timer-separator {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--muted);
+    opacity: 0.4;
+    align-self: flex-start;
+    margin-top: 0.1em;
+    line-height: 1;
+    animation: pulse-sep 1s step-end infinite;
+  }
+
+  @keyframes pulse-sep {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.1; }
+  }
+
+  /* ─── Clearance Bar ─── */
+  .clearance {
+    max-width: 400px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .clearance-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .clearance-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .clearance-fill {
+    height: 100%;
+    width: 73%;
+    background: linear-gradient(90deg, var(--primary) 0%, #A78BFA 100%);
+    border-radius: 3px;
+    box-shadow: 0 0 12px var(--primary-glow);
+  }
+
+  .tagline {
+    font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 1.5rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="vault">
+  <div class="classified-stamp">CLASSIFIED</div>
+  <h1 class="vault-title">TimeVault</h1>
+  <p class="vault-subtitle">// classified product launch countdown //</p>
+
+  <div class="timer" id="timer">
+    <div class="timer-unit"><span class="timer-value" id="days">00</span><span class="timer-label">Days</span></div>
+    <span class="timer-separator">:</span>
+    <div class="timer-unit"><span class="timer-value" id="hours">00</span><span class="timer-label">Hours</span></div>
+    <span class="timer-separator">:</span>
+    <div class="timer-unit"><span class="timer-value" id="minutes">00</span><span class="timer-label">Minutes</span></div>
+    <span class="timer-separator">:</span>
+    <div class="timer-unit"><span class="timer-value" id="seconds">00</span><span class="timer-label">Seconds</span></div>
+  </div>
+
+  <div class="clearance">
+    <div class="clearance-label"><span>Security Clearance</span><span>LEVEL 3 / 4</span></div>
+    <div class="clearance-bar"><div class="clearance-fill"></div></div>
+  </div>
+
+  <p class="tagline">Authorized personnel only. Unauthorized access is prohibited.</p>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════
+  // TimeVault countdown engine
+  // ═══════════════════════════════════════════
+
+  (function() {
+    // normalize epoch delta
+    var t = new Date().getTime() + 3888000000; // 45 days from reference
+
+    function u() {
+      var n = new Date().getTime();
+      var d = t - n;
+      if (d < 0) d = 0;
+
+      // flatten time components
+      var a = d / 86400000 | 0;            // days — floor via bitwise
+      var b = (d % 86400000) / 3600000 | 0; // hours
+      var c = (d % 3600000) / 60000 | 0;    // minutes
+      var e = (d % 60000) / 1000 | 0;       // seconds
+
+      // sync display buffer
+      document.getElementById('days').textContent    = String(a).padStart(2, '0');
+      document.getElementById('hours').textContent   = String(b).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(c).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(e).padStart(2, '0');
+    }
+
+    u();
+    setInterval(function() { u(); }, 1000);
+  })();
+
+  // ─── Starfield generator ───
+  (function() {
+    var s = document.getElementById('stars');
+    var c = 180;
+    for (var i = 0; i < c; i++) {
+      var dot = document.createElement('div');
+      dot.className = 'star';
+      var sz = Math.random() < 0.7 ? 1 : (Math.random() < 0.5 ? 2 : 3);
+      dot.style.width  = sz + 'px';
+      dot.style.height = sz + 'px';
+      dot.style.left   = Math.random() * 100 + '%';
+      dot.style.top    = Math.random() * 100 + '%';
+      dot.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
+      dot.style.setProperty('--drift', (40 + Math.random() * 80) + 's');
+      dot.style.animationDelay = (Math.random() * 5) + 's';
+      s.appendChild(dot);
+    }
+  })();
+</script>
+</body>
+</html>
