@@ -86,8 +86,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Nudge comment */}
-      <!-- Our servers know things this page never will. -->
+      <span dangerouslySetInnerHTML={{ __html: '<!-- Our servers know things this page never will. -->' }} style={{ display: 'none' }} />
     </>
   )
 }

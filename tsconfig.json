@@ -19,5 +19,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "instance-server", "scripts"]
+  "exclude": ["node_modules", "instance-server", "scripts", "challenge-01-novasec-portal", "challenge-02-timevault", "challenge-03-debugmode"]
 }
