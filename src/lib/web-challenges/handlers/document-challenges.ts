@@ -396,7 +396,7 @@ const idorUsers: Record<number, { id: number; name: string; email: string; role:
   7: { id: 7,  name: 'Grace Lee',     email: 'grace@cgs.local',    role: 'HR',         bio: 'People operations. Handles onboarding.' },
   8: { id: 8,  name: 'Henry Davis',   email: 'henry@cgs.local',    role: 'Engineer',   bio: 'Mobile dev. iOS & Android.' },
   9: { id: 9,  name: 'Ivy Wilson',    email: 'ivy@cgs.local',      role: 'Designer',   bio: 'Visual design & branding.' },
-  10: { id: 10, name: 'CLASSIFIED',   email: 'redacted@cgs.local', role: 'ADMIN',      bio: 'FLAG: ' + IDOR_FLAG },
+  10: { id: 10, name: 'CLASSIFIED',   email: 'redacted@cgs.local', role: 'ADMIN',      bio: 'FLAG: ' + IDOR_FLAG, },
   11: { id: 11, name: 'Jack Thompson', email: 'jack@cgs.local',    role: 'Engineer',   bio: 'Frontend specialist. React & Vue.' },
   12: { id: 12, name: 'Karen Garcia',  email: 'karen@cgs.local',   role: 'Marketing',  bio: 'Growth marketing & campaigns.' },
   13: { id: 13, name: 'Leo Anderson',  email: 'leo@cgs.local',     role: 'DevOps',     bio: 'CI/CD & cloud infrastructure.' },
@@ -408,8 +408,6 @@ const idorUsers: Record<number, { id: number; name: string; email: string; role:
   19: { id: 19, name: 'Rachel Lee',    email: 'rachel@cgs.local',  role: 'Legal',      bio: 'Compliance & legal affairs.' },
   20: { id: 20, name: 'Sam Clark',     email: 'sam@cgs.local',     role: 'Engineer',   bio: 'Platform architecture & performance.' },
 }
-
-const b64 = (n: number): string => Buffer.from(String(n)).toString('base64url')
 
 const idorHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.method === 'POST' && req.path === '/api/login') {
@@ -429,84 +427,76 @@ const idorHandler = (req: PlaygroundRequest): PlaygroundResponse => {
 
   const isAuth = req.cookies.session === 'authenticated-user'
 
-  const dashboardMatch = req.path.match(/^\/dashboard\/(.+)$/)
-  if (dashboardMatch) {
+  const userMatch = req.path.match(/^\/user\/(.+)$/)
+  if (userMatch) {
     if (!isAuth) return { status: 302, headers: { 'Location': '/', 'Content-Type': 'text/html' }, body: 'Redirecting...' }
     let id = 0
-    try { id = parseInt(Buffer.from(dashboardMatch[1], 'base64').toString(), 10) } catch {}
-    if (id < 1 || id > 20) return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Not Found</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;display:flex;align-items:center;justify-content:center;min-height:100vh}.box{text-align:center;padding:60px}.box h1{font-size:64px;color:#EF4444;font-weight:800;margin-bottom:8px}.box p{color:#94A3B8;font-size:14px}</style></head><body><div class="box"><h1>404</h1><p>User dashboard not found.</p></div></body></html>`)
+    try { id = parseInt(Buffer.from(userMatch[1], 'base64').toString(), 10) } catch {}
+    if (id < 1 || id > 20) return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Not Found</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;display:flex;align-items:center;justify-content:center;min-height:100vh}h1{font-size:72px;color:#EF4444;font-weight:800}p{color:#94A3B8;margin-top:8px;font-size:14px}</style></head><body><h1>404</h1><p>User not found</p></body></html>`)
     const u = idorUsers[id]
-    return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${u.name} — Dashboard</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;min-height:100vh}
-.top{background:#1E293B;border-bottom:1px solid #334155;padding:16px 32px;display:flex;justify-content:space-between;align-items:center}
-.top .brand{font-weight:700;font-size:18px;color:#3B82F6}.top .logout{color:#94A3B8;font-size:13px;cursor:pointer;text-decoration:underline}
-.main{max-width:700px;margin:40px auto;padding:0 24px}
-.profile{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:32px;margin-bottom:20px}
-.profile .header{display:flex;align-items:center;gap:20px;margin-bottom:24px}
-.profile .avatar{width:64px;height:64px;border-radius:50%;background:#3B82F6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;color:#fff}
-.profile .info h2{font-size:20px;color:#F1F5F9}.profile .info .role{color:#3B82F6;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
-.fields{display:grid;gap:12px}.fields .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #334155;font-size:14px}
-.fields .row .label{color:#94A3B8}.fields .row .value{color:#E2E8F0;font-weight:500}
-.back{display:inline-block;margin-top:12px;color:#3B82F6;font-size:13px;text-decoration:none}
-.badge{display:inline-block;background:#0F172A;border:1px solid #334155;border-radius:6px;padding:4px 10px;font-family:monospace;font-size:12px;color:#64748B;margin-bottom:20px}
-${id === 10 ? `.profile{border-color:#EF4444;box-shadow:inset 0 0 0 1px #EF4444}
-.badge{border-color:#EF4444;color:#EF4444;background:#1E293B}
-.fields .row .value{color:#EF4444;font-weight:700}` : ''}
+    return serve(req.path, `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${u.name} — CGS HR</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0B1120;color:#E2E8F0;min-height:100vh}
+.nav{background:#111B2E;border-bottom:1px solid #1E2A45;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav .brand{font-weight:700;font-size:16px;color:#E2E8F0;letter-spacing:.5px}.nav .brand span{color:#3B82F6}
+.nav .logout{font-size:13px;color:#94A3B8;cursor:pointer;text-decoration:none;padding:6px 14px;border:1px solid #1E2A45;border-radius:6px;transition:all .2s}
+.nav .logout:hover{border-color:#EF4444;color:#EF4444}
+.page{max-width:640px;margin:0 auto;padding:48px 24px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:#111B2E;border:1px solid #1E2A45;border-radius:6px;padding:6px 14px;font-family:monospace;font-size:12px;color:#64748B;margin-bottom:24px}
+.badge .arrow{color:#3B82F6;font-size:14px}
+.profile-card{background:#111B2E;border:1px solid #1E2A45;border-radius:16px;padding:32px}
+.profile-card .top-row{display:flex;align-items:center;gap:20px;margin-bottom:28px}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;color:#fff;flex-shrink:0}
+.info h2{font-size:20px;font-weight:600;color:#F1F5F9}.info .role-tag{display:inline-block;margin-top:6px;font-size:11px;color:#3B82F6;text-transform:uppercase;letter-spacing:1px;background:#1E293B;padding:3px 10px;border-radius:4px;font-weight:600}
+.details{display:grid;gap:0}.details .row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #1E2A45;font-size:14px}
+.details .row:last-child{border-bottom:none}.details .row .label{color:#64748B;font-size:13px}
+.details .row .val{color:#E2E8F0;font-weight:500;text-align:right;max-width:60%;word-break:break-word}
+.nav-buttons{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.nav-buttons a{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:#111B2E;border:1px solid #1E2A45;border-radius:8px;color:#94A3B8;text-decoration:none;font-size:13px;transition:all .2s}
+.nav-buttons a:hover{border-color:#3B82F6;color:#E2E8F0}
+.nav-buttons a.next{background:#3B82F6;border-color:#3B82F6;color:#fff}
+.nav-buttons a.next:hover{background:#2563EB}
+.footer-note{text-align:center;color:#1E2A45;font-size:11px;margin-top:40px}
+${id === 10 ? `.profile-card{border-color:#EF4444;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 20px 0 rgba(239,68,68,.15)}}
+.badge{border-color:#EF4444;color:#EF4444;background:#1E1A1A}
+.details .row .val{color:#EF4444;font-weight:700}` : ''}
 </style></head><body>
-<div class="top"><div class="brand">CGS HR</div><a href="#" class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';window.location='/'">Sign Out</a></div>
-<div class="main"><div class="badge">Encoded ID: ${dashboardMatch[1]}</div>
-<div class="profile"><div class="header"><div class="avatar">${u.name[0]}</div><div class="info"><h2>${u.name}</h2><div class="role">${u.role}</div></div></div>
-<div class="fields"><div class="row"><span class="label">Email</span><span class="value">${u.email}</span></div>
-<div class="row"><span class="label">Bio</span><span class="value">${u.bio}</span></div>
-<div class="row"><span class="label">User ID</span><span class="value">${u.id}</span></div></div></div>
-<a href="../dashboard" class="back">&larr; Back to directory</a></div></body></html>`)
+<div class="nav"><div class="brand">CGS <span>HR</span></div><a href="#" class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';window.location='/'">Sign Out</a></div>
+<div class="page"><div class="badge"><span>${userMatch[1]}</span><span class="arrow">→</span><span>ID: ${u.id}</span></div>
+<div class="profile-card"><div class="top-row"><div class="avatar">${u.name[0]}</div><div class="info"><h2>${u.name}</h2><div class="role-tag">${u.role}</div></div></div>
+<div class="details"><div class="row"><span class="label">Email</span><span class="val">${u.email}</span></div>
+<div class="row"><span class="label">Bio</span><span class="val">${u.bio}</span></div></div></div>
+<div class="nav-buttons">${id > 1 ? `<a href="../user/${Buffer.from(String(id - 1)).toString('base64url')}">&larr; Previous</a>` : '<a style="opacity:0.3;pointer-events:none">&larr; Previous</a>'}
+<a href="../user/${Buffer.from(String(id + 1 > 20 ? 1 : id + 1)).toString('base64url')}" class="next">Next &rarr;</a></div>
+<p class="footer-note">CGS Internal HR Portal &bull; Authorized personnel only</p></div></body></html>`)
   }
 
   if (!isAuth) {
-    return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>HR Portal Login</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;min-height:100vh;display:flex;align-items:center;justify-content:center}
-.box{width:380px}.logo{text-align:center;margin-bottom:28px}.logo .icon{width:56px;height:56px;background:#3B82F6;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;color:#fff}
-.logo h1{font-size:22px;color:#F1F5F9;margin-top:12px;margin-bottom:4px}.logo p{color:#94A3B8;font-size:13px}
-.card{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:28px}
-.creds{background:#0F172A;border:1px dashed #334155;border-radius:8px;padding:12px;margin-bottom:20px;text-align:center;font-size:12px;color:#94A3B8}
-.creds span{font-family:monospace;color:#3B82F6;font-weight:600}
-.field{margin-bottom:16px}.field label{display:block;font-size:12px;color:#94A3B8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.field input{width:100%;padding:10px 12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;font-size:14px;outline:none}
-.field input:focus{border-color:#3B82F6}button{width:100%;padding:10px;background:#3B82F6;border:none;border-radius:6px;color:#fff;font-size:14px;cursor:pointer}
-button:hover{background:#2563EB}.error{color:#EF4444;font-size:13px;text-align:center;margin-top:12px;display:none}
-.footer{color:#475569;font-size:11px;text-align:center;margin-top:20px}
+    return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS HR Portal</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0B1120;color:#E2E8F0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{width:400px}.branding{text-align:center;margin-bottom:32px}
+.branding .shield{width:56px;height:56px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;color:#fff;margin-bottom:16px;box-shadow:0 4px 20px rgba(59,130,246,0.3)}
+.branding h1{font-size:22px;font-weight:700;color:#F1F5F9;margin-bottom:6px}
+.branding p{font-size:13px;color:#64748B}.card{background:#111B2E;border:1px solid #1E2A45;border-radius:16px;padding:32px}
+.creds{display:flex;align-items:center;gap:10px;background:#0B1120;border:1px dashed #1E2A45;border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:12px;color:#64748B}
+.creds .lock{color:#3B82F6;font-size:14px}.creds strong{color:#94A3B8;font-weight:500}
+.creds code{font-family:monospace;color:#3B82F6;font-size:12px;font-weight:600}
+.field{margin-bottom:18px}.field label{display:block;font-size:12px;color:#94A3B8;margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.field input{width:100%;padding:11px 14px;background:#0B1120;border:1px solid #1E2A45;border-radius:8px;color:#E2E8F0;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#3B82F6}button{width:100%;padding:11px;background:#3B82F6;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+button:hover{background:#2563EB}.error{color:#EF4444;font-size:13px;text-align:center;margin-top:14px;display:none;font-weight:500}
+.footer{color:#1E2A45;font-size:11px;text-align:center;margin-top:24px}
 </style></head><body>
-<div class="box"><div class="logo"><div class="icon">H</div><h1>HR Portal</h1><p>Employee Directory — Authorized Access Only</p></div>
-<div class="card"><div class="creds">Demo: <span>admin</span> / <span>admin123</span></div>
+<div class="container"><div class="branding"><div class="shield">H</div><h1>HR Portal</h1><p>Employee directory — authorized access only</p></div>
+<div class="card"><div class="creds"><span class="lock">&#9670;</span><span><strong>Demo:</strong> <code>admin</code> / <code>admin123</code></span></div>
 <form id="loginForm"><div class="field"><label>Username</label><input type="text" name="username" value="admin"></div>
 <div class="field"><label>Password</label><input type="password" name="password" value="admin123"></div>
 <button type="submit">Sign In</button></form><div class="error" id="err">Invalid credentials</div></div>
-<p class="footer">CGS Internal Systems</p></div>
-<script>(function(){var f=document.getElementById('loginForm');f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f);fetch('api/login',{method:'POST',body:new URLSearchParams(d)}).then(function(r){return r.json()}).then(function(j){if(j.ok){window.location.href='dashboard'}else{document.getElementById('err').style.display='block'}}).catch(function(){})})})()</script></body></html>`)
+<p class="footer">CGS Internal Systems &bull; Confidential</p></div>
+<script>(function(){var f=document.getElementById('loginForm');f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f);fetch('api/login',{method:'POST',body:new URLSearchParams(d)}).then(function(r){return r.json()}).then(function(j){if(j.ok){window.location.href='user/'+btoa('1')}else{document.getElementById('err').style.display='block'}}).catch(function(){})})})()</script></body></html>`)
   }
 
-  const userRows = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map(id => {
-    const u = idorUsers[id]
-    const enc = b64(id)
-    return `<a href="dashboard/${enc}" class="row"><span class="uid">${enc}</span><span class="name">${u.name}</span><span class="role">${u.role}</span></a>`
-  }).join('\n')
-
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Employee Directory</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;min-height:100vh}
-.top{background:#1E293B;border-bottom:1px solid #334155;padding:16px 32px;display:flex;justify-content:space-between;align-items:center}
-.top .brand{font-weight:700;font-size:18px;color:#3B82F6}.top .logout{color:#94A3B8;font-size:13px;cursor:pointer;text-decoration:underline}
-.main{max-width:800px;margin:0 auto;padding:32px 20px}
-.header{margin-bottom:24px}.header h1{font-size:22px;color:#F1F5F9}.header p{color:#94A3B8;font-size:13px;margin-top:4px}
-.list{display:grid;gap:8px}.row{display:flex;align-items:center;gap:16px;background:#1E293B;border:1px solid #334155;border-radius:8px;padding:14px 20px;text-decoration:none;transition:border-color .2s}
-.row:hover{border-color:#3B82F6}.uid{font-family:monospace;font-size:12px;color:#64748B;background:#0F172A;padding:4px 8px;border-radius:4px;min-width:60px;text-align:center}
-.name{flex:1;font-size:14px;color:#F1F5F9;font-weight:500}.role{font-size:12px;color:#3B82F6;text-transform:uppercase;letter-spacing:.5px}
-.hint{margin-top:20px;padding:12px 16px;background:#1E293B;border:1px solid #334155;border-radius:8px;font-size:12px;color:#64748B;text-align:center}
-.hint code{color:#3B82F6;background:#0F172A;padding:2px 6px;border-radius:4px;font-family:monospace}
-</style></head><body>
-<div class="top"><div class="brand">CGS HR</div><a href="#" class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';window.location='/'">Sign Out</a></div>
-<div class="main"><div class="header"><h1>Employee Directory</h1><p>${Object.keys(idorUsers).length} employees — click a row to view their dashboard</p></div>
-<div class="list">${userRows}</div>
-<div class="hint">Notice the URL pattern: <code>dashboard/{encoded_id}</code> — try decoding one</div></div></body></html>`)
+  return serve('/', '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Redirecting...</title><meta http-equiv="refresh" content="0;url=user/MQ=="></head><body></body></html>')
 }
 
 // 13 — ReflectedNote
