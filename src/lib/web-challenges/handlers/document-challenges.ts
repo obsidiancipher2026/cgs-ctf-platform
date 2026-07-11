@@ -332,7 +332,7 @@ const hiddenApiHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.path === '/api/v2/internal/report') return json({ flag: HIDDEN_FLAG })
   if (req.path === '/assets/app.bundle.js') {
     return serve(req.path, `// CGS Analytics Dashboard — production bundle
-var API_ENDPOINTS={stats:'/api/v1/public/stats',internal:'/api/v2/internal/report'};
+var API_ENDPOINTS={stats:'api/v1/public/stats',internal:'api/v2/internal/report'};
 document.addEventListener('DOMContentLoaded',function(){fetch(API_ENDPOINTS.stats).then(function(r){return r.json()}).then(function(d){document.getElementById('stats').innerHTML='<p>Users: '+d.users+'</p><p>Uptime: '+d.uptime+'</p>'}).catch(function(){})});`, 'application/javascript')
   }
   return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Analytics</title>
@@ -342,7 +342,7 @@ h1{font-size:24px;color:#3B82F6;margin-bottom:20px}.card{background:#1E293B;bord
 footer{color:#475569;font-size:11px;margin-top:40px;text-align:center}</style></head><body>
 <h1>CGS Analytics Dashboard</h1><div class="card"><h3>Public Statistics</h3><div id="stats"><p>Loading...</p></div></div>
 <div class="card"><h3>System Status</h3><p style="font-size:14px;font-weight:400;color:#10B981">All systems operational</p></div>
-<footer>CGS Internal &bull; v2.1.0</footer><script src="/assets/app.bundle.js"></script></body></html>`)
+<footer>CGS Internal &bull; v2.1.0</footer><script src="assets/app.bundle.js"></script></body></html>`)
 }
 
 // 12 — IDOR Inbox
