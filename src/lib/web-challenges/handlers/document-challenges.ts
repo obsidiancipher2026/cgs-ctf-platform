@@ -556,11 +556,17 @@ const noneAlgHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   }
   return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Admin Login</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;display:flex;flex-direction:column;align-items:center;padding:80px 20px}
-h1{color:#EF4444;margin-bottom:8px}.card{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:24px;width:420px;margin-top:20px}
+h1{color:#EF4444;margin-bottom:8px}.card{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:24px;width:480px;margin-top:20px}
 label{display:block;font-size:13px;color:#94A3B8;margin-bottom:4px}input{width:100%;padding:10px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;margin-bottom:12px;font-size:14px}
 button{width:100%;padding:12px;background:#EF4444;border:none;color:#fff;border-radius:6px;font-weight:600;cursor:pointer}
+button.sec{background:#3B82F6;margin-top:8px}
 #result{color:#94A3B8;font-size:13px;margin-top:12px;text-align:center;white-space:pre-wrap;word-break:break-all}
 .token-box{margin-top:12px;background:#0F172A;border:1px solid #334155;border-radius:6px;padding:10px;font-family:monospace;font-size:11px;color:#F59E0B;word-break:break-all;display:none;max-height:120px;overflow-y:auto}
+.admin-section{border-top:1px solid #334155;margin-top:20px;padding-top:20px;display:none}
+.admin-section h3{font-size:13px;color:#EF4444;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.admin-section textarea{width:100%;padding:10px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;font-family:monospace;font-size:11px;min-height:70px;resize:vertical;margin-bottom:8px}
+.admin-section textarea:focus{border-color:#EF4444}
+#adminResult{color:#94A3B8;font-size:13px;margin-top:8px;text-align:center;white-space:pre-wrap;word-break:break-all;min-height:20px}
 .hint{color:#64748B;font-size:12px;margin-top:16px;padding:12px;background:#1E293B;border:1px solid #334155;border-radius:6px;text-align:center}
 .hint code{color:#EF4444;font-family:monospace;font-size:11px;background:#0F172A;padding:2px 6px;border-radius:3px}
 .cred{color:#94A3B8;font-size:12px;margin-bottom:16px;padding:8px 12px;background:#0F172A;border:1px dashed #334155;border-radius:6px;text-align:center}
@@ -573,10 +579,17 @@ button{width:100%;padding:12px;background:#EF4444;border:none;color:#fff;border-
 <button id="loginBtn">Authenticate</button>
 <div id="result"></div>
 <div id="tokenDisplay" class="token-box"></div>
+<div class="admin-section" id="adminSection">
+<h3>Admin Flag Access</h3>
+<textarea id="tokenInput" placeholder="Paste your JWT here..."></textarea>
+<button class="sec" id="adminBtn">Get Flag</button>
+<div id="adminResult"></div>
+</div>
 </div>
 <div class="hint">API: <code>api/login</code> &bull; <code>api/admin/flag</code> &bull; How does the server verify the token's algorithm?</div>
 <p style="color:#475569;font-size:11px;margin-top:20px">CGS Internal Tools &bull; v3.1</p>
-<script>document.getElementById('loginBtn').addEventListener('click',async function(){var d=new FormData();d.append('username',document.getElementById('user').value);d.append('password',document.getElementById('pass').value);var r=await fetch('api/login',{method:'POST',body:new URLSearchParams(d)});var j=await r.json();if(j.token){document.getElementById('result').style.color='#10B981';document.getElementById('result').textContent='Authenticated. Your token:';document.getElementById('tokenDisplay').textContent=j.token;document.getElementById('tokenDisplay').style.display='block'}else{document.getElementById('result').style.color='#EF4444';document.getElementById('result').textContent=j.error;document.getElementById('tokenDisplay').style.display='none'}})</script></body></html>`)
+<script>document.getElementById('loginBtn').addEventListener('click',async function(){var d=new FormData();d.append('username',document.getElementById('user').value);d.append('password',document.getElementById('pass').value);var r=await fetch('api/login',{method:'POST',body:new URLSearchParams(d)});var j=await r.json();if(j.token){document.getElementById('result').style.color='#10B981';document.getElementById('result').textContent='Authenticated. Your token:';document.getElementById('tokenDisplay').textContent=j.token;document.getElementById('tokenDisplay').style.display='block';document.getElementById('adminSection').style.display='block'}else{document.getElementById('result').style.color='#EF4444';document.getElementById('result').textContent=j.error;document.getElementById('tokenDisplay').style.display='none';document.getElementById('adminSection').style.display='none'}});
+document.getElementById('adminBtn').addEventListener('click',async function(){var t=document.getElementById('tokenInput').value;if(!t){document.getElementById('adminResult').textContent='Please paste a token first';return}var r=await fetch('api/admin/flag',{headers:{Authorization:'Bearer '+t}});var j=await r.json();document.getElementById('adminResult').textContent=JSON.stringify(j,null,2)})</script></body></html>`)
 }
 
 // 15 — RateDodge
