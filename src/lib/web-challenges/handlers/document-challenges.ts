@@ -325,114 +325,6 @@ document.getElementById('unlockBtn').addEventListener('click',function(){var c=d
 </script></body></html>`)
 }
 
-// 11 — HiddenAPI
-const HIDDEN_FLAG = 'CGS{th3_ui_1sn7_th3_wh0l3_4p1_surf4c3}'
-const hiddenApiHandler = (req: PlaygroundRequest): PlaygroundResponse => {
-  if (req.method === 'POST' && req.path === '/api/login') {
-    const params = new URLSearchParams(req.body || '')
-    const user = params.get('username')
-    const pass = params.get('password')
-    if (user === 'admin' && pass === 'admin123') {
-      return {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Set-Cookie': 'session=authenticated-user; Path=/; SameSite=Lax'
-        },
-        body: JSON.stringify({ ok: true })
-      }
-    }
-    return json({ error: 'Invalid credentials' })
-  }
-
-  if (req.path === '/api/users' || req.path.startsWith('/api/users/')) {
-    if (req.cookies.session !== 'authenticated-user') return error(401, 'Unauthorized')
-    const id = parseInt(req.path.replace('/api/users/', ''), 10)
-    if (isNaN(id) || id < 1 || id > 20) return json({ error: 'Invalid user ID' })
-    const users: Array<{ id: number; name: string; dept: string; flag?: string }> = [
-      { id: 1,  name: 'Alice Chen',      dept: 'Engineering' },
-      { id: 2,  name: 'Bob Martinez',    dept: 'Marketing'   },
-      { id: 3,  name: 'Carol Smith',     dept: 'Design'      },
-      { id: 4,  name: 'Dave Johnson',    dept: 'Engineering' },
-      { id: 5,  name: 'Eve Williams',    dept: 'HR'          },
-      { id: 6,  name: 'Frank Brown',     dept: 'Finance'     },
-      { id: 7,  name: 'Grace Lee',       dept: 'Executive'   },
-      { id: 8,  name: 'Henry Davis',     dept: 'Engineering' },
-      { id: 9,  name: 'Ivy Wilson',      dept: 'Design'      },
-      { id: 10, name: 'Jack Thompson',   dept: 'Marketing'   },
-      { id: 11, name: 'Karen Garcia',    dept: 'HR'          },
-      { id: 12, name: 'Leo Anderson',    dept: 'Finance'     },
-      { id: 13, name: 'Mia Taylor',      dept: 'Engineering' },
-      { id: 14, name: 'Noah Thomas',     dept: 'Design'      },
-      { id: 15, name: 'Olivia White',    dept: 'Marketing'   },
-      { id: 16, name: 'Peter Harris',    dept: 'Engineering' },
-      { id: 17, name: 'Quinn Martin',    dept: 'Finance'     },
-      { id: 18, name: 'Rachel Lee',      dept: 'Design'      },
-      { id: 19, name: 'Sam Clark',       dept: 'HR'          },
-      { id: 20, name: 'Tina Walker',     dept: 'Engineering' },
-    ]
-    const user = { ...users[id - 1] }
-    if (id === 7) user.flag = HIDDEN_FLAG
-    return json(user, id === 7 ? HIDDEN_FLAG : undefined)
-  }
-
-  const isAuth = req.cookies.session === 'authenticated-user'
-
-  const userCards = [
-    [1,'Alice Chen','Engineering'],[2,'Bob Martinez','Marketing'],[3,'Carol Smith','Design'],
-    [4,'Dave Johnson','Engineering'],[5,'Eve Williams','HR'],[6,'Frank Brown','Finance'],
-    [7,'Grace Lee','Executive'],[8,'Henry Davis','Engineering'],[9,'Ivy Wilson','Design'],
-    [10,'Jack Thompson','Marketing'],[11,'Karen Garcia','HR'],[12,'Leo Anderson','Finance'],
-    [13,'Mia Taylor','Engineering'],[14,'Noah Thomas','Design'],[15,'Olivia White','Marketing'],
-    [16,'Peter Harris','Engineering'],[17,'Quinn Martin','Finance'],[18,'Rachel Lee','Design'],
-    [19,'Sam Clark','HR'],[20,'Tina Walker','Engineering']
-  ].map(([id, name, dept]) =>
-    `<div class="card"><span class="badge">${id}</span><h3>${name}</h3><p>${dept}</p></div>`
-  ).join('\n')
-
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>HiddenAPI — Employee Portal</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;min-height:100vh}
-.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at top,#1E293B,#0F172A)}
-.login-box{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:40px;width:360px}
-.login-box h1{font-size:20px;color:#F1F5F9;margin-bottom:4px}.login-box .sub{color:#94A3B8;font-size:13px;margin-bottom:24px}
-.login-box label{display:block;color:#94A3B8;font-size:12px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.login-box input{width:100%;padding:10px 12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;font-size:14px;margin-bottom:16px;outline:none}
-.login-box input:focus{border-color:#3B82F6}.login-box .hint{font-size:12px;color:#64748B;margin-bottom:20px;padding:8px 12px;background:#0F172A;border-radius:6px;font-family:monospace;text-align:center}
-.login-box button{width:100%;padding:10px;background:#3B82F6;border:none;border-radius:6px;color:#fff;font-size:14px;cursor:pointer}
-.login-box button:hover{background:#2563EB}.login-box .error{color:#EF4444;font-size:13px;margin-bottom:12px;display:none}
-.container{max-width:960px;margin:0 auto;padding:32px 20px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
-header h1{font-size:22px;color:#F1F5F9}header .logout{color:#94A3B8;font-size:13px;cursor:pointer;text-decoration:underline}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:16px;position:relative;cursor:default}
-.card .badge{position:absolute;top:8px;right:8px;background:#3B82F6;color:#fff;font-size:10px;border-radius:4px;padding:2px 6px;font-weight:700}
-.card h3{font-size:14px;color:#F1F5F9;margin-bottom:4px}.card p{font-size:12px;color:#94A3B8}
-.hint-bar{margin-top:24px;padding:12px 16px;background:#1E293B;border:1px solid #334155;border-radius:8px;font-size:13px;color:#94A3B8;text-align:center}
-.hint-bar code{color:#3B82F6;background:#0F172A;padding:2px 6px;border-radius:4px;font-size:12px}
-.card.flag{box-shadow:inset 0 0 0 2px #EF4444;opacity:.4;pointer-events:none}
-.card.flag .badge{background:#EF4444}</style></head><body>
-${isAuth ? `
-<div class="container">
-<header><h1>Employee Directory</h1><span class="logout" onclick="document.cookie='session=;Path=/;Max-Age=0';location.reload()">logout</span></header>
-<div class="grid">${userCards}</div>
-<div class="hint-bar">Access employee details via the internal API: <code>api/users/N</code></div>
-</div>` : `
-<div class="login-page">
-<div class="login-box">
-<h1>Employee Portal</h1>
-<p class="sub">Sign in to access the directory</p>
-<div class="error" id="err">Invalid credentials</div>
-<form id="loginForm">
-<label>Username</label><input type="text" name="username" value="admin">
-<label>Password</label><input type="password" name="password" value="admin123">
-<div class="hint">Demo credentials pre-filled above</div>
-<button type="submit">Sign In</button>
-</form>
-</div>
-<script>(function(){var f=document.getElementById('loginForm');f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f);fetch('api/login',{method:'POST',body:new URLSearchParams(d)}).then(function(r){return r.json()}).then(function(j){if(j.ok){location.reload()}else{document.getElementById('err').style.display='block'}}).catch(function(){})})})()</script>
-</div>`}
-</body></html>`)
-}
 
 // 12 — IDOR Inbox
 const IDOR_FLAG = 'CGS{1nc0rr3ct_d1r3ct_0bj3ct_r3f3r3nc3s}'
@@ -1144,7 +1036,6 @@ export const documentChallenges: ChallengeDef[] = [
   { slug: 'cookiecrumbs',      title: 'CookieCrumbs',      handler: cookieHandler },
   { slug: 'tokenpeek',         title: 'TokenPeek',         handler: tokenPeekHandler },
   { slug: 'localvault',        title: 'LocalVault',        handler: localVaultHandler },
-  { slug: 'hiddenapi',         title: 'HiddenAPI',         handler: hiddenApiHandler },
   { slug: 'idor-inbox',        title: 'IDOR Inbox',        handler: idorHandler },
   { slug: 'reflectednote',     title: 'ReflectedNote',     handler: reflectedNoteHandler },
   { slug: 'nonealg',           title: 'NoneAlg',           handler: noneAlgHandler },
