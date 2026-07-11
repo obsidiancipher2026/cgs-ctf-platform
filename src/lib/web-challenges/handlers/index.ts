@@ -1,18 +1,26 @@
 import { ChallengeDef } from '../types'
 import {
-  hiddenInPlainSight, cookieJar, viewSource, guestVsAdmin,
-  pathAsParameter, apiRateLimitRace, sqliSpeakeasy, pathLessTraveled, blindSqli,
-  nosqlInjection, ssti, openRedirect, corsChallenge, idor, ssrf, xss,
-  prototypePollution, jwtNone, csrf, xxe, raceCondition, webCachePoisoning,
-} from './challenges'
+  robotsOnly, cookieMonster, viewSourceWontSaveYou, theParameterWhisperer,
+  headerGames, loginOptional, directoryOfSecrets, cacheMeIfYouCan,
+  theRedirectTrap, formOfTruth, blindAsABat, templateTrouble,
+  xssMarksTheSpot, raceToTheFlag, jwtNone, thePathLessTraveled,
+  deserializeThis, corsYouLater, graphqlGauntlet, theUploadZone,
+  ssrfToTheCloud, prototypeChaos, smugglersRoute, cachePoisoningCarnival,
+  xxeMarksAnotherSpot, theChainedExploit, secondOrderInjection,
+  websocketWhisper, crypticSignature, theSandboxEscape,
+} from './document-challenges'
 
 export const challengeHandlers: Record<string, ChallengeDef> = {}
 
 const defs: ChallengeDef[] = [
-  hiddenInPlainSight, cookieJar, viewSource, guestVsAdmin,
-  pathAsParameter, apiRateLimitRace, sqliSpeakeasy, pathLessTraveled, blindSqli,
-  nosqlInjection, ssti, openRedirect, corsChallenge, idor, ssrf, xss,
-  prototypePollution, jwtNone, csrf, xxe, raceCondition, webCachePoisoning,
+  robotsOnly, cookieMonster, viewSourceWontSaveYou, theParameterWhisperer,
+  headerGames, loginOptional, directoryOfSecrets, cacheMeIfYouCan,
+  theRedirectTrap, formOfTruth, blindAsABat, templateTrouble,
+  xssMarksTheSpot, raceToTheFlag, jwtNone, thePathLessTraveled,
+  deserializeThis, corsYouLater, graphqlGauntlet, theUploadZone,
+  ssrfToTheCloud, prototypeChaos, smugglersRoute, cachePoisoningCarnival,
+  xxeMarksAnotherSpot, theChainedExploit, secondOrderInjection,
+  websocketWhisper, crypticSignature, theSandboxEscape,
 ]
 
 for (const def of defs) {
