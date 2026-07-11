@@ -581,6 +581,10 @@ button{padding:10px 24px;background:#e94560;border:none;color:#fff;border-radius
 const NONEALG_FLAG = 'CGS{n3v3r_tru5t_th3_4l6_h34d3r}'
 const noneAlgHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.path === '/api/login') {
+    const params = new URLSearchParams(req.body || '')
+    const user = params.get('username')
+    const pass = params.get('password')
+    if (user !== 'admin' || pass !== 'secret123') return json({ error: 'Invalid credentials' })
     const token = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url').replace(/=+$/, '') + '.' + Buffer.from(JSON.stringify({ user: 'guest', admin: false })).toString('base64url').replace(/=+$/, '') + '.signature'
     return json({ token })
   }
@@ -591,25 +595,33 @@ const noneAlgHandler = (req: PlaygroundRequest): PlaygroundResponse => {
       const parts = token.split('.')
       const header = JSON.parse(Buffer.from(parts[0], 'base64url').toString())
       const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString())
-      if (header.alg === 'none' || (payload && payload.admin === true)) {
-        if (payload.admin === true) return json({ flag: NONEALG_FLAG })
-      }
+      if ((header.alg === 'none') && payload.admin === true) return json({ flag: NONEALG_FLAG })
     } catch {}
     return errJson(403, 'forbidden')
   }
   return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Admin Login</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;display:flex;flex-direction:column;align-items:center;padding:80px 20px}
-h1{color:#EF4444;margin-bottom:8px}.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:24px;width:360px;margin-top:20px}
+h1{color:#EF4444;margin-bottom:8px}.card{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:24px;width:420px;margin-top:20px}
 label{display:block;font-size:13px;color:#94A3B8;margin-bottom:4px}input{width:100%;padding:10px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;margin-bottom:12px;font-size:14px}
 button{width:100%;padding:12px;background:#EF4444;border:none;color:#fff;border-radius:6px;font-weight:600;cursor:pointer}
-.banner{background:#1E293B;border:1px solid #F59E0B;border-radius:6px;padding:12px;margin-top:16px;font-size:12px;color:#F59E0B;text-align:center}
-#result{color:#94A3B8;font-size:13px;margin-top:12px;text-align:center}</style></head><body>
+#result{color:#94A3B8;font-size:13px;margin-top:12px;text-align:center;white-space:pre-wrap;word-break:break-all}
+.token-box{margin-top:12px;background:#0F172A;border:1px solid #334155;border-radius:6px;padding:10px;font-family:monospace;font-size:11px;color:#F59E0B;word-break:break-all;display:none;max-height:120px;overflow-y:auto}
+.hint{color:#64748B;font-size:12px;margin-top:16px;padding:12px;background:#1E293B;border:1px solid #334155;border-radius:6px;text-align:center}
+.hint code{color:#EF4444;font-family:monospace;font-size:11px;background:#0F172A;padding:2px 6px;border-radius:3px}
+.cred{color:#94A3B8;font-size:12px;margin-bottom:16px;padding:8px 12px;background:#0F172A;border:1px dashed #334155;border-radius:6px;text-align:center}
+.cred span{font-family:monospace;color:#EF4444;font-weight:600}</style></head><body>
 <h1>Admin Console</h1><p style="color:#94A3B8">Restricted access. Authorized personnel only.</p>
-<div class="card"><label>Username</label><input type="text" id="user" value="admin"><label>Password</label><input type="password" id="pass">
-<button id="loginBtn">Authenticate</button><div class="banner">Brute force protection enabled. 3 remaining attempts.</div>
-<div id="result"></div></div>
+<div class="card">
+<div class="cred">Demo credentials: <span>admin</span> / <span>secret123</span></div>
+<label>Username</label><input type="text" id="user" value="admin">
+<label>Password</label><input type="password" id="pass" value="secret123">
+<button id="loginBtn">Authenticate</button>
+<div id="result"></div>
+<div id="tokenDisplay" class="token-box"></div>
+</div>
+<div class="hint">API: <code>api/login</code> &bull; <code>api/admin/flag</code> &bull; How does the server verify the token's algorithm?</div>
 <p style="color:#475569;font-size:11px;margin-top:20px">CGS Internal Tools &bull; v3.1</p>
-<script>document.getElementById('loginBtn').addEventListener('click',function(){document.getElementById('result').textContent='Invalid credentials. Access denied.'})</script></body></html>`)
+<script>document.getElementById('loginBtn').addEventListener('click',async function(){var d=new FormData();d.append('username',document.getElementById('user').value);d.append('password',document.getElementById('pass').value);var r=await fetch('api/login',{method:'POST',body:new URLSearchParams(d)});var j=await r.json();if(j.token){document.getElementById('result').style.color='#10B981';document.getElementById('result').textContent='Authenticated. Your token:';document.getElementById('tokenDisplay').textContent=j.token;document.getElementById('tokenDisplay').style.display='block'}else{document.getElementById('result').style.color='#EF4444';document.getElementById('result').textContent=j.error;document.getElementById('tokenDisplay').style.display='none'}})</script></body></html>`)
 }
 
 // 15 — RateDodge
