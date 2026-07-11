@@ -367,8 +367,7 @@ export default function AdminPage() {
 
   const loadMaintenance = async () => {
     try {
-      const res = await fetch('/api/admin/maintenance', { credentials: 'include' });
-      const data = await res.json();
+      const data = await api.getMaintenance();
       setMaintenanceEnabled(data.enabled);
       setMaintenanceMessage(data.message || 'The site is currently under maintenance. Please check back later.');
     } catch {}
@@ -377,18 +376,12 @@ export default function AdminPage() {
   const handleToggleMaintenance = async () => {
     setMaintenanceLoading(true);
     try {
-      const res = await fetch('/api/admin/maintenance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ enabled: !maintenanceEnabled }),
-      });
-      const data = await res.json();
+      const data = await api.setMaintenance({ enabled: !maintenanceEnabled });
       setMaintenanceEnabled(data.enabled);
       setMaintenanceMessage(data.message);
       toast.success(data.enabled ? 'Maintenance mode ON' : 'Maintenance mode OFF');
     } catch (err: any) {
-      toast.error('Failed to toggle maintenance mode');
+      toast.error(err?.response?.data?.detail || 'Failed to toggle maintenance mode');
     }
     setMaintenanceLoading(false);
   };
@@ -396,17 +389,11 @@ export default function AdminPage() {
   const handleUpdateMaintenanceMessage = async () => {
     setMaintenanceLoading(true);
     try {
-      const res = await fetch('/api/admin/maintenance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ message: maintenanceMessage }),
-      });
-      const data = await res.json();
+      const data = await api.setMaintenance({ message: maintenanceMessage });
       setMaintenanceMessage(data.message);
       toast.success('Maintenance message updated');
     } catch (err: any) {
-      toast.error('Failed to update message');
+      toast.error(err?.response?.data?.detail || 'Failed to update message');
     }
     setMaintenanceLoading(false);
   };

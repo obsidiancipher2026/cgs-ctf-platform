@@ -339,5 +339,6 @@ export function getClientIp(request: Request): string {
   if (forwarded && isValidIp(forwarded)) return forwarded
   const realIp = request.headers.get('x-real-ip')
   if (realIp && isValidIp(realIp)) return realIp
+  if (process.env.NODE_ENV === 'development') return '127.0.0.1'
   return 'unknown'
 }

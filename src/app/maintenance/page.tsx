@@ -1,17 +1,26 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Wrench } from 'lucide-react'
 
-export default function MaintenancePage() {
-  const [message, setMessage] = useState('The site is currently under maintenance. Please check back later.')
+const DEFAULT_MESSAGE = 'The site is currently under maintenance. Please check back later.'
+
+function MaintenanceContent() {
+  const searchParams = useSearchParams()
+  const [message, setMessage] = useState(DEFAULT_MESSAGE)
 
   useEffect(() => {
-    fetch('/maintenance.json')
-      .then(r => r.json())
-      .then(data => { if (data.message) setMessage(data.message) })
+    const fromQuery = searchParams.get('msg')
+    if (fromQuery) {
+      setMessage(fromQuery)
+      return
+    }
+    fetch('/api/maintenance', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((data) => { if (data.message) setMessage(data.message) })
       .catch(() => {})
-  }, [])
+  }, [searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base px-4">
@@ -26,5 +35,13 @@ export default function MaintenancePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function MaintenancePage() {
+  return (
+    <Suspense fallback={null}>
+      <MaintenanceContent />
+    </Suspense>
   )
 }

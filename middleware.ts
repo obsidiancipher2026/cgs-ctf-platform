@@ -1,16 +1,33 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-export const runtime = 'nodejs'
+import { isAdminAccessToken } from '@/lib/edge-auth'
 
 const PUBLIC_PATHS = ['/', '/login', '/register', '/about', '/announcements', '/challenges', '/maintenance']
 
-function getMaintenanceStatus(): { enabled: boolean; message: string } {
+const MAINTENANCE_EXEMPT_PATHS = [
+  '/maintenance',
+  '/api/maintenance',
+  '/lenaPretsaMdliuG',
+  '/api/auth/admin/login',
+  '/api/auth/refresh',
+  '/api/auth/csrf-token',
+  '/api/auth/logout',
+]
+
+function isMaintenanceExempt(pathname: string): boolean {
+  return MAINTENANCE_EXEMPT_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + '/'),
+  )
+}
+
+async function fetchMaintenanceStatus(request: NextRequest): Promise<{ enabled: boolean; message: string }> {
   try {
-    const { readFileSync } = require('fs')
-    const { join } = require('path')
-    const data = readFileSync(join(process.cwd(), 'public', 'maintenance.json'), 'utf-8')
-    return JSON.parse(data)
+    const res = await fetch(new URL('/api/maintenance', request.url), {
+      cache: 'no-store',
+      headers: { 'x-maintenance-check': '1' },
+    })
+    if (!res.ok) return { enabled: false, message: '' }
+    return await res.json()
   } catch {
     return { enabled: false, message: '' }
   }
@@ -52,6 +69,34 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  if (!isMaintenanceExempt(pathname)) {
+    const maintenance = await fetchMaintenanceStatus(request)
+    if (maintenance.enabled) {
+      const accessToken = request.cookies.get('access_token')?.value
+      const jwtSecret = process.env.JWT_SECRET
+      const isAdmin =
+        !!accessToken && !!jwtSecret && (await isAdminAccessToken(accessToken, jwtSecret))
+
+      if (!isAdmin) {
+        if (pathname.startsWith('/api/')) {
+          return NextResponse.json(
+            {
+              detail: 'Site is under maintenance',
+              message: maintenance.message,
+            },
+            { status: 503 },
+          )
+        }
+
+        const maintUrl = new URL('/maintenance', request.url)
+        if (maintenance.message) {
+          maintUrl.searchParams.set('msg', maintenance.message)
+        }
+        return NextResponse.redirect(maintUrl)
+      }
+    }
+  }
+
   const accessToken = request.cookies.get('access_token')?.value
   const isPublic = PUBLIC_PATHS.includes(pathname)
 
@@ -65,20 +110,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
-  const maintenance = getMaintenanceStatus()
-  if (maintenance.enabled) {
-    const isAdmin = pathname.startsWith('/lenaPretsaMdliuG') || pathname.startsWith('/api/admin') || pathname.startsWith('/api/auth/admin')
-    if (!isAdmin && pathname !== '/maintenance') {
-      const maintenanceUrl = new URL('/maintenance', request.url)
-      return NextResponse.redirect(maintenanceUrl)
-    }
-  }
-
   return response
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

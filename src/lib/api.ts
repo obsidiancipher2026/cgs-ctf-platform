@@ -255,6 +255,16 @@ class ApiClient {
     return data;
   }
 
+  async getMaintenance() {
+    const { data } = await this.client.get('/api/admin/maintenance');
+    return data;
+  }
+
+  async setMaintenance(payload: { enabled?: boolean; message?: string }) {
+    const { data } = await this.client.post('/api/admin/maintenance', payload);
+    return data;
+  }
+
   async updateProfile(data: { username?: string; email?: string; college?: string; country?: string }) {
     const { data: res } = await this.client.put('/api/auth/profile', data);
     return res;

@@ -1,12 +1,8 @@
-import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { jsonResponse } from '@/lib/auth'
+import { getMaintenanceStatus } from '@/lib/maintenance'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  const enabled = await prisma.securityConfig.findUnique({ where: { key: 'maintenance_mode' } })
-  const message = await prisma.securityConfig.findUnique({ where: { key: 'maintenance_message' } })
-
-  return NextResponse.json({
-    enabled: enabled?.value === 'true',
-    message: message?.value || 'The site is currently under maintenance. Please check back later.',
-  })
+  return jsonResponse(await getMaintenanceStatus())
 }
