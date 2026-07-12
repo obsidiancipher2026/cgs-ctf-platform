@@ -981,82 +981,7 @@ footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></
 document.getElementById('url').addEventListener('keydown',function(e){if(e.key==='Enter')preview()})</script></body></html>`)
 }
 
-// 21 — DeserialBomb
-const DESER_FLAG = 'CGS{1ns3cur3_d3s3r14l1zat10n_1s_rc3}'
-const deserialBombHandler = (req: PlaygroundRequest): PlaygroundResponse => {
-  if (req.method === 'POST' && req.path === '/save') {
-    let prefs = ''
-    try { prefs = JSON.stringify(JSON.parse(req.body || '{}')) } catch { prefs = req.body || '{}' }
-    return { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': `prefs=${encodeURIComponent(prefs)}; Path=/; HttpOnly=false` }, body: JSON.stringify({ status: 'saved' }) }
-  }
-  // GET / — read cookie, check for dangerous patterns, render page
-  const raw = req.cookies.prefs ? decodeURIComponent(req.cookies.prefs) : ''
-  let parsed
-  try { parsed = JSON.parse(raw) } catch { parsed = null }
-  const isMalicious = raw.includes('_$$ND_FUNC$$_') || raw.includes('function') || raw.includes('require(') || raw.includes('readFileSync')
-  const flagBlock = isMalicious
-    ? `<div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:8px;padding:20px;margin-bottom:16px">
-        <h3 style="color:#EF4444;margin-bottom:8px">Deserialization Error</h3>
-        <p style="color:#EF4444;font-family:monospace;font-size:13px;word-break:break-all">Error: ${DESER_FLAG}</p>
-        <p style="color:#94A3B8;font-size:12px;margin-top:8px">The server detected unsafe patterns in your serialized preferences cookie.</p>
-       </div>`
-    : ''
-  const defaultPrefs = parsed || { theme: 'dark', fontSize: 14 }
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Preferences</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;padding:40px;max-width:600px;margin:0 auto}
-h1{color:#8B5CF6;margin-bottom:8px}.sub{color:#94A3B8;font-size:14px;margin-bottom:24px}
-.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:20px;margin-bottom:16px}
-.card h3{font-size:13px;color:#94A3B8;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
-.setting{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1a1a2e;font-size:14px}
-.setting:last-child{border-bottom:none}
-label{display:block;font-size:12px;color:#94A3B8;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
-textarea{width:100%;padding:12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#8B5CF6;font-family:'Courier New',monospace;font-size:13px;min-height:140px;resize:vertical;margin-bottom:16px;line-height:1.5}
-textarea:focus{outline:none;border-color:#8B5CF6}
-.btn-row{display:flex;gap:8px;margin-bottom:16px}
-button{padding:10px 24px;border:none;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer}
-.btn-save{background:#8B5CF6;color:#fff}.btn-save:hover{opacity:0.9}
-.btn-reset{background:#1F2937;color:#9CA3AF;border:1px solid #374151}
-.btn-reset:hover{background:#374151}
-.info{color:#94A3B8;font-size:12px;padding:12px;background:#1E293B;border:1px solid #8B5CF6;border-radius:6px;margin-bottom:16px}
-.info code{color:#8B5CF6;background:#0F172A;padding:1px 5px;border-radius:3px;font-size:11px}
-.toast{padding:10px 16px;border-radius:6px;font-size:13px;margin-top:8px;display:none}
-.toast.ok{display:block;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#10B981}
-.toast.err{display:block;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#EF4444}
-footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></head><body>
-<h1>User Preferences</h1><p class="sub">Edit your preferences below. Changes are stored in a cookie.</p>
-${flagBlock}
-<div class="card"><h3>Current Settings</h3>
-<div class="setting"><span>Theme</span><span style="color:#8B5CF6">${defaultPrefs.theme || 'dark'}</span></div>
-<div class="setting"><span>Font Size</span><span>${defaultPrefs.fontSize || 14}px</span></div>
-<div class="setting"><span>Notifications</span><span>enabled</span></div></div>
-<div class="info">Preferences are serialized to a cookie using <code>JSON.stringify()</code> and deserialized on load using <code>JSON.parse()</code>. The server reconstructs your settings from the cookie on every request.</div>
-<label>Raw Preferences (JSON)</label>
-<textarea id="editor">${JSON.stringify(defaultPrefs, null, 2)}</textarea>
-<div class="btn-row"><button class="btn-save" id="saveBtn">Save Preferences</button><button class="btn-reset" id="resetBtn">Reset</button></div>
-<div id="toast" class="toast"></div>
-<footer>CGS Internal &bull; v2.0</footer>
-<script>
-document.getElementById('saveBtn').addEventListener('click',async function(){
-  var raw=document.getElementById('editor').value;
-  try{JSON.parse(raw)}catch(e){showToast('Invalid JSON: '+e.message,true);return}
-  var r=await fetch('save',{method:'POST',headers:{'Content-Type':'application/json'},body:raw});
-  if(r.ok){showToast('Saved! Reloading...');setTimeout(function(){location.reload()},600)}
-  else{showToast('Save failed',true)}
-});
-document.getElementById('resetBtn').addEventListener('click',function(){
-  document.getElementById('editor').value=JSON.stringify({theme:'dark',fontSize:14},null,2);
-  showToast('Reset to defaults');
-});
-function showToast(msg,err){
-  var t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className=err?'toast err':'toast ok';
-  setTimeout(function(){t.className='toast'},3000);
-}
-</script></body></html>`)
-}
-
-// 22 — JWTCrack
+// 21 — JWTCrack
 const JWTCRACK_FLAG = 'CGS{w34k_hm4c_s3cr3ts_f4ll_t0_wordl1sts}'
 const JWT_SECRET = 'cgs2024'
 function signToken(payload: any, secret: string): string {
@@ -1305,7 +1230,7 @@ export const documentChallenges: ChallengeDef[] = [
   { slug: 'sqlilogin',         title: 'SQLiLogin',         handler: sqliLoginHandler },
   { slug: 'blindbool',         title: 'BlindBool',         handler: blindBoolHandler },
   { slug: 'ssrfetch',          title: 'SSRFetch',          handler: ssrfetchHandler },
-  { slug: 'deserialbomb',      title: 'DeserialBomb',      handler: deserialBombHandler },
+
   { slug: 'jwtcrack',          title: 'JWTCrack',          handler: jwtCrackHandler },
   { slug: 'racewin',           title: 'RaceWin',           handler: raceWinHandler },
   { slug: 'protopollute',      title: 'ProtoPollute',      handler: protoPolluteHandler },

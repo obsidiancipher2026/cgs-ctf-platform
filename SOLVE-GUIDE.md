@@ -1,6 +1,6 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **25 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **24 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > All challenges are accessible via `/standalone/{slug}` on the platform.
 > Every challenge is solvable with just a browser (DevTools) and optionally `curl` or a scripting language.
@@ -30,13 +30,12 @@
 - [Hard Tier (400 pts each)](#hard-tier)
   - [17. BlindBool](#17-blindbool)
   - [18. SSRFetch](#18-ssrfetch)
-  - [19. DeserialBomb](#19-deserialbomb)
-  - [20. JWTCrack](#20-jwtcrack)
-  - [21. RaceWin](#21-racewin)
-  - [22. ProtoPollute](#22-protopollute)
-  - [23. SSTI Render](#23-ssti-render)
-  - [24. XXEcho](#24-xxecho)
-  - [25. CORSChain](#25-corschain)
+  - [19. JWTCrack](#19-jwtcrack)
+  - [20. RaceWin](#20-racewin)
+  - [21. ProtoPollute](#21-protopollute)
+  - [22. SSTI Render](#22-ssti-render)
+  - [23. XXEcho](#23-xxecho)
+  - [24. CORSChain](#24-corschain)
 
 ---
 
@@ -435,33 +434,7 @@
 
 ---
 
-### 19. DeserialBomb
-
-**Concept:** Insecure deserialization — the server deserializes user-controlled cookie data unsafely.
-
-**Solve Steps:**
-
-1. Open the challenge — you'll see a Preferences page with a JSON editor.
-2. The page shows your current settings as editable JSON and a "Save Preferences" button.
-3. When you save, the JSON is stored in a `prefs` cookie. On the next request, the server deserializes it.
-4. Edit the JSON to include a dangerous keyword. Replace the contents with:
-   ```json
-   {"theme":"dark","fontSize":14,"hook":"function(){return require('fs').readFileSync('flag.txt')}"}
-   ```
-   Or simply:
-   ```json
-   {"prefs":"function"}
-   ```
-5. Click **Save Preferences**.
-6. The page reloads, the server reads the cookie, detects the `function` keyword during deserialization, and returns the flag in the error response.
-
-> **Hint:** The server uses `JSON.parse()` on your cookie value and then checks for dangerous patterns. Add `function` to your JSON to trigger detection.
-
-**Flag:** `CGS{1ns3cur3_d3s3r14l1zat10n_1s_rc3}`
-
----
-
-### 20. JWTCrack
+### 19. JWTCrack
 
 **Concept:** Weak JWT secret — the HMAC secret is a dictionary word that can be cracked offline.
 
@@ -490,7 +463,7 @@
 
 ---
 
-### 21. RaceWin
+### 20. RaceWin
 
 **Concept:** TOCTOU race condition — the redeem check reads state, then writes state as two non-atomic steps.
 
@@ -512,7 +485,7 @@
 
 ---
 
-### 22. ProtoPollute
+### 21. ProtoPollute
 
 **Concept:** Prototype pollution via an unsafe deep-merge of user JSON into server config.
 
@@ -532,7 +505,7 @@
 
 ---
 
-### 23. SSTI Render
+### 22. SSTI Render
 
 **Concept:** Server-Side Template Injection — user input rendered through EJS with no sandbox.
 
@@ -556,7 +529,7 @@
 
 ---
 
-### 24. XXEcho
+### 23. XXEcho
 
 **Concept:** XXE (XML External Entity) injection — the XML parser resolves external entities with no restrictions.
 
@@ -584,7 +557,7 @@
 
 ---
 
-### 25. CORSChain
+### 24. CORSChain
 
 **Concept:** Reflected CORS with credentials — `/api/session-info` reflects any Origin and allows credentialed requests.
 
