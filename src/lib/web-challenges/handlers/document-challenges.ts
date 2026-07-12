@@ -1006,14 +1006,15 @@ const jwtCrackHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS API Console</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;padding:40px;max-width:600px;margin:0 auto}
 h1{color:#EC4899;margin-bottom:20px}.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:20px;margin-bottom:16px}
-.card h3{font-size:13px;color:#94A3B8;margin-bottom:8px}pre{background:#0F172A;padding:12px;border-radius:6px;font-size:12px;color:#EC4899;overflow-x:auto}
+.card h3{font-size:13px;color:#94A3B8;margin-bottom:8px}textarea{width:100%;padding:12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#EC4899;font-family:monospace;font-size:12px;min-height:80px;resize:vertical;word-break:break-all}
+textarea:focus{outline:none;border-color:#EC4899}
 button{padding:10px 20px;background:#EC4899;border:none;color:#fff;border-radius:6px;font-weight:600;cursor:pointer;margin-right:8px}
 #result{color:#94A3B8;font-size:13px;margin-top:12px;white-space:pre-wrap}</style></head><body>
-<h1>CGS API Console</h1><div class="card"><h3>Current Token</h3><pre id="token">Loading...</pre></div>
+<h1>CGS API Console</h1><div class="card"><h3>Current Token</h3><textarea id="token" readonly>Loading...</textarea></div>
 <button id="getToken">Get Token</button><button id="adminBtn">Access Admin</button><div id="result"></div>
 <footer>CGS Internal API &bull; v3.0</footer>
-<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('api/login');var d=await r.json();document.getElementById('token').textContent=d.token});
-document.getElementById('adminBtn').addEventListener('click',async function(){var r=await fetch('api/admin',{headers:{Authorization:'Bearer '+document.getElementById('token').textContent}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
+<script>document.getElementById('getToken').addEventListener('click',async function(){var r=await fetch('api/login');var d=await r.json();document.getElementById('token').value=d.token;document.getElementById('token').removeAttribute('readonly')});
+document.getElementById('adminBtn').addEventListener('click',async function(){var r=await fetch('api/admin',{headers:{Authorization:'Bearer '+document.getElementById('token').value}});var d=await r.json();document.getElementById('result').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
 // 23 — RaceWin
