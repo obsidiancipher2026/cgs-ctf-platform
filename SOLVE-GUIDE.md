@@ -1,6 +1,6 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **26 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **25 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > All challenges are accessible via `/standalone/{slug}` on the platform.
 > Every challenge is solvable with just a browser (DevTools) and optionally `curl` or a scripting language.
@@ -28,16 +28,15 @@
   - [15. GraphIntrospect](#15-graphintrospect)
   - [16. PathPeek](#16-pathpeek)
 - [Hard Tier (400 pts each)](#hard-tier)
-  - [17. SQLiLogin](#17-sqlogin)
-  - [18. BlindBool](#18-blindbool)
-  - [19. SSRFetch](#19-ssrfetch)
-  - [20. DeserialBomb](#20-deserialbomb)
-  - [21. JWTCrack](#21-jwtcrack)
-  - [22. RaceWin](#22-racewin)
-  - [23. ProtoPollute](#23-protopollute)
-  - [24. SSTI Render](#24-ssti-render)
-  - [25. XXEcho](#25-xxecho)
-  - [26. CORSChain](#26-corschain)
+  - [17. BlindBool](#17-blindbool)
+  - [18. SSRFetch](#18-ssrfetch)
+  - [19. DeserialBomb](#19-deserialbomb)
+  - [20. JWTCrack](#20-jwtcrack)
+  - [21. RaceWin](#21-racewin)
+  - [22. ProtoPollute](#22-protopollute)
+  - [23. SSTI Render](#23-ssti-render)
+  - [24. XXEcho](#24-xxecho)
+  - [25. CORSChain](#25-corschain)
 
 ---
 
@@ -389,38 +388,7 @@
 
 ## Hard Tier
 
-### 17. SQLiLogin
-
-**Concept:** SQL injection with WAF bypass + UNION-based data extraction from a separate table.
-
-**Solve Steps:**
-
-1. Open the login page. The error response shows the full query structure:
-   ```sql
-   SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '...' AND u.password = '...' AND r.active = 1
-   ```
-2. Try a basic injection like `admin' --` — the WAF blocks it because `--` is a line comment marker.
-3. Try `admin' UNION SELECT...` — blocked because `UNION` and `SELECT` are keyword patterns.
-4. The WAF blocks SQL keywords case-insensitively (`UNION`, `SELECT`, etc.) AND line comment markers (`--`, `#`). But it does **not** block block comments (`/* */`) — this is the flaw.
-5. Use **inline block comments** to break up keywords so the WAF regex doesn't match as whole words:
-   ```
-   ' UN/**/ION SEL/**/ECT 1,key,value FROM secrets WHERE '1'='1
-   ```
-   `UN/**/ION` doesn't match `\bUNION\b` because `/**/` splits the word. The server's SQL parser ignores the empty comments and executes `UNION SELECT`.
-6. This payload:
-   - Breaks out of the username string with `'`
-   - Uses `UN/**/ION SEL/**/ECT` to bypass the keyword filter
-   - Selects from the `secrets` table (where the flag is stored)
-   - The `WHERE '1'='1` closes the original query's trailing quote
-7. The server returns `Welcome admin.` followed by the extracted flag.
-
-> **Key Insight:** A successful login (`admin`/`Sup3rS3cret!`) returns "No flags here" — the flag is in the `secrets` table, not in user credentials. You need UNION injection to extract it, and the WAF's blind spot is block comments (`/* */`).
-
-**Flag:** `CGS{w4f_byp4ss_un10n_3xtr4ct10n_1s_h4rd}`
-
----
-
-### 18. BlindBool
+### 17. BlindBool
 
 **Concept:** Boolean-based blind SQL injection — no error or data output, only "found"/"not found".
 
@@ -446,7 +414,7 @@
 
 ---
 
-### 19. SSRFetch
+### 18. SSRFetch
 
 **Concept:** Server-Side Request Forgery — the link preview fetches URLs server-side with no allowlist.
 
@@ -467,7 +435,7 @@
 
 ---
 
-### 20. DeserialBomb
+### 19. DeserialBomb
 
 **Concept:** Insecure deserialization — the `prefs` cookie triggers code execution when it contains function-related keywords.
 
@@ -489,7 +457,7 @@
 
 ---
 
-### 21. JWTCrack
+### 20. JWTCrack
 
 **Concept:** Weak JWT secret — the HMAC secret is a dictionary word that can be cracked offline.
 
@@ -518,7 +486,7 @@
 
 ---
 
-### 22. RaceWin
+### 21. RaceWin
 
 **Concept:** TOCTOU race condition — the redeem check reads state, then writes state as two non-atomic steps.
 
@@ -540,7 +508,7 @@
 
 ---
 
-### 23. ProtoPollute
+### 22. ProtoPollute
 
 **Concept:** Prototype pollution via an unsafe deep-merge of user JSON into server config.
 
@@ -560,7 +528,7 @@
 
 ---
 
-### 24. SSTI Render
+### 23. SSTI Render
 
 **Concept:** Server-Side Template Injection — user input rendered through EJS with no sandbox.
 
@@ -584,7 +552,7 @@
 
 ---
 
-### 25. XXEcho
+### 24. XXEcho
 
 **Concept:** XXE (XML External Entity) injection — the XML parser resolves external entities with no restrictions.
 
@@ -612,7 +580,7 @@
 
 ---
 
-### 26. CORSChain
+### 25. CORSChain
 
 **Concept:** Reflected CORS with credentials — `/api/session-info` reflects any Origin and allows credentialed requests.
 
