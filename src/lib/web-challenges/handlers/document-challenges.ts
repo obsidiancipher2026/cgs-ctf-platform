@@ -477,8 +477,8 @@ const rateDodgeHandler = (req: PlaygroundRequest): PlaygroundResponse => {
     return json({ status: 'ok', message: 'seen_ips cleared' })
   }
   if (req.path === '/api/vend') {
-    const raw = req.headers['x-forwarded-for'] || ''
-    const key = raw ? raw.split(',')[0].trim() : (req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || 'anonymous')
+    const raw = req.headers['x-client-ip'] || req.headers['x-forwarded-for'] || ''
+    const key = raw ? raw.split(',')[0].trim() : 'anonymous'
     if (seenIps[key]) {
       return { status: 429, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'rate_limited', message: 'This IP has already made a request.', unique_ips_seen: Object.keys(seenIps).length }) }
     }
@@ -509,7 +509,7 @@ footer{color:#334155;font-size:11px;margin-top:32px;text-align:center}
 <div class="topbar"><h1>CGS RateDodge</h1><span>v1.0</span></div>
 <div class="hero"><h2>Flag Vendor</h2><p>A rate limiter guards the flag endpoint. One request per IP. Or does it?</p>
 <div class="vend-card"><h3>Request the flag</h3><button id="vend">Vend Flag</button><div id="out"></div></div>
-<div class="hint"><h4>Hint</h4><p>The server asks the client what IP it's coming from. Vary the <code style="color:#10B981;background:#0B1120;padding:2px 6px;border-radius:4px;font-size:12px">X-Forwarded-For</code> header across requests.</p></div>
+<div class="hint"><h4>Hint</h4><p>The server asks the client what IP it's coming from. Vary the <code style="color:#10B981;background:#0B1120;padding:2px 6px;border-radius:4px;font-size:12px">X-Client-IP</code> header across requests.</p></div>
 <footer>CGS RateDodge &bull; Web Exploitation</footer>
 <script>document.getElementById('vend').addEventListener('click',async function(){var r=await fetch('api/vend');var d=await r.json();document.getElementById('out').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
