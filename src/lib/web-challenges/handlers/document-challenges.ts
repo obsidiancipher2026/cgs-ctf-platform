@@ -759,9 +759,102 @@ document.getElementById('fileSelect').addEventListener('change',loadDoc);loadDoc
 // HARD TIER (10)
 // ═══════════════════════════════════
 
-// 18 — SQLiLogin
-const SQLI_FLAG = 'CGS{cl4ss1c_sql1_n3v3r_r3ally_d13s}'
-const sqliUser = { username: 'admin', password: 'S9x!qP2vLk', role: 'admin' }
+// 18 — SQLiLogin (Hard)
+// Simulated schema:
+//   users  (id INT, username TEXT, password TEXT, role TEXT, role_id INT)
+//   roles  (id INT, name TEXT, active INT)
+//   secrets(id INT, key TEXT, value TEXT)
+// Vulnerable query joins users+roles; flag lives in secrets table.
+// A WAF blocks common SQLi keywords — must be bypassed with case variation
+// or inline comments.  UNION-based extraction required for the flag.
+
+const SQLI_FLAG = 'CGS{w4f_byp4ss_un10n_3xtr4ct10n_1s_h4rd}'
+const sqliUsers = [
+  { id: 1, username: 'admin', password: 'Sup3rS3cret!', role: 'administrator', roleId: 1 },
+  { id: 2, username: 'jdoe', password: 'password123', role: 'user', roleId: 2 },
+  { id: 3, username: 'mwilliams', password: 'letmein', role: 'user', roleId: 2 },
+]
+const sqliRoles = [
+  { id: 1, name: 'administrator', active: 1 },
+  { id: 2, name: 'user', active: 1 },
+]
+const sqliSecrets = [
+  { id: 1, key: 'flag', value: SQLI_FLAG },
+  { id: 2, key: 'db_version', value: 'PostgreSQL 14.9' },
+  { id: 3, key: 'internal_api_key', value: 'cgS-k3y-d0-N0t-Sh4r3' },
+]
+
+// WAF: blocks common SQLi keywords (case-sensitive check on normalized input)
+const WAF_BLOCKED = [
+  /\bUNION\b/i, /\bSELECT\b/i, /\bINSERT\b/i, /\bUPDATE\b/i, /\bDELETE\b/i,
+  /\bDROP\b/i, /\bTRUNCATE\b/i, /\bALTER\b/i, /\bCREATE\b/i, /\bEXEC\b/i,
+  /\bEXECUTE\b/i, /\bSLEEP\b/i, /\bBENCHMARK\b/i, /\bLOAD_FILE\b/i,
+  /\bINTO\s+(OUTFILE|DUMPFILE)\b/i, /\bINFORMATION_SCHEMA\b/i,
+  /\bpg_sleep\b/i, /\bWAITFOR\b/i,
+]
+const WAF_COMMENT = /(--|\/\*|\*\/|#)/i
+
+function wafTriggered(input: string): boolean {
+  if (WAF_COMMENT.test(input)) return true
+  for (const pat of WAF_BLOCKED) {
+    if (pat.test(input)) return true
+  }
+  return false
+}
+
+// Detect UNION-based injection: ' UNION SELECT ... --
+function detectUnionInjection(username: string): string | null {
+  const upper = username.toUpperCase()
+  // Must contain a quote, then UNION and SELECT (with possible inline comments)
+  const cleaned = username.replace(/\/\*.*?\*\//g, '').replace(/\s+/g, ' ')
+  const unionMatch = cleaned.match(/'\s*(OR\s+)?(UNION\s+(ALL\s+)?SELECT)/i)
+  if (!unionMatch) return null
+
+  // Extract the SELECT column list after UNION SELECT
+  const afterUnion = cleaned.slice(cleaned.toUpperCase().indexOf('UNION SELECT') + (cleaned.toUpperCase().includes('ALL SELECT') ? 14 : 12))
+  const columns = afterUnion.split(',').map(c => c.trim()).filter(Boolean)
+
+  // Build a fake row: we return secrets table data when 3+ columns are selected
+  // Column mapping: id, key/value or username/password depending on query
+  if (columns.length >= 2) {
+    // Return the flag as if it came from the secrets table
+    return SQLI_FLAG
+  }
+  return null
+}
+
+// Simulated query execution against our in-memory tables
+function simulateQuery(query: string): { columns: string[], rows: any[][] } | null {
+  const q = query.replace(/\s+/g, ' ').trim()
+
+  // Match the login query: SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '...' AND u.password = '...' AND r.active = 1
+  const loginMatch = q.match(/FROM\s+users\s+u\s+JOIN\s+roles\s+r\s+ON\s+u\.role_id\s*=\s*r\.id\s+WHERE\s+u\.username\s*=\s*'([^']*)'\s+AND\s+u\.password\s*=\s*'([^']*)'/i)
+  if (loginMatch) {
+    const [, user, pass] = loginMatch
+    const found = sqliUsers.find(u => u.username === user && u.password === pass)
+    const activeRole = sqliRoles.find(r => r.active === 1)
+    if (found && activeRole) {
+      return {
+        columns: ['id', 'username', 'role', 'role_id'],
+        rows: [[found.id, found.username, found.role, found.roleId]],
+      }
+    }
+    return { columns: ['id', 'username', 'role', 'role_id'], rows: [] }
+  }
+
+  // Match secrets query (from UNION injection): SELECT ... FROM secrets
+  if (/FROM\s+secrets/i.test(q)) {
+    const cols = q.match(/SELECT\s+(.*?)\s+FROM/i)?.[1] || '*'
+    const colCount = cols.split(',').length
+    // Return flag row padded to match column count
+    const row: (string | number | null)[] = [1, 'flag', SQLI_FLAG]
+    while (row.length < colCount) row.push(null)
+    return { columns: Array.from({ length: colCount }, (_, i) => `col${i}`), rows: [row.slice(0, colCount)] }
+  }
+
+  return null
+}
+
 const sqliLoginHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.method === 'POST' && req.path === '/login') {
     let username = '', password = ''
@@ -774,28 +867,45 @@ const sqliLoginHandler = (req: PlaygroundRequest): PlaygroundResponse => {
       username = params.get('username') || ''
       password = params.get('password') || ''
     }
-    const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`
-    if (username.toLowerCase().includes("' or ") || username.toLowerCase().includes("'--") || username.toLowerCase().includes("' --") || username.includes("'") && username.toLowerCase().includes("or")) {
-      return text(`Welcome admin. ${SQLI_FLAG}`)
+
+    // WAF check — block obvious SQLi keywords
+    if (wafTriggered(username) || wafTriggered(password)) {
+      return { status: 403, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'WAF: Request blocked by security filter.', query: `SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '${username}' AND u.password = '${password}' AND r.active = 1` }) }
     }
-    if (username === sqliUser.username && password === sqliUser.password) {
-      return text(`Welcome admin. ${SQLI_FLAG}`)
+
+    // The vulnerable query (shown to attacker for reconnaissance)
+    const query = `SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '${username}' AND u.password = '${password}' AND r.active = 1`
+
+    // Check for UNION-based injection (requires bypassing WAF first via case/comments)
+    const unionResult = detectUnionInjection(username)
+    if (unionResult) {
+      return text(`Welcome admin.\nQuery executed: ${query}\nResult: ${unionResult}`)
     }
-    return { status: 401, headers: { 'Content-Type': 'text/plain' }, body: 'Invalid credentials' }
+
+    // Normal login
+    const result = simulateQuery(query)
+    if (result && result.rows.length > 0) {
+      const [id, uname, role] = result.rows[0]
+      return text(`Login successful.\nWelcome ${uname} (${role}).\nSession started. No flags here — try harder.`)
+    }
+
+    return { status: 401, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Invalid credentials.', query }) }
   }
   return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Admin Login</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;display:flex;flex-direction:column;align-items:center;padding:80px 20px}
-h1{font-size:28px;color:#EF4444;margin-bottom:4px}.card{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:32px;width:380px;margin-top:24px}
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;display:flex;flex-direction:column;align-items:center;padding:60px 20px}
+h1{font-size:28px;color:#EF4444;margin-bottom:4px}.card{background:#1E293B;border:1px solid #334155;border-radius:12px;padding:32px;width:420px;margin-top:20px}
 label{display:block;font-size:13px;color:#94A3B8;margin-bottom:4px}input{width:100%;padding:12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;margin-bottom:16px;font-size:14px}
 button{width:100%;padding:12px;background:#EF4444;border:none;color:#fff;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer}
 .legacy{color:#F59E0B;font-size:11px;text-align:center;margin-top:12px;padding:8px;background:#1E293B;border:1px solid #F59E0B;border-radius:4px}
-#err{color:#EF4444;font-size:13px;text-align:center;margin-top:12px;display:none}
-footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></head><body>
+.waf{color:#EF4444;font-size:11px;text-align:center;margin-top:8px;padding:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:4px}
+#err{color:#EF4444;font-size:13px;text-align:center;margin-top:12px;display:none;white-space:pre-wrap;font-family:monospace;font-size:12px}
+footer{color:#475569;font-size:11px;margin-top:24px;text-align:center}</style></head><body>
 <h1>Legacy Admin Console</h1><p style="color:#94A3B8;font-size:14px;margin-bottom:4px">CGS Internal — authorized personnel only</p>
 <div class="card"><label>Username</label><input type="text" id="user" value="admin"><label>Password</label><input type="password" id="pass">
-<button id="loginBtn">Log In</button><div class="legacy">Running legacy authentication module v2.1. Please report issues to IT.</div>
+<button id="loginBtn">Log In</button><div class="legacy">Running legacy authentication module v3.7 — patched with WAF v1.2</div>
+<div class="waf">Web Application Firewall active — SQL keywords are monitored</div>
 <div id="err"></div></div><footer>CGS Internal &bull; Confidential</footer>
-<script>document.getElementById('loginBtn').addEventListener('click',async function(){var r=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('user').value,password:document.getElementById('pass').value})});var t=await r.text();if(r.ok){document.getElementById('err').style.color='#10B981';document.getElementById('err').textContent=t}else{document.getElementById('err').style.color='#EF4444';document.getElementById('err').textContent=t}document.getElementById('err').style.display='block'})</script></body></html>`)
+<script>document.getElementById('loginBtn').addEventListener('click',async function(){var r=await fetch('login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('user').value,password:document.getElementById('pass').value})});var t=await r.text();if(r.ok){document.getElementById('err').style.color='#10B981';document.getElementById('err').textContent=t}else{document.getElementById('err').style.color='#EF4444';document.getElementById('err').textContent=t}document.getElementById('err').style.display='block'})</script></body></html>`)
 }
 
 // 19 — BlindBool

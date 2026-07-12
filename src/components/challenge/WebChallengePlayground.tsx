@@ -271,7 +271,7 @@ export default function WebChallengePlayground({ slug }: Props) {
                   srcDoc={srcdoc}
                   className="w-full h-full border-0 bg-white"
                   title="Challenge response"
-                  sandbox="allow-scripts allow-forms allow-modals"
+                  sandbox="allow-scripts allow-forms allow-modals allow-same-origin"
                 />
               ) : (
                 <pre className="p-4 text-xs font-mono text-txt-secondary whitespace-pre-wrap break-all bg-black/20">
