@@ -515,7 +515,18 @@ footer{color:#334155;font-size:11px;margin-top:32px;text-align:center}
 }
 
 // 16 — GraphIntrospect
-const GRAPH_FLAG = 'CGS{1ntr0sp3ct10n_l34ks_th3_wh0l3_sch3m4}'
+const GRAPH_FLAG = 'CGS{gr4ph_1ntr0sp3ct10n_l34ks_th3_wh0l3_sch3m4}'
+const GRAPH_FLAG_ROT13 = 'PTF{te4pu_vag3rfcgvbgr_y34x3_gur_juby3_fpurzma}'
+const graphAssets = [
+  { id:'1', name:'Logo Pack v3', category:'branding', format:'SVG/PNG', size:'2.4 MB', uploaded:'2026-03-12', author:'Design Team' },
+  { id:'2', name:'Icon Library', category:'ui-components', format:'SVG', size:'890 KB', uploaded:'2026-04-02', author:'Sarah K.' },
+  { id:'3', name:'Email Templates', category:'templates', format:'HTML/EJS', size:'156 KB', uploaded:'2026-02-18', author:'Marketing' },
+  { id:'4', name:'Product Photos', category:'photography', format:'JPEG', size:'18.7 MB', uploaded:'2026-05-01', author:'Content Team' },
+  { id:'5', name:'Illustration Set', category:'illustrations', format:'SVG/PNG', size:'5.1 MB', uploaded:'2026-01-22', author:'Design Team' },
+  { id:'6', name:'Brand Guidelines', category:'documentation', format:'PDF', size:'3.8 MB', uploaded:'2026-03-30', author:'Brand Lead' },
+  { id:'7', name:'UI Kit — Dashboard', category:'ui-components', format:'Figma/SVG', size:'12.3 MB', uploaded:'2026-04-15', author:'UX Team' },
+  { id:'8', name:'Motion Presets', category:'animation', format:'JSON/Lottie', size:'420 KB', uploaded:'2026-05-10', author:'Motion Team' },
+]
 const graphIntrospectHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.path === '/graphql') {
     let query = ''
@@ -523,35 +534,112 @@ const graphIntrospectHandler = (req: PlaygroundRequest): PlaygroundResponse => {
     else if (req.body) {
       try { query = JSON.parse(req.body).query || '' } catch { query = req.body }
     }
-    if (query.includes('__schema') || query.includes('introspection') || query.includes('__type')) {
+    if (query.includes('__schema') || query.includes('__type') || query.includes('introspection')) {
       return json({
         data: {
           __schema: {
-            queryType: { fields: [
-              { name: 'assets' },
-              { name: 'secretVault' },
-            ]}
+            queryType: { name: 'Query', fields: [
+              { name: 'assets', type: { kind: 'NON_NULL', ofType: { kind: 'LIST', ofType: { kind: 'OBJECT', name: 'Asset' } } }, args: [] },
+              { name: 'secretVault', type: { kind: 'OBJECT', name: 'VaultPayload' }, args: [] },
+            ]},
+            types: [
+              { name: 'Asset', kind: 'OBJECT', fields: [
+                { name: 'id', type: { kind: 'NON_NULL', ofType: { kind: 'SCALAR', name: 'ID' } } },
+                { name: 'name', type: { kind: 'NON_NULL', ofType: { kind: 'SCALAR', name: 'String' } } },
+                { name: 'category', type: { kind: 'NON_NULL', ofType: { kind: 'SCALAR', name: 'String' } } },
+                { name: 'format', type: { kind: 'SCALAR', name: 'String' } },
+                { name: 'size', type: { kind: 'SCALAR', name: 'String' } },
+                { name: 'uploaded', type: { kind: 'SCALAR', name: 'String' } },
+                { name: 'author', type: { kind: 'SCALAR', name: 'String' } },
+              ]},
+              { name: 'VaultPayload', kind: 'OBJECT', fields: [
+                { name: 'data', type: { kind: 'NON_NULL', ofType: { kind: 'SCALAR', name: 'String' } } },
+                { name: 'format', type: { kind: 'NON_NULL', ofType: { kind: 'SCALAR', name: 'String' } } },
+                { name: 'note', type: { kind: 'SCALAR', name: 'String' } },
+              ]},
+            ]
           }
         }
       })
     }
-    if (query.includes('secretVault')) return json({ data: { secretVault: GRAPH_FLAG } })
-    if (query.includes('assets')) return json({ data: { assets: [{ id: '1', name: 'Logo Pack', category: 'branding' }] } })
-    return json({ data: null })
+    if (query.includes('secretVault')) {
+      return json({
+        data: {
+          secretVault: {
+            data: GRAPH_FLAG_ROT13,
+            format: 'rot13',
+            note: 'Payload is encoded. Decode to retrieve contents.',
+          }
+        }
+      })
+    }
+    if (query.includes('assets')) return json({ data: { assets: graphAssets } })
+    return json({ data: null, errors: [{ message: 'Must provide query string.' }] })
   }
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Assets</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;padding:40px;max-width:700px;margin:0 auto}
-h1{color:#10B981;margin-bottom:20px}.card{background:#1E293B;border:1px solid #334155;border-radius:8px;padding:20px;margin-bottom:12px;display:flex;align-items:center}
-.card .icon{width:40px;height:40px;background:#10B981;border-radius:6px;margin-right:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold}
-.card h3{font-size:16px;margin-bottom:2px}.card p{color:#94A3B8;font-size:13px}
-.graphql-badge{background:#1E293B;border:1px solid #10B981;border-radius:20px;padding:4px 12px;font-size:11px;color:#10B981;display:inline-block;margin-bottom:16px}
-footer{color:#475569;font-size:11px;text-align:center;margin-top:40px}</style></head><body>
-<h1>CGS Asset Catalog</h1><div class="graphql-badge">GraphQL API</div>
-<div class="card"><div class="icon">L</div><div><h3>Logo Pack</h3><p>Branding assets (id: 1)</p></div></div>
-<div class="card"><div class="icon">I</div><div><h3>Icons v2</h3><p>UI icon set (id: 2)</p></div></div>
-<div class="card"><div class="icon">T</div><div><h3>Template Kit</h3><p>Email templates (id: 3)</p></div></div>
-<p style="color:#475569;font-size:12px;margin-top:20px">Endpoint: /graphql &bull; Try an introspection query!</p>
-<footer>CGS Internal &bull; v1.0</footer></body></html>`)
+  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Asset Catalog</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Menlo','Monaco','Courier New',monospace;background:#0d1117;color:#c9d1d9;min-height:100vh}
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:14px;color:#58a6ff;font-weight:600}.topbar .version{color:#484f58;font-size:11px}
+.container{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 45px)}
+.sidebar{background:#161b22;border-right:1px solid #30363d;padding:16px 0}
+.sidebar h3{font-size:10px;color:#484f58;text-transform:uppercase;letter-spacing:1.5px;padding:0 16px;margin-bottom:12px}
+.sidebar a{display:block;padding:6px 16px;color:#8b949e;font-size:12px;text-decoration:none;border-left:2px solid transparent}
+.sidebar a:hover,.sidebar a.active{color:#c9d1d9;background:#1c2128;border-left-color:#58a6ff}
+.main{padding:24px;overflow-y:auto}
+.page-header{margin-bottom:24px}
+.page-header h2{font-size:18px;color:#f0f6fc;margin-bottom:4px}
+.page-header p{color:#8b949e;font-size:12px}
+.badge{display:inline-block;background:#1f6feb22;color:#58a6ff;border:1px solid #1f6feb44;border-radius:12px;padding:2px 10px;font-size:10px;margin-left:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.asset-card{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px;transition:border-color 0.15s}
+.asset-card:hover{border-color:#58a6ff}
+.asset-card .top{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.asset-card h4{font-size:13px;color:#f0f6fc;font-weight:600}
+.asset-card .cat{font-size:10px;color:#58a6ff;background:#1f6feb15;border:1px solid #1f6feb33;border-radius:4px;padding:1px 6px}
+.asset-card .meta{display:flex;gap:12px;font-size:11px;color:#484f58;margin-top:8px}
+.asset-card .meta span{display:flex;align-items:center;gap:4px}
+.endpoint-box{margin-top:24px;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px}
+.endpoint-box h3{font-size:12px;color:#8b949e;margin-bottom:8px;font-weight:500}
+.endpoint-box code{color:#79c0ff;font-size:12px}
+.endpoint-box .methods{margin-top:8px;display:flex;gap:8px}
+.endpoint-box .methods span{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600}
+.method-get{background:#23863622;color:#3fb950;border:1px solid #23863644}
+.method-post{background:#1f6feb22;color:#58a6ff;border:1px solid #1f6feb44}
+footer{color:#30363d;font-size:10px;text-align:center;padding:20px;border-top:1px solid #30363d;margin-top:24px}
+</style></head><body>
+<div class="topbar"><h1>CGS Asset Catalog</h1><span class="version">v2.3.1</span></div>
+<div class="container">
+<div class="sidebar">
+<h3>Navigation</h3>
+<a href="#" class="active">All Assets</a>
+<a href="#">Branding</a>
+<a href="#">UI Components</a>
+<a href="#">Templates</a>
+<a href="#">Documentation</a>
+<a href="#">Animation</a>
+</div>
+<div class="main">
+<div class="page-header"><h2>All Assets <span class="badge">8 items</span></h2><p>Internal design and engineering asset catalog</p></div>
+<div class="grid">
+<div class="asset-card"><div class="top"><h4>Logo Pack v3</h4><span class="cat">branding</span></div><div class="meta"><span>SVG/PNG</span><span>2.4 MB</span><span>2026-03-12</span></div></div>
+<div class="asset-card"><div class="top"><h4>Icon Library</h4><span class="cat">ui-components</span></div><div class="meta"><span>SVG</span><span>890 KB</span><span>2026-04-02</span></div></div>
+<div class="asset-card"><div class="top"><h4>Email Templates</h4><span class="cat">templates</span></div><div class="meta"><span>HTML/EJS</span><span>156 KB</span><span>2026-02-18</span></div></div>
+<div class="asset-card"><div class="top"><h4>Product Photos</h4><span class="cat">photography</span></div><div class="meta"><span>JPEG</span><span>18.7 MB</span><span>2026-05-01</span></div></div>
+<div class="asset-card"><div class="top"><h4>Illustration Set</h4><span class="cat">illustrations</span></div><div class="meta"><span>SVG/PNG</span><span>5.1 MB</span><span>2026-01-22</span></div></div>
+<div class="asset-card"><div class="top"><h4>Brand Guidelines</h4><span class="cat">documentation</span></div><div class="meta"><span>PDF</span><span>3.8 MB</span><span>2026-03-30</span></div></div>
+<div class="asset-card"><div class="top"><h4>UI Kit — Dashboard</h4><span class="cat">ui-components</span></div><div class="meta"><span>Figma/SVG</span><span>12.3 MB</span><span>2026-04-15</span></div></div>
+<div class="asset-card"><div class="top"><h4>Motion Presets</h4><span class="cat">animation</span></div><div class="meta"><span>JSON/Lottie</span><span>420 KB</span><span>2026-05-10</span></div></div>
+</div>
+<div class="endpoint-box">
+<h3>API Endpoint</h3>
+<code>POST /graphql</code>
+<div class="methods"><span class="method-get">GET (query param)</span><span class="method-post">POST (JSON body)</span></div>
+<p style="color:#484f58;font-size:11px;margin-top:12px">Supports standard GraphQL queries. Introspection is enabled.</p>
+</div>
+<footer>CGS Internal Tools &bull; Asset Catalog Service</footer>
+</div>
+</div></body></html>`)
 }
 
 // 17 — PathPeek
