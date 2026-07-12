@@ -469,30 +469,48 @@ document.getElementById('adminBtn').addEventListener('click',async function(){va
 
 // 15 — RateDodge
 const RATE_FLAG = 'CGS{sp00f3d_h34d3rs_r3s3t_r4t3_l1m1ts}'
-if (!(globalThis as any).__rateDodgeHitLog) (globalThis as any).__rateDodgeHitLog = {} as Record<string, number[]>
-const hitLog: Record<string, number[]> = (globalThis as any).__rateDodgeHitLog
+if (!(globalThis as any).__rateDodgeSeenIps) (globalThis as any).__rateDodgeSeenIps = {} as Record<string, boolean>
+const seenIps: Record<string, boolean> = (globalThis as any).__rateDodgeSeenIps
 const rateDodgeHandler = (req: PlaygroundRequest): PlaygroundResponse => {
-  if (req.path === '/api/vend') {
-    const ip = req.headers['x-forwarded-for'] || 'unknown'
-    const now = Date.now()
-    hitLog[ip] = hitLog[ip] || []
-    hitLog[ip] = hitLog[ip].filter(t => now - t < 60000)
-    if (hitLog[ip].length >= 1) {
-      return errJson(429, 'rate limited, try again later')
-    }
-    hitLog[ip].push(now)
-    const distinctIPs = Object.keys(hitLog).length
-    if (distinctIPs >= 10) return json({ flag: RATE_FLAG })
-    return json({ message: `vend ok, distinct clients so far: ${distinctIPs}` })
+  if (req.path === '/api/vend/reset' && req.method === 'POST') {
+    for (const k of Object.keys(seenIps)) delete seenIps[k]
+    return json({ status: 'ok', message: 'seen_ips cleared' })
   }
-  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Flag Vendor</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:monospace;background:#0a0a0a;color:#00ff41;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px}
-h1{font-size:20px;margin-bottom:20px;letter-spacing:2px}.card{background:#111;border:1px solid #00ff41;border-radius:4px;padding:20px;text-align:center;width:400px}
-button{padding:12px 32px;background:#00ff41;color:#000;border:none;font-family:monospace;font-weight:bold;font-size:16px;cursor:pointer;margin-top:12px;border-radius:4px}
-#out{color:#00ff41;font-size:13px;margin-top:16px;min-height:20px}
-.hint{color:#333;font-size:11px;margin-top:20px}</style></head><body>
-<h1>CGS Flag Vendor</h1><div class="card"><p style="font-size:13px;margin-bottom:16px">Request a flag. One per IP per minute.</p><button id="vend">Vend Flag</button><div id="out"></div></div>
-<p class="hint">Rate limit: 1 request / minute per IP</p>
+  if (req.path === '/api/vend') {
+    const raw = req.headers['x-forwarded-for'] || ''
+    const key = raw ? raw.split(',')[0].trim() : (req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || 'anonymous')
+    if (seenIps[key]) {
+      return { status: 429, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'rate_limited', message: 'This IP has already made a request.', unique_ips_seen: Object.keys(seenIps).length }) }
+    }
+    seenIps[key] = true
+    const count = Object.keys(seenIps).length
+    if (count === 10) {
+      return { status: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'ok', unique_ips_seen: count, flag: RATE_FLAG }) }
+    }
+    return json({ status: 'ok', unique_ips_seen: count })
+  }
+  return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>RateDodge</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1120;color:#E2E8F0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px}
+.topbar{position:fixed;top:0;left:0;right:0;background:#111827;border-bottom:1px solid #1F2937;padding:14px 32px;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:16px;color:#F1F5F9;font-weight:600}.topbar span{color:#64748B;font-size:13px}
+.hero{text-align:center;max-width:520px}
+.hero h2{font-size:28px;font-weight:700;color:#F1F5F9;margin-bottom:8px;letter-spacing:-0.5px}
+.hero p{color:#94A3B8;font-size:15px;line-height:1.6;margin-bottom:24px}
+.vend-card{background:#111827;border:1px solid #1F2937;border-radius:12px;padding:32px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+.vend-card h3{font-size:14px;color:#94A3B8;font-weight:500;margin-bottom:16px;text-align:center}
+button{width:100%;padding:14px;background:linear-gradient(135deg,#10B981,#059669);border:none;color:#fff;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;transition:opacity 0.2s}
+button:hover{opacity:0.9}
+#out{margin-top:16px;font-family:monospace;font-size:12px;color:#64748B;min-height:40px;white-space:pre-wrap;word-break:break-all;text-align:center}
+.hint{margin-top:20px;background:#111827;border:1px solid #1F2937;border-radius:8px;padding:14px 18px;max-width:400px;width:100%}
+.hint h4{font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.hint p{color:#94A3B8;font-size:13px;line-height:1.5}
+footer{color:#334155;font-size:11px;margin-top:32px;text-align:center}
+</style></head><body>
+<div class="topbar"><h1>CGS RateDodge</h1><span>v1.0</span></div>
+<div class="hero"><h2>Flag Vendor</h2><p>A rate limiter guards the flag endpoint. One request per IP. Or does it?</p>
+<div class="vend-card"><h3>Request the flag</h3><button id="vend">Vend Flag</button><div id="out"></div></div>
+<div class="hint"><h4>Hint</h4><p>The server asks the client what IP it's coming from. Vary the <code style="color:#10B981;background:#0B1120;padding:2px 6px;border-radius:4px;font-size:12px">X-Forwarded-For</code> header across requests.</p></div>
+<footer>CGS RateDodge &bull; Web Exploitation</footer>
 <script>document.getElementById('vend').addEventListener('click',async function(){var r=await fetch('api/vend');var d=await r.json();document.getElementById('out').textContent=JSON.stringify(d,null,2)})</script></body></html>`)
 }
 
