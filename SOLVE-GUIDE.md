@@ -447,15 +447,12 @@
    - **hashcat (mode 16500):** `hashcat -m 16500 <token> /usr/share/wordlists/rockyou.txt`
    - **John:** `john --format=hmac-sha256 <token> --wordlist=rockyou.txt`
    - **Manual:** Try common words like `cgs2024`, `secret`, `password`, etc.
-4. Once you recover the secret `cgs2024`, forge a new token:
-   ```javascript
-   header = base64url({"alg":"HS256","typ":"JWT"})
-   payload = base64url({"role":"admin"})
-   signature = HMAC-SHA256(header + "." + payload, "cgs2024")
-   token = header + "." + payload + "." + signature
-   ```
-   Note: The signature algorithm here is `Base64(secret + '.' + header + '.' + body)`, not standard HMAC.
-5. Send the forged token to `/api/admin` — the server verifies it successfully and returns the flag.
+4. Once you recover the secret `cgs2024`, forge a new token on [jwt.io](https://jwt.io):
+   - Header: `{"alg":"HS256","typ":"JWT"}`
+   - Payload: `{"role":"admin"}`
+   - Secret: `cgs2024`
+5. Copy the encoded JWT and paste it into the token field on the challenge page.
+6. Click **Access Admin** — the server verifies the HMAC signature and returns the flag.
 
 > **Hint:** The HMAC signature is verified properly, but the secret is weak. Crack it offline with a wordlist tool, then forge your own admin token.
 

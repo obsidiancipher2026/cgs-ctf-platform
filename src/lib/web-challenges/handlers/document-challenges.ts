@@ -1,4 +1,5 @@
 import { ChallengeDef, type PlaygroundRequest, type PlaygroundResponse, html, json, text, error } from '../types'
+import crypto from 'crypto'
 
 // ═══════════════════════════════════
 // HELPER
@@ -987,7 +988,7 @@ const JWT_SECRET = 'cgs2024'
 function signToken(payload: any, secret: string): string {
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url').replace(/=+$/, '')
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url').replace(/=+$/, '')
-  const signature = Buffer.from(secret + '.' + header + '.' + body).toString('base64url').replace(/=+$/, '')
+  const signature = crypto.createHmac('sha256', secret).update(header + '.' + body).digest('base64url')
   return header + '.' + body + '.' + signature
 }
 const jwtCrackHandler = (req: PlaygroundRequest): PlaygroundResponse => {
@@ -998,7 +999,7 @@ const jwtCrackHandler = (req: PlaygroundRequest): PlaygroundResponse => {
     try {
       const parts = token.split('.')
       const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString())
-      const expectedSig = Buffer.from(JWT_SECRET + '.' + parts[0] + '.' + parts[1]).toString('base64url').replace(/=+$/, '')
+      const expectedSig = crypto.createHmac('sha256', JWT_SECRET).update(parts[0] + '.' + parts[1]).digest('base64url')
       if (parts[2] === expectedSig && payload.role === 'admin') return json({ flag: JWTCRACK_FLAG })
     } catch {}
     return errJson(403, 'forbidden')
