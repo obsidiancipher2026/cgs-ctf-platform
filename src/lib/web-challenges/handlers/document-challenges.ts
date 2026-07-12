@@ -980,22 +980,17 @@ const idorInboxUsers = [
   { id:20, username:'bscott',     full_name:'Ben Scott',         email:'ben.scott@cgslabs.io',        bio:'CTO. I attend meetings so the team can ship code.' },
 ]
 const idorInboxHandler = (req: PlaygroundRequest): PlaygroundResponse => {
-  const isLoggedIn = req.cookies['pp_session'] === 'active'
-
   if (req.path === '/api/login' && req.method === 'POST') {
     const params = new URLSearchParams(req.body || '')
     const user = params.get('username') || ''
     const pass = params.get('password') || ''
     if (user === 'player' && pass === 'player123') {
-      return { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': 'pp_session=active; Path=/; HttpOnly' }, body: JSON.stringify({ ok: true }) }
+      return json({ ok: true, redirectTo: '/profile?id=MQ==' })
     }
     return errJson(401, 'Invalid credentials')
   }
 
   if (req.path === '/profile' || req.path.startsWith('/profile')) {
-    if (!isLoggedIn) {
-      return { status: 302, headers: { 'Location': '/', 'Set-Cookie': 'pp_session=; Path=/; Max-Age=0' }, body: '' }
-    }
     const idB64 = req.query.id || ''
     let idNum: number
     try { idNum = parseInt(Buffer.from(idB64, 'base64').toString(), 10) } catch { idNum = NaN }
@@ -1008,7 +1003,6 @@ const idorInboxHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   }
 
   if (req.path === '/api/profile') {
-    if (!isLoggedIn) return errJson(401, 'not authenticated')
     const idB64 = req.query.id || ''
     let idNum: number
     try { idNum = parseInt(Buffer.from(idB64, 'base64').toString(), 10) } catch { idNum = NaN }
@@ -1016,10 +1010,6 @@ const idorInboxHandler = (req: PlaygroundRequest): PlaygroundResponse => {
     const user = idorInboxUsers.find(u => u.id === idNum)
     if (user) return json(user)
     return errJson(404, 'User not found')
-  }
-
-  if (isLoggedIn) {
-    return { status: 302, headers: { Location: '/profile?id=MQ==' }, body: '' }
   }
 
   return serve('/', idorInboxLoginPage())
@@ -1047,10 +1037,10 @@ button:hover{opacity:0.9}
 footer{color:#334155;font-size:11px;margin-top:24px;text-align:center}
 </style></head><body>
 <div class="login-wrapper">
-<div class="login-header"><div class="logo">P</div><h1>CGS Inbox</h1><p>View and manage your team profiles</p></div>
+<div class="login-header"><div class="logo">I</div><h1>CGS Inbox</h1><p>View and manage your team profiles</p></div>
 <div class="login-card">
-<label>Username</label><input type="text" id="user" value="player" autocomplete="username">
-<label>Password</label><input type="password" id="pass" value="player123" autocomplete="current-password">
+<label>Username</label><input type="text" id="user" placeholder="Enter username" autocomplete="username">
+<label>Password</label><input type="password" id="pass" placeholder="Enter password" autocomplete="current-password">
 <button id="loginBtn">Sign In</button>
 <div class="error" id="error"></div>
 </div>
@@ -1060,7 +1050,7 @@ footer{color:#334155;font-size:11px;margin-top:24px;text-align:center}
 </div>
 </div>
 <footer>CGS Inbox &bull; v1.0</footer>
-<script>document.getElementById('loginBtn').addEventListener('click',async function(){var u=document.getElementById('user').value;var p=document.getElementById('pass').value;var e=document.getElementById('error');e.style.display='none';try{var r=await fetch('api/login',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'username='+encodeURIComponent(u)+'&password='+encodeURIComponent(p)});if(r.ok){window.location.href='/profile?id=MQ==')}else{var d=await r.json();e.textContent=d.error||'Login failed';e.style.display='block'}}catch(x){e.textContent='Connection error';e.style.display='block'}});document.getElementById('pass').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click()})</script></body></html>`
+<script>document.getElementById('loginBtn').addEventListener('click',async function(){var u=document.getElementById('user').value;var p=document.getElementById('pass').value;var e=document.getElementById('error');e.style.display='none';try{var r=await fetch('api/login',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'username='+encodeURIComponent(u)+'&password='+encodeURIComponent(p)});var d=await r.json();if(r.ok&&d.ok){sessionStorage.setItem('idor_inbox_session','active');window.location.href=d.redirectTo||'/profile?id=MQ=='}else{e.textContent=d.error||'Login failed';e.style.display='block'}}catch(x){e.textContent='Connection error';e.style.display='block'}});document.getElementById('pass').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click()})</script></body></html>`
 }
 
 function idorInboxPage(idB64: string, user: { id: number; full_name: string; email: string; bio: string }): string {
@@ -1069,7 +1059,7 @@ function idorInboxPage(idB64: string, user: { id: number; full_name: string; ema
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1120;color:#E2E8F0;min-height:100vh}
 .topbar{background:#111827;border-bottom:1px solid #1F2937;padding:14px 32px;display:flex;justify-content:space-between;align-items:center}
 .topbar h1{font-size:16px;color:#F1F5F9;font-weight:600}
-.topbar a{color:#3B82F6;text-decoration:none;font-size:13px;font-weight:500}
+.topbar a{color:#3B82F6;text-decoration:none;font-size:13px;font-weight:500;cursor:pointer}
 .profile-container{max-width:640px;margin:40px auto;padding:0 24px}
 .profile-card{background:#111827;border:1px solid #1F2937;border-radius:12px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
 .profile-top{display:flex;align-items:center;gap:20px;margin-bottom:24px}
@@ -1086,7 +1076,7 @@ function idorInboxPage(idB64: string, user: { id: number; full_name: string; ema
 .url-bar em{color:#3B82F6;font-style:normal}
 footer{color:#334155;font-size:11px;text-align:center;margin-top:40px;padding:20px}
 </style></head><body>
-<div class="topbar"><h1>CGS Inbox</h1><a href="/">Sign Out</a></div>
+<div class="topbar"><h1>CGS Inbox</h1><a onclick="sessionStorage.removeItem('idor_inbox_session');window.location.href='/'">Sign Out</a></div>
 <div class="profile-container">
 <div class="profile-card">
 <div class="profile-top">
@@ -1101,7 +1091,7 @@ footer{color:#334155;font-size:11px;text-align:center;margin-top:40px;padding:20
 </div>
 </div>
 <footer>CGS Inbox &bull; Internal Use Only</footer>
-</body></html>`
+<script>if(!sessionStorage.getItem('idor_inbox_session'))window.location.href='/'</script></body></html>`
 }
 
 function idorInboxNotFound(): string {
@@ -1111,10 +1101,10 @@ function idorInboxNotFound(): string {
 .icon{font-size:48px;margin-bottom:16px;opacity:0.5}
 h2{font-size:20px;color:#F1F5F9;margin-bottom:8px}
 p{color:#64748B;font-size:14px;line-height:1.6}
-.back{display:inline-block;margin-top:20px;color:#3B82F6;text-decoration:none;font-size:14px;font-weight:500}
+.back{display:inline-block;margin-top:20px;color:#3B82F6;text-decoration:none;font-size:14px;font-weight:500;cursor:pointer}
 </style></head><body>
-<div class="card"><div class="icon">&#128269;</div><h2>User Not Found</h2><p>The profile you're looking for doesn't exist or has been removed.</p><a class="back" href="/profile?id=MQ==">Back to your profile</a></div>
-</body></html>`
+<div class="card"><div class="icon">&#128269;</div><h2>User Not Found</h2><p>The profile you're looking for doesn't exist or has been removed.</p><a class="back" onclick="window.location.href='/profile?id=MQ=='">Back to your profile</a></div>
+<script>if(!sessionStorage.getItem('idor_inbox_session'))window.location.href='/'</script></body></html>`
 }
 
 // ═══════════════════════════════════
