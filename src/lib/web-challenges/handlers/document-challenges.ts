@@ -784,7 +784,10 @@ const sqliSecrets = [
   { id: 3, key: 'internal_api_key', value: 'cgS-k3y-d0-N0t-Sh4r3' },
 ]
 
-// WAF: blocks common SQLi keywords (case-sensitive check on normalized input)
+// WAF: blocks common SQLi keywords and line-comment markers.
+// Block comments (/* */) are intentionally NOT blocked — this is the WAF flaw
+// that enables the bypass: UN/**/ION SEL/**/ECT breaks keyword word-boundary
+// matching while the server's SQL parser ignores the comments.
 const WAF_BLOCKED = [
   /\bUNION\b/i, /\bSELECT\b/i, /\bINSERT\b/i, /\bUPDATE\b/i, /\bDELETE\b/i,
   /\bDROP\b/i, /\bTRUNCATE\b/i, /\bALTER\b/i, /\bCREATE\b/i, /\bEXEC\b/i,
@@ -792,7 +795,7 @@ const WAF_BLOCKED = [
   /\bINTO\s+(OUTFILE|DUMPFILE)\b/i, /\bINFORMATION_SCHEMA\b/i,
   /\bpg_sleep\b/i, /\bWAITFOR\b/i,
 ]
-const WAF_COMMENT = /(--|\/\*|\*\/|#)/i
+const WAF_COMMENT = /(--|#)/i
 
 function wafTriggered(input: string): boolean {
   if (WAF_COMMENT.test(input)) return true

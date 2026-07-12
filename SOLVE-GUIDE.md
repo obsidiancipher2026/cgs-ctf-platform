@@ -399,23 +399,22 @@
    ```sql
    SELECT u.id, u.username, u.role, u.role_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = '...' AND u.password = '...' AND r.active = 1
    ```
-2. Try a basic injection like `admin' --` — the WAF blocks it because `--` is a SQL comment keyword.
-3. Try `admin' OR '1'='1` — blocked because `OR` triggers the filter.
-4. The WAF blocks SQL keywords **case-insensitively** and blocks comment markers (`--`, `/*`, `*/`, `#`).
-5. Bypass the WAF using **inline comments** to split keywords. The key insight: `UNION` and `SELECT` are blocked as whole words, but `UN/**/ION` and `SEL/**/ECT` break the regex pattern matching.
-6. However, `--` and `/*` are also blocked, so you must avoid trailing comments.
-7. The successful payload:
+2. Try a basic injection like `admin' --` — the WAF blocks it because `--` is a line comment marker.
+3. Try `admin' UNION SELECT...` — blocked because `UNION` and `SELECT` are keyword patterns.
+4. The WAF blocks SQL keywords case-insensitively (`UNION`, `SELECT`, etc.) AND line comment markers (`--`, `#`). But it does **not** block block comments (`/* */`) — this is the flaw.
+5. Use **inline block comments** to break up keywords so the WAF regex doesn't match as whole words:
    ```
    ' UN/**/ION SEL/**/ECT 1,key,value FROM secrets WHERE '1'='1
    ```
-   This:
+   `UN/**/ION` doesn't match `\bUNION\b` because `/**/` splits the word. The server's SQL parser ignores the empty comments and executes `UNION SELECT`.
+6. This payload:
    - Breaks out of the username string with `'`
-   - Uses `UN/**/ION SEL/**/ECT` to bypass the keyword filter (inline comments are stripped before the regex check)
+   - Uses `UN/**/ION SEL/**/ECT` to bypass the keyword filter
    - Selects from the `secrets` table (where the flag is stored)
    - The `WHERE '1'='1` closes the original query's trailing quote
-8. The server returns `Welcome admin.` followed by the extracted flag.
+7. The server returns `Welcome admin.` followed by the extracted flag.
 
-> **Key Insight:** A successful login (`admin`/`Sup3rS3cret!`) returns "No flags here" — the flag is in the `secrets` table, not in user credentials. You need UNION injection to extract it, and you must bypass the WAF first.
+> **Key Insight:** A successful login (`admin`/`Sup3rS3cret!`) returns "No flags here" — the flag is in the `secrets` table, not in user credentials. You need UNION injection to extract it, and the WAF's blind spot is block comments (`/* */`).
 
 **Flag:** `CGS{w4f_byp4ss_un10n_3xtr4ct10n_1s_h4rd}`
 
