@@ -437,21 +437,25 @@
 
 ### 19. DeserialBomb
 
-**Concept:** Insecure deserialization — the `prefs` cookie triggers code execution when it contains function-related keywords.
+**Concept:** Insecure deserialization — the server deserializes user-controlled cookie data unsafely.
 
 **Solve Steps:**
 
-1. Open the challenge and note the `prefs` cookie.
-2. The server deserializes the cookie and checks for dangerous patterns.
-3. Set the `prefs` cookie to a value containing function execution keywords:
+1. Open the challenge — you'll see a Preferences page with a JSON editor.
+2. The page shows your current settings as editable JSON and a "Save Preferences" button.
+3. When you save, the JSON is stored in a `prefs` cookie. On the next request, the server deserializes it.
+4. Edit the JSON to include a dangerous keyword. Replace the contents with:
+   ```json
+   {"theme":"dark","fontSize":14,"hook":"function(){return require('fs').readFileSync('flag.txt')}"}
    ```
-   _$$ND_FUNC$$_function(){ throw new Error(require('fs').readFileSync('flag.txt','utf8')) }()
+   Or simply:
+   ```json
+   {"prefs":"function"}
    ```
-   Or any value containing `require(` and `readFileSync` — the server detects these patterns.
-4. Make a request to `/prefs`.
-5. The server detects the malicious cookie and returns the flag in the error response.
+5. Click **Save Preferences**.
+6. The page reloads, the server reads the cookie, detects the `function` keyword during deserialization, and returns the flag in the error response.
 
-> **Hint:** The `prefs` cookie uses a serialization format that can embed functions. Set the cookie to a value containing `require` and `readFileSync` to trigger detection.
+> **Hint:** The server uses `JSON.parse()` on your cookie value and then checks for dangerous patterns. Add `function` to your JSON to trigger detection.
 
 **Flag:** `CGS{1ns3cur3_d3s3r14l1zat10n_1s_rc3}`
 
