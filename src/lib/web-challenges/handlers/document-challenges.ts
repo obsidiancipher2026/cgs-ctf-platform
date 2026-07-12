@@ -986,29 +986,22 @@ const DESER_FLAG = 'CGS{1ns3cur3_d3s3r14l1zat10n_1s_rc3}'
 const deserialBombHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.method === 'POST' && req.path === '/save') {
     let prefs = ''
-    try {
-      const parsed = JSON.parse(req.body || '{}')
-      prefs = JSON.stringify(parsed)
-    } catch {
-      prefs = req.body || ''
-    }
-    const resp = new Response(JSON.stringify({ status: 'saved', prefs: JSON.parse(prefs || '{}') }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'Set-Cookie': `prefs=${encodeURIComponent(prefs)}; Path=/; HttpOnly=false` },
-    })
-    return { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': `prefs=${encodeURIComponent(prefs)}; Path=/; HttpOnly=false` }, body: JSON.stringify({ status: 'saved', prefs: JSON.parse(prefs || '{}') }) }
+    try { prefs = JSON.stringify(JSON.parse(req.body || '{}')) } catch { prefs = req.body || '{}' }
+    return { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': `prefs=${encodeURIComponent(prefs)}; Path=/; HttpOnly=false` }, body: JSON.stringify({ status: 'saved' }) }
   }
-  if (req.path === '/prefs') {
-    const raw = req.cookies.prefs ? decodeURIComponent(req.cookies.prefs) : ''
-    if (raw.includes('_$$ND_FUNC$$_') || raw.includes('function') || raw.includes('require(') || raw.includes('readFileSync')) {
-      return { status: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: `DeserializationError: ${DESER_FLAG}` }) }
-    }
-    let parsed
-    try { parsed = JSON.parse(raw) } catch { parsed = null }
-    if (parsed) return json({ prefs: parsed })
-    return json({ prefs: { theme: 'dark', fontSize: 14 } })
-  }
-  const defaultPrefs = req.cookies.prefs ? (() => { try { return JSON.parse(decodeURIComponent(req.cookies.prefs)) } catch { return { theme: 'dark', fontSize: 14 } } })() : { theme: 'dark', fontSize: 14 }
+  // GET / — read cookie, check for dangerous patterns, render page
+  const raw = req.cookies.prefs ? decodeURIComponent(req.cookies.prefs) : ''
+  let parsed
+  try { parsed = JSON.parse(raw) } catch { parsed = null }
+  const isMalicious = raw.includes('_$$ND_FUNC$$_') || raw.includes('function') || raw.includes('require(') || raw.includes('readFileSync')
+  const flagBlock = isMalicious
+    ? `<div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:8px;padding:20px;margin-bottom:16px">
+        <h3 style="color:#EF4444;margin-bottom:8px">Deserialization Error</h3>
+        <p style="color:#EF4444;font-family:monospace;font-size:13px;word-break:break-all">Error: ${DESER_FLAG}</p>
+        <p style="color:#94A3B8;font-size:12px;margin-top:8px">The server detected unsafe patterns in your serialized preferences cookie.</p>
+       </div>`
+    : ''
+  const defaultPrefs = parsed || { theme: 'dark', fontSize: 14 }
   return serve('/', `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Preferences</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#0F172A;color:#E2E8F0;padding:40px;max-width:600px;margin:0 auto}
 h1{color:#8B5CF6;margin-bottom:8px}.sub{color:#94A3B8;font-size:14px;margin-bottom:24px}
@@ -1026,12 +1019,12 @@ button{padding:10px 24px;border:none;border-radius:6px;font-weight:600;font-size
 .btn-reset:hover{background:#374151}
 .info{color:#94A3B8;font-size:12px;padding:12px;background:#1E293B;border:1px solid #8B5CF6;border-radius:6px;margin-bottom:16px}
 .info code{color:#8B5CF6;background:#0F172A;padding:1px 5px;border-radius:3px;font-size:11px}
-#status{font-size:13px;margin-top:8px;min-height:20px}
 .toast{padding:10px 16px;border-radius:6px;font-size:13px;margin-top:8px;display:none}
 .toast.ok{display:block;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#10B981}
 .toast.err{display:block;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#EF4444}
 footer{color:#475569;font-size:11px;margin-top:30px;text-align:center}</style></head><body>
 <h1>User Preferences</h1><p class="sub">Edit your preferences below. Changes are stored in a cookie.</p>
+${flagBlock}
 <div class="card"><h3>Current Settings</h3>
 <div class="setting"><span>Theme</span><span style="color:#8B5CF6">${defaultPrefs.theme || 'dark'}</span></div>
 <div class="setting"><span>Font Size</span><span>${defaultPrefs.fontSize || 14}px</span></div>
@@ -1047,9 +1040,8 @@ document.getElementById('saveBtn').addEventListener('click',async function(){
   var raw=document.getElementById('editor').value;
   try{JSON.parse(raw)}catch(e){showToast('Invalid JSON: '+e.message,true);return}
   var r=await fetch('save',{method:'POST',headers:{'Content-Type':'application/json'},body:raw});
-  var d=await r.json();
-  if(r.ok){showToast('Preferences saved! Reloading...');setTimeout(function(){location.reload()},800)}
-  else{showToast('Error: '+JSON.stringify(d),true)}
+  if(r.ok){showToast('Saved! Reloading...');setTimeout(function(){location.reload()},600)}
+  else{showToast('Save failed',true)}
 });
 document.getElementById('resetBtn').addEventListener('click',function(){
   document.getElementById('editor').value=JSON.stringify({theme:'dark',fontSize:14},null,2);
@@ -1059,7 +1051,7 @@ function showToast(msg,err){
   var t=document.getElementById('toast');
   t.textContent=msg;
   t.className=err?'toast err':'toast ok';
-  setTimeout(function(){t.className='toast'},4000);
+  setTimeout(function(){t.className='toast'},3000);
 }
 </script></body></html>`)
 }
