@@ -388,22 +388,63 @@ h1{color:#3B82F6;margin-bottom:8px;font-size:24px}p{color:#94A3B8;font-size:14px
 const XSS_FLAG = 'CGS{r3fl3ct3d_xss_st1ll_c0unts}'
 const reflectedNoteHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   const note = req.query.note || ''
-  const body = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Notes Preview</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#1a1a2e;color:#e0e0e0;padding:40px;display:flex;flex-direction:column;align-items:center}
-h1{color:#e94560;margin-bottom:20px}.container{max-width:600px;width:100%;background:#16213e;border-radius:8px;padding:24px;border:1px solid #0f3460}
-label{display:block;font-size:13px;color:#a0a0b0;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
-textarea{width:100%;padding:12px;background:#1a1a2e;border:1px solid #0f3460;border-radius:4px;color:#e0e0e0;font-family:monospace;font-size:14px;resize:vertical;min-height:80px;margin-bottom:12px}
-button{padding:10px 24px;background:#e94560;border:none;color:#fff;border-radius:4px;font-weight:600;cursor:pointer}
-.note-preview{background:#1a1a2e;border:1px solid #0f3460;border-radius:4px;padding:16px;margin-top:16px;min-height:60px;word-break:break-word}
-.note-preview strong{color:#e94560}footer{color:#4a4a6a;font-size:11px;margin-top:30px}
+  const body = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGS Quick Note</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1120;color:#E2E8F0;min-height:100vh}
+.topbar{background:#111827;border-bottom:1px solid #1F2937;padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:15px;color:#F1F5F9;font-weight:600;display:flex;align-items:center;gap:8px}
+.topbar h1 .dot{width:8px;height:8px;background:#10B981;border-radius:50%}
+.topbar .ver{color:#4B5563;font-size:11px}
+.container{max-width:680px;margin:32px auto;padding:0 24px}
+.editor{background:#111827;border:1px solid #1F2937;border-radius:10px;padding:20px;margin-bottom:20px}
+.editor label{display:block;font-size:11px;color:#6B7280;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;font-weight:500}
+.editor textarea{width:100%;padding:12px 14px;background:#0B1120;border:1px solid #1F2937;border-radius:6px;color:#E2E8F0;font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;resize:vertical;min-height:72px;outline:none;line-height:1.5}
+.editor textarea:focus{border-color:#3B82F6}
+.editor textarea::placeholder{color:#4B5563}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.btn-row button{padding:8px 20px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
+.btn-primary{background:#3B82F6;color:#fff}
+.btn-primary:hover{opacity:0.85}
+.btn-secondary{background:#1F2937;color:#9CA3AF;border:1px solid #374151}
+.btn-secondary:hover{background:#374151}
+.preview-label{font-size:11px;color:#6B7280;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;font-weight:500}
+.preview-box{background:#111827;border:1px solid #1F2937;border-radius:10px;padding:20px;min-height:80px;word-break:break-word;line-height:1.6;font-size:14px;color:#D1D5DB}
+.preview-box:empty::before{content:'Your note will appear here...';color:#4B5563;font-style:italic}
+.note-list{margin-top:24px}
+.note-list h3{font-size:11px;color:#6B7280;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;font-weight:500}
+.saved-note{background:#111827;border:1px solid #1F2937;border-radius:8px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s}
+.saved-note:hover{border-color:#3B82F6}
+.saved-note .title{font-size:13px;color:#E5E7EB;font-weight:500;margin-bottom:2px}
+.saved-note .meta{font-size:11px;color:#4B5563}
+footer{color:#374151;font-size:10px;text-align:center;padding:24px}
 </style></head><body>
-<h1>CGS Notes</h1><div class="container">
-<label>Your Note</label><textarea id="noteInput"></textarea><button onclick="previewNote()">Preview</button>
-<div class="note-preview" id="preview">${note}</div>
-<div id="hidden-flag-container" style="display:none">${XSS_FLAG}</div>
+<div class="topbar"><h1><span class="dot"></span>CGS Quick Note</h1><span class="ver">v1.2</span></div>
+<div class="container">
+<div class="editor">
+<label>New Note</label>
+<textarea id="noteInput" placeholder="Type your note here...">${note.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}</textarea>
+<div class="btn-row">
+<button class="btn-primary" onclick="saveNote()">Save Note</button>
+<button class="btn-secondary" onclick="clearNote()">Clear</button>
 </div>
-<footer>Internal notes tool &bull; v1.0</footer>
-<script>function previewNote(){var v=document.getElementById('noteInput').value;window.location.search='?note='+encodeURIComponent(v)}</script></body></html>`
+</div>
+<div class="preview-label">Note Preview</div>
+<div class="preview-box" id="preview">${note}</div>
+<div class="note-list">
+<h3>Recent Notes</h3>
+<div class="saved-note" onclick="loadNote('Meeting notes: Q2 planning session — review budget allocations')"><div class="title">Meeting notes</div><div class="meta">Q2 planning session — review budget allocations</div></div>
+<div class="saved-note" onclick="loadNote('Reminder: Deploy v2.3 to staging by Friday. Check changelog before merging.')"><div class="title">Reminder</div><div class="meta">Deploy v2.3 to staging by Friday. Check changelog before merging.</div></div>
+<div class="saved-note" onclick="loadNote('Ideas: Add dark mode toggle to dashboard, improve mobile nav, cache API responses')"><div class="title">Ideas</div><div class="meta">Add dark mode toggle to dashboard, improve mobile nav, cache API responses</div></div>
+</div>
+</div>
+<div id="hidden-flag-container" style="display:none">${XSS_FLAG}</div>
+<footer>CGS Internal Tools &bull; Quick Note</footer>
+<script>
+function saveNote(){var v=document.getElementById('noteInput').value;window.location.search='?note='+encodeURIComponent(v)}
+function clearNote(){document.getElementById('noteInput').value='';window.location.search=''}
+function loadNote(t){document.getElementById('noteInput').value=t;window.location.search='?note='+encodeURIComponent(t)}
+document.getElementById('noteInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();saveNote()}})
+</script></body></html>`
   return serve('/', body)
 }
 
