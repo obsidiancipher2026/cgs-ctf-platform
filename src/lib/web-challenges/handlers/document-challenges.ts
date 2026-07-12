@@ -622,65 +622,103 @@ const graphIntrospectHandler = (req: PlaygroundRequest): PlaygroundResponse => {
 body{font-family:'Menlo','Monaco','Courier New',monospace;background:#0d1117;color:#c9d1d9;min-height:100vh}
 .topbar{background:#161b22;border-bottom:1px solid #30363d;padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
 .topbar h1{font-size:14px;color:#58a6ff;font-weight:600}.topbar .version{color:#484f58;font-size:11px}
-.container{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 45px)}
+.container{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 45px)}
 .sidebar{background:#161b22;border-right:1px solid #30363d;padding:16px 0}
 .sidebar h3{font-size:10px;color:#484f58;text-transform:uppercase;letter-spacing:1.5px;padding:0 16px;margin-bottom:12px}
 .sidebar a{display:block;padding:6px 16px;color:#8b949e;font-size:12px;text-decoration:none;border-left:2px solid transparent}
 .sidebar a:hover,.sidebar a.active{color:#c9d1d9;background:#1c2128;border-left-color:#58a6ff}
-.main{padding:24px;overflow-y:auto}
-.page-header{margin-bottom:24px}
-.page-header h2{font-size:18px;color:#f0f6fc;margin-bottom:4px}
-.page-header p{color:#8b949e;font-size:12px}
-.badge{display:inline-block;background:#1f6feb22;color:#58a6ff;border:1px solid #1f6feb44;border-radius:12px;padding:2px 10px;font-size:10px;margin-left:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.asset-card{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px;transition:border-color 0.15s}
-.asset-card:hover{border-color:#58a6ff}
-.asset-card .top{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
-.asset-card h4{font-size:13px;color:#f0f6fc;font-weight:600}
-.asset-card .cat{font-size:10px;color:#58a6ff;background:#1f6feb15;border:1px solid #1f6feb33;border-radius:4px;padding:1px 6px}
-.asset-card .meta{display:flex;gap:12px;font-size:11px;color:#484f58;margin-top:8px}
-.asset-card .meta span{display:flex;align-items:center;gap:4px}
-.endpoint-box{margin-top:24px;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px}
-.endpoint-box h3{font-size:12px;color:#8b949e;margin-bottom:8px;font-weight:500}
-.endpoint-box code{color:#79c0ff;font-size:12px}
-.endpoint-box .methods{margin-top:8px;display:flex;gap:8px}
-.endpoint-box .methods span{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600}
-.method-get{background:#23863622;color:#3fb950;border:1px solid #23863644}
-.method-post{background:#1f6feb22;color:#58a6ff;border:1px solid #1f6feb44}
-footer{color:#30363d;font-size:10px;text-align:center;padding:20px;border-top:1px solid #30363d;margin-top:24px}
+.sidebar .section{margin-top:20px}
+.main{padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+.panel-header{display:flex;justify-content:space-between;align-items:center}
+.panel-header h2{font-size:15px;color:#f0f6fc;font-weight:600}
+.panel-header .badge{font-size:10px;color:#3fb950;background:#23863622;border:1px solid #23863644;border-radius:10px;padding:2px 8px}
+.editor-panel{background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden}
+.editor-toolbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#1c2128;border-bottom:1px solid #30363d}
+.editor-toolbar .label{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:1px}
+.editor-toolbar button{padding:6px 16px;background:#238636;border:none;color:#fff;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.editor-toolbar button:hover{background:#2ea043}
+.editor-toolbar button:active{background:#1a7f37}
+.editor-toolbar button:disabled{opacity:0.5;cursor:not-allowed}
+textarea{width:100%;min-height:140px;padding:12px 14px;background:#0d1117;border:none;color:#c9d1d9;font-family:'Menlo','Monaco','Courier New',monospace;font-size:13px;resize:vertical;outline:none;line-height:1.5}
+textarea::placeholder{color:#484f58}
+.results-panel{background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;flex:1;min-height:200px;display:flex;flex-direction:column}
+.results-toolbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#1c2128;border-bottom:1px solid #30363d}
+.results-toolbar .label{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:1px}
+.results-toolbar .status{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600}
+.status-ok{color:#3fb950;background:#23863622}
+.status-err{color:#f85149;background:#da363322}
+.results-body{padding:12px 14px;font-size:12px;line-height:1.6;overflow:auto;flex:1;white-space:pre-wrap;word-break:break-all;color:#c9d1d9}
+.results-body:empty::before{content:'Run a query to see results';color:#484f58;font-style:italic}
+.hint-box{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px 16px}
+.hint-box h4{font-size:10px;color:#484f58;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.hint-box p{font-size:12px;color:#8b949e;line-height:1.5}
+.hint-box code{color:#79c0ff;background:#0d1117;padding:1px 5px;border-radius:3px;font-size:11px}
+footer{color:#30363d;font-size:10px;text-align:center;padding:16px;border-top:1px solid #30363d}
 </style></head><body>
-<div class="topbar"><h1>CGS Asset Catalog</h1><span class="version">v2.3.1</span></div>
+<div class="topbar"><h1>CGS Asset Catalog</h1><span class="version">v2.3.1 — GraphQL API</span></div>
 <div class="container">
 <div class="sidebar">
 <h3>Navigation</h3>
-<a href="#" class="active">All Assets</a>
+<a href="#" class="active">Query Explorer</a>
+<a href="#">All Assets</a>
 <a href="#">Branding</a>
 <a href="#">UI Components</a>
-<a href="#">Templates</a>
-<a href="#">Documentation</a>
-<a href="#">Animation</a>
+<div class="section"><h3>Endpoint</h3>
+<a href="#" style="cursor:default">POST /graphql</a>
+<a href="#" style="cursor:default;font-size:10px;color:#484f58">Introspection: ON</a></div>
 </div>
 <div class="main">
-<div class="page-header"><h2>All Assets <span class="badge">8 items</span></h2><p>Internal design and engineering asset catalog</p></div>
-<div class="grid">
-<div class="asset-card"><div class="top"><h4>Logo Pack v3</h4><span class="cat">branding</span></div><div class="meta"><span>SVG/PNG</span><span>2.4 MB</span><span>2026-03-12</span></div></div>
-<div class="asset-card"><div class="top"><h4>Icon Library</h4><span class="cat">ui-components</span></div><div class="meta"><span>SVG</span><span>890 KB</span><span>2026-04-02</span></div></div>
-<div class="asset-card"><div class="top"><h4>Email Templates</h4><span class="cat">templates</span></div><div class="meta"><span>HTML/EJS</span><span>156 KB</span><span>2026-02-18</span></div></div>
-<div class="asset-card"><div class="top"><h4>Product Photos</h4><span class="cat">photography</span></div><div class="meta"><span>JPEG</span><span>18.7 MB</span><span>2026-05-01</span></div></div>
-<div class="asset-card"><div class="top"><h4>Illustration Set</h4><span class="cat">illustrations</span></div><div class="meta"><span>SVG/PNG</span><span>5.1 MB</span><span>2026-01-22</span></div></div>
-<div class="asset-card"><div class="top"><h4>Brand Guidelines</h4><span class="cat">documentation</span></div><div class="meta"><span>PDF</span><span>3.8 MB</span><span>2026-03-30</span></div></div>
-<div class="asset-card"><div class="top"><h4>UI Kit — Dashboard</h4><span class="cat">ui-components</span></div><div class="meta"><span>Figma/SVG</span><span>12.3 MB</span><span>2026-04-15</span></div></div>
-<div class="asset-card"><div class="top"><h4>Motion Presets</h4><span class="cat">animation</span></div><div class="meta"><span>JSON/Lottie</span><span>420 KB</span><span>2026-05-10</span></div></div>
+<div class="panel-header"><h2>GraphQL Explorer</h2><span class="badge">LIVE</span></div>
+<div class="editor-panel">
+<div class="editor-toolbar">
+<span class="label">Query</span>
+<button id="runBtn" onclick="runQuery()">Run Query</button>
 </div>
-<div class="endpoint-box">
-<h3>API Endpoint</h3>
-<code>POST /graphql</code>
-<div class="methods"><span class="method-get">GET (query param)</span><span class="method-post">POST (JSON body)</span></div>
-<p style="color:#484f58;font-size:11px;margin-top:12px">Supports standard GraphQL queries. Introspection is enabled.</p>
+<textarea id="queryInput" placeholder="Write your GraphQL query here...">{ 
+  assets {
+    name
+    category
+  }
+}</textarea>
+</div>
+<div class="results-panel">
+<div class="results-toolbar">
+<span class="label">Results</span>
+<span class="status" id="statusBadge"></span>
+</div>
+<div class="results-body" id="results"></div>
+</div>
+<div class="hint-box">
+<h4>API Info</h4>
+<p>Send a POST request to <code>/graphql</code> with a JSON body: <code>{"query": "..."}</code>. Introspection is enabled — the schema can describe itself.</p>
 </div>
 <footer>CGS Internal Tools &bull; Asset Catalog Service</footer>
 </div>
-</div></body></html>`)
+</div>
+<script>
+async function runQuery(){
+  var q=document.getElementById('queryInput').value.trim();
+  if(!q)return;
+  var btn=document.getElementById('runBtn');
+  var res=document.getElementById('results');
+  var badge=document.getElementById('statusBadge');
+  btn.disabled=true;btn.textContent='Running...';res.textContent='';badge.textContent='';badge.className='status';
+  try{
+    var r=await fetch('graphql',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q})});
+    var d=await r.json();
+    badge.textContent=r.status+(r.ok?' OK':' Error');
+    badge.className='status '+(r.ok?'status-ok':'status-err');
+    res.textContent=JSON.stringify(d,null,2);
+  }catch(e){
+    badge.textContent='Error';badge.className='status status-err';
+    res.textContent='Request failed: '+e.message;
+  }
+  btn.disabled=false;btn.textContent='Run Query';
+}
+document.getElementById('queryInput').addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runQuery()}
+});
+</script></body></html>`)
 }
 
 // 17 — PathPeek
