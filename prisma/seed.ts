@@ -68,6 +68,58 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'A highly classified archive has been recovered from a heavily secured scientific laboratory. Among the recovered files are several confidential research notes, damaged correspondence, and references to an individual known only as "OES."\n\nDuring the investigation, analysts discovered that the challenge author is a huge fan of a famous AAA survival horror video game series. The codename OES is a clue pointing toward one of its most iconic fictional scientists.\n\nYour mission is to identify this character and list the names of their most significant successful biological research projects in chronological order. Concatenate the names together exactly as shown in the flag format.',
   },
+  {
+    title:'The Forgotten Castle', category:'osint', difficulty:'easy', points:100,
+    flag:'CGS{Peleș_Castle}',
+    hint:null,
+    hintList:[
+      'Located in Romania.',
+      'Built in the 19th century.',
+      'Frequently compared to a castle from Resident Evil Village.',
+    ],
+    instanceUrl:null,
+    description:'A recovered intelligence report mentions that the challenge author is fascinated by a legendary vampire lord from a famous survival horror game. Investigators believe the castle in the game was inspired by a real European castle.\n\nFind the name of the real castle.',
+  },
+
+  // ═══ OSINT MEDIUM ═══
+  {
+    title:'Project Umbrella', category:'osint', difficulty:'medium', points:250,
+    flag:'CGS{Umbrella_1968}',
+    hint:null,
+    hintList:[
+      'The corporation\'s logo is red and white.',
+      'Founded by three people.',
+      'Search official lore instead of fan theories.',
+    ],
+    instanceUrl:null,
+    description:'Researchers found documents describing a fictional pharmaceutical corporation responsible for numerous biological disasters.\n\nIdentify the corporation and determine the year it was founded according to official lore.',
+  },
+  {
+    title:'Spencer\'s Mansion', category:'osint', difficulty:'medium', points:250,
+    flag:'CGS{Biltmore_Estate}',
+    hint:null,
+    hintList:[
+      'Located in the United States.',
+      'It is one of the largest private residences in America.',
+      'Search for "real inspiration for Spencer Mansion."',
+    ],
+    instanceUrl:null,
+    description:'Recovered architectural sketches appear to resemble a mansion from a famous survival horror game. Researchers believe it was inspired by a real historical mansion.\n\nIdentify the real mansion and submit its official name.',
+  },
+
+  // ═══ OSINT HARD ═══
+  {
+    title:'The Founder', category:'osint', difficulty:'hard', points:400,
+    flag:'CGS{1966}',
+    hint:null,
+    hintList:[
+      'The flower originates from Africa.',
+      'It later became the basis of many viral experiments.',
+      'Search the official Resident Evil timeline.',
+    ],
+    instanceUrl:null,
+    description:'Investigators recovered notes mentioning only the initials O.E.S. and references to an ancient flower.\n\nIdentify the scientist and determine the exact year he discovered the flower that became the foundation of his life\'s work.',
+  },
 ]
 
 const getTags = (category: string, difficulty: string): string => {
