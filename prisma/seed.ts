@@ -16,7 +16,8 @@ const playgroundSlug = (title: string): string =>
 
 interface ChallengeData {
   title: string; description: string; category: string; difficulty: string;
-  points: number; flag: string; hint: string | null; files?: string | null; instanceUrl?: string | null;
+  points: number; flag: string; hint: string | null; hintList?: string[];
+  files?: string | null; instanceUrl?: string | null;
 }
 
 const challenges: ChallengeData[] = [
@@ -50,6 +51,23 @@ const challenges: ChallengeData[] = [
   { title:'SSTI Render',          category:'web',difficulty:'hard',points:400,flag:'CGS{ss7i_turns_t3mpl4t3s_1nt0_sh3lls}',        hint:'Try a template expression like <%= 7*7 %> in the preview field.',                                                            instanceUrl:null, description:'CGS\'s marketing team built a live preview for email templates. Whatever you type gets rendered by the server\'s full template engine, no sandbox in sight.' },
   { title:'XXEcho',               category:'web',difficulty:'hard',points:400,flag:'CGS{xx3_st1ll_h4unts_l3g4cy_p4rs3rs}',          hint:'XML supports defining custom entities, including ones that read local files — research XXE.',                                instanceUrl:null, description:'CGS\'s contact importer accepts XML uploads and happily resolves whatever entities you define inside them — including ones that point at the local filesystem.' },
   { title:'CORSChain',            category:'web',difficulty:'hard',points:400,flag:'CGS{r3fl3ct3d_cors_pl4y_l34ks_cr3d3nt14l5}',    hint:'Check the CORS headers on /api/session-info — what Origin values does it accept, and does it allow credentials?',           instanceUrl:null, description:'CGS\'s session-info API reflects whatever Origin header it receives and allows credentialed requests. That\'s a very generous cross-origin policy for an endpoint that returns session data.' },
+
+  // ═══ OSINT EASY ═══
+  {
+    title:'Project OES Archive', category:'osint', difficulty:'easy', points:100,
+    flag:'CGS{ProgenitorTyrantGvirusTveronicaUroborosCvirusAlpis}',
+    hint:null,
+    hintList:[
+      'The character\'s initials are O.E.S.',
+      'The character is a scientist, not the main protagonist.',
+      'The game series began in the 1990s.',
+      'The first letter of every research name is capitalized.',
+      'There are seven research names.',
+      'Ignore spaces, hyphens, and punctuation. Join all research names together.',
+    ],
+    instanceUrl:null,
+    description:'A highly classified archive has been recovered from a heavily secured scientific laboratory. Among the recovered files are several confidential research notes, damaged correspondence, and references to an individual known only as "OES."\n\nDuring the investigation, analysts discovered that the challenge author is a huge fan of a famous AAA survival horror video game series. The codename OES is a clue pointing toward one of its most iconic fictional scientists.\n\nYour mission is to identify this character and list the names of their most significant successful biological research projects in chronological order. Concatenate the names together exactly as shown in the flag format.',
+  },
 ]
 
 const getTags = (category: string, difficulty: string): string => {
@@ -71,7 +89,8 @@ const getInstanceType = (category: string): string | null => {
   return null
 }
 
-const getHints = (hint: string | null): string | null => {
+const getHints = (hint: string | null, hintList?: string[]): string | null => {
+  if (hintList && hintList.length > 0) return JSON.stringify(hintList.map(h => ({ text: h, penalty: 0 })))
   if (!hint) return null
   return JSON.stringify([{ text: hint, penalty: 0 }])
 }
@@ -141,7 +160,7 @@ async function seedChallenges() {
         solveRate: 0.0,
         instanceType: getInstanceType(c.category),
         hintPenalty: 0,
-        hints: getHints(c.hint),
+        hints: getHints(c.hint, c.hintList),
       },
       create: {
         slug,
@@ -165,7 +184,7 @@ async function seedChallenges() {
         solveRate: 0.0,
         instanceType: getInstanceType(c.category),
         hintPenalty: 0,
-        hints: getHints(c.hint),
+        hints: getHints(c.hint, c.hintList),
       },
     })
 
