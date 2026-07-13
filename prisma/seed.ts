@@ -148,6 +148,110 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'A damaged notebook recovered from the challenge author\'s desk contains only one readable sentence:\n\n"My favourite horror game series is Outlast. I\'ve always wondered how close Mount Massive Asylum is to its real-world inspiration."\n\nYour mission is to identify the real-world location that inspired Mount Massive Asylum and determine its exact geographic coordinates.\n\nFlag Format:\nCGS{LATITUDE,LONGITUDE}',
   },
+
+  // ═══ FORENSICS EASY (5) ═══
+  {
+    title:'Hidden in Plain Sight', category:'forensics', difficulty:'easy', points:100,
+    flag:'CGS{tr41l1ng_d4t4_1s_3v3ryw3r3}',
+    hint:'JPEGs end with FF D9. Check what comes after.',
+    files:JSON.stringify([{name:'trailing.jpg', url:'/uploads/challenges/forensics-easy1/trailing.jpg'}]),
+    instanceUrl:null,
+    description:'A JPEG image has a text string appended after the EOF marker. Extract it with a hex editor or binwalk.',
+  },
+  {
+    title:'Whitespace Secrets', category:'forensics', difficulty:'easy', points:100,
+    flag:'CGS{wh1t3sp4c3_h1d3s_th1ngs}',
+    hint:'Try a Stegsnow tool or view the file in a hex editor.',
+    files:JSON.stringify([{name:'empty.txt', url:'/uploads/challenges/forensics-easy2/empty.txt'}]),
+    instanceUrl:null,
+    description:'A text file looks empty but has invisible characters (spaces and tabs) encoding a message in binary (space=0, tab=1).',
+  },
+  {
+    title:'Reversed Image', category:'forensics', difficulty:'easy', points:100,
+    flag:'CGS{byt3_0rd3r_m4tt3rs}',
+    hint:'Compare the file\'s first 8 bytes to a normal PNG signature.',
+    files:JSON.stringify([{name:'corrupted.png', url:'/uploads/challenges/forensics-easy3/corrupted.png'}]),
+    instanceUrl:null,
+    description:'A PNG file\'s header bytes are reversed, so it won\'t open normally.',
+  },
+  {
+    title:'EXIF Explorer', category:'forensics', difficulty:'easy', points:100,
+    flag:'CGS{m3t4d4t4_t3lls_st0r13s}',
+    hint:'Use exiftool to dump all metadata fields.',
+    files:JSON.stringify([{name:'photo.jpg', url:'/uploads/challenges/forensics-easy4/photo.jpg'}]),
+    instanceUrl:null,
+    description:'A photo\'s metadata contains a flag in the "Comment" field.',
+  },
+  {
+    title:'Base64 in a PCAP', category:'forensics', difficulty:'easy', points:100,
+    flag:'CGS{p4ck3ts_c4rry_s3cr3ts}',
+    hint:'Filter for POST requests in Wireshark and decode the payload.',
+    files:JSON.stringify([{name:'traffic.pcap', url:'/uploads/challenges/forensics-easy5/traffic.pcap'}]),
+    instanceUrl:null,
+    description:'A packet capture has one HTTP POST request with a Base64-encoded flag in the body.',
+  },
+
+  // ═══ FORENSICS MEDIUM (4) ═══
+  {
+    title:'LSB PNG', category:'forensics', difficulty:'medium', points:250,
+    flag:'CGS{l345t_51gn1f1c4nt_b1t}',
+    hint:'Use a Python script with PIL to extract LSBs from each pixel, then convert bits to ASCII.',
+    files:JSON.stringify([{name:'image.png', url:'/uploads/challenges/forensics-medium1/image.png'}]),
+    instanceUrl:null,
+    description:'A PNG image hides a flag in the least significant bits of the red channel.',
+  },
+  {
+    title:'Corrupted Header Recovery', category:'forensics', difficulty:'medium', points:250,
+    flag:'CGS{z1p_h34d3r_r3p41r}',
+    hint:'ZIP files start with 50 4B 03 04. Compare and fix.',
+    files:JSON.stringify([{name:'archive.zip', url:'/uploads/challenges/forensics-medium2/archive.zip'}]),
+    instanceUrl:null,
+    description:'A ZIP file has a corrupted local file header (wrong magic bytes) that needs fixing before it will extract.',
+  },
+  {
+    title:'Memory Dump Strings', category:'forensics', difficulty:'medium', points:250,
+    flag:'CGS{m3m0ry_n3v3r_f0rg3ts}',
+    hint:'Run strings on the dump and grep for "CGS{".',
+    files:JSON.stringify([{name:'memory.raw', url:'/uploads/challenges/forensics-medium3/memory.raw'}]),
+    instanceUrl:null,
+    description:'A memory dump (.raw) contains a process running a script with the flag in an environment variable.',
+  },
+  {
+    title:'Audio Spectrogram', category:'forensics', difficulty:'medium', points:250,
+    flag:'CGS{s0und_w4v3s_h1d3_1m4g3s}',
+    hint:'Open the file in Audacity or Sonic Visualiser and switch to spectrogram view.',
+    files:JSON.stringify([{name:'audio.wav', url:'/uploads/challenges/forensics-medium4/audio.wav'}]),
+    instanceUrl:null,
+    description:'A WAV file has a flag hidden visually in its frequency spectrogram.',
+  },
+
+  // ═══ FORENSICS HARD (2) ═══
+  {
+    title:'Multi-Layer Steganography', category:'forensics', difficulty:'hard', points:400,
+    flag:'CGS{l4y3r3d_s3cr3ts_n33d_p4t13nc3}',
+    hint:null,
+    hintList:[
+      'Extract EXIF first, decode the GPS values as characters to get the steghide password, then extract the embedded file.',
+      'The password is hidden in the image\'s EXIF GPS coordinates (decoded as ASCII).',
+      'Use steghide with the extracted password to reveal the flag.',
+    ],
+    files:JSON.stringify([{name:'secret.jpg', url:'/uploads/challenges/forensics-hard1/secret.jpg'}]),
+    instanceUrl:null,
+    description:'A JPEG has a password-protected steghide payload; the password is hidden in the image\'s EXIF GPS coordinates (decoded as ASCII).',
+  },
+  {
+    title:'Disk Image Carving', category:'forensics', difficulty:'hard', points:400,
+    flag:'CGS{d3l3t3d_bu7_n0t_g0n3_f0r3v3r}',
+    hint:null,
+    hintList:[
+      'Carve for PDFs first, then check document metadata rather than the page content.',
+      'Use foremost or scalpel to recover deleted files from the disk image.',
+      'The flag is inside a PDF\'s document properties, not the visible text.',
+    ],
+    files:JSON.stringify([{name:'disk.dd', url:'/uploads/challenges/forensics-hard2/disk.dd'}]),
+    instanceUrl:null,
+    description:'A raw disk image (.dd) has a deleted file with the flag. The file was deleted but not overwritten, and file carving with foremost or scalpel recovers it.',
+  },
 ]
 
 const getTags = (category: string, difficulty: string): string => {
