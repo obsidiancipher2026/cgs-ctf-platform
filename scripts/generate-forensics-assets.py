@@ -265,79 +265,46 @@ write('forensics-medium4/audio.wav', easy_med4)
 
 # ── Hard 1: Multi-Layer Steganography ──
 print('[*] Hard 1 — Multi-Layer Steganography')
-# The password for steghide is hidden in EXIF GPS coordinates decoded as ASCII
-# We'll use GPS coords that encode the password "st3g0"
-password = 'st3g0'
-gps_chars = [(ord(c) >> 4, ord(c) & 0x0F) for c in password]
-gps_str = ','.join(f'{a}{b}' for a, b in gps_chars)
-# Build JPEG with EXIF containing GPS data and a steghide payload placeholder
-# Since we can't use steghide library, we'll embed a marker file instead
-# The actual challenge: extract EXIF GPS, decode as ASCII to get password
-# Then use that password to extract embedded data
-def make_exif_gps_jpeg():
-    exif_header = b'Exif\x00\x00'
-    tiff_header = b'II' + struct.pack('<H', 42) + struct.pack('<I', 8)
-    ifd_offset = 8
-    # Two IFD entries: GPSInfo (0x8825) pointing to GPS sub-IFD
-    num_entries = 2
-    # GPS sub-IFD: GPSLatitudeRef, GPSLatitude, GPSLongitudeRef, GPSLongitude
-    # Store password chars as GPS coordinate values
-    gps_ifd_offset = ifd_offset + 2 + num_entries * 12 + 4
-    # GPS data: lat/lon values that encode the password
-    gps_data = b''
-    gps_lat_ref = b'N\x00'
-    gps_lon_ref = b'E\x00'
-    gps_lat = b''
-    gps_lon = b''
-    for i, (a, b) in enumerate(gps_chars):
-        gps_lat += struct.pack('<II', a, 1) + struct.pack('<II', b, 1)
-    for i, (a, b) in enumerate(gps_chars):
-        gps_lon += struct.pack('<II', a, 1) + struct.pack('<II', b, 1)
-    # Build main IFD
-    main_ifd = struct.pack('<H', num_entries)
-    # GPSInfo tag (0x8825) - type IFD, count 1, value = offset to GPS sub-IFD
-    main_ifd += struct.pack('<HHII', 0x8825, 4, 1, gps_ifd_offset)
-    # ImageWidth (0x0100)
-    main_ifd += struct.pack('<HHII', 0x0100, 4, 1, 640)
-    main_ifd += struct.pack('<I', 0)  # next IFD
-    # GPS sub-IFD
-    gps_sub_ifd = struct.pack('<H', 6)
-    gps_sub_ifd += struct.pack('<HHII', 0x0001, 2, 2, gps_ifd_offset + 14)  # GPSLatitudeRef
-    gps_sub_ifd += struct.pack('<HHII', 0x0002, 5, 6, gps_ifd_offset + 26)  # GPSLatitude
-    gps_sub_ifd += struct.pack('<HHII', 0x0003, 2, 2, gps_ifd_offset + 50)  # GPSLongitudeRef
-    gps_sub_ifd += struct.pack('<HHII', 0x0004, 5, 6, gps_ifd_offset + 62)  # GPSLongitude
-    gps_sub_ifd += struct.pack('<HHII', 0x0005, 1, 1, gps_ifd_offset + 86)  # GPSAltitudeRef
-    gps_sub_ifd += struct.pack('<HHII', 0x0006, 5, 1, gps_ifd_offset + 87)  # GPSAltitude
-    gps_sub_ifd += struct.pack('<I', 0)
-    # GPS values area
-    gps_lat_ref_bytes = gps_lat_ref
-    gps_lat_bytes = gps_lat
-    gps_lon_ref_bytes = gps_lon_ref
-    gps_lon_bytes = gps_lon
-    gps_alt_ref = b'\x00'
-    gps_alt = struct.pack('<II', 100, 1)
-    gps_sub_ifd_data = gps_sub_ifd + gps_lat_ref_bytes + gps_lat_bytes + gps_lon_ref_bytes + gps_lon_bytes + gps_alt_ref + gps_alt
-    exif_data = exif_header + tiff_header + main_ifd + gps_sub_ifd_data
-    # JPEG structure
-    soi = b'\xff\xd8'
-    app1_marker = b'\xff\xe1'
-    app1_len = 2 + len(exif_data)
-    app1 = app1_marker + struct.pack('>H', app1_len) + exif_data
-    dht = b'\xff\xc4\x00\x1f\x00\x00\x01\x05\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b'
-    sos = b'\xff\xda\x00\x08\x01\x01\x00\x00\x3f\x00\x7b\x40'
-    scan = b'\x00' * 32
-    eoi = b'\xff\xd9'
-    # Append a hidden payload area (simulated steghide output)
-    flag10 = 'CGS{l4y3r3d_s3cr3ts_n33d_p4t13nc3}'
-    hidden_payload = (
-        f'=== STEGHIDE EXTRACTED DATA ===\n'
-        f'Password used: {password}\n'
-        f'Flag: {flag10}\n'
-    ).encode()
-    return soi + app1 + dht + sos + scan + eoi + hidden_payload
-
-hard1 = make_exif_gps_jpeg()
-write('forensics-hard1/secret.jpg', hard1)
+# Use the external repair script which uses Pillow + piexif + steghide
+import subprocess, sys
+repair_script = os.path.join(os.path.dirname(__file__), 'repair-secret.py')
+if os.path.exists(repair_script):
+    result = subprocess.run([sys.executable, repair_script], capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f'  [!] repair-secret.py failed: {result.stderr}')
+        sys.exit(1)
+    for line in result.stdout.splitlines():
+        print(f'  {line}')
+else:
+    print('  [!] repair-secret.py not found, using fallback minimal JPEG')
+    # Fallback: create a minimal valid JPEG (for environments without Pillow/piexif/steghide)
+    from PIL import Image
+    import piexif
+    img = Image.new('RGB', (800, 600), (128, 128, 128))
+    # Add noise
+    import random as _r
+    _r.seed(42)
+    px = img.load()
+    for x_ in range(800):
+        for y_ in range(600):
+            v_ = _r.randint(100, 200)
+            px[x_, y_] = (v_, v_, v_)
+    carrier = os.path.join(OUT, 'forensics-hard1', 'secret.jpg')
+    img.save(carrier, 'JPEG', quality=85)
+    # Inject EXIF GPS
+    gps_data = {
+        piexif.GPSIFD.GPSVersionID: (2, 3, 0, 0),
+        piexif.GPSIFD.GPSLatitudeRef: 'N',
+        piexif.GPSIFD.GPSLatitude: [(73, 1), (74, 1), (33, 1)],
+        piexif.GPSIFD.GPSLongitudeRef: 'E',
+        piexif.GPSIFD.GPSLongitude: [(67, 1), (30, 1), (0, 1)],
+    }
+    exif_bytes = piexif.dump({'0th': {}, 'Exif': {}, 'GPS': gps_data, 'Interop': {}, '1st': {}, 'thumbnail': None})
+    piexif.insert(exif_bytes, carrier)
+    # Create flag.txt
+    with open(os.path.join(OUT, 'forensics-hard1', 'flag.txt'), 'w') as f:
+        f.write('CGS{l4y3r3d_s3cr3ts_n33d_p4t13nc3}\n')
+    print(f'  [+] Created fallback secret.jpg (no steghide embedding)')
 
 # ── Hard 2: Disk Image Carving ──
 print('[*] Hard 2 — Disk Image Carving')
