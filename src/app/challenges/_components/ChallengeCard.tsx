@@ -9,6 +9,7 @@ const categoryMeta: Record<string, { icon: React.ElementType; label: string; col
   crypto: { icon: Lock, label: 'Crypto', color: 'text-[var(--aurora-violet)]' },
   forensics: { icon: Search, label: 'Forensics', color: 'text-[var(--aurora-emerald)]' },
   reverse: { icon: Terminal, label: 'Reverse', color: 'text-amber-400' },
+  osint: { icon: Search, label: 'OSINT', color: 'text-sky-400' },
   misc: { icon: Puzzle, label: 'Misc', color: 'text-pink-400' },
 }
 

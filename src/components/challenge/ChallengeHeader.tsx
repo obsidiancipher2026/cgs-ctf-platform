@@ -33,6 +33,7 @@ const categoryMeta: Record<string, { icon: React.ElementType; label: string; col
   crypto: { icon: Lock, label: 'Crypto', color: 'text-[var(--aurora-violet)]', bg: 'bg-[rgba(124,92,255,0.08)] border-[rgba(124,92,255,0.2)]' },
   forensics: { icon: Search, label: 'Forensics', color: 'text-[var(--aurora-emerald)]', bg: 'bg-[rgba(52,232,158,0.08)] border-[rgba(52,232,158,0.2)]' },
   reverse: { icon: Terminal, label: 'Reverse', color: 'text-amber-400', bg: 'bg-[rgba(251,191,36,0.08)] border-[rgba(251,191,36,0.2)]' },
+  osint: { icon: Search, label: 'OSINT', color: 'text-sky-400', bg: 'bg-[rgba(56,189,248,0.08)] border-[rgba(56,189,248,0.2)]' },
   misc: { icon: Puzzle, label: 'Misc', color: 'text-pink-400', bg: 'bg-[rgba(244,114,182,0.08)] border-[rgba(244,114,182,0.2)]' },
 }
 

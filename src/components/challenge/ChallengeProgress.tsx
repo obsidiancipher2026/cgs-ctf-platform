@@ -24,6 +24,7 @@ const categoryMeta: Record<string, { label: string; icon: React.ElementType; col
   crypto: { label: 'Crypto', icon: Lock, color: 'text-[var(--aurora-violet)]', barColor: 'bg-[var(--aurora-violet)]' },
   forensics: { label: 'Forensics', icon: Search, color: 'text-[var(--aurora-emerald)]', barColor: 'bg-[var(--aurora-emerald)]' },
   reverse: { label: 'Reverse', icon: Terminal, color: 'text-amber-400', barColor: 'bg-amber-400' },
+  osint: { label: 'OSINT', icon: Search, color: 'text-sky-400', barColor: 'bg-sky-400' },
   misc: { label: 'Misc', icon: Puzzle, color: 'text-pink-400', barColor: 'bg-pink-400' },
 }
 
