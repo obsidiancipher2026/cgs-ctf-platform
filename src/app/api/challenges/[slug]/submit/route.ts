@@ -4,7 +4,7 @@ import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
-const BLOOD_BONUS: Record<string, number> = { easy: 25, medium: 50, hard: 100 }
+const BLOOD_BONUS: Record<string, number> = { easy: 25, medium: 50, hard: 75, insane: 100 }
 
 const RATE_LIMIT_WINDOW = 5_000
 const rateLimitMap = new Map<number, number>()
@@ -47,7 +47,7 @@ export async function POST(request: Request, { params }: { params: { slug: strin
     })
     if (existing) return jsonResponse({ detail: 'Already solved this challenge' }, 409)
 
-    const trimmed = flag.trim()
+    const flagHash = crypto.createHash('sha256').update(flag).digest('hex')
 
     const storedFlags = await prisma.realFlag.findMany({
       where: {
@@ -71,7 +71,6 @@ export async function POST(request: Request, { params }: { params: { slug: strin
 
     const validHashes = [challenge.flag, ...storedFlags.map(f => crypto.createHash('sha256').update(f.flag).digest('hex'))]
 
-    const flagHash = crypto.createHash('sha256').update(trimmed).digest('hex')
     const match = validHashes.some(h => constantTimeEqual(flagHash, h))
 
     if (!match) {
@@ -81,34 +80,45 @@ export async function POST(request: Request, { params }: { params: { slug: strin
           userId: user.id,
           ipAddress: getClientIp(request),
           severity: 'info',
-          details: JSON.stringify({ challenge_id: challenge.id, slug: challenge.slug, title: challenge.title, flag_preview: trimmed.slice(0, 20) }),
+          details: JSON.stringify({ challenge_id: challenge.id, slug: challenge.slug, title: challenge.title, flag_preview: flag.slice(0, 20) }),
         },
       }).catch(() => {})
       return jsonResponse({ detail: 'Incorrect flag' }, 400)
     }
 
-    const existingSolves = await prisma.submission.count({
-      where: { challengeId: challenge.id, solved: true },
-    })
-    const isFirstBlood = existingSolves === 0
-    const bloodBonus = isFirstBlood ? getBloodBonus(challenge.difficulty) : 0
-    const totalPoints = challenge.points + bloodBonus
+    let isFirstBlood = false
+    let bloodBonus = 0
+    let totalPoints = challenge.points
 
-    await prisma.submission.create({
-      data: { userId: user.id, challengeId: challenge.id, solved: true },
-    })
+    await prisma.$transaction(async (tx) => {
+      const claim = await tx.challenge.updateMany({
+        where: { id: challenge.id, bloodAwarded: false },
+        data: {
+          bloodAwarded: true,
+          firstSolverUserId: user.id,
+          firstBloodTimestamp: new Date(),
+        },
+      })
+      isFirstBlood = claim.count > 0
+      bloodBonus = isFirstBlood ? getBloodBonus(challenge.difficulty) : 0
+      totalPoints = challenge.points + bloodBonus
 
-    await prisma.challenge.update({
-      where: { id: challenge.id },
-      data: { solveCount: { increment: 1 } },
-    })
+      await tx.submission.create({
+        data: { userId: user.id, challengeId: challenge.id, solved: true },
+      })
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        score: { increment: totalPoints },
-        bloodPoints: isFirstBlood ? { increment: bloodBonus } : undefined,
-      },
+      await tx.challenge.update({
+        where: { id: challenge.id },
+        data: { solveCount: { increment: 1 } },
+      })
+
+      await tx.user.update({
+        where: { id: user.id },
+        data: {
+          score: { increment: totalPoints },
+          bloodPoints: isFirstBlood ? { increment: bloodBonus } : undefined,
+        },
+      })
     })
 
     await prisma.log.create({

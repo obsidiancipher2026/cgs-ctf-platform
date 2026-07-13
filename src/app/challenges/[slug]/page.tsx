@@ -126,6 +126,10 @@ export default function ChallengeWorkspacePage() {
     )
   }
 
+  const bloodAwarded = (challenge as any).bloodAwarded ?? false
+  const firstSolverUsername = (challenge as any).firstSolverUsername ?? null
+  const firstBloodTimestamp = (challenge as any).firstBloodTimestamp ?? null
+
   const solved = solvedIds.has(challenge.id)
   const attempted = !solved && solves.some(s => s.challenge_id === challenge.id)
   const status: 'solved' | 'attempted' | 'unsolved' = solved ? 'solved' : attempted ? 'attempted' : 'unsolved'
@@ -219,7 +223,7 @@ export default function ChallengeWorkspacePage() {
 
           {/* Sidebar */}
           <div className="w-full lg:w-80 shrink-0">
-            <ChallengeSidebar challenge={challenge} status={status}>
+            <ChallengeSidebar challenge={{ ...challenge, bloodAwarded, firstSolverUsername, firstBloodTimestamp }} status={status}>
               <ChallengeSubmit slug={challenge.slug} challengeId={challenge.id} solved={solved} onSolved={loadData} />
             </ChallengeSidebar>
           </div>

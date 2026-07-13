@@ -32,13 +32,28 @@ export async function GET(request: Request, { params }: { params: { slug: string
         estimatedTime: true,
         solveCount: true,
         solveRate: true,
+        firstBloodTimestamp: true,
+        bloodAwarded: true,
+        firstSolverUserId: true,
         createdAt: true,
       },
     })
 
     if (!challenge) return jsonResponse({ detail: 'Challenge not found' }, 404)
 
-    return jsonResponse(challenge)
+    let firstSolverUsername: string | null = null
+    if (challenge.bloodAwarded && challenge.firstSolverUserId) {
+      const solver = await prisma.user.findUnique({
+        where: { id: challenge.firstSolverUserId },
+        select: { username: true },
+      })
+      firstSolverUsername = solver?.username ?? null
+    }
+
+    return jsonResponse({
+      ...challenge,
+      firstSolverUsername,
+    })
   } catch {
     return jsonResponse({ detail: 'Failed to load challenge' }, 500)
   }

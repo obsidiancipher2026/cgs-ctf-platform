@@ -13,7 +13,25 @@ export async function GET(request: Request) {
   if (adminErr) return adminErr
 
   const flags = await prisma.realFlag.findMany({ orderBy: { id: 'desc' } })
-  return jsonResponse(flags)
+
+  const flagsWithChallenge = await Promise.all(flags.map(async (f) => {
+    const challenge = await prisma.challenge.findFirst({
+      where: { title: f.challengeName },
+      select: { id: true, title: true, category: true, difficulty: true, points: true, solveCount: true, updatedAt: true },
+    })
+    return {
+      ...f,
+      challengeId: challenge?.id ?? null,
+      challengeTitle: challenge?.title ?? null,
+      challengeCategory: challenge?.category ?? null,
+      challengeDifficulty: challenge?.difficulty ?? null,
+      challengePoints: challenge?.points ?? null,
+      challengeSolveCount: challenge?.solveCount ?? null,
+      challengeUpdatedAt: challenge?.updatedAt?.toISOString() ?? null,
+    }
+  }))
+
+  return jsonResponse(flagsWithChallenge)
 }
 
 export async function POST(request: Request) {

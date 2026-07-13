@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Globe, Lock, Search, Terminal, Puzzle,
-  Clock, Users, TrendingUp, Calendar, Flag,
+  Clock, Users, TrendingUp, Calendar, Flag, Zap,
   Bookmark, Heart, CheckCircle, AlertCircle, HelpCircle
 } from 'lucide-react'
 
@@ -21,6 +21,9 @@ interface Challenge {
   estimatedTime?: number | null
   createdAt?: string
   hintPenalty?: number
+  bloodAwarded?: boolean
+  firstSolverUsername?: string | null
+  firstBloodTimestamp?: string | null
 }
 
 interface Props {
@@ -42,6 +45,7 @@ const difficultyMeta: Record<string, { label: string; color: string; bars: numbe
   easy: { label: 'Easy', color: 'text-[var(--aurora-emerald)]', bars: 1, barColor: 'bg-[var(--aurora-emerald)]' },
   medium: { label: 'Medium', color: 'text-[var(--aurora-cyan)]', bars: 2, barColor: 'bg-[var(--aurora-cyan)]' },
   hard: { label: 'Hard', color: 'text-[#FF4500]', bars: 3, barColor: 'bg-[#FF4500]' },
+  insane: { label: 'Insane', color: 'text-[#FF0055]', bars: 4, barColor: 'bg-[#FF0055]' },
 }
 
 const statusConfig = {
@@ -89,8 +93,8 @@ export default function ChallengeSidebar({ challenge, status = 'unsolved', child
               <span className={`text-xs font-mono flex items-center gap-2 ${diff.color}`}>
                 {diff.label}
                 <span className="flex gap-[2px]">
-                  {[1, 2, 3].map(i => (
-                    <span key={i} className={`w-3 h-1 rounded-full ${i <= diff.bars ? diff.barColor : 'bg-white/[0.06]'}`} />
+                  {[1, 2, 3, 4].map(i => (
+                    <span key={i} className={`w-2.5 h-1 rounded-full ${i <= diff.bars ? diff.barColor : 'bg-white/[0.06]'}`} />
                   ))}
                 </span>
               </span>
@@ -99,6 +103,15 @@ export default function ChallengeSidebar({ challenge, status = 'unsolved', child
               <span className="text-xs font-mono text-txt-muted">Points</span>
               <span className="text-xs font-mono text-[var(--aurora-violet)]">{challenge.points} pts</span>
             </div>
+            {challenge.bloodAwarded && challenge.firstSolverUsername && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-txt-muted flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-yellow-400" />
+                  <span className="text-yellow-400">First Blood</span>
+                </span>
+                <span className="text-xs font-mono text-yellow-300 font-medium">{challenge.firstSolverUsername}</span>
+              </div>
+            )}
             {challenge.author && (
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-txt-muted">Author</span>

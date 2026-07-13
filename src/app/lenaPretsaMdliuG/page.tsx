@@ -1252,16 +1252,19 @@ export default function AdminPage() {
                             <thead>
                               <tr className="text-txt-muted font-mono text-[11px] uppercase tracking-wider border-b border-[rgba(34,211,238,0.1)] bg-black/20">
                                 <th className="p-3 pl-5 font-medium">ID</th>
-                                <th className="p-3 font-medium">Name</th>
-                                <th className="p-3 font-medium">Flag</th>
+                                <th className="p-3 font-medium">Challenge Name</th>
+                                <th className="p-3 font-medium">Challenge ID</th>
                                 <th className="p-3 font-medium">Category</th>
-                                <th className="p-3 font-medium">Notes</th>
+                                <th className="p-3 font-medium">Difficulty</th>
+                                <th className="p-3 font-medium">Flag</th>
+                                <th className="p-3 font-medium">Status</th>
+                                <th className="p-3 pr-5 font-medium text-right">Last Updated</th>
                                 <th className="p-3 pr-5 font-medium text-right">Actions</th>
                               </tr>
                             </thead>
                             <tbody>
                               {realFlags.length === 0 ? (
-                                <tr><td colSpan={6} className="p-10 text-center text-txt-muted font-mono text-sm">No secret flags stored yet</td></tr>
+                                <tr><td colSpan={9} className="p-10 text-center text-txt-muted font-mono text-sm">No secret flags stored yet</td></tr>
                               ) : realFlags.map((f: any) => (
                                 <tr key={f.id} className="border-b border-[rgba(34,211,238,0.05)] hover:bg-[rgba(34,211,238,0.03)] transition-colors">
                                   {editRealFlag?.id === f.id ? (
@@ -1271,18 +1274,15 @@ export default function AdminPage() {
                                         <input type="text" value={editRealFlagForm.challenge_name} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, challenge_name: e.target.value })}
                                           className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
                                       </td>
+                                      <td className="p-3 font-mono text-xs text-txt-muted align-top pt-4">{f.challengeId ?? '-'}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary align-top pt-4">{f.challengeCategory ?? '-'}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary align-top pt-4">{f.challengeDifficulty ?? '-'}</td>
                                       <td className="p-3">
                                         <textarea value={editRealFlagForm.flag} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, flag: e.target.value })}
                                           className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" rows={1} />
                                       </td>
-                                      <td className="p-3">
-                                        <input type="text" value={editRealFlagForm.category} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, category: e.target.value })}
-                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
-                                      </td>
-                                      <td className="p-3">
-                                        <input type="text" value={editRealFlagForm.notes} onChange={(e) => setEditRealFlagForm({ ...editRealFlagForm, notes: e.target.value })}
-                                          className="input-field w-full px-2.5 py-1.5 rounded font-mono text-xs" />
-                                      </td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary align-top pt-4">{f.challengeId ? (f.challengeSolveCount > 0 ? 'Stored' : 'Unused') : 'Unmatched'}</td>
+                                      <td className="p-3 pr-5 font-mono text-xs text-txt-muted align-top pt-4">{f.updatedAt ? new Date(f.updatedAt).toLocaleDateString() : '-'}</td>
                                       <td className="p-3 pr-5 align-top pt-4">
                                         <div className="flex gap-1.5 justify-end">
                                           <button onClick={async () => {
@@ -1304,10 +1304,13 @@ export default function AdminPage() {
                                   ) : (
                                     <>
                                       <td className="p-3 pl-5 font-mono text-xs text-txt-muted">{f.id}</td>
-                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium">{f.challenge_name}</td>
-                                      <td className="p-3 font-mono text-xs max-w-[220px] truncate" title={f.flag} style={{color: '#ff4500'}}>{f.flag}</td>
-                                      <td className="p-3 font-mono text-xs text-txt-secondary">{f.category || <span className="text-txt-muted">-</span>}</td>
-                                      <td className="p-3 font-mono text-xs text-txt-secondary max-w-[180px] truncate" title={f.notes || ''}>{f.notes || <span className="text-txt-muted">-</span>}</td>
+                                      <td className="p-3 font-mono text-sm text-txt-primary font-medium">{f.challengeTitle ?? f.challenge_name}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-muted">{f.challengeId ?? '-'}</td>
+                                      <td className="p-3 font-mono text-xs text-txt-secondary">{f.challengeCategory ?? '-'}</td>
+                                      <td className="p-3 font-mono text-xs">{f.challengeDifficulty ?? '-'}</td>
+                                      <td className="p-3 font-mono text-xs max-w-[180px] truncate" title={f.flag} style={{color: '#ff4500'}}>{f.flag}</td>
+                                      <td className="p-3 font-mono text-xs">{f.challengeId ? (f.challengeSolveCount > 0 ? <span style={{color: 'var(--aurora-emerald)'}}>Stored</span> : <span style={{color: 'var(--aurora-cyan)'}}>Unused</span>) : <span className="text-txt-muted">Unmatched</span>}</td>
+                                      <td className="p-3 pr-5 font-mono text-xs text-txt-muted">{f.updatedAt ? new Date(f.updatedAt).toLocaleDateString() : '-'}</td>
                                       <td className="p-3 pr-5">
                                         <div className="flex gap-1.5 justify-end">
                                           <button onClick={() => { setEditRealFlag(f); setEditRealFlagForm({ challenge_name: f.challenge_name, flag: f.flag, category: f.category || '', notes: f.notes || '' }); }}

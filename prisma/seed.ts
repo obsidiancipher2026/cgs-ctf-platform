@@ -31,26 +31,26 @@ const challenges: ChallengeData[] = [
   { title:'EncodedBanner',        category:'web',difficulty:'easy',points:100,flag:'CGS{b4s3_s1xty_f0ur_1s_n0t_3ncrypt10n}',      hint:'Look at the embedded JSON config script tag. Not every field is plain text.',                                                instanceUrl:null, description:'CGS Labs is teasing a new product with a slick countdown banner. The page ships its configuration as embedded JSON — some of it \'encoded for efficiency.\' Encoding isn\'t encryption.' },
 
   // ═══ MEDIUM TIER (10) ═══
-  { title:'CookieCrumbs',         category:'web',difficulty:'medium',points:250,flag:'CGS{c00k13s_ar3_just_s3lf_r3p0rted_st4te}', hint:'Look at what cookies get set when you load the page.',                                                                   instanceUrl:null, description:'CGS Members Portal has a shiny login form — and a dashboard that quietly trusts a cookie to decide who you are. The form is a red herring. The server already believes whatever you tell it.' },
-  { title:'TokenPeek',            category:'web',difficulty:'medium',points:250,flag:'CGS{jwt_p4yl04ds_ar3_r34d4bl3_n0t_s3cur3}', hint:'JWTs have three parts. Look closely at what the middle part contains.',                                                  instanceUrl:null, description:'CGS\'s internal tools use JSON Web Tokens for \'authentication.\' The server reads the payload to decide what you can see. It never actually checks whether the token is legitimate.' },
-  { title:'LocalVault',           category:'web',difficulty:'medium',points:250,flag:'CGS{cl13nt_s1d3_gat3s_ar3_su663st10ns}',     hint:'Check what\'s stored in this site\'s Local Storage.',                                                                       instanceUrl:null, description:'CGS\'s premium panel is gated behind a feature flag stored right there in your browser. The promo code box is a distraction — the real switch is sitting in plain view in Local Storage.' },
-  { title:'HiddenAPI',            category:'web',difficulty:'medium',points:250,flag:'CGS{th3_ui_1sn7_th3_wh0l3_4p1_surf4c3}',     hint:'The bundle was built straight from source. Search for /api/ strings — one endpoint is hidden.',                               instanceUrl:null, description:'The UI loads an app.bundle.js file built straight from source. It uses a public stats API, but the bundle might contain references to other endpoints.' },
-  { title:'ReflectedNote',        category:'web',difficulty:'medium',points:250,flag:'CGS{r3fl3ct3d_xss_st1ll_c0unts}',           hint:'The note preview renders your input exactly as written. What happens if the input contains script tags?',                      instanceUrl:null, description:'CGS Quick Note is an internal tool for drafting and previewing notes. Your input gets rendered live on the page — the app trusts you to write safe content.' },
-  { title:'NoneAlg',              category:'web',difficulty:'medium',points:250,flag:'CGS{n3v3r_tru5t_th3_4l6_h34d3r}',            hint:'How does the server know which algorithm to use when verifying a JWT?',                                                    instanceUrl:null, description:'CGS\'s internal tools login system uses JWTs. The verification code reads the algorithm straight from the token instead of pinning it.' },
-  { title:'RateDodge',            category:'web',difficulty:'medium',points:250,flag:'CGS{sp00f3d_h34d3rs_r3s3t_r4t3_l1m1ts}',     hint:'The server asks the client what IP it\'s coming from. Vary the X-Client-IP header across requests.',                        instanceUrl:null, description:'RateDodge \u2014 a rate limiter guards /api/vend. It only allows one request per IP. Or does it check the IP the way you think it does?' },
-  { title:'GraphIntrospect',      category:'web',difficulty:'medium',points:250,flag:'CGS{gr4ph_1ntr0sp3ct10n_l34ks_th3_wh0l3_sch3m4}', hint:'Introspection reveals more than just field names — look at the return types. Some payloads need decoding.',                     instanceUrl:null, description:'CGS Asset Catalog exposes a GraphQL API for querying internal design assets. The frontend only asks for what it needs — but GraphQL will happily tell you everything it CAN answer, if you just ask the schema about itself. What you find might need a second look.' },
-  { title:'PathPeek',             category:'web',difficulty:'medium',points:250,flag:'CGS{d0t_d0t_sl4sh_st1ll_w0rks_1n_2026}',    hint:'The file parameter builds a filesystem path directly. What characters let you escape a folder?',                            instanceUrl:null, description:'CGS\'s internal doc viewer serves files from a folder by name. It never stopped to check whether \'by name\' could also mean \'by relative path.\'' },
+  { title:'CookieCrumbs',         category:'web',difficulty:'medium',points:200,flag:'CGS{c00k13s_ar3_just_s3lf_r3p0rted_st4te}', hint:'Look at what cookies get set when you load the page.',                                                                   instanceUrl:null, description:'CGS Members Portal has a shiny login form — and a dashboard that quietly trusts a cookie to decide who you are. The form is a red herring. The server already believes whatever you tell it.' },
+  { title:'TokenPeek',            category:'web',difficulty:'medium',points:200,flag:'CGS{jwt_p4yl04ds_ar3_r34d4bl3_n0t_s3cur3}', hint:'JWTs have three parts. Look closely at what the middle part contains.',                                                  instanceUrl:null, description:'CGS\'s internal tools use JSON Web Tokens for \'authentication.\' The server reads the payload to decide what you can see. It never actually checks whether the token is legitimate.' },
+  { title:'LocalVault',           category:'web',difficulty:'medium',points:200,flag:'CGS{cl13nt_s1d3_gat3s_ar3_su663st10ns}',     hint:'Check what\'s stored in this site\'s Local Storage.',                                                                       instanceUrl:null, description:'CGS\'s premium panel is gated behind a feature flag stored right there in your browser. The promo code box is a distraction — the real switch is sitting in plain view in Local Storage.' },
+  { title:'HiddenAPI',            category:'web',difficulty:'medium',points:200,flag:'CGS{th3_ui_1sn7_th3_wh0l3_4p1_surf4c3}',     hint:'The bundle was built straight from source. Search for /api/ strings — one endpoint is hidden.',                               instanceUrl:null, description:'The UI loads an app.bundle.js file built straight from source. It uses a public stats API, but the bundle might contain references to other endpoints.' },
+  { title:'ReflectedNote',        category:'web',difficulty:'medium',points:200,flag:'CGS{r3fl3ct3d_xss_st1ll_c0unts}',           hint:'The note preview renders your input exactly as written. What happens if the input contains script tags?',                      instanceUrl:null, description:'CGS Quick Note is an internal tool for drafting and previewing notes. Your input gets rendered live on the page — the app trusts you to write safe content.' },
+  { title:'NoneAlg',              category:'web',difficulty:'medium',points:200,flag:'CGS{n3v3r_tru5t_th3_4l6_h34d3r}',            hint:'How does the server know which algorithm to use when verifying a JWT?',                                                    instanceUrl:null, description:'CGS\'s internal tools login system uses JWTs. The verification code reads the algorithm straight from the token instead of pinning it.' },
+  { title:'RateDodge',            category:'web',difficulty:'medium',points:200,flag:'CGS{sp00f3d_h34d3rs_r3s3t_r4t3_l1m1ts}',     hint:'The server asks the client what IP it\'s coming from. Vary the X-Client-IP header across requests.',                        instanceUrl:null, description:'RateDodge \u2014 a rate limiter guards /api/vend. It only allows one request per IP. Or does it check the IP the way you think it does?' },
+  { title:'GraphIntrospect',      category:'web',difficulty:'medium',points:200,flag:'CGS{gr4ph_1ntr0sp3ct10n_l34ks_th3_wh0l3_sch3m4}', hint:'Introspection reveals more than just field names — look at the return types. Some payloads need decoding.',                     instanceUrl:null, description:'CGS Asset Catalog exposes a GraphQL API for querying internal design assets. The frontend only asks for what it needs — but GraphQL will happily tell you everything it CAN answer, if you just ask the schema about itself. What you find might need a second look.' },
+  { title:'PathPeek',             category:'web',difficulty:'medium',points:200,flag:'CGS{d0t_d0t_sl4sh_st1ll_w0rks_1n_2026}',    hint:'The file parameter builds a filesystem path directly. What characters let you escape a folder?',                            instanceUrl:null, description:'CGS\'s internal doc viewer serves files from a folder by name. It never stopped to check whether \'by name\' could also mean \'by relative path.\'' },
 
   // ═══ HARD TIER (8) ═══
-  { title:'BlindBool',            category:'web',difficulty:'hard',points:400,flag:'CGS{bl1nd_b00l34n_extr4ct10n_1s_sl0w_but_sur3}',hint:'True/false is still a channel. Look for boolean-based blind SQL injection.',                                              instanceUrl:null, description:'CGS\'s product search never gives you a query error and never gives you data back — just found or not found. That\'s still enough to talk to the database, one true/false question at a time.' },
-  { title:'SSRFetch',             category:'web',difficulty:'hard',points:400,flag:'CGS{s3rv3r_s1d3_r3qu3sts_g0_pl4c3s_us3rs_c4nt}',hint:'This feature makes an HTTP request from the server on your behalf. What if you pointed it somewhere unexpected?',           instanceUrl:null, description:'CGS\'s link preview tool fetches whatever URL you give it — from the server, not your browser. The server can see places you can\'t.' },
+  { title:'BlindBool',            category:'web',difficulty:'hard',points:300,flag:'CGS{bl1nd_b00l34n_extr4ct10n_1s_sl0w_but_sur3}',hint:'True/false is still a channel. Look for boolean-based blind SQL injection.',                                              instanceUrl:null, description:'CGS\'s product search never gives you a query error and never gives you data back — just found or not found. That\'s still enough to talk to the database, one true/false question at a time.' },
+  { title:'SSRFetch',             category:'web',difficulty:'hard',points:300,flag:'CGS{s3rv3r_s1d3_r3qu3sts_g0_pl4c3s_us3rs_c4nt}',hint:'This feature makes an HTTP request from the server on your behalf. What if you pointed it somewhere unexpected?',           instanceUrl:null, description:'CGS\'s link preview tool fetches whatever URL you give it — from the server, not your browser. The server can see places you can\'t.' },
 
-  { title:'JWTCrack',             category:'web',difficulty:'hard',points:400,flag:'CGS{w34k_hm4c_s3cr3ts_f4ll_t0_wordl1sts}',     hint:'The token\'s signature is legitimate HS256 — but is the secret behind it actually strong?',                                 instanceUrl:null, description:'CGS\'s internal API signs its tokens properly — HMAC, valid signature, all correct. Except the secret they picked wouldn\'t survive five minutes against a wordlist.' },
-  { title:'RaceWin',              category:'web',difficulty:'hard',points:400,flag:'CGS{t0ct0u_r4c3_c0nd1t10ns_ar3_r34l}',         hint:'The redemption check isn\'t a single atomic operation — it reads state, then writes state, as two separate steps.',        instanceUrl:null, description:'CGS is running a limited flash promo: one flag coupon, redeemable exactly once every 30 seconds. Their redemption check reads the flag state, then writes it — two separate steps. Steps take time. Time is exploitable.' },
-  { title:'ProtoPollute',         category:'web',difficulty:'hard',points:400,flag:'CGS{__pr0t0__pollut10n_ch4ng3s_3v3ryth1ng}',   hint:'This endpoint deep-merges your preferences into server state. What happens if you include a __proto__ key?',               instanceUrl:null, description:'CGS\'s settings API merges your preferences into its config, recursively, key by key. It never stopped to ask whether one of those keys might be __proto__.' },
-  { title:'SSTI Render',          category:'web',difficulty:'hard',points:400,flag:'CGS{ss7i_turns_t3mpl4t3s_1nt0_sh3lls}',        hint:'Try a template expression like <%= 7*7 %> in the preview field.',                                                            instanceUrl:null, description:'CGS\'s marketing team built a live preview for email templates. Whatever you type gets rendered by the server\'s full template engine, no sandbox in sight.' },
-  { title:'XXEcho',               category:'web',difficulty:'hard',points:400,flag:'CGS{xx3_st1ll_h4unts_l3g4cy_p4rs3rs}',          hint:'XML supports defining custom entities, including ones that read local files — research XXE.',                                instanceUrl:null, description:'CGS\'s contact importer accepts XML uploads and happily resolves whatever entities you define inside them — including ones that point at the local filesystem.' },
-  { title:'CORSChain',            category:'web',difficulty:'hard',points:400,flag:'CGS{r3fl3ct3d_cors_pl4y_l34ks_cr3d3nt14l5}',    hint:'Check the CORS headers on /api/session-info — what Origin values does it accept, and does it allow credentials?',           instanceUrl:null, description:'CGS\'s session-info API reflects whatever Origin header it receives and allows credentialed requests. That\'s a very generous cross-origin policy for an endpoint that returns session data.' },
+  { title:'JWTCrack',             category:'web',difficulty:'hard',points:300,flag:'CGS{w34k_hm4c_s3cr3ts_f4ll_t0_wordl1sts}',     hint:'The token\'s signature is legitimate HS256 — but is the secret behind it actually strong?',                                 instanceUrl:null, description:'CGS\'s internal API signs its tokens properly — HMAC, valid signature, all correct. Except the secret they picked wouldn\'t survive five minutes against a wordlist.' },
+  { title:'RaceWin',              category:'web',difficulty:'hard',points:300,flag:'CGS{t0ct0u_r4c3_c0nd1t10ns_ar3_r34l}',         hint:'The redemption check isn\'t a single atomic operation — it reads state, then writes state, as two separate steps.',        instanceUrl:null, description:'CGS is running a limited flash promo: one flag coupon, redeemable exactly once every 30 seconds. Their redemption check reads the flag state, then writes it — two separate steps. Steps take time. Time is exploitable.' },
+  { title:'ProtoPollute',         category:'web',difficulty:'hard',points:300,flag:'CGS{__pr0t0__pollut10n_ch4ng3s_3v3ryth1ng}',   hint:'This endpoint deep-merges your preferences into server state. What happens if you include a __proto__ key?',               instanceUrl:null, description:'CGS\'s settings API merges your preferences into its config, recursively, key by key. It never stopped to ask whether one of those keys might be __proto__.' },
+  { title:'SSTI Render',          category:'web',difficulty:'hard',points:300,flag:'CGS{ss7i_turns_t3mpl4t3s_1nt0_sh3lls}',        hint:'Try a template expression like <%= 7*7 %> in the preview field.',                                                            instanceUrl:null, description:'CGS\'s marketing team built a live preview for email templates. Whatever you type gets rendered by the server\'s full template engine, no sandbox in sight.' },
+  { title:'XXEcho',               category:'web',difficulty:'hard',points:300,flag:'CGS{xx3_st1ll_h4unts_l3g4cy_p4rs3rs}',          hint:'XML supports defining custom entities, including ones that read local files — research XXE.',                                instanceUrl:null, description:'CGS\'s contact importer accepts XML uploads and happily resolves whatever entities you define inside them — including ones that point at the local filesystem.' },
+  { title:'CORSChain',            category:'web',difficulty:'hard',points:300,flag:'CGS{r3fl3ct3d_cors_pl4y_l34ks_cr3d3nt14l5}',    hint:'Check the CORS headers on /api/session-info — what Origin values does it accept, and does it allow credentials?',           instanceUrl:null, description:'CGS\'s session-info API reflects whatever Origin header it receives and allows credentialed requests. That\'s a very generous cross-origin policy for an endpoint that returns session data.' },
 
   // ═══ OSINT EASY ═══
   {
@@ -83,7 +83,7 @@ const challenges: ChallengeData[] = [
 
   // ═══ OSINT MEDIUM ═══
   {
-    title:'Project Umbrella', category:'osint', difficulty:'medium', points:250,
+    title:'Project Umbrella', category:'osint', difficulty:'medium', points:200,
     flag:'CGS{Umbrella_1968}',
     hint:null,
     hintList:[
@@ -95,7 +95,7 @@ const challenges: ChallengeData[] = [
     description:'Researchers found documents describing a fictional pharmaceutical corporation responsible for numerous biological disasters.\n\nIdentify the corporation and determine the year it was founded according to official lore.',
   },
   {
-    title:'Spencer\'s Mansion', category:'osint', difficulty:'medium', points:250,
+    title:'Spencer\'s Mansion', category:'osint', difficulty:'medium', points:200,
     flag:'CGS{Biltmore_Estate}',
     hint:null,
     hintList:[
@@ -109,7 +109,7 @@ const challenges: ChallengeData[] = [
 
   // ═══ OSINT HARD ═══
   {
-    title:'The Founder', category:'osint', difficulty:'hard', points:400,
+    title:'The Founder', category:'osint', difficulty:'hard', points:300,
     flag:'CGS{1966}',
     hint:null,
     hintList:[
@@ -123,7 +123,7 @@ const challenges: ChallengeData[] = [
 
   // ═══ NEW OSINT CHALLENGES ═══
   {
-    title:'Whitechapel Files', category:'osint', difficulty:'hard', points:450,
+    title:'Whitechapel Files', category:'osint', difficulty:'hard', points:300,
     flag:'CGS{Metropolitan_Police_Whitechapel_Row}',
     hint:null,
     hintList:[
@@ -137,7 +137,7 @@ const challenges: ChallengeData[] = [
     description:'In a sealed archive recovered from a classified forensic laboratory, investigators discovered several fragmented reports concerning a notorious serial killer who inspired one of the most memorable antagonists in a famous AAA stealth-action video game.\n\nMost of the records have been destroyed. The only surviving note reads:\n\n"History remembers the monster. Detectives remember the streets."\n\nYour mission is to identify the real historical serial killer, determine the official name of the police division responsible for investigating the murders, and find the exact street where the first canonical victim\'s body was discovered.\n\nCombine both answers to recover the flag.\n\nFlag Format\nCGS{PoliceDivision_StreetName}',
   },
   {
-    title:'Mount Massive', category:'osint', difficulty:'medium', points:300,
+    title:'Mount Massive', category:'osint', difficulty:'medium', points:200,
     flag:'CGS{42.9398,-78.8764}',
     hint:null,
     hintList:[
@@ -193,7 +193,7 @@ const challenges: ChallengeData[] = [
 
   // ═══ FORENSICS MEDIUM (4) ═══
   {
-    title:'LSB PNG', category:'forensics', difficulty:'medium', points:250,
+    title:'LSB PNG', category:'forensics', difficulty:'medium', points:200,
     flag:'CGS{l345t_51gn1f1c4nt_b1t}',
     hint:'Use a Python script with PIL to extract LSBs from each pixel, then convert bits to ASCII.',
     files:JSON.stringify([{name:'image.png', url:'/uploads/challenges/forensics-medium1/image.png'}]),
@@ -201,7 +201,7 @@ const challenges: ChallengeData[] = [
     description:'A PNG image hides a flag in the least significant bits of the red channel.',
   },
   {
-    title:'Corrupted Header Recovery', category:'forensics', difficulty:'medium', points:250,
+    title:'Corrupted Header Recovery', category:'forensics', difficulty:'medium', points:200,
     flag:'CGS{z1p_h34d3r_r3p41r}',
     hint:'ZIP files start with 50 4B 03 04. Compare and fix.',
     files:JSON.stringify([{name:'archive.zip', url:'/uploads/challenges/forensics-medium2/archive.zip'}]),
@@ -209,7 +209,7 @@ const challenges: ChallengeData[] = [
     description:'A ZIP file has a corrupted local file header (wrong magic bytes) that needs fixing before it will extract.',
   },
   {
-    title:'Memory Dump Strings', category:'forensics', difficulty:'medium', points:250,
+    title:'Memory Dump Strings', category:'forensics', difficulty:'medium', points:200,
     flag:'CGS{m3m0ry_n3v3r_f0rg3ts}',
     hint:'Run strings on the dump and grep for "CGS{".',
     files:JSON.stringify([{name:'memory.raw', url:'/uploads/challenges/forensics-medium3/memory.raw'}]),
@@ -217,7 +217,7 @@ const challenges: ChallengeData[] = [
     description:'A memory dump (.raw) contains a process running a script with the flag in an environment variable.',
   },
   {
-    title:'Audio Spectrogram', category:'forensics', difficulty:'medium', points:250,
+    title:'Audio Spectrogram', category:'forensics', difficulty:'medium', points:200,
     flag:'CGS{s0und_w4v3s_h1d3_1m4g3s}',
     hint:'Open the file in Audacity or Sonic Visualiser and switch to spectrogram view.',
     files:JSON.stringify([{name:'audio.wav', url:'/uploads/challenges/forensics-medium4/audio.wav'}]),
@@ -227,7 +227,7 @@ const challenges: ChallengeData[] = [
 
   // ═══ FORENSICS HARD (2) ═══
   {
-    title:'Multi-Layer Steganography', category:'forensics', difficulty:'hard', points:400,
+    title:'Multi-Layer Steganography', category:'forensics', difficulty:'hard', points:300,
     flag:'CGS{l4y3r3d_s3cr3ts_n33d_p4t13nc3}',
     hint:null,
     hintList:[
@@ -240,7 +240,7 @@ const challenges: ChallengeData[] = [
     description:'A JPEG has a password-protected steghide payload; the password is hidden in the image\'s EXIF GPS coordinates (decoded as ASCII).',
   },
   {
-    title:'Disk Image Carving', category:'forensics', difficulty:'hard', points:400,
+    title:'Disk Image Carving', category:'forensics', difficulty:'hard', points:300,
     flag:'CGS{d3l3t3d_bu7_n0t_g0n3_f0r3v3r}',
     hint:null,
     hintList:[

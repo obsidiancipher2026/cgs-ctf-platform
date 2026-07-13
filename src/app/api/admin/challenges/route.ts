@@ -6,8 +6,14 @@ import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
+const BASE_SCORES: Record<string, number> = { easy: 100, medium: 200, hard: 300, insane: 500 }
+
 function hashFlag(flag: string) {
   return crypto.createHash('sha256').update(flag).digest('hex')
+}
+
+function getBaseScore(difficulty: string | null): number {
+  return BASE_SCORES[difficulty ?? ''] ?? 100
 }
 
 export async function GET(request: Request) {
@@ -45,13 +51,14 @@ export async function POST(request: Request) {
       return jsonResponse({ detail: 'title, description, category, and flag are required' }, 400)
     }
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    const autoPoints = getBaseScore(difficulty)
     const challenge = await prisma.challenge.create({
       data: {
         title,
         slug,
         description,
         category,
-        points: parseInt(points) || 100,
+        points: points !== undefined ? (parseInt(points) || autoPoints) : autoPoints,
         flag: hashFlag(flag),
         hint: hint || null,
         files: files || null,

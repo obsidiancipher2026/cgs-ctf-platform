@@ -41,6 +41,7 @@ const difficultyMeta: Record<string, { label: string; color: string; bars: numbe
   easy: { label: 'Easy', color: 'text-[var(--aurora-emerald)]', bars: 1, barColor: 'bg-[var(--aurora-emerald)]' },
   medium: { label: 'Medium', color: 'text-[var(--aurora-cyan)]', bars: 2, barColor: 'bg-[var(--aurora-cyan)]' },
   hard: { label: 'Hard', color: 'text-[#FF4500]', bars: 3, barColor: 'bg-[#FF4500]' },
+  insane: { label: 'Insane', color: 'text-[#FF0055]', bars: 4, barColor: 'bg-[#FF0055]' },
 }
 
 const statusConfig = {
@@ -111,8 +112,8 @@ export default function ChallengeHeader({ challenge, status = 'unsolved' }: Prop
             <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono uppercase tracking-wider border border-white/[0.08] bg-white/[0.04] ${diff.color}`}>
               {diff.label}
               <span className="flex gap-[2px]">
-                {[1, 2, 3].map(i => (
-                  <span key={i} className={`w-3 h-1 rounded-full ${i <= diff.bars ? diff.barColor : 'bg-white/[0.06]'}`} />
+                {[1, 2, 3, 4].map(i => (
+                  <span key={i} className={`w-2.5 h-1 rounded-full ${i <= diff.bars ? diff.barColor : 'bg-white/[0.06]'}`} />
                 ))}
               </span>
             </span>
