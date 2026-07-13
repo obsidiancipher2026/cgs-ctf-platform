@@ -142,8 +142,9 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                   <tr style={{ borderBottom: '1px solid var(--border)' }}>
                     <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-14" style={{ color: 'var(--aurora-cyan)' }}>Rank</th>
                     <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5" style={{ color: 'var(--aurora-cyan)' }}>Player</th>
-                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-20 text-right" style={{ color: 'var(--aurora-cyan)' }}>Points</th>
-                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-24 text-center hidden sm:table-cell" style={{ color: 'var(--aurora-cyan)' }}>Solved</th>
+                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-16 text-right" style={{ color: 'var(--aurora-cyan)' }}>Score</th>
+                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-14 text-right hidden sm:table-cell" style={{ color: 'var(--aurora-cyan)' }}>Blood</th>
+                    <th className="font-mono text-[9px] font-semibold uppercase tracking-widest px-4 py-2.5 w-20 text-center hidden sm:table-cell" style={{ color: 'var(--aurora-cyan)' }}>Solved</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -173,6 +174,11 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                         <td className="px-4 py-3 text-right">
                           <span className="font-display font-bold text-sm" style={{ color: mc.text }}>
                             {player.score.toLocaleString()}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right hidden sm:table-cell">
+                          <span className="font-mono text-xs" style={{ color: player.bloodPoints > 0 ? '#FFD700' : 'var(--text-muted)' }}>
+                            {player.bloodPoints > 0 ? `+${player.bloodPoints}` : '0'}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-center hidden sm:table-cell">
@@ -207,6 +213,11 @@ export default function Scoreboard({ players, stats, loading = false }: Scoreboa
                       <td className="px-4 py-3 text-right">
                         <span className="font-display font-bold text-sm" style={{ color: 'var(--aurora-emerald)' }}>
                           {player.score.toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right hidden sm:table-cell">
+                        <span className="font-mono text-xs" style={{ color: player.bloodPoints > 0 ? '#FFD700' : 'var(--text-muted)' }}>
+                          {player.bloodPoints > 0 ? `+${player.bloodPoints}` : '0'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center hidden sm:table-cell">

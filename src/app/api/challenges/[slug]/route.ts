@@ -3,6 +3,12 @@ import { jsonResponse } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
+const BLOOD_BONUS: Record<string, number> = { easy: 25, medium: 50, hard: 75, insane: 100 }
+
+function getBloodBonus(difficulty: string | null): number {
+  return BLOOD_BONUS[difficulty ?? ''] ?? 0
+}
+
 export async function GET(request: Request, { params }: { params: { slug: string } }) {
   try {
     const { slug } = params
@@ -50,9 +56,12 @@ export async function GET(request: Request, { params }: { params: { slug: string
       firstSolverUsername = solver?.username ?? null
     }
 
+    const bloodBonus = getBloodBonus(challenge.difficulty)
+
     return jsonResponse({
       ...challenge,
       firstSolverUsername,
+      bloodBonus,
     })
   } catch {
     return jsonResponse({ detail: 'Failed to load challenge' }, 500)

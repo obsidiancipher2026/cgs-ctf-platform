@@ -17,6 +17,7 @@ interface User {
   role: string;
   score: number;
   ranking: number;
+  bloodPoints: number;
   team_id: number | null;
 }
 

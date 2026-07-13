@@ -80,7 +80,7 @@ export default function ProfilePage() {
                   <span className="text-txt-secondary text-xs font-mono">[{user.role}]</span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-center max-w-xs">
+              <div className="grid grid-cols-3 gap-3 text-center max-w-md">
                 <div className="p-3 rounded bg-aurora-cyan/20 border border-aurora-cyan/10">
                   <div className="text-aurora-cyan font-display text-lg font-bold">{user.score}</div>
                   <div className="text-txt-muted text-[10px] font-mono">Points</div>
@@ -88,6 +88,10 @@ export default function ProfilePage() {
                 <div className="p-3 rounded bg-signal-amber/5 border border-signal-amber/10">
                   <div className="text-signal-amber font-display text-lg font-bold">#{user.ranking}</div>
                   <div className="text-txt-muted text-[10px] font-mono">Rank</div>
+                </div>
+                <div className="p-3 rounded bg-yellow-500/10 border border-yellow-500/20">
+                  <div className="text-yellow-400 font-display text-lg font-bold">+{(user as any).bloodPoints ?? 0}</div>
+                  <div className="text-txt-muted text-[10px] font-mono">Blood</div>
                 </div>
               </div>
             </div>

@@ -8,6 +8,8 @@ import {
   Bookmark, Heart, CheckCircle, AlertCircle, HelpCircle
 } from 'lucide-react'
 
+const BLOOD_BONUS: Record<string, number> = { easy: 25, medium: 50, hard: 75, insane: 100 }
+
 interface Challenge {
   id: number
   title: string
@@ -24,6 +26,7 @@ interface Challenge {
   bloodAwarded?: boolean
   firstSolverUsername?: string | null
   firstBloodTimestamp?: string | null
+  bloodBonus?: number
 }
 
 interface Props {
@@ -103,6 +106,23 @@ export default function ChallengeSidebar({ challenge, status = 'unsolved', child
               <span className="text-xs font-mono text-txt-muted">Points</span>
               <span className="text-xs font-mono text-[var(--aurora-violet)]">{challenge.points} pts</span>
             </div>
+            {challenge.bloodAwarded ? (
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-txt-muted flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-yellow-400" />
+                  <span className="text-yellow-400">Blood Bonus</span>
+                </span>
+                <span className="text-xs font-mono text-yellow-400 font-bold">Claimed</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-txt-muted flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-yellow-500/60" />
+                  Blood Points
+                </span>
+                <span className="text-xs font-mono text-yellow-500 font-bold">+{challenge.bloodBonus ?? BLOOD_BONUS[challenge.difficulty ?? ''] ?? 0}</span>
+              </div>
+            )}
             {challenge.bloodAwarded && challenge.firstSolverUsername && (
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-txt-muted flex items-center gap-1">
@@ -177,6 +197,23 @@ export default function ChallengeSidebar({ challenge, status = 'unsolved', child
             </span>
             <span className="text-xs font-mono text-[var(--aurora-violet)] font-bold">{challenge.points}</span>
           </div>
+          {challenge.bloodAwarded ? (
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono text-txt-muted flex items-center gap-1.5">
+                <Zap className="w-3 h-3 text-yellow-400" />
+                Blood Bonus
+              </span>
+              <span className="text-xs font-mono text-yellow-400 font-bold">Claimed</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono text-txt-muted flex items-center gap-1.5">
+                <Zap className="w-3 h-3 text-yellow-500/60" />
+                Blood Bonus
+              </span>
+              <span className="text-xs font-mono text-yellow-500 font-bold">+{challenge.bloodBonus ?? BLOOD_BONUS[challenge.difficulty ?? ''] ?? 0}</span>
+            </div>
+          )}
         </div>
       </div>
 
