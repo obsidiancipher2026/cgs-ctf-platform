@@ -120,6 +120,34 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'Investigators recovered notes mentioning only the initials O.E.S. and references to an ancient flower.\n\nIdentify the scientist and determine the exact year he discovered the flower that became the foundation of his life\'s work.',
   },
+
+  // ═══ NEW OSINT CHALLENGES ═══
+  {
+    title:'Whitechapel Files', category:'osint', difficulty:'hard', points:450,
+    flag:'CGS{Metropolitan_Police_Whitechapel_Row}',
+    hint:null,
+    hintList:[
+      'The killer\'s identity remains officially unknown.',
+      'Search historical police records rather than game lore.',
+      'The answer is related to the first of the Canonical Five victims.',
+      'Replace spaces with underscores.',
+      'Keep official capitalization.',
+    ],
+    instanceUrl:null,
+    description:'In a sealed archive recovered from a classified forensic laboratory, investigators discovered several fragmented reports concerning a notorious serial killer who inspired one of the most memorable antagonists in a famous AAA stealth-action video game.\n\nMost of the records have been destroyed. The only surviving note reads:\n\n"History remembers the monster. Detectives remember the streets."\n\nYour mission is to identify the real historical serial killer, determine the official name of the police division responsible for investigating the murders, and find the exact street where the first canonical victim\'s body was discovered.\n\nCombine both answers to recover the flag.\n\nFlag Format\nCGS{PoliceDivision_StreetName}',
+  },
+  {
+    title:'Mount Massive', category:'osint', difficulty:'medium', points:300,
+    flag:'CGS{42.9398,-78.8764}',
+    hint:null,
+    hintList:[
+      'The answer isn\'t inside the game. Research what inspired the game\'s setting.',
+      'The building you\'re looking for is a historic psychiatric hospital in New York State.',
+      'The inspiration is the Richardson Olmsted Complex in Buffalo. Now find its precise coordinates.',
+    ],
+    instanceUrl:null,
+    description:'A damaged notebook recovered from the challenge author\'s desk contains only one readable sentence:\n\n"My favourite horror game series is Outlast. I\'ve always wondered how close Mount Massive Asylum is to its real-world inspiration."\n\nYour mission is to identify the real-world location that inspired Mount Massive Asylum and determine its exact geographic coordinates.\n\nFlag Format:\nCGS{LATITUDE,LONGITUDE}',
+  },
 ]
 
 const getTags = (category: string, difficulty: string): string => {
