@@ -65,8 +65,9 @@ export default function ChallengesPage() {
     () => Array.from(new Set(challenges.map(c => c.category))).sort(),
     [challenges]
   )
+  const difficultyOrder: Record<string, number> = { easy: 0, medium: 1, hard: 2 }
   const difficulties = useMemo(
-    () => Array.from(new Set(challenges.map(c => c.difficulty))).filter(Boolean).sort(),
+    () => Array.from(new Set(challenges.map(c => c.difficulty))).filter(Boolean).sort((a, b) => (difficultyOrder[a] ?? 99) - (difficultyOrder[b] ?? 99)),
     [challenges]
   ) as string[]
 
