@@ -1,0 +1,6 @@
+The following message was intercepted. It has been encrypted using a simple substitution cipher that shifts each letter by a fixed amount. The flag format is CGS{...}.
+
+Encrypted message:
+GKW{wl1jx_l4tt3rw}
+
+Hint: Julius Caesar favored a specific round number for his ciphers, but this one is off by a coin flip.

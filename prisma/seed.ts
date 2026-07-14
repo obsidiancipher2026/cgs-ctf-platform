@@ -341,6 +341,7 @@ const challenges: ChallengeData[] = [
     title:'Caesar\'s Ghost', category:'crypto', difficulty:'easy', points:100,
     flag:'CGS{sh1ft_h4pp3ns}',
     hint:'The shift is not 13 (ROT13). Try other shifts.',
+    files:JSON.stringify([{name:'ciphertext.txt', url:'/uploads/challenges/crypto-easy1/ciphertext.txt'}]),
     instanceUrl:null,
     description:'A mysterious message was found encrypted with a classical cipher. The sender claims it\'s unbreakable, but they used a simple substitution that shifts each letter. Julius liked round numbers, but this one\'s off by a coin flip. Can you recover the plaintext?',
   },
