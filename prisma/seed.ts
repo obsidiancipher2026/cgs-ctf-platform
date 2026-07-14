@@ -252,6 +252,48 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'A raw disk image (.dd) has a deleted file with the flag. The file was deleted but not overwritten, and file carving with foremost or scalpel recovers it.',
   },
+  {
+    title:'Memory Lane', category:'forensics', difficulty:'hard', points:300,
+    flag:'CGS{v0l4t1l1ty_n3v3r_f0rg3ts}',
+    hint:null,
+    hintList:[
+      'Use volatility or strings to extract readable text from the memory dump.',
+      'Search for the CGS flag format directly in the extracted strings.',
+      'The flag is embedded in a process environment variable or command-line argument.',
+    ],
+    files:JSON.stringify([{name:'memory.raw', url:'/uploads/challenges/forensics-hard3/memory.raw'}]),
+    instanceUrl:null,
+    description:'A raw memory dump (.raw) from a Linux system. The computer forgot to forget. A process left sensitive data in memory that was never written to disk. Use Volatility or strings analysis to recover the flag from the dead process memory.',
+  },
+  {
+    title:'Decrypted Wire', category:'forensics', difficulty:'hard', points:300,
+    flag:'CGS{tls_k3ys_unl0ck_th3_w1r3}',
+    hint:null,
+    hintList:[
+      'The SSLKEYLOG file contains TLS session keys that Wireshark can use for decryption.',
+      'In Wireshark, go to Edit > Preferences > Protocols > TLS and set the (Pre)-Master-Secret log filename.',
+      'After loading the key log, follow the TLS stream to find the HTTP response with the flag.',
+    ],
+    files:JSON.stringify([
+      {name:'traffic.pcap', url:'/uploads/challenges/forensics-hard4/traffic.pcap'},
+      {name:'sslkeylog.log', url:'/uploads/challenges/forensics-hard4/sslkeylog.log'},
+    ]),
+    instanceUrl:null,
+    description:'A packet capture of a TLS-encrypted session between a client and server. The lock and the key were shipped separately, on purpose. An SSLKEYLOG file was leaked alongside the capture. Load it in Wireshark to decrypt the session and recover the flag from the HTTP response body.',
+  },
+  {
+    title:'Deep Carve', category:'forensics', difficulty:'hard', points:300,
+    flag:'CGS{d33p_c4rv1ng_f1nds_fr4gm3nt5}',
+    hint:null,
+    hintList:[
+      'The disk image has a deleted file with a known signature (PNG magic bytes: 89 50 4E 47).',
+      'The file is not in one contiguous block - its data is scattered across non-contiguous clusters.',
+      'Use foremost or scalpel with raw disk carving mode. If the output is corrupted, check the FAT for cluster allocation.',
+    ],
+    files:JSON.stringify([{name:'disk.dd', url:'/uploads/challenges/forensics-hard5/disk.dd'}]),
+    instanceUrl:null,
+    description:'A raw disk image with a deleted file whose data blocks are scattered across non-contiguous clusters. The pieces aren\'t next to each other. That\'s the point. You\'ll need to reconstruct the file from its fragments before extracting the flag.',
+  },
 
   // ═══ MISC ═══
   {
