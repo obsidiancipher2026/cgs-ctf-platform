@@ -3,7 +3,8 @@
 > **74 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > Web challenges are accessible via `/standalone/{slug}` on the platform.
-> Forensics, Misc, and Crypto challenges provide downloadable asset files.
+> Forensics and Misc challenges provide downloadable asset files.
+> Most Crypto challenges provide downloadable files; some require interacting with a live instance at `/standalone/{slug}`.
 
 ---
 
@@ -974,10 +975,11 @@
 
 **Solve Steps:**
 
-1. The ciphertext is a Caesar cipher (each letter shifted by a fixed amount).
-2. The shift is NOT 13 (ROT13) — it's a different value.
-3. Brute-force all 25 possible shifts using CyberChef, dcode.fr, or a script.
-4. The shift that produces readable text starting with "CGS{" is the answer.
+1. Download `ciphertext.txt`.
+2. The ciphertext is a Caesar cipher (each letter shifted by a fixed amount).
+3. The shift is NOT 13 (ROT13) — it's a different value.
+4. Brute-force all 25 possible shifts using CyberChef, dcode.fr, or a script.
+5. The shift that produces readable text starting with "CGS{" is the answer.
 
 **Flag:** `CGS{sh1ft_h4pp3ns}`
 
@@ -989,16 +991,17 @@
 
 **Solve Steps:**
 
-1. The ciphertext is XORed with a single byte (0x00-0xFF).
-2. Write a script to try all 256 possible keys:
+1. Download `xor_ciphertext.txt`.
+2. The ciphertext is XORed with a single byte (0x00-0xFF).
+3. Write a script to try all 256 possible keys:
    ```python
    for key in range(256):
        result = bytes([b ^ key for b in ciphertext])
        if b'CGS{' in result:
            print(result)
    ```
-3. Or use CyberChef's "XOR Brute Force" operation.
-4. The key that produces readable text starting with "CGS{" is the answer.
+4. Or use CyberChef's "XOR Brute Force" operation.
+5. The key that produces readable text starting with "CGS{" is the answer.
 
 **Flag:** `CGS{s1ngl3_byt3_x0r_1s_n0_l0ck}`
 
@@ -1010,10 +1013,11 @@
 
 **Solve Steps:**
 
-1. The data has been encoded three times: first base64, then base32, then hex.
-2. Work backwards: decode hex first, then base32, then base64.
-3. Use CyberChef's "Magic" operation to auto-detect and peel layers.
-4. Or manually: hex decode → base32 decode → base64 decode.
+1. Download `encoded.txt`.
+2. The data has been encoded three times: first base64, then base32, then hex.
+3. Work backwards: decode hex first, then base32, then base64.
+4. Use CyberChef's "Magic" operation to auto-detect and peel layers.
+5. Or manually: hex decode → base32 decode → base64 decode.
 
 **Flag:** `CGS{layer5_0f_3nc0d1ng_p33l_off}`
 
@@ -1025,10 +1029,11 @@
 
 **Solve Steps:**
 
-1. Atbash maps each letter to its reverse in the alphabet: A↔Z, B↔Y, C↔X, etc.
-2. Apply the same transformation again to decrypt (Atbash is its own inverse).
-3. Use CyberChef's "Atbash Cipher" or dcode.fr.
-4. The plaintext reveals the flag.
+1. Download `ciphertext.txt`.
+2. Atbash maps each letter to its reverse in the alphabet: A↔Z, B↔Y, C↔X, etc.
+3. Apply the same transformation again to decrypt (Atbash is its own inverse).
+4. Use CyberChef's "Atbash Cipher" or dcode.fr.
+5. The plaintext reveals the flag.
 
 **Flag:** `CGS{atb45h_1s_1ts_0wn_1nv3rs3}`
 
@@ -1040,10 +1045,11 @@
 
 **Solve Steps:**
 
-1. The key is short (3-4 characters) and hinted indirectly in the description.
-2. Try common short keys related to the challenge theme.
-3. Use Kasiski examination or an online Vigenère solver.
-4. Once you find the key, decrypt the message to get the flag.
+1. Download `ciphertext.txt`.
+2. The key is short (3-4 characters) and hinted indirectly in the description.
+3. Try common short keys related to the challenge theme.
+4. Use Kasiski examination or an online Vigenère solver.
+5. Once you find the key, decrypt the message to get the flag.
 
 **Flag:** `CGS{v1g3n3r3_w1th_a_sh0rt_k3y}`
 
@@ -1070,10 +1076,11 @@
 
 **Solve Steps:**
 
-1. ROT47 rotates characters in the range ! (33) through ~ (126).
-2. Each character is shifted by 47 positions within this range.
-3. Use CyberChef's "ROT47" or dcode.fr.
-4. Apply ROT47 to decrypt the message.
+1. Download `ciphertext.txt`.
+2. ROT47 rotates characters in the range ! (33) through ~ (126).
+3. Each character is shifted by 47 positions within this range.
+4. Use CyberChef's "ROT47" or dcode.fr.
+5. Apply ROT47 to decrypt the message.
 
 **Flag:** `CGS{r0t47_g03s_p4st_l3tt3rs}`
 
@@ -1150,11 +1157,12 @@
 
 **Solve Steps:**
 
-1. The endpoint returns different errors for invalid padding vs. invalid data.
-2. Modify the ciphertext byte-by-byte and observe server responses.
-3. A padding error means the padding is wrong; no error means correct padding.
-4. Use the oracle to decrypt each byte of the plaintext.
-5. Script the attack to recover the full flag.
+1. Access the interactive instance at `/standalone/padding-oracle-lite`.
+2. The endpoint returns different errors for invalid padding vs. invalid data.
+3. Modify the ciphertext byte-by-byte and observe server responses.
+4. A padding error means the padding is wrong; no error means correct padding.
+5. Use the oracle to decrypt each byte of the plaintext.
+6. Script the attack to recover the full flag.
 
 **Flag:** `CGS{th3_3rr0r_t0ld_0n_1ts3lf}`
 
@@ -1263,8 +1271,8 @@
 
 **Solve Steps:**
 
-1. Download `cookie.txt`.
-2. The cookie decrypts to `user=guest&admin=false`.
+1. Access the interactive instance at `/standalone/flip-the-bit`.
+2. The provided cookie decrypts to `user=guest&admin=false`.
 3. In CBC mode, flipping a ciphertext byte flips the corresponding plaintext byte in the next block.
 4. Calculate which bits to flip to change "false" to "true" (XOR difference).
 5. Modify the ciphertext and submit to get the flag.
@@ -1327,11 +1335,12 @@
 
 **Solve Steps:**
 
-1. The endpoint compares input against a secret token byte-by-byte.
-2. If a byte matches, the comparison continues (slightly slower).
-3. If a byte doesn't match, the comparison exits early (slightly faster).
-4. Send requests measuring response times for each possible byte value.
-5. The fastest response for each position reveals the correct byte.
+1. Access the interactive login endpoint at `/standalone/timing-tells`.
+2. The endpoint compares input against a secret token byte-by-byte.
+3. If a byte matches, the comparison continues (slightly slower).
+4. If a byte doesn't match, the comparison exits early (slightly faster).
+5. Send requests measuring response times for each possible byte value.
+6. The fastest response for each position reveals the correct byte.
 
 **Flag:** `CGS{c0mp4r1s0n_t1m1ng_l34ks_byt3s}`
 
@@ -1343,11 +1352,12 @@
 
 **Solve Steps:**
 
-1. The endpoint leaks padding validity through error messages.
-2. Implement a full padding oracle attack script.
-3. Start from the last block and work backwards.
-4. For each byte position, send 256 modified ciphertexts to find the correct value.
-5. Repeat across all blocks to recover the complete flag.
+1. Access the interactive instance at `/standalone/oracle-full-session`.
+2. The endpoint leaks padding validity through error messages.
+3. Implement a full padding oracle attack script.
+4. Start from the last block and work backwards.
+5. For each byte position, send 256 modified ciphertexts to find the correct value.
+6. Repeat across all blocks to recover the complete flag.
 
 **Flag:** `CGS{full_p4dd1ng_0r4cl3_r3c0v3rs_3v3ryth1ng}`
 
