@@ -252,6 +252,29 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'A raw disk image (.dd) has a deleted file with the flag. The file was deleted but not overwritten, and file carving with foremost or scalpel recovers it.',
   },
+
+  // ═══ MISC ═══
+  {
+    title:'Digital Footprints', category:'misc', difficulty:'easy', points:100,
+    flag:'CGS{1nk_1n_b10_7r4c3}',
+    hint:'Where does an organization leave traces that aren\'t on their official website?',
+    instanceUrl:null,
+    description:'Every organization leaves traces of its identity across the internet. Some are loud, while others quietly exist where people choose to share moments instead of words. One of our oldest public footprints contains exactly what you\'re looking for. Observe carefully.',
+  },
+  {
+    title:'Professional Presence', category:'misc', difficulty:'medium', points:200,
+    flag:'CGS{pr0f35510n4l_f007pr1n7}',
+    hint:'Look where professionals present their career history. The answer is not in the visible text.',
+    instanceUrl:null,
+    description:'Not every clue belongs inside a repository or website. Sometimes the most valuable information is hidden where organizations present themselves to the professional world. Read everything\u2014not just the headlines.',
+  },
+  {
+    title:'Status Message', category:'misc', difficulty:'easy', points:100,
+    flag:'CGS{5747u5_kn0w5_411}',
+    hint:'A single line can reveal more than an entire conversation. Check platforms where short updates are the norm.',
+    instanceUrl:null,
+    description:'Some messages aren\'t sent directly\u2014they simply wait to be noticed. A single line can reveal more than an entire conversation. Look beyond the obvious.',
+  },
 ]
 
 const getTags = (category: string, difficulty: string): string => {
