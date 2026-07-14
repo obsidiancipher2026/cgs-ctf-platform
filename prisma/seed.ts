@@ -428,6 +428,9 @@ async function seedChallenges() {
         instanceType: getInstanceType(c.category),
         hintPenalty: 0,
         hints: getHints(c.hint, c.hintList),
+        bloodAwarded: false,
+        firstSolverUserId: null,
+        firstBloodTimestamp: null,
       },
       create: {
         slug,
@@ -452,6 +455,9 @@ async function seedChallenges() {
         instanceType: getInstanceType(c.category),
         hintPenalty: 0,
         hints: getHints(c.hint, c.hintList),
+        bloodAwarded: false,
+        firstSolverUserId: null,
+        firstBloodTimestamp: null,
       },
     })
 
