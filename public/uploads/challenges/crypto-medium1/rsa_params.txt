@@ -1,0 +1,15 @@
+RSA Challenge - Small Primes
+============================
+
+n = 10969629647
+e = 65537
+ciphertext = 10676809232
+
+The flag was encrypted with RSA. The public key looks normal,
+but something about the key generation was... rushed.
+
+Hint: The primes used to generate n are not as large as they
+should be. Modern RSA uses 2048-bit primes. These are much
+smaller.
+
+Submit the decrypted flag in the format: CGS{...}

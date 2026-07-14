@@ -1,9 +1,9 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **50 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **74 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > Web challenges are accessible via `/standalone/{slug}` on the platform.
-> Forensics and Misc challenges provide downloadable asset files.
+> Forensics, Misc, and Crypto challenges provide downloadable asset files.
 
 ---
 
@@ -65,6 +65,35 @@
 - [Misc Medium (200 pts each)](#misc-medium)
   - [42. Professional Presence](#42-professional-presence)
   - [43. Hidden Announcement](#43-hidden-announcement)
+
+### Crypto Challenges
+- [Crypto Easy (100 pts each)](#crypto-easy)
+  - [44. Caesar's Ghost](#44-caesars-ghost)
+  - [45. XOR Marks the Spot](#45-xor-marks-the-spot)
+  - [46. Encoding Onion](#46-encoding-onion)
+  - [47. Mirror Cipher](#47-mirror-cipher)
+  - [48. Key of Four](#48-key-of-four)
+  - [49. Radio Silence](#49-radio-silence)
+  - [50. Rotated Further](#50-rotated-further)
+  - [51. Rainbow's End](#51-rainbows-end)
+- [Crypto Medium (200 pts each)](#crypto-medium)
+  - [52. RSA's Small Mistake](#52-rsas-small-mistake)
+  - [53. Frequency Fumble](#53-frequency-fumble)
+  - [54. Penguin Problem](#54-penguin-problem)
+  - [55. Padding Oracle Lite](#55-padding-oracle-lite)
+  - [56. Same Prefix, Different Story](#56-same-prefix-different-story)
+  - [57. Predictable Dice](#57-predictable-dice)
+  - [58. Secret's Not So Secret](#58-secrets-not-so-secret)
+  - [59. Mode Matters](#59-mode-matters)
+- [Crypto Hard (300 pts each)](#crypto-hard)
+  - [60. Lattice of Lies](#60-lattice-of-lies)
+  - [61. Wiener's Whisper](#61-wieners-whisper)
+  - [62. Flip the Bit](#62-flip-the-bit)
+  - [63. Partial Exposure](#63-partial-exposure)
+  - [64. Small Curve, Big Problem](#64-small-curve-big-problem)
+  - [65. Format Preserved, Security Not](#65-format-preserved-security-not)
+  - [66. Timing Tells](#66-timing-tells)
+  - [67. Oracle, Full Session](#67-oracle-full-session)
 
 ---
 
@@ -937,6 +966,393 @@
 
 ---
 
+## Crypto Easy
+
+### 44. Caesar's Ghost
+
+**Concept:** Caesar cipher with a non-standard shift.
+
+**Solve Steps:**
+
+1. The ciphertext is a Caesar cipher (each letter shifted by a fixed amount).
+2. The shift is NOT 13 (ROT13) — it's a different value.
+3. Brute-force all 25 possible shifts using CyberChef, dcode.fr, or a script.
+4. The shift that produces readable text starting with "CGS{" is the answer.
+
+**Flag:** `CGS{sh1ft_h4pp3ns}`
+
+---
+
+### 45. XOR Marks the Spot
+
+**Concept:** Single-byte XOR encryption.
+
+**Solve Steps:**
+
+1. The ciphertext is XORed with a single byte (0x00-0xFF).
+2. Write a script to try all 256 possible keys:
+   ```python
+   for key in range(256):
+       result = bytes([b ^ key for b in ciphertext])
+       if b'CGS{' in result:
+           print(result)
+   ```
+3. Or use CyberChef's "XOR Brute Force" operation.
+4. The key that produces readable text starting with "CGS{" is the answer.
+
+**Flag:** `CGS{s1ngl3_byt3_x0r_1s_n0_l0ck}`
+
+---
+
+### 46. Encoding Onion
+
+**Concept:** Multiple encoding layers (base64 → base32 → hex).
+
+**Solve Steps:**
+
+1. The data has been encoded three times: first base64, then base32, then hex.
+2. Work backwards: decode hex first, then base32, then base64.
+3. Use CyberChef's "Magic" operation to auto-detect and peel layers.
+4. Or manually: hex decode → base32 decode → base64 decode.
+
+**Flag:** `CGS{layer5_0f_3nc0d1ng_p33l_off}`
+
+---
+
+### 47. Mirror Cipher
+
+**Concept:** Atbash cipher (A↔Z, B↔Y, C↔X, etc.).
+
+**Solve Steps:**
+
+1. Atbash maps each letter to its reverse in the alphabet: A↔Z, B↔Y, C↔X, etc.
+2. Apply the same transformation again to decrypt (Atbash is its own inverse).
+3. Use CyberChef's "Atbash Cipher" or dcode.fr.
+4. The plaintext reveals the flag.
+
+**Flag:** `CGS{atb45h_1s_1ts_0wn_1nv3rs3}`
+
+---
+
+### 48. Key of Four
+
+**Concept:** Vigenère cipher with a short (3-4 char) key.
+
+**Solve Steps:**
+
+1. The key is short (3-4 characters) and hinted indirectly in the description.
+2. Try common short keys related to the challenge theme.
+3. Use Kasiski examination or an online Vigenère solver.
+4. Once you find the key, decrypt the message to get the flag.
+
+**Flag:** `CGS{v1g3n3r3_w1th_a_sh0rt_k3y}`
+
+---
+
+### 49. Radio Silence
+
+**Concept:** Morse code decoding.
+
+**Solve Steps:**
+
+1. Download `morse.txt`.
+2. The file contains dots (.) and dashes (-) separated by spaces.
+3. Decode the Morse code using an online decoder or reference chart.
+4. Letters are separated by spaces, words by " / ".
+
+**Flag:** `CGS{m0rs3_c0d3_st1ll_w0rk5}`
+
+---
+
+### 50. Rotated Further
+
+**Concept:** ROT47 (rotates full printable ASCII range).
+
+**Solve Steps:**
+
+1. ROT47 rotates characters in the range ! (33) through ~ (126).
+2. Each character is shifted by 47 positions within this range.
+3. Use CyberChef's "ROT47" or dcode.fr.
+4. Apply ROT47 to decrypt the message.
+
+**Flag:** `CGS{r0t47_g03s_p4st_l3tt3rs}`
+
+---
+
+### 51. Rainbow's End
+
+**Concept:** MD5 hash cracking via rainbow tables.
+
+**Solve Steps:**
+
+1. The hash `5f4dcc3b5aa765d61d8327deb882cf99` is provided.
+2. Look it up on an online rainbow table (md5decrypt.net, crackstation.net).
+3. The hash corresponds to a common English word.
+4. Wrap the cracked word in `CGS{...}` to form the flag.
+
+**Flag:** `CGS{md5_h4sh3s_ar3nt_s3cr3ts}`
+
+---
+
+## Crypto Medium
+
+### 52. RSA's Small Mistake
+
+**Concept:** RSA with small, factorable primes.
+
+**Solve Steps:**
+
+1. Download `rsa_params.txt` to get n, e, and ciphertext.
+2. Factor n into p × q (small enough for trial division or factordb.com).
+3. Compute φ(n) = (p-1)(q-1).
+4. Compute d = e⁻¹ mod φ(n) using extended Euclidean algorithm.
+5. Decrypt: m = cᵈ mod n, convert to bytes.
+
+**Flag:** `CGS{fact0r1ng_sm4ll_pr1m3s_1s_ch34p}`
+
+---
+
+### 53. Frequency Fumble
+
+**Concept:** Vigenère cipher cracked via Kasiski examination.
+
+**Solve Steps:**
+
+1. Download `ciphertext.txt`.
+2. Use Kasiski examination to find repeated trigrams and determine key length.
+3. Or use the Index of Coincidence to estimate key length.
+4. Split ciphertext into groups by key position and perform frequency analysis on each.
+5. Determine each key character and decrypt.
+
+**Flag:** `CGS{v1g3n3r3_k3y_l3ngth_l34k5}`
+
+---
+
+### 54. Penguin Problem
+
+**Concept:** AES-ECB mode preserves visual patterns.
+
+**Solve Steps:**
+
+1. Download `penguin_original.bmp` and `challenge_note.txt`.
+2. Recognize that the image shows visible stripe patterns.
+3. In ECB mode, identical plaintext blocks → identical ciphertext blocks.
+4. The pattern reveals the structure of the original image despite encryption.
+5. The flag is derivable from the visible pattern in the encrypted output.
+
+**Flag:** `CGS{3cb_m0d3_l34k5_p4tt3rns}`
+
+---
+
+### 55. Padding Oracle Lite
+
+**Concept:** Padding oracle attack on AES-CBC.
+
+**Solve Steps:**
+
+1. The endpoint returns different errors for invalid padding vs. invalid data.
+2. Modify the ciphertext byte-by-byte and observe server responses.
+3. A padding error means the padding is wrong; no error means correct padding.
+4. Use the oracle to decrypt each byte of the plaintext.
+5. Script the attack to recover the full flag.
+
+**Flag:** `CGS{th3_3rr0r_t0ld_0n_1ts3lf}`
+
+---
+
+### 56. Same Prefix, Different Story
+
+**Concept:** MD5 collision — two files with different content, same hash.
+
+**Solve Steps:**
+
+1. Download `file_a.txt` and `file_b.txt`.
+2. Verify both files have the same MD5 hash.
+3. Read file B — it contains the hidden flag.
+4. The collision demonstrates that MD5 is cryptographically broken.
+
+**Flag:** `CGS{md5_c0ll1s10ns_ar3_r34l}`
+
+---
+
+### 57. Predictable Dice
+
+**Concept:** PRNG seeded with a predictable value (Unix timestamp).
+
+**Solve Steps:**
+
+1. Download `token.txt`.
+2. The token was generated using Python's `random` module seeded with `int(time.time())`.
+3. The generation timestamp is provided: 1718352000.
+4. Reproduce the seed: `random.seed(1718352000)` and regenerate the token.
+5. The flag is in the file.
+
+**Flag:** `CGS{w34k_prng_s33d5_ar3_gu355abl3}`
+
+---
+
+### 58. Secret's Not So Secret
+
+**Concept:** JWT with a weak HS256 secret.
+
+**Solve Steps:**
+
+1. Download `token.jwt`.
+2. Decode the JWT header and payload — the secret is weak/short.
+3. Crack the secret using hashcat: `hashcat -m 16500 token.jwt wordlist.txt`
+4. Or use jwt_tool: `python jwt_tool.py token.jwt -C -d wordlist.txt`
+5. Forge a new token with `admin: true` using the cracked secret.
+
+**Flag:** `CGS{w34k_jwt_s3cr3ts_g3t_cr4ck3d}`
+
+---
+
+### 59. Mode Matters
+
+**Concept:** AES-CBC with reused IV allows XOR-difference attack.
+
+**Solve Steps:**
+
+1. Download `ciphertexts.txt`.
+2. Two messages were encrypted with the same key and IV.
+3. XOR the two ciphertexts together: `c1 ⊕ c2 = p1 ⊕ p2`.
+4. Since you know part of p1 ("The secret is: "), XOR it with `p1 ⊕ p2` to recover part of p2.
+5. The flag is in the second plaintext.
+
+**Flag:** `CGS{cbc_w1th0ut_1v_1s_r1sky}`
+
+---
+
+## Crypto Hard
+
+### 60. Lattice of Lies
+
+**Concept:** RSA common modulus attack.
+
+**Solve Steps:**
+
+1. Download `rsa_common.txt`.
+2. Two ciphertexts share the same modulus n but use different exponents e1, e2.
+3. Compute gcd(e1, e2) — if it's 1, find integers a, b such that `a·e1 + b·e2 = 1`.
+4. Use extended Euclidean algorithm: `c1^a · c2^b ≡ m (mod n)`.
+5. The result is the plaintext message.
+
+**Flag:** `CGS{l4tt1c3_r3duct10n_br34ks_w34k_k3ys}`
+
+---
+
+### 61. Wiener's Whisper
+
+**Concept:** RSA with small private exponent (Wiener's attack).
+
+**Solve Steps:**
+
+1. Download `rsa_wiener.txt`.
+2. The private exponent d is very small (< n^(1/4)/3).
+3. Compute the continued fraction expansion of e/n.
+4. Check convergents for the value of d.
+5. Use Wiener's algorithm (available in SageMath or sympy).
+
+**Flag:** `CGS{sm4ll_pr1v4t3_3xp0n3nts_ar3_d4ng3r0us}`
+
+---
+
+### 62. Flip the Bit
+
+**Concept:** AES-CBC bit-flipping attack.
+
+**Solve Steps:**
+
+1. Download `cookie.txt`.
+2. The cookie decrypts to `user=guest&admin=false`.
+3. In CBC mode, flipping a ciphertext byte flips the corresponding plaintext byte in the next block.
+4. Calculate which bits to flip to change "false" to "true" (XOR difference).
+5. Modify the ciphertext and submit to get the flag.
+
+**Flag:** `CGS{b1t_fl1pp1ng_cbc_1s_p0w3rful}`
+
+---
+
+### 63. Partial Exposure
+
+**Concept:** RSA with partial private key leak.
+
+**Solve Steps:**
+
+1. Download `rsa_partial.txt`.
+2. The top half of d is leaked.
+3. Use Coppersmith's method or lattice reduction (HNP problem).
+4. The known bits constrain the search space enough to recover the full d.
+5. Decrypt the ciphertext with the recovered private key.
+
+**Flag:** `CGS{l34k1ng_h4lf_a_k3y_1s_3n0ugh}`
+
+---
+
+### 64. Small Curve, Big Problem
+
+**Concept:** Elliptic curve with small group order (brute-forceable).
+
+**Solve Steps:**
+
+1. Download `curve_params.txt`.
+2. The curve has a small order (19).
+3. Brute-force all possible private keys from 1 to 19.
+4. For each key d, compute d·G and check if it matches the public key.
+5. The x-coordinate of the shared secret encodes the flag.
+
+**Flag:** `CGS{w34k_curv3s_h4v3_sm4ll_0rd3rs}`
+
+---
+
+### 65. Format Preserved, Security Not
+
+**Concept:** Weak format-preserving encryption.
+
+**Solve Steps:**
+
+1. Download `fpe_challenge.txt`.
+2. The FPE uses a weak 3-round Feistel network.
+3. Analyze the round key schedule — it's deterministic and reversible.
+4. Reverse the Feistel network on the encrypted values.
+5. The original plaintext contains the flag.
+
+**Flag:** `CGS{fp3_1sn't_4lway5_5tr0ng3c}`
+
+---
+
+### 66. Timing Tells
+
+**Concept:** Timing attack on byte-by-byte comparison.
+
+**Solve Steps:**
+
+1. The endpoint compares input against a secret token byte-by-byte.
+2. If a byte matches, the comparison continues (slightly slower).
+3. If a byte doesn't match, the comparison exits early (slightly faster).
+4. Send requests measuring response times for each possible byte value.
+5. The fastest response for each position reveals the correct byte.
+
+**Flag:** `CGS{c0mp4r1s0n_t1m1ng_l34ks_byt3s}`
+
+---
+
+### 67. Oracle, Full Session
+
+**Concept:** Complete multi-round padding oracle attack.
+
+**Solve Steps:**
+
+1. The endpoint leaks padding validity through error messages.
+2. Implement a full padding oracle attack script.
+3. Start from the last block and work backwards.
+4. For each byte position, send 256 modified ciphertexts to find the correct value.
+5. Repeat across all blocks to recover the complete flag.
+
+**Flag:** `CGS{full_p4dd1ng_0r4cl3_r3c0v3rs_3v3ryth1ng}`
+
+---
+
 ## Tools Reference
 
 | Tool | Purpose | Example |
@@ -946,7 +1362,11 @@
 | **exiftool** | Read EXIF metadata from images | `exiftool photo.jpg` |
 | **jwt.io** | Decode and forge JWTs | Paste a JWT to inspect its payload |
 | **base64decode.org** | Decode Base64 strings | Paste the encoded string |
-| **hashcat** | Crack JWT secrets offline | `hashcat -m 16500 token.txt wordlist.txt` |
+| **CyberChef** | Encode/decode, crypto operations | "Magic" auto-detect, XOR brute force |
+| **hashcat** | Crack hashes and JWT secrets offline | `hashcat -m 16500 token.txt wordlist.txt` |
+| **dcode.fr** | Classical cipher solvers | Caesar, Vigenere, Atbash, ROT47 |
+| **factordb.com** | Factor large integers | Paste n to find p × q |
+| **SageMath** | Advanced math and crypto | Lattice reduction, elliptic curves |
 | **Python / Node** | Script automated attacks | Blind SQLi extraction, race conditions |
 | **Wireshark** | Analyze and decrypt network captures | Load SSLKEYLOG for TLS decryption |
 | **tshark** | CLI packet analysis | `tshark -r file.pcap -o "tls.keylog_file:key.log"` |
@@ -956,6 +1376,7 @@
 | **binwalk** | Firmware/binary analysis | `binwalk -e disk.dd` |
 | **HxD / xxd** | Hex editing | Inspect and modify binary files |
 | **Audacity** | Audio analysis with spectrogram view | Open WAV, switch to Spectrogram |
+| **jwt_tool** | JWT analysis and attacks | `python jwt_tool.py token.jwt -C -d wordlist.txt` |
 
 ---
 

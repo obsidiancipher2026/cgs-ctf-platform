@@ -1,0 +1,14 @@
+MD5 Collision Challenge - File A
+================================
+This file and File B have the same MD5 hash despite different contents.
+
+The classic MD5 collision works by finding two different messages M1 and M2
+that produce the same MD5 digest. This is possible because MD5 is broken.
+
+File A contains harmless data. File B contains the hidden flag.
+
+Both files share the same MD5: 0cc175b9c0f1b6a831c399e269772661
+(This is the MD5 of 'a', used as a placeholder)
+
+The collision blocks are carefully crafted binary data that cause
+the MD5 compression function to produce the same state.

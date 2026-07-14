@@ -1,0 +1,20 @@
+ECB Mode Challenge - Pattern Preservation
+==========================================
+
+The file "penguin_original.bmp" has been encrypted using AES-ECB mode.
+
+In ECB mode, identical plaintext blocks produce identical ciphertext blocks.
+This means patterns in the original image are preserved in the encrypted version.
+
+The flag has been embedded in the image as a text overlay on specific pixel
+blocks. When encrypted with ECB, these blocks remain distinguishable.
+
+To solve this challenge:
+1. Recognize that the encrypted image shows the same pattern as the original
+2. The flag text is visible in the encrypted image's structure
+3. Use the pattern to identify which blocks contain flag data
+
+The flag format is: CGS{...}
+
+Note: The actual encrypted image would show visible stripe patterns even
+after encryption, which is the classic "ECB Penguin" effect.

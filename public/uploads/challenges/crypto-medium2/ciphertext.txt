@@ -1,0 +1,17 @@
+Vigenere Cipher - Intercepted Ciphertext
+==========================================
+
+A suspicious message was captured from an encrypted channel.
+The encryption method appears to be classical, not modern.
+
+Ciphertext:
+NKS{f1r3r3r3_u3j_p3nqel_l34u5}
+
+The sender seems to be using a Vigenere cipher. The key is
+short and may be guessable from context. The message length
+is sufficient for frequency analysis if needed.
+
+Known plaintext hint: The message starts with "CGS{" and
+ends with "}". The key repeats cyclically.
+
+Submit the decrypted flag.

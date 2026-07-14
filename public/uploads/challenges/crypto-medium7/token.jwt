@@ -1,0 +1,14 @@
+JWT Token Challenge
+===================
+
+A JSON Web Token was intercepted from an authentication flow:
+
+eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJ1c2VyIjogImd1ZXN0IiwgImFkbWluIjogZmFsc2UsICJpYXQiOiAxNzE4MzUyMDAwfQ.h57zyB9aBbYkeRPVME0HalboTP1f-Apl7S3queNBavk
+
+The token appears to be signed with HS256. The signing secret
+is reportedly weak and can be cracked offline.
+
+Once you crack the secret, forge a new token with admin: true
+to reveal the flag.
+
+Submit the flag in format: CGS{...}

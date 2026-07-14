@@ -1,0 +1,19 @@
+RSA Partial Key Exposure
+========================
+
+n = 1000036000099
+e = 65537
+ciphertext = 261229649365
+
+The private exponent d was partially leaked. An attacker managed
+to recover the top 20 bits of d:
+
+d_top = 937713
+
+The full d is approximately 40 bits. Knowing the top half
+allows lattice-based reduction (Coppersmith/HNP) to recover the
+remaining bits.
+
+d = d_top * 2^20 + d_bottom
+
+where d_bottom < 2^20

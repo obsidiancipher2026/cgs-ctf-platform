@@ -1,0 +1,19 @@
+AES-CBC Challenge - Reused IV
+=============================
+
+Two messages were encrypted using AES-CBC with the same key and IV.
+
+IV (hex): 4a6f686e20446f652048656c6c6f21
+
+Ciphertext 1 (hex): 7b94e3a1f2c8d5b6e9a0f3c4d7e8b1a2
+Ciphertext 2 (hex): 7b94e3a1f2c8d5b6e9a0f3c4d7e8b1a3
+
+Message 1 is known to start with: "The secret is: "
+Message 2 contains the flag.
+
+In AES-CBC, if the same IV and key are used for two messages,
+XORing the ciphertexts reveals the XOR of the plaintexts.
+Since you know part of plaintext 1, you can recover plaintext 2.
+
+The flag is in the second message.
+Format: CGS{...}
