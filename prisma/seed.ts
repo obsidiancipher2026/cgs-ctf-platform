@@ -433,7 +433,7 @@ const challenges: ChallengeData[] = [
     title:'Padding Oracle Lite', category:'crypto', difficulty:'medium', points:200,
     flag:'CGS{th3_3rr0r_t0ld_0n_1ts3lf}',
     hint:'Send modified ciphertext and observe whether the server returns a padding error.',
-    instanceUrl:null,
+    instanceUrl:'/standalone/padding-oracle-lite',
     description:'A web endpoint decrypts AES-CBC ciphertext and returns different error messages for invalid padding vs. invalid data. The error message is more honest than it means to be. Use the padding oracle to decrypt the flag byte by byte.',
   },
   {
@@ -494,7 +494,7 @@ const challenges: ChallengeData[] = [
     flag:'CGS{b1t_fl1pp1ng_cbc_1s_p0w3rful}',
     hint:'In CBC mode, flipping a ciphertext byte flips the corresponding plaintext byte in the next block.',
     files:JSON.stringify([{name:'cookie.txt', url:'/uploads/challenges/crypto-hard3/cookie.txt'}]),
-    instanceUrl:null,
+    instanceUrl:'/standalone/flip-the-bit',
     description:'A web application encrypts session cookies using AES-CBC. Change one block, and the next one changes in a way you can predict. Flip specific bits in the ciphertext to change "admin=false" to "admin=true" in the decrypted cookie.',
   },
   {
@@ -525,14 +525,14 @@ const challenges: ChallengeData[] = [
     title:'Timing Tells', category:'crypto', difficulty:'hard', points:300,
     flag:'CGS{c0mp4r1s0n_t1m1ng_l34ks_byt3s}',
     hint:'The server compares strings byte-by-byte with early exit. Measure response times.',
-    instanceUrl:null,
+    instanceUrl:'/standalone/timing-tells',
     description:'A login endpoint compares your input against a secret token byte-by-byte. It answers a little faster when you\'re getting warmer. The non-constant-time comparison leaks information through response timing. Measure timing differences to recover the secret one character at a time.',
   },
   {
     title:'Oracle, Full Session', category:'crypto', difficulty:'hard', points:300,
     flag:'CGS{full_p4dd1ng_0r4cl3_r3c0v3rs_3v3ryth1ng}',
     hint:'This is a complete padding oracle attack across multiple blocks. Script the full recovery.',
-    instanceUrl:null,
+    instanceUrl:'/standalone/oracle-full-session',
     description:'A web application decrypts AES-CBC ciphertext and leaks padding validity through error messages. Ask it enough small yes-or-no questions and it eventually says everything. Implement a full multi-round padding oracle attack to recover the entire encrypted flag across all blocks.',
   },
 ]
