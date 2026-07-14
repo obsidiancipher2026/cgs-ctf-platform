@@ -6,7 +6,3 @@ Each layer was applied on top of the previous one.
 
 Encoded data:
 4B45594749564446474A3447515A4B584B5A3455345652594F354E47594F44324D4A575532353232495244484B575252484633553236534F4F4E4D44454F4C4E4C4A58444150493D
-
-Hint: The layers are (from outermost to innermost):
-hex -> base32 -> base64 -> plaintext
-Work backwards from the outside in.

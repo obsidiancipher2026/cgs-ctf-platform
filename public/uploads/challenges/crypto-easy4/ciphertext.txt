@@ -6,6 +6,3 @@ The encryption maps each letter to its mirror in the alphabet.
 
 Ciphertext:
 XTH{zgy45s_1h_1gh_0dm_1me3ih3}
-
-Hint: A becomes Z, B becomes Y, C becomes X...
-This cipher is its own inverse - applying it twice returns the original.

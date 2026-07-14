@@ -6,6 +6,3 @@ It shifts the entire printable ASCII range (33-126).
 
 Ciphertext:
 rv$LC_Ecf08_bD0AcDE0=bEEbCDN
-
-Hint: Unlike ROT13 (which only affects A-Za-z), ROT47 rotates all
-printable characters from ! (33) through ~ (126) by 47 positions.
