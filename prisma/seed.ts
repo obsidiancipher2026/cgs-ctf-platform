@@ -275,6 +275,24 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'Some messages aren\'t sent directly\u2014they simply wait to be noticed. A single line can reveal more than an entire conversation. Look beyond the obvious.',
   },
+
+  // ═══ MISC EASY ═══
+  {
+    title:'The Forgotten Repository', category:'misc', difficulty:'easy', points:100,
+    flag:'CGS{0p3n_50urc3_hun73r}',
+    hint:'Developers sometimes leave sensitive information in public repositories. Check the commit history or file contents.',
+    instanceUrl:null,
+    description:'Not everything is hidden behind encryption. Sometimes developers leave things where only the curious bother to look.',
+  },
+
+  // ═══ MISC MEDIUM ═══
+  {
+    title:'Hidden Announcement', category:'misc', difficulty:'medium', points:200,
+    flag:'CGS{p45t5_n3v3r_d13}',
+    hint:'Some information is posted publicly but only once. Check archived or historical posts.',
+    instanceUrl:null,
+    description:'Some announcements are made once and then forgotten. Search through our public timeline carefully; the answer hasn\'t moved.',
+  },
 ]
 
 const getTags = (category: string, difficulty: string): string => {
