@@ -7,7 +7,7 @@ const FLAG_TIMING = 'CGS{c0mp4r1s0n_t1m1ng_l34ks_byt3s}'
 const FLAG_ORACLE_FULL = 'CGS{full_p4dd1ng_0r4cl3_r3c0v3rs_3v3ryth1ng}'
 
 const KEY = Buffer.from('deadbeefcafebabe0123456789abcdef', 'hex')
-const IV = Buffer.from('0123456789abcdef', 'hex')
+const IV = Buffer.from('0123456789abcdef0123456789abcdef', 'hex')
 
 function encrypt(plaintext: string): string {
   const padded = Buffer.from(plaintext, 'utf-8')
@@ -94,7 +94,7 @@ async function decryptMsg(){const h=document.getElementById('hex-input').value;c
 }
 
 const FLIP_KEY = Buffer.from('cafebabedeadbeef0123456789abcdef', 'hex')
-const FLIP_IV = Buffer.from('fedcba9876543210', 'hex')
+const FLIP_IV = Buffer.from('fedcba9876543210fedcba9876543210', 'hex')
 
 function encryptCookie(plaintext: string): string {
   const padded = Buffer.from(plaintext, 'utf-8')
@@ -212,7 +212,7 @@ async function measure(){const p=document.getElementById('pwd-input').value;cons
 }
 
 const ORACLE_FULL_KEY = Buffer.from('0123456789abcdefdeadbeefcafebabe', 'hex')
-const ORACLE_FULL_IV = Buffer.from('abcdef0123456789', 'hex')
+const ORACLE_FULL_IV = Buffer.from('abcdef0123456789abcdef0123456789', 'hex')
 
 function oracleEncrypt(plaintext: string): string {
   const padded = Buffer.from(plaintext, 'utf-8')
