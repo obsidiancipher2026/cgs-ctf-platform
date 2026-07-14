@@ -1,0 +1,11 @@
+Single-byte XOR Encrypted Message
+================================
+
+The following message was intercepted. It was encrypted by XORing
+each byte with a single unknown key (0x00-0xFF).
+
+Ciphertext (hex):
+696d7951591b444d46197548535e1975521a58751b5975441a75461a494157
+
+The key is somewhere between 0 and 255. Brute force until
+the flag reveals itself.

@@ -1,0 +1,12 @@
+Vigenère Cipher - Intercepted Ciphertext
+========================================
+
+A suspicious message was captured from an encrypted channel.
+The encryption method is a Vigenère cipher with a short key.
+
+Ciphertext:
+HUM{m1l3b3l3_n1yv_u_jm0fn_b3d}
+
+The key is short (3-4 characters) and hinted in the challenge description.
+The message starts with "CGS{" and ends with "}".
+The key repeats cyclically throughout the message.
