@@ -51,17 +51,17 @@ const paddingOracleLiteHandler = (req: PlaygroundRequest): PlaygroundResponse =>
   if (req.method === 'POST' && req.path === '/check') {
     const hex = req.body?.trim() || ''
     const decrypted = decryptToHex(hex)
-    if (!decrypted) return text('Invalid ciphertext (must be hex, length multiple of 16)', 400)
+    if (!decrypted) return error(400, 'Invalid ciphertext (must be hex, length multiple of 16)')
     if (hasValidPKCS7Padding(decrypted)) return text('Valid padding')
     return text('Invalid padding')
   }
   if (req.method === 'POST' && req.path === '/decrypt') {
     const hex = req.body?.trim() || ''
     const decrypted = decryptToHex(hex)
-    if (!decrypted) return text('Invalid ciphertext', 400)
-    if (!hasValidPKCS7Padding(decrypted)) return text('Invalid padding', 400)
+    if (!decrypted) return error(400, 'Invalid ciphertext')
+    if (!hasValidPKCS7Padding(decrypted)) return error(400, 'Invalid padding')
     const plain = stripPKCS7Padding(decrypted).toString('utf-8')
-    if (plain.includes(FLAG_PADDING)) return text(plain, undefined, FLAG_PADDING)
+    if (plain.includes(FLAG_PADDING)) return text(plain, FLAG_PADDING)
     return text(plain)
   }
   return html(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Padding Oracle Lite</title>
@@ -124,9 +124,9 @@ const flipTheBitHandler = (req: PlaygroundRequest): PlaygroundResponse => {
   if (req.method === 'POST' && req.path === '/submit') {
     const b64 = req.body?.trim() || ''
     const plain = decryptCookie(b64)
-    if (!plain) return text('Invalid cookie or padding error', 400)
+    if (!plain) return error(400, 'Invalid cookie or padding error')
     const params = Object.fromEntries(new URLSearchParams(plain))
-    if (params.admin === 'true') return text('Access granted! ' + FLAG_BITFLIP, undefined, FLAG_BITFLIP)
+    if (params.admin === 'true') return text('Access granted! ' + FLAG_BITFLIP, FLAG_BITFLIP)
     return text('Access denied. admin=' + (params.admin || 'missing'))
   }
   return html(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Flip the Bit</title>
@@ -164,7 +164,7 @@ const timingTellsHandler = async (req: PlaygroundRequest): Promise<PlaygroundRes
       await new Promise(r => setTimeout(r, 5))
     }
     if (password.length === TIMING_PASSWORD.length && match) {
-      return text('Login successful! ' + FLAG_TIMING, undefined, FLAG_TIMING)
+      return text('Login successful! ' + FLAG_TIMING, FLAG_TIMING)
     }
     if (password.length !== TIMING_PASSWORD.length) {
       if (password.length < TIMING_PASSWORD.length) {
@@ -175,7 +175,7 @@ const timingTellsHandler = async (req: PlaygroundRequest): Promise<PlaygroundRes
       return text('Login failed: incorrect password length or content')
     }
     if (!match) return text('Login failed: incorrect password')
-    return text('Login successful! ' + FLAG_TIMING, undefined, FLAG_TIMING)
+    return text('Login successful! ' + FLAG_TIMING, FLAG_TIMING)
   }
   if (req.method === 'POST' && req.path === '/measure') {
     const body = req.body || ''
@@ -240,17 +240,17 @@ const oracleFullSessionHandler = (req: PlaygroundRequest): PlaygroundResponse =>
   if (req.method === 'POST' && req.path === '/check') {
     const hex = req.body?.trim() || ''
     const decrypted = oracleDecrypt(hex)
-    if (!decrypted) return text('Invalid', 400)
+    if (!decrypted) return error(400, 'Invalid')
     if (hasValidPKCS7Padding(decrypted)) return text('Valid')
     return text('Invalid')
   }
   if (req.method === 'POST' && req.path === '/decrypt') {
     const hex = req.body?.trim() || ''
     const decrypted = oracleDecrypt(hex)
-    if (!decrypted) return text('Invalid ciphertext', 400)
-    if (!hasValidPKCS7Padding(decrypted)) return text('Invalid padding', 400)
+    if (!decrypted) return error(400, 'Invalid ciphertext')
+    if (!hasValidPKCS7Padding(decrypted)) return error(400, 'Invalid padding')
     const plain = stripPKCS7Padding(decrypted).toString('utf-8')
-    if (plain.includes(FLAG_ORACLE_FULL)) return text(plain, undefined, FLAG_ORACLE_FULL)
+    if (plain.includes(FLAG_ORACLE_FULL)) return text(plain, FLAG_ORACLE_FULL)
     return text(plain)
   }
   return html(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Oracle Full Session</title>
