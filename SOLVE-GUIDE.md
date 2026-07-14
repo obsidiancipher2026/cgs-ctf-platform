@@ -1,14 +1,15 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **24 Web Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **50 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
-> All challenges are accessible via `/standalone/{slug}` on the platform.
-> Every challenge is solvable with just a browser (DevTools) and optionally `curl` or a scripting language.
+> Web challenges are accessible via `/standalone/{slug}` on the platform.
+> Forensics and Misc challenges provide downloadable asset files.
 
 ---
 
 ## Contents
 
+### Web Challenges
 - [Easy Tier (100 pts each)](#easy-tier)
   - [1. NovaSec Portal](#1-novasec-portal)
   - [2. TimeVault](#2-timevault)
@@ -17,7 +18,7 @@
   - [5. CrawlerTrap](#5-crawlertrap)
   - [6. StyleGuide](#6-styleguide)
   - [7. EncodedBanner](#7-encodedbanner)
-- [Medium Tier (250 pts each)](#medium-tier)
+- [Medium Tier (200 pts each)](#medium-tier)
   - [8. CookieCrumbs](#8-cookiecrumbs)
   - [9. TokenPeek](#9-tokenpeek)
   - [10. LocalVault](#10-localvault)
@@ -27,7 +28,7 @@
   - [14. RateDodge](#14-ratedodge)
   - [15. GraphIntrospect](#15-graphintrospect)
   - [16. PathPeek](#16-pathpeek)
-- [Hard Tier (400 pts each)](#hard-tier)
+- [Hard Tier (300 pts each)](#hard-tier)
   - [17. BlindBool](#17-blindbool)
   - [18. SSRFetch](#18-ssrfetch)
   - [19. JWTCrack](#19-jwtcrack)
@@ -36,6 +37,38 @@
   - [22. SSTI Render](#22-ssti-render)
   - [23. XXEcho](#23-xxecho)
   - [24. CORSChain](#24-corschain)
+
+### Forensics Challenges
+- [Forensics Easy (100 pts each)](#forensics-easy)
+  - [25. Hidden in Plain Sight](#25-hidden-in-plain-sight)
+  - [26. Whitespace Secrets](#26-whitespace-secrets)
+  - [27. Reversed Image](#27-reversed-image)
+  - [28. EXIF Explorer](#28-exif-explorer)
+  - [29. Base64 in a PCAP](#29-base64-in-a-pcap)
+- [Forensics Medium (200 pts each)](#forensics-medium)
+  - [30. LSB PNG](#30-lsb-png)
+  - [31. Corrupted Header Recovery](#31-corrupted-header-recovery)
+  - [32. Memory Dump Strings](#32-memory-dump-strings)
+  - [33. Audio Spectrogram](#33-audio-spectrogram)
+- [Forensics Hard (300 pts each)](#forensics-hard)
+  - [34. Multi-Layer Steganography](#34-multi-layer-steganography)
+  - [35. Disk Image Carving](#35-disk-image-carving)
+  - [36. Memory Lane](#36-memory-lane)
+  - [37. Decrypted Wire](#37-decrypted-wire)
+  - [38. Deep Carve](#38-deep-carve)
+
+### Misc Challenges
+- [Misc Easy (100 pts each)](#misc-easy)
+  - [39. Digital Footprints](#39-digital-footprints)
+  - [40. Status Message](#40-status-message)
+  - [41. The Forgotten Repository](#41-the-forgotten-repository)
+- [Misc Medium (200 pts each)](#misc-medium)
+  - [42. Professional Presence](#42-professional-presence)
+  - [43. Hidden Announcement](#43-hidden-announcement)
+
+---
+
+## Web Challenges
 
 ---
 
@@ -583,6 +616,327 @@
 
 ---
 
+## Forensics Easy
+
+### 25. Hidden in Plain Sight
+
+**Concept:** Data appended after JPEG EOF marker.
+
+**Solve Steps:**
+
+1. Download `trailing.jpg`.
+2. Open in a hex editor (HxD, xxd) or run `binwalk trailing.jpg`.
+3. The JPEG ends at offset `FF D9`. Everything after that is the hidden flag text.
+4. `strings trailing.jpg | grep CGS` also works.
+
+**Flag:** `CGS{tr41l1ng_d4t4_1s_3v3ryw3r3}`
+
+---
+
+### 26. Whitespace Secrets
+
+**Concept:** Binary message encoded in whitespace characters (space=0, tab=1).
+
+**Solve Steps:**
+
+1. Download `empty.txt`.
+2. Open in a hex editor — the file is not actually empty.
+3. Each character is either a space (0) or tab (1). Group them into 8-bit bytes.
+4. Convert each byte to ASCII to reveal the flag.
+5. Use an online Stegsnow decoder or write a quick Python script.
+
+**Flag:** `CGS{wh1t3sp4c3_h1d3s_th1ngs}`
+
+---
+
+### 27. Reversed Image
+
+**Concept:** PNG magic bytes are reversed — fix them to reveal the image.
+
+**Solve Steps:**
+
+1. Download `corrupted.png`.
+2. Open in a hex editor. The first bytes should be `89 50 4E 47` but are reversed.
+3. Reverse the byte order of the PNG signature back to `89 50 4E 47 0D 0A 1A 0A`.
+4. The corrected PNG opens normally and displays the flag.
+
+**Flag:** `CGS{byt3_0rd3r_m4tt3rs}`
+
+---
+
+### 28. EXIF Explorer
+
+**Concept:** Flag hidden in JPEG EXIF Comment field.
+
+**Solve Steps:**
+
+1. Download `photo.jpg`.
+2. Run `exiftool photo.jpg` or upload to an online EXIF viewer.
+3. The `Comment` field contains the flag.
+
+**Flag:** `CGS{m3t4d4t4_t3lls_st0r13s}`
+
+---
+
+### 29. Base64 in a PCAP
+
+**Concept:** Base64-encoded flag in an HTTP POST body.
+
+**Solve Steps:**
+
+1. Open `traffic.pcap` in Wireshark.
+2. Filter for `http.request.method == POST`.
+3. Follow the TCP stream or inspect the POST body.
+4. Base64-decode the body content to get the flag.
+
+**Flag:** `CGS{p4ck3ts_c4rry_s3cr3ts}`
+
+---
+
+## Forensics Medium
+
+### 30. LSB PNG
+
+**Concept:** Flag encoded in the least significant bits of pixel data.
+
+**Solve Steps:**
+
+1. Download `image.png`.
+2. Write a Python script to extract LSBs from the red channel:
+   ```python
+   from PIL import Image
+   img = Image.open('image.png')
+   bits = []
+   for pixel in img.getdata():
+       bits.append(pixel[0] & 1)
+   chars = [chr(int(''.join(map(str,bits[i:i+8])),2)) for i in range(0,len(bits),8)]
+   print(''.join(chars))
+   ```
+3. The output contains the flag.
+
+**Flag:** `CGS{l345t_51gn1f1c4nt_b1t}`
+
+---
+
+### 31. Corrupted Header Recovery
+
+**Concept:** ZIP file with corrupted magic bytes.
+
+**Solve Steps:**
+
+1. Download `archive.zip`.
+2. ZIP files start with `50 4B 03 04`. If corrupted, fix the header in a hex editor.
+3. After repair, extract the archive to find the flag.
+
+**Flag:** `CGS{z1p_h34d3r_r3p41r}`
+
+---
+
+### 32. Memory Dump Strings
+
+**Concept:** Flag in a process environment variable inside a memory dump.
+
+**Solve Steps:**
+
+1. Download `memory.raw`.
+2. Run `strings memory.raw | grep CGS`.
+3. The flag appears in the extracted strings.
+
+**Flag:** `CGS{m3m0ry_n3v3r_f0rg3ts}`
+
+---
+
+### 33. Audio Spectrogram
+
+**Concept:** Flag visible as an image in the audio spectrogram.
+
+**Solve Steps:**
+
+1. Download `audio.wav`.
+2. Open in Audacity, Sonic Visualiser, or similar.
+3. Switch to Spectrogram view.
+4. The flag text is rendered visually in the frequency domain.
+
+**Flag:** `CGS{s0und_w4v3s_h1d3_1m4g3s}`
+
+---
+
+## Forensics Hard
+
+### 34. Multi-Layer Steganography
+
+**Concept:** Multi-step stego — EXIF GPS coordinates decode to a steghide password.
+
+**Solve Steps:**
+
+1. Download `secret.jpg`.
+2. Extract EXIF data: `exiftool secret.jpg`.
+3. Read the GPS coordinates — decode the values as ASCII characters to get the password.
+4. Use steghide: `steghide extract -sf secret.jpg -p <password>`.
+5. The extracted file contains the flag.
+
+**Flag:** `CGS{l4y3r3d_s3cr3ts_n33d_p4t13nc3}`
+
+---
+
+### 35. Disk Image Carving
+
+**Concept:** Deleted file on a raw disk image — recoverable with file carving.
+
+**Solve Steps:**
+
+1. Download `disk.dd`.
+2. Run `foremost -t pdf -i disk.dd -o output/` or `scalpel disk.dd`.
+3. A PDF file is recovered from the disk.
+4. Open the PDF and check its Document Properties (not the page content).
+5. The flag is in the PDF metadata.
+
+**Flag:** `CGS{d3l3t3d_bu7_n0t_g0n3_f0r3v3r}`
+
+---
+
+### 36. Memory Lane
+
+**Concept:** Flag embedded in process memory — recoverable via strings or Volatility.
+
+**Solve Steps:**
+
+1. Download `memory.raw`.
+2. **Quick method:** Run `strings memory.raw | grep "CGS{"` — the flag appears twice in the dump.
+3. **Forensic method:** Load the dump into Volatility:
+   ```
+   vol.py -f memory.raw linux_bash
+   vol.py -f memory.raw linux_envars
+   ```
+4. The flag is stored in a process result buffer and a credential cache, visible in both the `result_buffer` and `value` fields.
+5. Context clues: look for `result_buffer:` or `value:` near the flag string.
+
+**Flag:** `CGS{v0l4t1l1ty_n3v3r_f0rg3ts}`
+
+---
+
+### 37. Decrypted Wire
+
+**Concept:** TLS-encrypted PCAP — decrypt using a leaked SSLKEYLOG file.
+
+**Solve Steps:**
+
+1. Download `traffic.pcap` and `sslkeylog.log`.
+2. Open Wireshark.
+3. Go to **Edit → Preferences → Protocols → TLS**.
+4. In the **(Pre)-Master-Secret log filename** field, browse to `sslkeylog.log`.
+5. Click OK — Wireshark decrypts the TLS session.
+6. Follow the TCP stream or expand the decrypted HTTP response.
+7. The flag is in the server's HTTP response body, inside the decrypted application data.
+8. **Alternatively:** Use `tshark` to filter the decrypted stream:
+   ```
+   tshark -r traffic.pcap -o "tls.keylog_file:sslkeylog.log" -Y http
+   ```
+
+**Flag:** `CGS{tls_k3ys_unl0ck_th3_w1r3}`
+
+---
+
+### 38. Deep Carve
+
+**Concept:** Fragmented disk image — deleted PNG split across non-contiguous clusters.
+
+**Solve Steps:**
+
+1. Download `disk.dd` (256KB FAT-like disk image).
+2. **File carving:** Run `foremost -t png -i disk.dd -o output/` or `binwalk -e disk.dd`.
+3. The carved output may be incomplete or corrupted because the PNG data is scattered across non-contiguous clusters.
+4. **Manual reconstruction:** Inspect the FAT (File Allocation Table) at sector 1 to find the cluster chain for the deleted file.
+5. The deleted directory entry (filename starting with `0xE5`) points to the first cluster.
+6. Read the PNG data from clusters 2, 8, 15, and 22 — concatenate them in order.
+7. The reconstructed PNG contains the flag in a `tEXt` metadata chunk (Author field).
+8. `strings` on the individual clusters can also reveal the flag fragment by fragment.
+
+**Flag:** `CGS{d33p_c4rv1ng_f1nds_fr4gm3nt5}`
+
+---
+
+## Misc Easy
+
+### 39. Digital Footprints
+
+**Concept:** Finding traces of an organization on social media platforms.
+
+**Solve Steps:**
+
+1. Research the CGS organization's public presence.
+2. Check social media platforms where organizations share moments visually.
+3. One of their oldest posts contains the flag.
+4. Look at Instagram or similar image-sharing platforms.
+
+**Flag:** `CGS{1nk_1n_b10_7r4c3}`
+
+---
+
+### 40. Status Message
+
+**Concept:** Short platform status messages can leak information.
+
+**Solve Steps:**
+
+1. Check platforms where short updates are the norm (Twitter/X, Mastodon, etc.).
+2. Find a status message from the CGS organization.
+3. The flag is embedded in a brief update.
+4. A single line reveals more than a full conversation.
+
+**Flag:** `CGS{5747u5_kn0w5_411}`
+
+---
+
+### 41. The Forgotten Repository
+
+**Concept:** Sensitive data left in a public repository's commit history or file contents.
+
+**Solve Steps:**
+
+1. Search GitHub for repositories belonging to the CGS organization.
+2. Look through the file contents of their public repositories.
+3. Developers sometimes leave flags or secrets committed directly in source code.
+4. Check for files that contain the flag string.
+5. The flag format `CGS{...}` may appear in a plaintext file.
+
+**Flag:** `CGS{0p3n_50urc3_hun73r}`
+
+---
+
+## Misc Medium
+
+### 42. Professional Presence
+
+**Concept:** Information hidden in professional networking profiles.
+
+**Solve Steps:**
+
+1. Look at professional networking platforms (LinkedIn, etc.).
+2. Find the organization's professional profile.
+3. Read everything carefully — not just headlines, but descriptions and details.
+4. The flag is hidden in the visible text of a career history entry.
+
+**Flag:** `CGS{pr0f35510n4l_f007pr1n7}`
+
+---
+
+### 43. Hidden Announcement
+
+**Concept:** A one-time public announcement that was never repeated.
+
+**Solve Steps:**
+
+1. Check the organization's public social media timeline.
+2. The announcement was made only once and never repeated.
+3. Scroll through historical posts carefully — the answer hasn't moved.
+4. Look for a single post that differs from the rest.
+5. The flag is embedded in that forgotten announcement.
+
+**Flag:** `CGS{p45t5_n3v3r_d13}`
+
+---
+
 ## Tools Reference
 
 | Tool | Purpose | Example |
@@ -594,6 +948,14 @@
 | **base64decode.org** | Decode Base64 strings | Paste the encoded string |
 | **hashcat** | Crack JWT secrets offline | `hashcat -m 16500 token.txt wordlist.txt` |
 | **Python / Node** | Script automated attacks | Blind SQLi extraction, race conditions |
+| **Wireshark** | Analyze and decrypt network captures | Load SSLKEYLOG for TLS decryption |
+| **tshark** | CLI packet analysis | `tshark -r file.pcap -o "tls.keylog_file:key.log"` |
+| **Volatility** | Memory dump forensics | `vol.py -f dump.raw linux_envars` |
+| **strings** | Extract printable text from binaries | `strings memory.raw \| grep CGS` |
+| **foremost / scalpel** | File carving from disk images | `foremost -t png -i disk.dd -o out/` |
+| **binwalk** | Firmware/binary analysis | `binwalk -e disk.dd` |
+| **HxD / xxd** | Hex editing | Inspect and modify binary files |
+| **Audacity** | Audio analysis with spectrogram view | Open WAV, switch to Spectrogram |
 
 ---
 
