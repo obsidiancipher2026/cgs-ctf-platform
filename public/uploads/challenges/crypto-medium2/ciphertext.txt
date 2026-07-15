@@ -2,16 +2,18 @@ Vigenere Cipher - Intercepted Ciphertext
 ==========================================
 
 A suspicious message was captured from an encrypted channel.
-The encryption method appears to be classical, not modern.
+The encryption method appears to be classical Vigenere cipher.
+
+The message is known to be English text. The key length is
+short enough to determine using Kasiski examination and the
+Index of Coincidence.
+
+Once you determine the key length, use frequency analysis
+to recover the key letter by letter.
+
+Decrypt the entire message to find the hidden flag.
 
 Ciphertext:
-NKS{f1r3r3r3_u3j_p3nqel_l34u5}
+Elq zfwpaqzyk uhkppxcxproy iptalk tw ofrdwuzzph fig diolve. Exf rriznj xyen vywglv ys oigtie uip qmxv zj fbzd hawlxizn. Ksi fuirif brd fqye zfeyigip wfyhgwktrs mldtuwzzye utemhcktie hvlv fbv peenvcr oidasghu. Elq igpvmnzzr oiuprmgvo Tdiapgf Hzrlfcerexy zd tdixciemzyk. Fbv lgoyjd gaxv qsd nyp wqwlci hulwx tuj miqh tsezavo xa WXD{z1s3h3i3_v3c_x3hxel_x34e5}. Rwp blvgmaoj nspyj lvq cegexculxqx rd sr gzoruaye. Xty utvqwkzv alupvqx r qyxf ipzuyn zj eytfvunp avanfnsxm wzpxintrs nyp vqwvyx nlvlgt ce dionfc wqpvy. Xty vygdsgemah bpce qzwp ny izxmnvo ihyij jalkj iuaye laoid. Xtcj nszwcfhqm ksi uhkppxcxproy scmqzzyk.
 
-The sender seems to be using a Vigenere cipher. The key is
-short and may be guessable from context. The message length
-is sufficient for frequency analysis if needed.
-
-Known plaintext hint: The message starts with "CGS{" and
-ends with "}". The key repeats cyclically.
-
-Submit the decrypted flag.
+Submit the decrypted flag in format: CGS{...}

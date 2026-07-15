@@ -1,15 +1,15 @@
 RSA Challenge - Small Primes
 ============================
 
-n = 1992410044922436069325600671111908467174842856767860967419259624853492783539261888635217037
+A message was encrypted using RSA with unusually small primes.
+The public key is provided below. Factor n to recover the private
+key and decrypt the ciphertext.
+
+n = 2181391799494168189841868474057046478875447189026074304183816907733291350749497344800062408546281151819
 e = 65537
-ciphertext = 1848378385533142309106927659779884397802757426241814960451333772938424304453595033783211055
+ciphertext = 848444909741824732293348723580257524197284125752902252061575652145527528001118625815662245183851341757
 
-The flag was encrypted with RSA. The public key looks normal,
-but something about the key generation was... rushed.
+The primes used to generate n are close enough to each other that
+Fermat's factorization method will work quickly.
 
-Hint: The primes used to generate n are not as large as they
-should be. Modern RSA uses 2048-bit primes. These are much
-smaller.
-
-Submit the decrypted flag in the format: CGS{...}
+Submit the decrypted flag in format: CGS{...}

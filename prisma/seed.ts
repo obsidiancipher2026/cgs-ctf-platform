@@ -418,6 +418,7 @@ const challenges: ChallengeData[] = [
     hint:'ECB mode encrypts identical blocks to identical ciphertext. Look at the pattern.',
     files:JSON.stringify([
       {name:'penguin_original.bmp', url:'/uploads/challenges/crypto-medium3/penguin_original.bmp'},
+      {name:'penguin_encrypted.bmp', url:'/uploads/challenges/crypto-medium3/penguin_encrypted.bmp'},
       {name:'challenge_note.txt', url:'/uploads/challenges/crypto-medium3/challenge_note.txt'},
     ]),
     instanceUrl:null,
@@ -445,9 +446,12 @@ const challenges: ChallengeData[] = [
     title:'Predictable Dice', category:'crypto', difficulty:'medium', points:200,
     flag:'CGS{w34k_prng_s33d5_ar3_gu355abl3}',
     hint:'The PRNG was seeded with a Unix timestamp. Reproduce the seed to regenerate the token.',
-    files:JSON.stringify([{name:'token.txt', url:'/uploads/challenges/crypto-medium6/token.txt'}]),
+    files:JSON.stringify([
+      {name:'token.txt', url:'/uploads/challenges/crypto-medium6/token.txt'},
+      {name:'flag_locked.txt', url:'/uploads/challenges/crypto-medium6/flag_locked.txt'},
+    ]),
     instanceUrl:null,
-    description:'A web application generates session tokens using a PRNG seeded with the current Unix timestamp. It rolled the dice, but the dice remember what time it was. Given the generation time and the token, reproduce the PRNG sequence to predict the next token and unlock the flag.',
+    description:'A web application generates session tokens using a PRNG seeded with the current Unix timestamp. It rolled the dice, but the dice remember what time it was. Given the generation time and the token, reproduce the PRNG sequence to regenerate the token and decrypt the locked flag file.',
   },
   {
     title:'Secret\'s Not So Secret', category:'crypto', difficulty:'medium', points:200,
@@ -463,7 +467,7 @@ const challenges: ChallengeData[] = [
     hint:'Two messages encrypted with the same IV and key. XOR the ciphertexts to get XOR of plaintexts.',
     files:JSON.stringify([{name:'ciphertexts.txt', url:'/uploads/challenges/crypto-medium8/ciphertexts.txt'}]),
     instanceUrl:null,
-    description:'Two messages were encrypted using AES-CBC with the same key and the same initialization vector. Using the same starting point twice tells you more than it should. XOR the ciphertexts together to isolate the difference between the two plaintexts.',
+    description:'Two messages were encrypted using AES-CTR with the same key and the same nonce. Reusing a nonce cancels the keystream between both messages. XOR the ciphertexts together and use the known plaintext to recover the second message containing the flag.',
   },
 
   // ═══ CRYPTO HARD (8) ═══

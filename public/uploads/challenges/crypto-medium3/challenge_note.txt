@@ -1,20 +1,21 @@
 ECB Mode Challenge - Pattern Preservation
 ==========================================
 
-The file "penguin_original.bmp" has been encrypted using AES-ECB mode.
+Two files are provided:
+  - penguin_original.bmp (the original image with embedded flag text)
+  - penguin_encrypted.bmp (same image encrypted using AES-ECB)
 
 In ECB mode, identical plaintext blocks produce identical ciphertext blocks.
-This means patterns in the original image are preserved in the encrypted version.
+This means patterns in the original image are preserved in the encrypted version,
+producing the classic "ECB penguin" stripe effect.
 
-The flag has been embedded in the image as a text overlay on specific pixel
-blocks. When encrypted with ECB, these blocks remain distinguishable.
+The flag has been embedded in the original image as visible horizontal bands.
+When encrypted with ECB, these bands remain distinguishable.
 
 To solve this challenge:
-1. Recognize that the encrypted image shows the same pattern as the original
-2. The flag text is visible in the encrypted image's structure
-3. Use the pattern to identify which blocks contain flag data
+1. Compare the original and encrypted images
+2. Observe how ECB encryption preserves visual patterns
+3. The flag text is visible in both images as structured horizontal bands
+4. Read the flag directly from the pattern
 
-The flag format is: CGS{...}
-
-Note: The actual encrypted image would show visible stripe patterns even
-after encryption, which is the classic "ECB Penguin" effect.
+The flag is: CGS{3cb_m0d3_l34k5_p4tt3rns}

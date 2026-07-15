@@ -20,8 +20,6 @@ at Unix timestamp: 1718352000
 
 Your token: e05588b2b6bfe25b6aedd37a3b20b056
 
-The flag is revealed when you can predict the next token.
 Use the same PRNG with the same seed to regenerate the token.
-
-Once you have the token, the flag is:
-CGS{w34k_prng_s33d5_ar3_gu355abl3}
+Once you have the token, use it to decrypt "flag_locked.txt"
+to reveal the CTF flag.

@@ -1,19 +1,22 @@
-AES-CBC Challenge - Reused IV
-=============================
+AES-CTR Challenge - Reused Nonce
+===============================
 
-Two messages were encrypted using AES-CBC with the same key and IV.
+Two messages were encrypted using AES-CTR with the same key and nonce.
 
-IV (hex): 4a6f686e20446f652048656c6c6f21
+Nonce (hex): 4a6f686e20446f652048656c6c6f2121
 
-Ciphertext 1 (hex): 7b94e3a1f2c8d5b6e9a0f3c4d7e8b1a2
-Ciphertext 2 (hex): 7b94e3a1f2c8d5b6e9a0f3c4d7e8b1a3
+Ciphertext 1 (hex): 9d214952f307d98e50c3797c138f92b0491f48ab29151b3aa69e807e852bc22ea62ad77495eb25443cdfe4
+Ciphertext 2 (hex): 8a264214e906df9241de38795a95f183720174b92b391f7cbd84d4549807ac16966ff744b4bf355d20d6eb6bbc774c55ca5d01662c66e6bfe487
 
 Message 1 is known to start with: "The secret is: "
 Message 2 contains the flag.
 
-In AES-CBC, if the same IV and key are used for two messages,
-XORing the ciphertexts reveals the XOR of the plaintexts.
-Since you know part of plaintext 1, you can recover plaintext 2.
+In AES-CTR, if the same nonce and key are used for two messages,
+the keystream is identical. This means:
+  C1 XOR C2 = P1 XOR P2
+
+Since you know part of plaintext 1, you can recover plaintext 2:
+  P2 = C1 XOR C2 XOR P1
 
 The flag is in the second message.
 Format: CGS{...}

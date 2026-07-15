@@ -1,0 +1,8 @@
+This file is locked.
+To unlock it, you must first predict the correct token.
+The token is generated using Python's random module seeded with a Unix timestamp.
+
+The encrypted flag is below (hex encoded):
+2677664e4f0b56593d461008026d46510505503b0541043e541701055751575a564d
+
+To decrypt, XOR the encrypted data with the regenerated token.
