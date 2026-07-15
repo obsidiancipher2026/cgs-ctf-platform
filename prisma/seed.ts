@@ -641,8 +641,7 @@ const challenges: ChallengeData[] = [
     flag:'CGS{rise_from_the_ashes_of_analysis}',
     hint:'The phoenix never dies—it simply changes the place where you should be looking.',
     files:JSON.stringify([
-      {name:'phoenix_protocol.exe', url:'/uploads/challenges/reverse-hard1/phoenix_protocol.exe'},
-      {name:'phoenix_protocol.c', url:'/uploads/challenges/reverse-hard1/phoenix_protocol.c'},
+      {name:'phoenix.exe', url:'/uploads/challenges/reverse-hard1/phoenix.exe'},
     ]),
     instanceUrl:null,
     description:'Project Phoenix was designed to survive analysis. Every layer you remove only reveals another.\n\nThe executable refuses to cooperate under a debugger, rebuilds portions of itself in memory, interprets a custom instruction set, and derives its final decryption key only after successful execution.\n\nLayers include:\n- Custom unpacking stub that reconstructs the real program in memory\n- Anti-debugging checks (PEB inspection, IsDebuggerPresent, timing checks)\n- Anti-VM detection (CPUID checks, virtualization artifacts)\n- Control-flow flattening across the validation routine\n- Encrypted VM bytecode with approximately 25-35 opcodes\n- Runtime decryption of bytecode using a derived key\n- VM execution that derives a 256-bit AES key\n- Final flag stored only as AES-256-CBC encrypted data\n\nSomewhere beyond all of that lies the flag.',

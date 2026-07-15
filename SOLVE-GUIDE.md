@@ -1178,7 +1178,7 @@
 
 **Solve Steps:**
 
-1. Download `phoenix_protocol.exe`.
+1. Download `phoenix.exe`.
 2. **Layer 1 — Unpacking:** Find the unpacking stub, identify the decompression algorithm, dump the reconstructed executable from memory.
 3. **Layer 2 — Anti-Debug:** Patch or bypass `IsDebuggerPresent`, PEB checks, timing checks, and hardware breakpoint detection.
 4. **Layer 3 — Anti-VM:** Neutralize CPUID-based VM detection and artifact checks.
