@@ -1022,9 +1022,9 @@
 
 1. Download `mathlock.exe`.
 2. Open in a disassembler and find the validation function.
-3. Identify the arithmetic operations applied to each input byte (add, XOR, subtract).
-4. Reverse each operation to find the expected input value.
-5. For example: if `input[0] + 7 == 'C'`, then `input[0] = 'C' - 7`.
+3. Identify the arithmetic operations: for each input byte, the code adds a constant then XORs with another constant.
+4. Reverse each operation: XOR the expected result with the XOR constant, then subtract the add constant.
+5. For example: if `(input[0] + 3) ^ 0x17 == 0x5E`, then `input[0] = (0x5E ^ 0x17) - 3`.
 6. Construct the correct input and run the binary.
 
 > **Hint:** Every operation has an opposite.
@@ -1060,9 +1060,9 @@
 
 1. Download `encoded.exe`.
 2. Open in a disassembler and find the decoding functions.
-3. Identify the encoding layers: Base64 decode, another Base64 decode, then ROT13.
+3. Identify the encoding layers: the binary applies Base64 decode, then another Base64 decode, then ROT13.
 4. Extract the encoded string from the binary.
-5. Apply the decodes in reverse order: ROT13 first, then Base64, then Base64 again.
+5. Apply the decodes in the same order: Base64 decode twice, then ROT13.
 6. Alternatively, use CyberChef with the "Magic" recipe to auto-detect layers.
 
 > **Hint:** Peeling onions hurts.
