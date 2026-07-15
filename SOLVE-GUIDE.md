@@ -1,6 +1,6 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **74 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **73 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > Web challenges are accessible via `/standalone/{slug}` on the platform.
 > Forensics and Misc challenges provide downloadable asset files.
@@ -76,7 +76,6 @@
   - [48. Key of Four](#48-key-of-four)
   - [49. Radio Silence](#49-radio-silence)
   - [50. Rotated Further](#50-rotated-further)
-  - [51. Rainbow's End](#51-rainbows-end)
 - [Crypto Medium (200 pts each)](#crypto-medium)
   - [52. RSA's Small Mistake](#52-rsas-small-mistake)
   - [53. Frequency Fumble](#53-frequency-fumble)
@@ -1083,21 +1082,6 @@
 5. Apply ROT47 to decrypt the message.
 
 **Flag:** `CGS{r0t47_g03s_p4st_l3tt3rs}`
-
----
-
-### 51. Rainbow's End
-
-**Concept:** MD5 hash cracking via rainbow tables.
-
-**Solve Steps:**
-
-1. The hash `e7a5bdf3c7d7ebf2ce7cb3c018cdd15e` is provided in the challenge description.
-2. Look it up on an online rainbow table (md5decrypt.net, crackstation.net).
-3. The hash corresponds to a phrase related to MD5 hashing.
-4. Wrap the cracked phrase in `CGS{...}` to form the flag.
-
-**Flag:** `CGS{md5_h4sh3s_ar3nt_s3cr3ts}`
 
 ---
 

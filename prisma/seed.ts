@@ -393,13 +393,7 @@ const challenges: ChallengeData[] = [
     instanceUrl:null,
     description:'Another rotation cipher, but this one rotates more than just the alphabet. It shifts the entire printable ASCII range — from exclamation mark to tilde. It rotates more than just the alphabet this time. Can you undo the rotation?',
   },
-  {
-    title:'Rainbow\'s End', category:'crypto', difficulty:'easy', points:100,
-    flag:'CGS{md5_h4sh3s_ar3nt_s3cr3ts}',
-    hint:'The hash has already been cracked by someone, somewhere. Use an online rainbow table.',
-    instanceUrl:null,
-    description:'A developer stored a secret by hashing it with MD5, believing it was secure. But this hash has already been cracked by someone, somewhere, before you. MD5 hashes of common words are readily available in rainbow tables. Find the original plaintext that produces this hash: e7a5bdf3c7d7ebf2ce7cb3c018cdd15e',
-  },
+
 
   // ═══ CRYPTO MEDIUM (8) ═══
   {
