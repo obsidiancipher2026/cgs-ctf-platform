@@ -398,7 +398,7 @@ const challenges: ChallengeData[] = [
     flag:'CGS{md5_h4sh3s_ar3nt_s3cr3ts}',
     hint:'The hash has already been cracked by someone, somewhere. Use an online rainbow table.',
     instanceUrl:null,
-    description:'A developer stored a secret by hashing it with MD5, believing it was secure. But this hash has already been cracked by someone, somewhere, before you. MD5 hashes of common words are readily available in rainbow tables. Find the original plaintext that produces this hash: 5f4dcc3b5aa765d61d8327deb882cf99',
+    description:'A developer stored a secret by hashing it with MD5, believing it was secure. But this hash has already been cracked by someone, somewhere, before you. MD5 hashes of common words are readily available in rainbow tables. Find the original plaintext that produces this hash: e7a5bdf3c7d7ebf2ce7cb3c018cdd15e',
   },
 
   // ═══ CRYPTO MEDIUM (8) ═══

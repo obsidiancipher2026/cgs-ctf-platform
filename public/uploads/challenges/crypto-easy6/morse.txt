@@ -10,11 +10,8 @@ using standard International Morse Code.
 
 Signal content:
 
--.-. --. ... -.--. M ----- R ... ... _ -.-. ----- D ... _ ... T 1 L L _ W ----- R K ..... -..-
+-.-. --. ... -.-.. -- ----- .-. ... ...-- ..--.- -.-. ----- -.. ...-- ..--.- ... - .---- .-.. .-.. ..--.- .-- ----- .-. -.- ..... .-..-.
 
 End of transmission.
 73 de Operator
 
-Note: Some operators embed flags in their transmissions.
-Look for the standard format: five characters, open brace,
-some content, close brace.

@@ -1062,9 +1062,9 @@
 **Solve Steps:**
 
 1. Download `morse.txt`.
-2. The file contains dots (.) and dashes (-) separated by spaces.
+2. The file contains a Morse code sequence using dots (.) and dashes (-) separated by spaces.
 3. Decode the Morse code using an online decoder or reference chart.
-4. Letters are separated by spaces, words by " / ".
+4. Letters are separated by spaces; the decoded result reveals the flag.
 
 **Flag:** `CGS{m0rs3_c0d3_st1ll_w0rk5}`
 
@@ -1092,10 +1092,10 @@
 
 **Solve Steps:**
 
-1. The hash `5f4dcc3b5aa765d61d8327deb882cf99` is provided.
+1. The hash `e7a5bdf3c7d7ebf2ce7cb3c018cdd15e` is provided in the challenge description.
 2. Look it up on an online rainbow table (md5decrypt.net, crackstation.net).
-3. The hash corresponds to a common English word.
-4. Wrap the cracked word in `CGS{...}` to form the flag.
+3. The hash corresponds to a phrase related to MD5 hashing.
+4. Wrap the cracked phrase in `CGS{...}` to form the flag.
 
 **Flag:** `CGS{md5_h4sh3s_ar3nt_s3cr3ts}`
 
