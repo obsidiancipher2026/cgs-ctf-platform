@@ -394,6 +394,183 @@ const challenges: ChallengeData[] = [
     description:'Another rotation cipher, but this one rotates more than just the alphabet. It shifts the entire printable ASCII range — from exclamation mark to tilde. It rotates more than just the alphabet this time. Can you undo the rotation?',
   },
 
+  // ═══ CRYPTO MEDIUM (5) ═══
+  {
+    title:'Two Doors, One Lock', category:'crypto', difficulty:'medium', points:350,
+    flag:'CGS{shared_modulus_shared_problem}',
+    hint:null,
+    hintList:[
+      'Two different public exponents encrypt the same message under the same modulus.',
+      'If you have c1 = m^e1 mod n and c2 = m^e2 mod n, can you combine them?',
+      'Use the extended Euclidean algorithm to find coefficients s1, s2 such that s1*e1 + s2*e2 = 1.',
+    ],
+    files:JSON.stringify([
+      {name:'public_alice.pem', url:'/uploads/challenges/crypto-medium1/public_alice.pem'},
+      {name:'public_bob.pem', url:'/uploads/challenges/crypto-medium1/public_bob.pem'},
+      {name:'alice_message.enc', url:'/uploads/challenges/crypto-medium1/alice_message.enc'},
+      {name:'bob_message.enc', url:'/uploads/challenges/crypto-medium1/bob_message.enc'},
+      {name:'readme.txt', url:'/uploads/challenges/crypto-medium1/readme.txt'},
+    ]),
+    instanceUrl:null,
+    description:'Alice and Bob work in different departments. They each generated RSA key pairs — but somehow ended up with the same modulus n. Alice encrypted a message with her exponent, and Bob encrypted the same message with his. You have both ciphertexts and both public keys. The shared modulus is their weakness.',
+  },
+  {
+    title:'Tiny Secret', category:'crypto', difficulty:'medium', points:400,
+    flag:'CGS{fast_is_not_always_safe}',
+    hint:null,
+    hintList:[
+      'The private exponent d is unusually small.',
+      'Wiener\'s attack uses continued fractions to recover small d from (e, n).',
+      'Research the Wiener attack on RSA.',
+    ],
+    files:JSON.stringify([
+      {name:'public.pem', url:'/uploads/challenges/crypto-medium2/public.pem'},
+      {name:'secret.enc', url:'/uploads/challenges/crypto-medium2/secret.enc'},
+      {name:'notes.txt', url:'/uploads/challenges/crypto-medium2/notes.txt'},
+    ]),
+    instanceUrl:null,
+    description:'Someone generated an RSA key pair in a hurry. The encryption works, the math checks out — but the private key was generated during a coffee break, and it shows. The secret was encrypted with this rushed key. Speed comes at a cost.',
+  },
+  {
+    title:'Trust the Cookie', category:'crypto', difficulty:'medium', points:450,
+    flag:'CGS{integrity_matters_more_than_secrecy}',
+    hint:null,
+    hintList:[
+      'The cookie is encrypted with AES-CBC.',
+      'In CBC mode, flipping a bit in ciphertext block i flips the corresponding bit in plaintext block i+1.',
+      'Find which byte to flip to change role=0 to role=admin.',
+    ],
+    files:JSON.stringify([
+      {name:'session.cookie', url:'/uploads/challenges/crypto-medium3/session.cookie'},
+      {name:'server.py', url:'/uploads/challenges/crypto-medium3/server.py'},
+      {name:'users.txt', url:'/uploads/challenges/crypto-medium3/users.txt'},
+    ]),
+    instanceUrl:null,
+    description:'A session management system issues encrypted cookies. The server decrypts your cookie and checks whether you have the admin role. You received a guest cookie — but maybe you can convince the server otherwise. CBC mode encrypts, but it doesn\'t authenticate.',
+  },
+  {
+    title:'Double Vision', category:'crypto', difficulty:'medium', points:500,
+    flag:'CGS{one_nonce_two_disasters}',
+    hint:null,
+    hintList:[
+      'Both messages were encrypted with the same AES-CTR key and nonce.',
+      'In CTR mode, ciphertext = plaintext XOR keystream.',
+      'If you XOR two ciphertexts encrypted with the same keystream, you get plaintext1 XOR plaintext2. Use known plaintext to recover the rest.',
+    ],
+    files:JSON.stringify([
+      {name:'chat1.enc', url:'/uploads/challenges/crypto-medium4/chat1.enc'},
+      {name:'chat2.enc', url:'/uploads/challenges/crypto-medium4/chat2.enc'},
+      {name:'chat_info.txt', url:'/uploads/challenges/crypto-medium4/chat_info.txt'},
+    ]),
+    instanceUrl:null,
+    description:'Two encrypted chat messages were intercepted. Both were encrypted with AES-CTR — the same key and the same nonce. The first message is mostly predictable. The second one contains something valuable. When the same stream encrypts two messages, privacy becomes transparent.',
+  },
+  {
+    title:'Signature Collection', category:'crypto', difficulty:'medium', points:550,
+    flag:'CGS{signatures_should_never_repeat}',
+    hint:null,
+    hintList:[
+      'Both DSA signatures use the same nonce k.',
+      'If s1 = k^-1(h1 + xr) mod q and s2 = k^-1(h2 + xr) mod q, you can subtract to eliminate x.',
+      'Recover k from the two signatures, then compute the private key x.',
+    ],
+    files:JSON.stringify([
+      {name:'public.pem', url:'/uploads/challenges/crypto-medium5/public.pem'},
+      {name:'signatures.txt', url:'/uploads/challenges/crypto-medium5/signatures.txt'},
+      {name:'memo.txt', url:'/uploads/challenges/crypto-medium5/memo.txt'},
+    ]),
+    instanceUrl:null,
+    description:'A signing service has been stable for months. It produced two signatures for two different messages — using the same nonce both times. DSA\'s security depends on nonce uniqueness. Two signatures with the same nonce are two doors to the same secret.',
+  },
+
+  // ═══ CRYPTO HARD (5) ═══
+  {
+    title:'Oracle Speaks', category:'crypto', difficulty:'hard', points:700,
+    flag:'CGS{asking_the_right_questions}',
+    hint:null,
+    hintList:[
+      'The server leaks whether PKCS#1 v1.5 padding is valid after decryption.',
+      'Bleichenbacher\'s attack uses the padding oracle to iteratively narrow down the plaintext.',
+      'Research Bleichenbacher\'s adaptive chosen ciphertext attack on PKCS#1 v1.5.',
+    ],
+    files:JSON.stringify([
+      {name:'server.py', url:'/uploads/challenges/crypto-hard1/server.py'},
+      {name:'encrypted.bin', url:'/uploads/challenges/crypto-hard1/encrypted.bin'},
+      {name:'readme.txt', url:'/uploads/challenges/crypto-hard1/readme.txt'},
+    ]),
+    instanceUrl:null,
+    description:'An RSA oracle decrypts your ciphertext and tells you whether the padding is valid. That single bit of information — valid or invalid — is enough to reconstruct the plaintext, one question at a time. The oracle speaks, and it never lies.',
+  },
+  {
+    title:'Family Secrets', category:'crypto', difficulty:'hard', points:800,
+    flag:'CGS{related_messages_related_problems}',
+    hint:null,
+    hintList:[
+      'Two messages are related by a known linear equation: m2 = m1 + c.',
+      'Both are encrypted under the same RSA public key with e=3.',
+      'The Franklin-Reiter related-message attack recovers m1 by computing the GCD of two polynomials over Z_n.',
+    ],
+    files:JSON.stringify([
+      {name:'public.pem', url:'/uploads/challenges/crypto-hard2/public.pem'},
+      {name:'letter1.enc', url:'/uploads/challenges/crypto-hard2/letter1.enc'},
+      {name:'letter2.enc', url:'/uploads/challenges/crypto-hard2/letter2.enc'},
+      {name:'story.txt', url:'/uploads/challenges/crypto-hard2/story.txt'},
+    ]),
+    instanceUrl:null,
+    description:'Two letters were encrypted with the same RSA public key. The sender admits the second draft only differs slightly from the first — a known linear relationship connects them. When two ciphertexts are related, their plaintexts aren\'t safe either.',
+  },
+  {
+    title:'Predictable Fortune', category:'crypto', difficulty:'hard', points:900,
+    flag:'CGS{entropy_is_everything}',
+    hint:null,
+    hintList:[
+      'Each ECDSA signature leaks the top bits of the nonce k.',
+      'The hidden number problem recovers a secret from partial nonce information using lattice reduction.',
+      'Research the hidden number problem and lattice-based attacks on ECDSA with biased nonces.',
+    ],
+    files:JSON.stringify([
+      {name:'ecdsa_public.pem', url:'/uploads/challenges/crypto-hard3/ecdsa_public.pem'},
+      {name:'captures.txt', url:'/uploads/challenges/crypto-hard3/captures.txt'},
+      {name:'device.log', url:'/uploads/challenges/crypto-hard3/device.log'},
+    ]),
+    instanceUrl:null,
+    description:'A hardware security module signs messages using ECDSA. But a manufacturing defect leaks the top bits of each nonce into a side channel. With enough signatures and their partial nonces, lattice reduction recovers the signing key. Entropy that leaks is entropy that kills.',
+  },
+  {
+    title:'Almost Known', category:'crypto', difficulty:'hard', points:950,
+    flag:'CGS{small_unknowns_are_not_hidden}',
+    hint:null,
+    hintList:[
+      'You know the flag format: CGS{...} — only the middle bytes are unknown.',
+      'Coppersmith\'s method finds small roots of polynomials modulo n.',
+      'For RSA with known prefix/suffix, construct f(x) = (prefix * 2^bits + x * 2^suffix + suffix)^e - ct and find the small root x.',
+    ],
+    files:JSON.stringify([
+      {name:'public.pem', url:'/uploads/challenges/crypto-hard4/public.pem'},
+      {name:'cipher.bin', url:'/uploads/challenges/crypto-hard4/cipher.bin'},
+      {name:'template.txt', url:'/uploads/challenges/crypto-hard4/template.txt'},
+    ]),
+    instanceUrl:null,
+    description:'An RSA ciphertext encrypts a message with a known format — you know the beginning, you know the end, but the middle is hidden. When the unknown portion is small relative to the modulus, Coppersmith\'s method finds it. Small unknowns are not hidden — they\'re just waiting to be found.',
+  },
+  {
+    title:'Strange Curve', category:'crypto', difficulty:'hard', points:1000,
+    flag:'CGS{validate_every_parameter}',
+    hint:null,
+    hintList:[
+      'The server doesn\'t validate which elliptic curve your point belongs to.',
+      'An invalid curve has a different (smaller) group order than the valid curve.',
+      'Send points on multiple invalid curves and use CRT to recover the server\'s private key modulo each small order.',
+    ],
+    files:JSON.stringify([
+      {name:'server.py', url:'/uploads/challenges/crypto-hard5/server.py'},
+      {name:'client.py', url:'/uploads/challenges/crypto-hard5/client.py'},
+      {name:'curve_notes.txt', url:'/uploads/challenges/crypto-hard5/curve_notes.txt'},
+    ]),
+    instanceUrl:null,
+    description:'An ECDH key exchange server computes shared secrets using a fixed private key. It accepts any point you send — it never checks whether your point actually lies on the correct curve. Send points on curves with small orders, observe the results, and reconstruct the private key. Every parameter must be validated. Every one.',
+  },
+
 
 ]
 

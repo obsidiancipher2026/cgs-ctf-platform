@@ -1,0 +1,2 @@
+The second draft only differs slightly from the first.
+Relation constant c = 12345

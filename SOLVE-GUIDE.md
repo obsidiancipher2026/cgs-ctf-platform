@@ -1,6 +1,6 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **57 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **67 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > Web challenges are accessible via `/standalone/{slug}` on the platform.
 > Forensics and Misc challenges provide downloadable asset files.
@@ -76,6 +76,18 @@
   - [48. Key of Four](#48-key-of-four)
   - [49. Radio Silence](#49-radio-silence)
   - [50. Rotated Further](#50-rotated-further)
+- [Crypto Medium (350-550 pts each)](#crypto-medium)
+  - [51. Two Doors, One Lock](#51-two-doors-one-lock)
+  - [52. Tiny Secret](#52-tiny-secret)
+  - [53. Trust the Cookie](#53-trust-the-cookie)
+  - [54. Double Vision](#54-double-vision)
+  - [55. Signature Collection](#55-signature-collection)
+- [Crypto Hard (700-1000 pts each)](#crypto-hard)
+  - [56. Oracle Speaks](#56-oracle-speaks)
+  - [57. Family Secrets](#57-family-secrets)
+  - [58. Predictable Fortune](#58-predictable-fortune)
+  - [59. Almost Known](#59-almost-known)
+  - [60. Strange Curve](#60-strange-curve)
 
 ---
 
@@ -1064,6 +1076,203 @@
 5. Apply ROT47 to decrypt the message.
 
 **Flag:** `CGS{r0t47_g03s_p4st_l3tt3rs}`
+
+---
+
+## Crypto Medium
+
+### 51. Two Doors, One Lock
+
+**Concept:** RSA common modulus attack — same n, different public exponents.
+
+**Solve Steps:**
+
+1. Download `public_alice.pem`, `public_bob.pem`, `alice_message.enc`, `bob_message.enc`.
+2. Both public keys share the same modulus n but use different exponents (e1=65537, e2=17).
+3. You have c1 = m^e1 mod n and c2 = m^e2 mod n.
+4. Use the extended Euclidean algorithm to find s1, s2 such that s1*e1 + s2*e2 = 1.
+5. Compute m = c1^s1 * c2^s2 mod n (handle negative exponents with modular inverse).
+6. The result is the flag.
+
+**Tool:** Python with `pycryptodome`, or SageMath.
+
+**Flag:** `CGS{shared_modulus_shared_problem}`
+
+---
+
+### 52. Tiny Secret
+
+**Concept:** Wiener's attack on RSA with small private exponent d.
+
+**Solve Steps:**
+
+1. Download `public.pem` and `secret.enc`.
+2. The RSA key has an unusually small private exponent d (~100 bits vs 1024-bit n).
+3. Wiener's attack uses continued fractions on e/n to recover d.
+4. Use a Wiener attack implementation (SageMath has built-in support).
+5. Once d is recovered, decrypt: m = c^d mod n.
+
+**Tool:** SageMath (`wiener_attack(e, n)`), or implement continued fractions in Python.
+
+**Flag:** `CGS{fast_is_not_always_safe}`
+
+---
+
+### 53. Trust the Cookie
+
+**Concept:** CBC bit-flipping attack — modify ciphertext to change decrypted plaintext.
+
+**Solve Steps:**
+
+1. Download `session.cookie` and `server.py`.
+2. The cookie is AES-CBC encrypted. The server checks for `role=admin` in the decrypted text.
+3. In CBC mode, flipping bit j in ciphertext block i flips bit j in plaintext block i+1.
+4. Identify which byte to flip to change `role=0` to `role=admin` (or similar).
+5. Flip the corresponding byte in the ciphertext block that precedes the target.
+6. Submit the modified cookie.
+
+**Tool:** Python with `pycryptodome`, or manual hex editing.
+
+**Flag:** `CGS{integrity_matters_more_than_secrecy}`
+
+---
+
+### 54. Double Vision
+
+**Concept:** AES-CTR nonce reuse — same key + nonce produces same keystream.
+
+**Solve Steps:**
+
+1. Download `chat1.enc` and `chat2.enc`.
+2. Both messages were encrypted with the same key and nonce.
+3. In CTR mode: ciphertext = plaintext XOR keystream.
+4. XOR the two ciphertexts together: c1 XOR c2 = p1 XOR p2.
+5. Since p1 is mostly known (greeting text), XOR with p1 to recover p2.
+6. The second message contains the flag.
+
+**Tool:** Python, CyberChef, or any XOR tool.
+
+**Flag:** `CGS{one_nonce_two_disasters}`
+
+---
+
+### 55. Signature Collection
+
+**Concept:** DSA nonce reuse — same nonce k used for two signatures leaks the private key.
+
+**Solve Steps:**
+
+1. Download `public.pem` and `signatures.txt`.
+2. Two DSA signatures share the same r value (indicating same nonce k).
+3. From s1 = k^-1(h1 + xr) mod q and s2 = k^-1(h2 + xr) mod q:
+   - k = (h1 - h2) * (s1 - s2)^-1 mod q
+   - x = (s1*k - h1) * r^-1 mod q
+4. Recover the private key x and use it to compute the flag.
+
+**Tool:** Python with `pycryptodome`, or SageMath.
+
+**Flag:** `CGS{signatures_should_never_repeat}`
+
+---
+
+## Crypto Hard
+
+### 56. Oracle Speaks
+
+**Concept:** Bleichenbacher's padding oracle attack on PKCS#1 v1.5 RSA.
+
+**Solve Steps:**
+
+1. Download `server.py` and `encrypted.bin`.
+2. The server decrypts ciphertext and tells you if PKCS#1 v1.5 padding is valid.
+3. This is a padding oracle — each query eliminates ~half the possible plaintexts.
+4. Implement Bleichenbacher's adaptive chosen ciphertext attack:
+   - Start with the encrypted ciphertext
+   - Multiply by random s values and submit to the oracle
+   - Narrow the range of possible plaintexts using interval arithmetic
+5. After ~O(log n) queries, the plaintext is recovered.
+
+**Tool:** Python with `pycryptodome`, or SageMath.
+
+**Flag:** `CGS{asking_the_right_questions}`
+
+---
+
+### 57. Family Secrets
+
+**Concept:** Franklin-Reiter related message attack — two RSA ciphertexts of related messages.
+
+**Solve Steps:**
+
+1. Download `public.pem`, `letter1.enc`, `letter2.enc`, `story.txt`.
+2. Both letters are encrypted with the same public key (e=3).
+3. The messages are related: m2 = m1 + c where c is known.
+4. For e=3, the attack solves: 3*c*m1^2 + 3*c^2*m1 + (c^3 - ct2 + ct1) = 0 mod n.
+5. Use the quadratic formula with modular square root (Tonelli-Shanks).
+6. The solution gives m1, which contains the flag.
+
+**Tool:** SageMath, or implement Tonelli-Shanks in Python.
+
+**Flag:** `CGS{related_messages_related_problems}`
+
+---
+
+### 58. Predictable Fortune
+
+**Concept:** Hidden number problem — partial nonce leaks in ECDSA enable lattice-based key recovery.
+
+**Solve Steps:**
+
+1. Download `ecdsa_public.pem` and `captures.txt`.
+2. 20 ECDSA signatures leak the top 128 bits of each nonce k.
+3. This is a hidden number problem: k_i = t_i + unknown_low_bits.
+4. Construct a lattice where the private key d and nonce bits are short vectors.
+5. Use LLL lattice reduction to recover d.
+6. The attack requires careful lattice construction with m+1 equations.
+
+**Tool:** SageMath with `LLL` lattice reduction.
+
+**Flag:** `CGS{entropy_is_everything}`
+
+---
+
+### 59. Almost Known
+
+**Concept:** Coppersmith's small root method — recover partial plaintext from RSA.
+
+**Solve Steps:**
+
+1. Download `public.pem`, `cipher.bin`, `template.txt`.
+2. The flag format is CGS{...} — you know the prefix and suffix, only the middle is unknown.
+3. Construct polynomial f(x) = (known_prefix * 2^bits + x * 2^suffix + known_suffix)^e - ct mod n.
+4. Coppersmith's method finds small roots of f(x) mod n when the unknown is < n^(1/e).
+5. For e=65537, this works when unknown < n^(1/65537) — but with smaller e or special structure, it works.
+6. Use SageMath's `small_roots()` method.
+
+**Tool:** SageMath with Coppersmith's method.
+
+**Flag:** `CGS{small_unknowns_are_not_hidden}`
+
+---
+
+### 60. Strange Curve
+
+**Concept:** Invalid curve attack — ECDH server doesn't validate curve parameters.
+
+**Solve Steps:**
+
+1. Download `server.py`, `client.py`, `curve_notes.txt`.
+2. The server uses P-256 but doesn't validate that your point lies on the correct curve.
+3. Send points on invalid curves (different 'a' parameter) — these have small group orders.
+4. For each invalid curve, the shared secret reveals d_priv mod small_order_i.
+5. Send points on multiple invalid curves and collect the residues.
+6. Use CRT (Chinese Remainder Theorem) to recover d_priv from the residues.
+
+**Tool:** Python, or SageMath for elliptic curve arithmetic.
+
+**Flag:** `CGS{validate_every_parameter}`
+
+---
 
 
 
