@@ -83,11 +83,8 @@
   - [54. Double Vision](#54-double-vision)
   - [55. Signature Collection](#55-signature-collection)
 - [Crypto Hard (700-1000 pts each)](#crypto-hard)
-  - [56. Oracle Speaks](#56-oracle-speaks)
-  - [57. Family Secrets](#57-family-secrets)
-  - [58. Predictable Fortune](#58-predictable-fortune)
-  - [59. Almost Known](#59-almost-known)
-  - [60. Strange Curve](#60-strange-curve)
+  - [56. Family Secrets](#56-family-secrets)
+  - [57. Predictable Fortune](#57-predictable-fortune)
 
 ---
 
@@ -1177,28 +1174,7 @@
 
 ## Crypto Hard
 
-### 56. Oracle Speaks
-
-**Concept:** Bleichenbacher's padding oracle attack on PKCS#1 v1.5 RSA.
-
-**Solve Steps:**
-
-1. Download `server.py` and `encrypted.bin`.
-2. The server decrypts ciphertext and tells you if PKCS#1 v1.5 padding is valid.
-3. This is a padding oracle — each query eliminates ~half the possible plaintexts.
-4. Implement Bleichenbacher's adaptive chosen ciphertext attack:
-   - Start with the encrypted ciphertext
-   - Multiply by random s values and submit to the oracle
-   - Narrow the range of possible plaintexts using interval arithmetic
-5. After ~O(log n) queries, the plaintext is recovered.
-
-**Tool:** Python with `pycryptodome`, or SageMath.
-
-**Flag:** `CGS{asking_the_right_questions}`
-
----
-
-### 57. Family Secrets
+### 56. Family Secrets
 
 **Concept:** Franklin-Reiter related message attack — two RSA ciphertexts of related messages.
 
@@ -1233,44 +1209,6 @@
 **Tool:** SageMath with `LLL` lattice reduction.
 
 **Flag:** `CGS{entropy_is_everything}`
-
----
-
-### 59. Almost Known
-
-**Concept:** Coppersmith's small root method — recover partial plaintext from RSA.
-
-**Solve Steps:**
-
-1. Download `public.pem`, `cipher.bin`, `template.txt`.
-2. The flag format is CGS{...} — you know the prefix and suffix, only the middle is unknown.
-3. Construct polynomial f(x) = (known_prefix * 2^bits + x * 2^suffix + known_suffix)^e - ct mod n.
-4. Coppersmith's method finds small roots of f(x) mod n when the unknown is < n^(1/e).
-5. For e=65537, this works when unknown < n^(1/65537) — but with smaller e or special structure, it works.
-6. Use SageMath's `small_roots()` method.
-
-**Tool:** SageMath with Coppersmith's method.
-
-**Flag:** `CGS{small_unknowns_are_not_hidden}`
-
----
-
-### 60. Strange Curve
-
-**Concept:** Invalid curve attack — ECDH server doesn't validate curve parameters.
-
-**Solve Steps:**
-
-1. Download `server.py`, `client.py`, `curve_notes.txt`.
-2. The server uses P-256 but doesn't validate that your point lies on the correct curve.
-3. Send points on invalid curves (different 'a' parameter) — these have small group orders.
-4. For each invalid curve, the shared secret reveals d_priv mod small_order_i.
-5. Send points on multiple invalid curves and collect the residues.
-6. Use CRT (Chinese Remainder Theorem) to recover d_priv from the residues.
-
-**Tool:** Python, or SageMath for elliptic curve arithmetic.
-
-**Flag:** `CGS{validate_every_parameter}`
 
 ---
 

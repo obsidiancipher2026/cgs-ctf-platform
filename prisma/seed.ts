@@ -483,24 +483,7 @@ const challenges: ChallengeData[] = [
     description:'A signing service has been stable for months. It produced two signatures for two different messages — using the same nonce both times. DSA\'s security depends on nonce uniqueness. Two signatures with the same nonce are two doors to the same secret.',
   },
 
-  // ═══ CRYPTO HARD (5) ═══
-  {
-    title:'Oracle Speaks', category:'crypto', difficulty:'hard', points:700,
-    flag:'CGS{asking_the_right_questions}',
-    hint:null,
-    hintList:[
-      'The server leaks whether PKCS#1 v1.5 padding is valid after decryption.',
-      'Bleichenbacher\'s attack uses the padding oracle to iteratively narrow down the plaintext.',
-      'Research Bleichenbacher\'s adaptive chosen ciphertext attack on PKCS#1 v1.5.',
-    ],
-    files:JSON.stringify([
-      {name:'server.py', url:'/uploads/challenges/crypto-hard1/server.py'},
-      {name:'encrypted.bin', url:'/uploads/challenges/crypto-hard1/encrypted.bin'},
-      {name:'readme.txt', url:'/uploads/challenges/crypto-hard1/readme.txt'},
-    ]),
-    instanceUrl:null,
-    description:'An RSA oracle decrypts your ciphertext and tells you whether the padding is valid. That single bit of information — valid or invalid — is enough to reconstruct the plaintext, one question at a time. The oracle speaks, and it never lies.',
-  },
+  // ═══ CRYPTO HARD (2) ═══
   {
     title:'Family Secrets', category:'crypto', difficulty:'hard', points:800,
     flag:'CGS{related_messages_related_problems}',
@@ -535,40 +518,6 @@ const challenges: ChallengeData[] = [
     ]),
     instanceUrl:null,
     description:'A hardware security module signs messages using ECDSA. But a manufacturing defect leaks the top bits of each nonce into a side channel. With enough signatures and their partial nonces, lattice reduction recovers the signing key. Entropy that leaks is entropy that kills.',
-  },
-  {
-    title:'Almost Known', category:'crypto', difficulty:'hard', points:950,
-    flag:'CGS{small_unknowns_are_not_hidden}',
-    hint:null,
-    hintList:[
-      'You know the flag format: CGS{...} — only the middle bytes are unknown.',
-      'Coppersmith\'s method finds small roots of polynomials modulo n.',
-      'For RSA with known prefix/suffix, construct f(x) = (prefix * 2^bits + x * 2^suffix + suffix)^e - ct and find the small root x.',
-    ],
-    files:JSON.stringify([
-      {name:'public.pem', url:'/uploads/challenges/crypto-hard4/public.pem'},
-      {name:'cipher.bin', url:'/uploads/challenges/crypto-hard4/cipher.bin'},
-      {name:'template.txt', url:'/uploads/challenges/crypto-hard4/template.txt'},
-    ]),
-    instanceUrl:null,
-    description:'An RSA ciphertext encrypts a message with a known format — you know the beginning, you know the end, but the middle is hidden. When the unknown portion is small relative to the modulus, Coppersmith\'s method finds it. Small unknowns are not hidden — they\'re just waiting to be found.',
-  },
-  {
-    title:'Strange Curve', category:'crypto', difficulty:'hard', points:1000,
-    flag:'CGS{validate_every_parameter}',
-    hint:null,
-    hintList:[
-      'The server doesn\'t validate which elliptic curve your point belongs to.',
-      'An invalid curve has a different (smaller) group order than the valid curve.',
-      'Send points on multiple invalid curves and use CRT to recover the server\'s private key modulo each small order.',
-    ],
-    files:JSON.stringify([
-      {name:'server.py', url:'/uploads/challenges/crypto-hard5/server.py'},
-      {name:'client.py', url:'/uploads/challenges/crypto-hard5/client.py'},
-      {name:'curve_notes.txt', url:'/uploads/challenges/crypto-hard5/curve_notes.txt'},
-    ]),
-    instanceUrl:null,
-    description:'An ECDH key exchange server computes shared secrets using a fixed private key. It accepts any point you send — it never checks whether your point actually lies on the correct curve. Send points on curves with small orders, observe the results, and reconstruct the private key. Every parameter must be validated. Every one.',
   },
 
 

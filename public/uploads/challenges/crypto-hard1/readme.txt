@@ -1,5 +1,0 @@
-Responses:
-
-VALID
-
-INVALID
