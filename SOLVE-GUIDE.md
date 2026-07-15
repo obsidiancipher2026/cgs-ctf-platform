@@ -1,10 +1,11 @@
 # CGS CTF Platform — Complete Solve Guide
 
-> **67 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
+> **78 Challenges** | Cyber Guardians Society | Flag format: `CGS{...}`
 >
 > Web challenges are accessible via `/standalone/{slug}` on the platform.
 > Forensics and Misc challenges provide downloadable asset files.
 > Most Crypto challenges provide downloadable files; some require interacting with a live instance at `/standalone/{slug}`.
+> Reverse Engineering challenges provide downloadable `.exe` binaries and source code files.
 
 ---
 
@@ -66,6 +67,22 @@
 - [Misc Medium (200 pts each)](#misc-medium)
   - [42. Professional Presence](#42-professional-presence)
   - [43. Hidden Announcement](#43-hidden-announcement)
+
+### Reverse Engineering Challenges
+- [Reverse Easy (100 pts each)](#reverse-easy)
+  - [58. Welcome Back](#58-welcome-back)
+  - [59. XOR Door](#59-xor-door)
+  - [60. Arithmetic Lock](#60-arithmetic-lock)
+  - [61. Hidden Function](#61-hidden-function)
+  - [62. Base64 Again?](#62-base64-again)
+- [Reverse Medium (200 pts each)](#reverse-medium)
+  - [63. VM School](#63-vm-school)
+  - [64. Self Repair](#64-self-repair)
+  - [65. License Manager](#65-license-manager)
+  - [66. Packed Surprise](#66-packed-surprise)
+  - [67. Anti Analyst](#67-anti-analyst)
+- [Reverse Hard (500 pts)](#reverse-hard)
+  - [68. Phoenix Protocol](#68-phoenix-protocol)
 
 ### Crypto Challenges
 - [Crypto Easy (100 pts each)](#crypto-easy)
@@ -957,6 +974,226 @@
 
 ---
 
+## Reverse Engineering Easy
+
+### 58. Welcome Back
+
+**Concept:** Hardcoded password comparison using strcmp.
+
+**Solve Steps:**
+
+1. Download `welcome_back.exe`.
+2. Open in a disassembler (Ghidra, IDA Free, or x64dbg).
+3. Find the `main()` function.
+4. Locate the call to `strcmp()` — its second argument is the password.
+5. Alternatively, run `strings welcome_back.exe` and look for the plaintext password.
+6. Enter the password when prompted.
+
+> **Hint:** Sometimes the loudest secret isn't encrypted.
+
+**Flag:** `CGS{strings_are_not_secrets}`
+
+---
+
+### 59. XOR Door
+
+**Concept:** Single-byte XOR encrypted flag.
+
+**Solve Steps:**
+
+1. Download `door.exe`.
+2. Open in a disassembler and find the decryption routine.
+3. Identify the XOR key (a single byte used repeatedly).
+4. Locate the encrypted byte array in the `.data` section.
+5. XOR each encrypted byte with the key to recover the flag.
+6. Alternatively, use CyberChef: paste the hex bytes and XOR with the found key.
+
+> **Hint:** One byte repeated forever eventually becomes predictable.
+
+**Flag:** `CGS{xor_is_not_encryption}`
+
+---
+
+### 60. Arithmetic Lock
+
+**Concept:** Simple arithmetic verification on input characters.
+
+**Solve Steps:**
+
+1. Download `mathlock.exe`.
+2. Open in a disassembler and find the validation function.
+3. Identify the arithmetic operations applied to each input byte (add, XOR, subtract).
+4. Reverse each operation to find the expected input value.
+5. For example: if `input[0] + 7 == 'C'`, then `input[0] = 'C' - 7`.
+6. Construct the correct input and run the binary.
+
+> **Hint:** Every operation has an opposite.
+
+**Flag:** `CGS{simple_checks_hide_nothing}`
+
+---
+
+### 61. Hidden Function
+
+**Concept:** Unused function that prints the flag.
+
+**Solve Steps:**
+
+1. Download `hidden.exe`.
+2. Open in a disassembler (Ghidra works best for this).
+3. List all functions in the binary.
+4. Find a function that is never called from `main()`.
+5. Read the function body — it contains a `printf()` call with the flag.
+6. No need to run the binary; the flag is visible in the disassembly.
+
+> **Hint:** Dead code isn't always dead.
+
+**Flag:** `CGS{unused_code_is_still_code}`
+
+---
+
+### 62. Base64 Again?
+
+**Concept:** Multiple encoding layers (Base64 + ROT13).
+
+**Solve Steps:**
+
+1. Download `encoded.exe`.
+2. Open in a disassembler and find the decoding functions.
+3. Identify the encoding layers: Base64 decode, another Base64 decode, then ROT13.
+4. Extract the encoded string from the binary.
+5. Apply the decodes in reverse order: ROT13 first, then Base64, then Base64 again.
+6. Alternatively, use CyberChef with the "Magic" recipe to auto-detect layers.
+
+> **Hint:** Peeling onions hurts.
+
+**Flag:** `CGS{layers_are_not_security}`
+
+---
+
+## Reverse Engineering Medium
+
+### 63. VM School
+
+**Concept:** Custom bytecode interpreter with embedded bytecode.
+
+**Solve Steps:**
+
+1. Download `vm_school.exe` and `bytecode.bin`.
+2. Open the exe in a disassembler and find the VM dispatch loop.
+3. Map each opcode byte to its operation (PUSH, XOR, ADD, CMP, JMP, HALT, etc.).
+4. Extract the bytecode from `bytecode.bin`.
+5. Decode the bytecode using the recovered instruction set.
+6. Execute mentally or write a quick emulator to process the bytecode.
+7. The correct execution path prints the flag.
+
+> **Hint:** Learn the language before reading the story.
+
+**Flag:** `CGS{tiny_virtual_machines}`
+
+---
+
+### 64. Self Repair
+
+**Concept:** Self-modifying code that decrypts itself at runtime.
+
+**Solve Steps:**
+
+1. Download `repair.exe`.
+2. Open in a disassembler — the code section will look like garbage.
+3. Find the decryption routine (look for XOR loops or decryption constants).
+4. Identify the XOR key used for decryption.
+5. Dump the memory after decryption (use x64dbg or dump the decrypted bytes manually).
+6. Re-analyze the dumped code to find the flag.
+
+> **Hint:** What you see first isn't what executes.
+
+**Flag:** `CGS{self_modifying_fun}`
+
+---
+
+### 65. License Manager
+
+**Concept:** Complex validation graph with CRC32, rotations, XOR, and lookup tables.
+
+**Solve Steps:**
+
+1. Download `license.exe`.
+2. Open in a disassembler and find the validation function.
+3. Identify all validation steps: CRC32 check, bit rotations, XOR accumulations, lookup table lookups.
+4. Determine the constraints each check imposes on the license key.
+5. Build a valid key that satisfies all constraints simultaneously.
+6. Enter the key when prompted.
+
+> **Hint:** Tables remember what code forgets.
+
+**Flag:** `CGS{graph_based_validation}`
+
+---
+
+### 66. Packed Surprise
+
+**Concept:** Custom executable packer that decompresses itself at runtime.
+
+**Solve Steps:**
+
+1. Download `packed.exe`.
+2. Run `strings packed.exe` — you won't find the flag (it's packed).
+3. Open in a disassembler and find the unpacking stub.
+4. Identify the decompression algorithm and key.
+5. Use x64dbg to run until the unpacking completes, then dump the memory.
+6. Open the dumped executable in a disassembler.
+7. Find the flag in the unpacked binary.
+
+> **Hint:** The real binary arrives late.
+
+**Flag:** `CGS{custom_packers_exist}`
+
+---
+
+### 67. Anti Analyst
+
+**Concept:** Anti-debugging and anti-VM detection checks.
+
+**Solve Steps:**
+
+1. Download `analyst.exe`.
+2. Open in a disassembler and find all check functions.
+3. Identify: `IsDebuggerPresent`, PEB `BeingDebugged` flag, timing checks, CPUID VM bit.
+4. Patch each check to always return the "safe" value (e.g., replace `call IsDebuggerPresent` with `xor eax, eax`).
+5. Alternatively, use a tool like ScyllaHide to bypass anti-debug automatically.
+6. Run the patched binary to get the flag.
+
+> **Hint:** Trust issues leave fingerprints.
+
+**Flag:** `CGS{debuggers_are_expected}`
+
+---
+
+## Reverse Engineering Hard
+
+### 68. Phoenix Protocol
+
+**Concept:** Layered reverse engineering challenge combining packer, anti-debug, anti-VM, control-flow flattening, encrypted VM, runtime key derivation, and AES-encrypted flag.
+
+**Solve Steps:**
+
+1. Download `phoenix_protocol.exe`.
+2. **Layer 1 — Unpacking:** Find the unpacking stub, identify the decompression algorithm, dump the reconstructed executable from memory.
+3. **Layer 2 — Anti-Debug:** Patch or bypass `IsDebuggerPresent`, PEB checks, timing checks, and hardware breakpoint detection.
+4. **Layer 3 — Anti-VM:** Neutralize CPUID-based VM detection and artifact checks.
+5. **Layer 4 — Control Flow:** Recover the flattened control flow into a readable form (deflat in Ghidra or use Binary Ninja's MLIL).
+6. **Layer 5 — VM Reversal:** Reverse the custom VM architecture (25-35 opcodes). Decode the encrypted bytecode stored in `.rdata`.
+7. **Layer 6 — Key Derivation:** Emulate or analyze the VM to obtain the runtime-derived 256-bit AES key.
+8. **Layer 7 — AES Decryption:** Decrypt the embedded AES-256-CBC ciphertext with the recovered key and IV to reveal the flag.
+9. The flag only exists in plaintext in memory immediately before it is printed.
+
+> **Hint:** The phoenix never dies—it simply changes the place where you should be looking.
+
+**Flag:** `CGS{rise_from_the_ashes_of_analysis}`
+
+---
+
 ## Crypto Easy
 
 ### 44. Caesar's Ghost
@@ -1242,6 +1479,14 @@
 | **HxD / xxd** | Hex editing | Inspect and modify binary files |
 | **Audacity** | Audio analysis with spectrogram view | Open WAV, switch to Spectrogram |
 | **jwt_tool** | JWT analysis and attacks | `python jwt_tool.py token.jwt -C -d wordlist.txt` |
+| **Ghidra** | Reverse engineering / disassembly | Open binary, analyze, decompile functions |
+| **IDA Free** | Disassembly and decompilation | Navigate functions, view pseudocode |
+| **x64dbg** | Windows debugger | Step through code, dump memory, patch |
+| **Binary Ninja** | Reverse engineering platform | MLIL for control flow recovery |
+| **radare2 / rizin** | Command-line reverse engineering | `r2 -A binary.exe` for auto-analysis |
+| **PE-bear** | PE file inspector | View PE headers, sections, imports |
+| **detect-it-easy** | Binary type identification | Detect compilers, packers, protections |
+| **ScyllaHide** | Anti-debug bypass plugin | Automatically bypass common anti-debug checks |
 
 ---
 

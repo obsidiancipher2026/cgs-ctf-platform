@@ -520,6 +520,133 @@ const challenges: ChallengeData[] = [
     description:'A hardware security module signs messages using ECDSA. But a manufacturing defect leaks the top bits of each nonce into a side channel. With enough signatures and their partial nonces, lattice reduction recovers the signing key. Entropy that leaks is entropy that kills.',
   },
 
+  // ═══ REVERSE ENGINEERING EASY (5) ═══
+  {
+    title:'Welcome Back', category:'reverse', difficulty:'easy', points:100,
+    flag:'CGS{strings_are_not_secrets}',
+    hint:'Sometimes the loudest secret isn\'t encrypted.',
+    files:JSON.stringify([
+      {name:'welcome_back.exe', url:'/uploads/challenges/reverse-easy1/welcome_back.exe'},
+      {name:'welcome_back.c', url:'/uploads/challenges/reverse-easy1/welcome_back.c'},
+    ]),
+    instanceUrl:null,
+    description:'The developer insists the password isn\'t stored anywhere in the binary.\n\nMaybe they\'re more optimistic than correct.\n\nA console application prompts for a password. If correct, it prints the flag. Password comparison is performed using a normal string compare.\n\nCan you find the password without running the binary?',
+  },
+  {
+    title:'XOR Door', category:'reverse', difficulty:'easy', points:100,
+    flag:'CGS{xor_is_not_encryption}',
+    hint:'One byte repeated forever eventually becomes predictable.',
+    files:JSON.stringify([
+      {name:'door.exe', url:'/uploads/challenges/reverse-easy2/door.exe'},
+      {name:'xor_door.c', url:'/uploads/challenges/reverse-easy2/xor_door.c'},
+    ]),
+    instanceUrl:null,
+    description:'A single key guards the entrance.\n\nFortunately, it isn\'t very creative.\n\nThe program stores an encrypted byte array and XORs each byte with a single key at runtime. After successful validation, it reveals the flag.\n\nCan you recover the key and decrypt the data?',
+  },
+  {
+    title:'Arithmetic Lock', category:'reverse', difficulty:'easy', points:100,
+    flag:'CGS{simple_checks_hide_nothing}',
+    hint:'Every operation has an opposite.',
+    files:JSON.stringify([
+      {name:'mathlock.exe', url:'/uploads/challenges/reverse-easy3/mathlock.exe'},
+      {name:'mathlock.c', url:'/uploads/challenges/reverse-easy3/mathlock.c'},
+    ]),
+    instanceUrl:null,
+    description:'Numbers rarely lie.\n\nCompilers don\'t either.\n\nThe program validates input by performing a series of arithmetic operations on each character: addition, XOR, subtraction. If all checks pass, the flag is revealed.\n\nCan you reverse the arithmetic to recover the expected input?',
+  },
+  {
+    title:'Hidden Function', category:'reverse', difficulty:'easy', points:100,
+    flag:'CGS{unused_code_is_still_code}',
+    hint:'Dead code isn\'t always dead.',
+    files:JSON.stringify([
+      {name:'hidden.exe', url:'/uploads/challenges/reverse-easy4/hidden.exe'},
+      {name:'hidden.c', url:'/uploads/challenges/reverse-easy4/hidden.c'},
+    ]),
+    instanceUrl:null,
+    description:'The program never reaches the interesting part.\n\nThat doesn\'t mean you can\'t.\n\nThe binary contains an unreferenced function that prints the flag. Main never calls it. Can you find the hidden function and extract the flag without executing it?',
+  },
+  {
+    title:'Base64 Again?', category:'reverse', difficulty:'easy', points:100,
+    flag:'CGS{layers_are_not_security}',
+    hint:'Peeling onions hurts.',
+    files:JSON.stringify([
+      {name:'encoded.exe', url:'/uploads/challenges/reverse-easy5/encoded.exe'},
+      {name:'encoded.c', url:'/uploads/challenges/reverse-easy5/encoded.c'},
+    ]),
+    instanceUrl:null,
+    description:'Encoding isn\'t encryption.\n\nBut people keep confusing them.\n\nThe binary stores a flag that has been encoded multiple times: Base64, then Base64 again, then ROT13. Runtime decodes each layer in reverse order.\n\nCan you identify the encoding layers and decode the flag?',
+  },
+
+  // ═══ REVERSE ENGINEERING MEDIUM (5) ═══
+  {
+    title:'VM School', category:'reverse', difficulty:'medium', points:200,
+    flag:'CGS{tiny_virtual_machines}',
+    hint:'Learn the language before reading the story.',
+    files:JSON.stringify([
+      {name:'vm_school.exe', url:'/uploads/challenges/reverse-medium1/vm_school.exe'},
+      {name:'bytecode.bin', url:'/uploads/challenges/reverse-medium1/bytecode.bin'},
+      {name:'vm_school.c', url:'/uploads/challenges/reverse-medium1/vm_school.c'},
+    ]),
+    instanceUrl:null,
+    description:'The CPU wasn\'t enough.\n\nSomeone decided to build another one.\n\nThe binary contains a custom bytecode interpreter with an embedded bytecode file. The VM supports approximately 25-35 opcodes including stack operations, arithmetic, logical operations, comparisons, and control flow.\n\nCorrect execution of the bytecode prints the flag. Can you reverse the VM instruction set and decode the bytecode?',
+  },
+  {
+    title:'Self Repair', category:'reverse', difficulty:'medium', points:200,
+    flag:'CGS{self_modifying_fun}',
+    hint:'What you see first isn\'t what executes.',
+    files:JSON.stringify([
+      {name:'repair.exe', url:'/uploads/challenges/reverse-medium2/repair.exe'},
+      {name:'repair.c', url:'/uploads/challenges/reverse-medium2/repair.c'},
+    ]),
+    instanceUrl:null,
+    description:'The binary changes itself before it starts behaving.\n\nThe executable decrypts a code section at runtime, patches instructions, and jumps into the decrypted region. Static analysis shows garbage; only dynamic analysis reveals the real behavior.\n\nCan you trace the runtime execution and dump the decrypted code?',
+  },
+  {
+    title:'License Manager', category:'reverse', difficulty:'medium', points:200,
+    flag:'CGS{graph_based_validation}',
+    hint:'Tables remember what code forgets.',
+    files:JSON.stringify([
+      {name:'license.exe', url:'/uploads/challenges/reverse-medium3/license.exe'},
+      {name:'license.c', url:'/uploads/challenges/reverse-medium3/license.c'},
+    ]),
+    instanceUrl:null,
+    description:'A surprisingly complicated license checker.\n\nSurely nobody will reverse this.\n\nThe validation involves CRC32 checksums, bit rotations, XOR operations, additions, and a lookup table. The validation graph branches across multiple checks before accepting a key.\n\nCan you reverse the validation logic and build a valid license key?',
+  },
+  {
+    title:'Packed Surprise', category:'reverse', difficulty:'medium', points:200,
+    flag:'CGS{custom_packers_exist}',
+    hint:'The real binary arrives late.',
+    files:JSON.stringify([
+      {name:'packed.exe', url:'/uploads/challenges/reverse-medium4/packed.exe'},
+      {name:'packed.c', url:'/uploads/challenges/reverse-medium4/packed.c'},
+    ]),
+    instanceUrl:null,
+    description:'Small binaries sometimes hide large secrets.\n\nThe executable is packed with a custom packer. It decompresses itself in memory and executes the unpacked image. The real binary is hidden inside the small wrapper.\n\nCan you detect the unpacking stub, dump the unpacked executable, and reverse the recovered binary?',
+  },
+  {
+    title:'Anti Analyst', category:'reverse', difficulty:'medium', points:200,
+    flag:'CGS{debuggers_are_expected}',
+    hint:'Trust issues leave fingerprints.',
+    files:JSON.stringify([
+      {name:'analyst.exe', url:'/uploads/challenges/reverse-medium5/analyst.exe'},
+      {name:'analyst.c', url:'/uploads/challenges/reverse-medium5/analyst.c'},
+    ]),
+    instanceUrl:null,
+    description:'The binary doesn\'t trust its audience.\n\nIt checks for debuggers using IsDebuggerPresent, PEB flags, timing checks, and VM artifact detection. It verifies it\'s not running in a virtual machine through CPUID checks.\n\nPassing all checks prints the flag. Can you patch the anti-debug and anti-VM protections to reach the flag?',
+  },
+
+  // ═══ REVERSE ENGINEERING HARD (1) ═══
+  {
+    title:'Phoenix Protocol', category:'reverse', difficulty:'hard', points:500,
+    flag:'CGS{rise_from_the_ashes_of_analysis}',
+    hint:'The phoenix never dies—it simply changes the place where you should be looking.',
+    files:JSON.stringify([
+      {name:'phoenix_protocol.exe', url:'/uploads/challenges/reverse-hard1/phoenix_protocol.exe'},
+      {name:'phoenix_protocol.c', url:'/uploads/challenges/reverse-hard1/phoenix_protocol.c'},
+    ]),
+    instanceUrl:null,
+    description:'Project Phoenix was designed to survive analysis. Every layer you remove only reveals another.\n\nThe executable refuses to cooperate under a debugger, rebuilds portions of itself in memory, interprets a custom instruction set, and derives its final decryption key only after successful execution.\n\nLayers include:\n- Custom unpacking stub that reconstructs the real program in memory\n- Anti-debugging checks (PEB inspection, IsDebuggerPresent, timing checks)\n- Anti-VM detection (CPUID checks, virtualization artifacts)\n- Control-flow flattening across the validation routine\n- Encrypted VM bytecode with approximately 25-35 opcodes\n- Runtime decryption of bytecode using a derived key\n- VM execution that derives a 256-bit AES key\n- Final flag stored only as AES-256-CBC encrypted data\n\nSomewhere beyond all of that lies the flag.',
+  },
 
 ]
 
