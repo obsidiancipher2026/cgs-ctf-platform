@@ -75,14 +75,8 @@
   - [60. Arithmetic Lock](#60-arithmetic-lock)
   - [61. Hidden Function](#61-hidden-function)
   - [62. Base64 Again?](#62-base64-again)
-- [Reverse Medium (200 pts each)](#reverse-medium)
-  - [63. VM School](#63-vm-school)
-  - [64. Self Repair](#64-self-repair)
-  - [65. License Manager](#65-license-manager)
-  - [66. Packed Surprise](#66-packed-surprise)
-  - [67. Anti Analyst](#67-anti-analyst)
 - [Reverse Hard (500 pts)](#reverse-hard)
-  - [68. Phoenix Protocol](#68-phoenix-protocol)
+  - [63. Phoenix Protocol](#63-phoenix-protocol)
 
 ### Crypto Challenges
 - [Crypto Easy (100 pts each)](#crypto-easy)
@@ -1071,108 +1065,9 @@
 
 ---
 
-## Reverse Engineering Medium
-
-### 63. VM School
-
-**Concept:** Custom bytecode interpreter with embedded bytecode.
-
-**Solve Steps:**
-
-1. Download `vm_school.exe` and `bytecode.bin`.
-2. Open the exe in a disassembler and find the VM dispatch loop.
-3. Map each opcode byte to its operation (PUSH, XOR, ADD, CMP, JMP, HALT, etc.).
-4. Extract the bytecode from `bytecode.bin`.
-5. Decode the bytecode using the recovered instruction set.
-6. Execute mentally or write a quick emulator to process the bytecode.
-7. The correct execution path prints the flag.
-
-> **Hint:** Learn the language before reading the story.
-
-**Flag:** `CGS{tiny_virtual_machines}`
-
----
-
-### 64. Self Repair
-
-**Concept:** Self-modifying code that decrypts itself at runtime.
-
-**Solve Steps:**
-
-1. Download `repair.exe`.
-2. Open in a disassembler — the code section will look like garbage.
-3. Find the decryption routine (look for XOR loops or decryption constants).
-4. Identify the XOR key used for decryption.
-5. Dump the memory after decryption (use x64dbg or dump the decrypted bytes manually).
-6. Re-analyze the dumped code to find the flag.
-
-> **Hint:** What you see first isn't what executes.
-
-**Flag:** `CGS{self_modifying_fun}`
-
----
-
-### 65. License Manager
-
-**Concept:** Complex validation graph with CRC32, rotations, XOR, and lookup tables.
-
-**Solve Steps:**
-
-1. Download `license.exe`.
-2. Open in a disassembler and find the validation function.
-3. Identify all validation steps: CRC32 check, bit rotations, XOR accumulations, lookup table lookups.
-4. Determine the constraints each check imposes on the license key.
-5. Build a valid key that satisfies all constraints simultaneously.
-6. Enter the key when prompted.
-
-> **Hint:** Tables remember what code forgets.
-
-**Flag:** `CGS{graph_based_validation}`
-
----
-
-### 66. Packed Surprise
-
-**Concept:** Custom executable packer that decompresses itself at runtime.
-
-**Solve Steps:**
-
-1. Download `packed.exe`.
-2. Run `strings packed.exe` — you won't find the flag (it's packed).
-3. Open in a disassembler and find the unpacking stub.
-4. Identify the decompression algorithm and key.
-5. Use x64dbg to run until the unpacking completes, then dump the memory.
-6. Open the dumped executable in a disassembler.
-7. Find the flag in the unpacked binary.
-
-> **Hint:** The real binary arrives late.
-
-**Flag:** `CGS{custom_packers_exist}`
-
----
-
-### 67. Anti Analyst
-
-**Concept:** Anti-debugging and anti-VM detection checks.
-
-**Solve Steps:**
-
-1. Download `analyst.exe`.
-2. Open in a disassembler and find all check functions.
-3. Identify: `IsDebuggerPresent`, PEB `BeingDebugged` flag, timing checks, CPUID VM bit.
-4. Patch each check to always return the "safe" value (e.g., replace `call IsDebuggerPresent` with `xor eax, eax`).
-5. Alternatively, use a tool like ScyllaHide to bypass anti-debug automatically.
-6. Run the patched binary to get the flag.
-
-> **Hint:** Trust issues leave fingerprints.
-
-**Flag:** `CGS{debuggers_are_expected}`
-
----
-
 ## Reverse Engineering Hard
 
-### 68. Phoenix Protocol
+### 63. Phoenix Protocol
 
 **Concept:** Layered reverse engineering challenge combining packer, anti-debug, anti-VM, control-flow flattening, encrypted VM, runtime key derivation, and AES-encrypted flag.
 

@@ -577,64 +577,6 @@ const challenges: ChallengeData[] = [
     description:'Encoding isn\'t encryption.\n\nBut people keep confusing them.\n\nThe binary stores a flag that has been encoded multiple times: Base64, then Base64 again, then ROT13. Runtime decodes each layer in reverse order.\n\nCan you identify the encoding layers and decode the flag?',
   },
 
-  // ═══ REVERSE ENGINEERING MEDIUM (5) ═══
-  {
-    title:'VM School', category:'reverse', difficulty:'medium', points:200,
-    flag:'CGS{tiny_virtual_machines}',
-    hint:'Learn the language before reading the story.',
-    files:JSON.stringify([
-      {name:'vm_school.exe', url:'/uploads/challenges/reverse-medium1/vm_school.exe'},
-      {name:'bytecode.bin', url:'/uploads/challenges/reverse-medium1/bytecode.bin'},
-      {name:'vm_school.c', url:'/uploads/challenges/reverse-medium1/vm_school.c'},
-    ]),
-    instanceUrl:null,
-    description:'The CPU wasn\'t enough.\n\nSomeone decided to build another one.\n\nThe binary contains a custom bytecode interpreter with an embedded bytecode file. The VM supports approximately 25-35 opcodes including stack operations, arithmetic, logical operations, comparisons, and control flow.\n\nCorrect execution of the bytecode prints the flag. Can you reverse the VM instruction set and decode the bytecode?',
-  },
-  {
-    title:'Self Repair', category:'reverse', difficulty:'medium', points:200,
-    flag:'CGS{self_modifying_fun}',
-    hint:'What you see first isn\'t what executes.',
-    files:JSON.stringify([
-      {name:'repair.exe', url:'/uploads/challenges/reverse-medium2/repair.exe'},
-      {name:'repair.c', url:'/uploads/challenges/reverse-medium2/repair.c'},
-    ]),
-    instanceUrl:null,
-    description:'The binary changes itself before it starts behaving.\n\nThe executable decrypts a code section at runtime, patches instructions, and jumps into the decrypted region. Static analysis shows garbage; only dynamic analysis reveals the real behavior.\n\nCan you trace the runtime execution and dump the decrypted code?',
-  },
-  {
-    title:'License Manager', category:'reverse', difficulty:'medium', points:200,
-    flag:'CGS{graph_based_validation}',
-    hint:'Tables remember what code forgets.',
-    files:JSON.stringify([
-      {name:'license.exe', url:'/uploads/challenges/reverse-medium3/license.exe'},
-      {name:'license.c', url:'/uploads/challenges/reverse-medium3/license.c'},
-    ]),
-    instanceUrl:null,
-    description:'A surprisingly complicated license checker.\n\nSurely nobody will reverse this.\n\nThe validation involves CRC32 checksums, bit rotations, XOR operations, additions, and a lookup table. The validation graph branches across multiple checks before accepting a key.\n\nCan you reverse the validation logic and build a valid license key?',
-  },
-  {
-    title:'Packed Surprise', category:'reverse', difficulty:'medium', points:200,
-    flag:'CGS{custom_packers_exist}',
-    hint:'The real binary arrives late.',
-    files:JSON.stringify([
-      {name:'packed.exe', url:'/uploads/challenges/reverse-medium4/packed.exe'},
-      {name:'packed.c', url:'/uploads/challenges/reverse-medium4/packed.c'},
-    ]),
-    instanceUrl:null,
-    description:'Small binaries sometimes hide large secrets.\n\nThe executable is packed with a custom packer. It decompresses itself in memory and executes the unpacked image. The real binary is hidden inside the small wrapper.\n\nCan you detect the unpacking stub, dump the unpacked executable, and reverse the recovered binary?',
-  },
-  {
-    title:'Anti Analyst', category:'reverse', difficulty:'medium', points:200,
-    flag:'CGS{debuggers_are_expected}',
-    hint:'Trust issues leave fingerprints.',
-    files:JSON.stringify([
-      {name:'analyst.exe', url:'/uploads/challenges/reverse-medium5/analyst.exe'},
-      {name:'analyst.c', url:'/uploads/challenges/reverse-medium5/analyst.c'},
-    ]),
-    instanceUrl:null,
-    description:'The binary doesn\'t trust its audience.\n\nIt checks for debuggers using IsDebuggerPresent, PEB flags, timing checks, and VM artifact detection. It verifies it\'s not running in a virtual machine through CPUID checks.\n\nPassing all checks prints the flag. Can you patch the anti-debug and anti-VM protections to reach the flag?',
-  },
-
   // ═══ REVERSE ENGINEERING HARD (1) ═══
   {
     title:'Phoenix Protocol', category:'reverse', difficulty:'hard', points:500,
