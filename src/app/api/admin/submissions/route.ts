@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     username: l.userId ? userMap.get(l.userId) || 'unknown' : 'unknown',
     ipAddress: l.ipAddress,
     status: l.action === 'flag_submit_correct' ? 'correct' : 'wrong',
-    details: l.details ? JSON.parse(l.details) : null,
+    details: l.details ? (() => { try { return JSON.parse(l.details) } catch { return l.details } })() : null,
     createdAt: l.createdAt,
   }))
 

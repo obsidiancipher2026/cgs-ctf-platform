@@ -5,6 +5,8 @@ import { sanitizeText } from '@/lib/sanitizer'
 import { getPasswordHash } from '@/lib/auth'
 import { wafGuard } from '@/lib/security-middleware'
 
+export const dynamic = 'force-dynamic'
+
 const UserCreateSchema = z.object({
   username: z.string().min(3).max(50),
   email: z.string().email().max(120),

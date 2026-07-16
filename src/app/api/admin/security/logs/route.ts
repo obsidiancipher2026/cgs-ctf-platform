@@ -52,20 +52,24 @@ export async function GET(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const { user, error } = await authenticate(request)
-  if (error) return error
+  try {
+    const { user, error } = await authenticate(request)
+    if (error) return error
 
-  const clientIp = getClientIp(request)
-  const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
-  if (adminErr) return adminErr
+    const clientIp = getClientIp(request)
+    const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
+    if (adminErr) return adminErr
 
-  const csrfToken = request.headers.get('x-csrf-token')
-  const csrfResult = csrfProtection('/api/admin/security/logs', 'DELETE', csrfToken, user.id)
-  if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
+    const csrfToken = request.headers.get('x-csrf-token')
+    const csrfResult = csrfProtection('/api/admin/security/logs', 'DELETE', csrfToken, user.id)
+    if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
-  await prisma.attackLog.deleteMany()
-  await prisma.log.create({
-    data: { action: 'security_logs_cleared', userId: user.id, ipAddress: clientIp, severity: 'info' },
-  })
-  return jsonResponse({ message: 'All attack logs cleared' })
+    await prisma.attackLog.deleteMany()
+    await prisma.log.create({
+      data: { action: 'security_logs_cleared', userId: user.id, ipAddress: clientIp, severity: 'info' },
+    })
+    return jsonResponse({ message: 'All attack logs cleared' })
+  } catch {
+    return jsonResponse({ detail: 'Failed to clear security logs' }, 500)
+  }
 }

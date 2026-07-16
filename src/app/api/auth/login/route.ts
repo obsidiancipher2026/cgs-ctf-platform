@@ -5,6 +5,8 @@ import { jsonResponse, getClientIp, setAuthCookies, createAccessToken, createRef
 import { sanitizeText } from '@/lib/sanitizer'
 import { wafGuard } from '@/lib/security-middleware'
 
+export const dynamic = 'force-dynamic'
+
 const UserLoginSchema = z.object({
   username: z.string(),
   password: z.string(),

@@ -2,6 +2,8 @@ import prisma from '@/lib/prisma'
 import { authenticate, jsonResponse, getClientIp } from '@/lib/auth'
 import { sanitizeText } from '@/lib/sanitizer'
 
+export const dynamic = 'force-dynamic'
+
 export async function PUT(request: Request) {
   const { user, error } = await authenticate(request)
   if (error) return error

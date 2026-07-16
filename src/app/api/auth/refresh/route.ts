@@ -1,6 +1,8 @@
 import prisma from '@/lib/prisma'
 import { jsonResponse, decodeRefreshToken, createAccessToken, createRefreshToken, setAuthCookies, clearAuthCookies } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const cookieHeader = request.headers.get('cookie') || ''
   const match = cookieHeader.match(/(?:^|;\s*)refresh_token=([^;]*)/)

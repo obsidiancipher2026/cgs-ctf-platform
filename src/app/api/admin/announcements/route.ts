@@ -21,29 +21,36 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { user, error } = await authenticate(request)
-  if (error) return error
+  try {
+    const { user, error } = await authenticate(request)
+    if (error) return error
 
-  const clientIp = getClientIp(request)
-  const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
-  if (adminErr) return adminErr
+    const clientIp = getClientIp(request)
+    const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
+    if (adminErr) return adminErr
 
-  const csrfToken = request.headers.get('x-csrf-token')
-  const csrfResult = csrfProtection('/api/admin/announcements', 'POST', csrfToken, user.id)
-  if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
+    const csrfToken = request.headers.get('x-csrf-token')
+    const csrfResult = csrfProtection('/api/admin/announcements', 'POST', csrfToken, user.id)
+    if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
-  const body = await request.json().catch(() => ({}))
-  const url = new URL(request.url)
-  const title = body.title || url.searchParams.get('title') || ''
-  const message = body.message || url.searchParams.get('message') || ''
+    const body = await request.json().catch(() => ({}))
+    const title = body.title || ''
+    const message = body.message || ''
 
-  const cleanTitle = sanitizeText(title, 200)
-  const cleanMessage = sanitizeText(message, 5000)
+    if (!title || !message) {
+      return jsonResponse({ detail: 'Title and message are required' }, 400)
+    }
 
-  const announcement = await prisma.announcement.create({
-    data: { title: cleanTitle, message: cleanMessage, isBroadcast: true },
-  })
+    const cleanTitle = sanitizeText(title, 200)
+    const cleanMessage = sanitizeText(message, 5000)
 
-  await prisma.log.create({ data: { action: 'announcement_created', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ title: cleanTitle }) } })
-  return jsonResponse({ message: 'Announcement created', id: announcement.id })
+    const announcement = await prisma.announcement.create({
+      data: { title: cleanTitle, message: cleanMessage, isBroadcast: true },
+    })
+
+    await prisma.log.create({ data: { action: 'announcement_created', userId: user.id, ipAddress: clientIp, severity: 'info', details: JSON.stringify({ title: cleanTitle }) } })
+    return jsonResponse({ message: 'Announcement created', id: announcement.id })
+  } catch {
+    return jsonResponse({ detail: 'Failed to create announcement' }, 500)
+  }
 }

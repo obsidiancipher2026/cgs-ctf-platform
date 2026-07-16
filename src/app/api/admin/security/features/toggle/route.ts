@@ -1,5 +1,6 @@
 import { authenticate, requireAdmin, jsonResponse, getClientIp } from '@/lib/auth'
 import { config } from '@/lib/config'
+import { csrfProtection } from '@/lib/csrf'
 import prisma from '@/lib/prisma'
 
 const ALL_FEATURES = [
@@ -21,30 +22,40 @@ async function getAllFeatures(): Promise<Record<string, boolean>> {
   return map
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
-  const { user, error } = await authenticate(request)
-  if (error) return error
-  const clientIp = getClientIp(request)
-  const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
-  if (adminErr) return adminErr
+  try {
+    const { user, error } = await authenticate(request)
+    if (error) return error
+    const clientIp = getClientIp(request)
+    const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
+    if (adminErr) return adminErr
 
-  const url = new URL(request.url)
-  const feature = url.searchParams.get('feature')
-  if (!feature || !ALL_FEATURES.includes(feature)) {
-    return jsonResponse({ detail: 'Invalid feature name' }, 400)
+    const csrfToken = request.headers.get('x-csrf-token')
+    const csrfResult = csrfProtection('/api/admin/security/features/toggle', 'POST', csrfToken, user.id)
+    if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
+
+    const url = new URL(request.url)
+    const feature = url.searchParams.get('feature')
+    if (!feature || !ALL_FEATURES.includes(feature)) {
+      return jsonResponse({ detail: 'Invalid feature name' }, 400)
+    }
+
+    const existing = await prisma.securityConfig.findUnique({ where: { key: feature } })
+    const currentEnabled = existing ? existing.value === 'true' : true
+    const newEnabled = !currentEnabled
+
+    await prisma.securityConfig.upsert({
+      where: { key: feature },
+      update: { value: String(newEnabled) },
+      create: { key: feature, value: String(newEnabled) },
+    })
+
+    const allFeatures = await getAllFeatures()
+
+    return jsonResponse({ feature, enabled: newEnabled, all_features: allFeatures })
+  } catch {
+    return jsonResponse({ detail: 'Failed to toggle feature' }, 500)
   }
-
-  const existing = await prisma.securityConfig.findUnique({ where: { key: feature } })
-  const currentEnabled = existing ? existing.value === 'true' : true
-  const newEnabled = !currentEnabled
-
-  await prisma.securityConfig.upsert({
-    where: { key: feature },
-    update: { value: String(newEnabled) },
-    create: { key: feature, value: String(newEnabled) },
-  })
-
-  const allFeatures = await getAllFeatures()
-
-  return jsonResponse({ feature, enabled: newEnabled, all_features: allFeatures })
 }

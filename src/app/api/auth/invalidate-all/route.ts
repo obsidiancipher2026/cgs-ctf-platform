@@ -1,6 +1,8 @@
 import prisma from '@/lib/prisma'
 import { authenticate, jsonResponse, getClientIp, invalidateAllSessions } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const { user, error } = await authenticate(request)
   if (error) return error

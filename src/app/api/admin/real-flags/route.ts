@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { authenticate, requireAdmin, jsonResponse, getClientIp } from '@/lib/auth'
 import { config } from '@/lib/config'
+import { csrfProtection } from '@/lib/csrf'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,14 +36,18 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { user, error } = await authenticate(request)
-  if (error) return error
-
-  const clientIp = getClientIp(request)
-  const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
-  if (adminErr) return adminErr
-
   try {
+    const { user, error } = await authenticate(request)
+    if (error) return error
+
+    const clientIp = getClientIp(request)
+    const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
+    if (adminErr) return adminErr
+
+    const csrfToken = request.headers.get('x-csrf-token')
+    const csrfResult = csrfProtection('/api/admin/real-flags', 'POST', csrfToken, user.id)
+    if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
+
     const body = await request.json()
     const { challenge_name, flag, category, notes } = body
     if (!challenge_name || !flag) {
@@ -59,7 +64,7 @@ export async function POST(request: Request) {
     })
     await prisma.log.create({ data: { action: 'real_flag_created', userId: user.id, ipAddress: clientIp, severity: 'info' } })
     return jsonResponse(record)
-  } catch (e) {
+  } catch {
     return jsonResponse({ detail: 'Failed to create secret flag' }, 500)
   }
 }

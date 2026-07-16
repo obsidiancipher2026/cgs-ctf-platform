@@ -37,29 +37,33 @@ export async function GET(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const { user, error } = await authenticate(request)
-  if (error) return error
+  try {
+    const { user, error } = await authenticate(request)
+    if (error) return error
 
-  const clientIp = getClientIp(request)
-  const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
-  if (adminErr) return adminErr
+    const clientIp = getClientIp(request)
+    const adminErr = requireAdmin(user, config.admin.allowedIPs, clientIp)
+    if (adminErr) return adminErr
 
-  const csrfToken = request.headers.get('x-csrf-token')
-  const csrfResult = csrfProtection('/api/admin/logs', 'DELETE', csrfToken, user.id)
-  if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
+    const csrfToken = request.headers.get('x-csrf-token')
+    const csrfResult = csrfProtection('/api/admin/logs', 'DELETE', csrfToken, user.id)
+    if (!csrfResult.valid) return jsonResponse({ detail: csrfResult.reason }, 403)
 
-  // Backup logs to a snapshot before clearing
-  const count = await prisma.log.count()
-  const lastLogs = await prisma.log.findMany({ orderBy: { createdAt: 'desc' }, take: 1000 })
-  await prisma.log.create({
-    data: {
-      action: 'logs_cleared',
-      userId: user.id,
-      ipAddress: clientIp,
-      severity: 'suspicious',
-      details: JSON.stringify({ clearedCount: count, backupSample: lastLogs.length }),
-    },
-  })
-  await prisma.log.deleteMany()
-  return jsonResponse({ message: `All logs cleared (${count} entries removed)` })
+    const count = await prisma.log.count()
+    await prisma.log.deleteMany()
+
+    await prisma.log.create({
+      data: {
+        action: 'logs_cleared',
+        userId: user.id,
+        ipAddress: clientIp,
+        severity: 'suspicious',
+        details: JSON.stringify({ clearedCount: count }),
+      },
+    })
+
+    return jsonResponse({ message: `All logs cleared (${count} entries removed)` })
+  } catch {
+    return jsonResponse({ detail: 'Failed to clear logs' }, 500)
+  }
 }

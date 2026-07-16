@@ -4,6 +4,8 @@ import { config } from '@/lib/config'
 import { jsonResponse, getClientIp, setAuthCookies, createAccessToken, createRefreshToken, verifyPassword, getPasswordHash, generateFingerprint } from '@/lib/auth'
 import { wafGuard } from '@/lib/security-middleware'
 
+export const dynamic = 'force-dynamic'
+
 // HTTP Tarpit for admin login — exponential backoff on failed attempts
 // Mirrors the protection on the regular user login endpoint
 async function tarpitDelay(clientIp: string): Promise<void> {
