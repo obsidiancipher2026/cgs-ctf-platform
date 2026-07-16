@@ -42,7 +42,8 @@ export async function POST(request: Request) {
     })
 
     return jsonResponse({ message: 'Solves, score, and blood points reset', user_id })
-  } catch {
+  } catch (err) {
+    console.error('[reset-solves] Error:', err instanceof Error ? err.message : err)
     return jsonResponse({ detail: 'Failed to reset solves' }, 500)
   }
 }

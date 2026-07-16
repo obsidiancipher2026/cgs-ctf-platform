@@ -725,21 +725,21 @@ export default function AdminPage() {
                                   <button onClick={async () => {
                                     if (!confirm(`Reset score for "${u.username}" to 0?`)) return;
                                     try { await api.resetUserScore(u.id); toast.success('Score reset'); loadTabData('users'); }
-                                    catch { toast.error('Failed to reset score'); }
+                                    catch (err: any) { toast.error(err?.response?.data?.detail || err?.message || 'Failed to reset score'); console.error(err); }
                                   }} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Score Points">
                                     <RefreshCw className="w-3.5 h-3.5" />
                                   </button>
                                   <button onClick={async () => {
                                     if (!confirm(`Reset blood points for "${u.username}" to 0?`)) return;
                                     try { await api.resetUserBlood(u.id); toast.success('Blood points reset'); loadTabData('users'); }
-                                    catch { toast.error('Failed to reset blood points'); }
+                                    catch (err: any) { toast.error(err?.response?.data?.detail || err?.message || 'Failed to reset blood points'); console.error(err); }
                                   }} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Blood Points">
                                     <Flame className="w-3.5 h-3.5" />
                                   </button>
                                   <button onClick={async () => {
                                     if (!confirm(`Reset all solves, score, and blood points for "${u.username}"? This cannot be undone.`)) return;
                                     try { await api.resetUserSolves(u.id); toast.success('Solves reset'); loadTabData('users'); }
-                                    catch { toast.error('Failed to reset solves'); }
+                                    catch (err: any) { toast.error(err?.response?.data?.detail || err?.message || 'Failed to reset solves'); console.error(err); }
                                   }} className="p-1.5 rounded-lg bg-[rgba(255,176,32,0.1)] text-[var(--signal-amber)] hover:bg-[rgba(255,176,32,0.2)] transition-all" title="Reset Solve Counts">
                                     <RotateCcw className="w-3.5 h-3.5" />
                                   </button>

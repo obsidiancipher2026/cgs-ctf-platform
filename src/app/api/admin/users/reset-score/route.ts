@@ -41,7 +41,8 @@ export async function POST(request: Request) {
     })
 
     return jsonResponse({ message: 'Score reset to 0', user_id })
-  } catch {
+  } catch (err) {
+    console.error('[reset-score] Error:', err instanceof Error ? err.message : err)
     return jsonResponse({ detail: 'Failed to reset score' }, 500)
   }
 }
